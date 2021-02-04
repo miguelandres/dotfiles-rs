@@ -1,0 +1,6 @@
+[workspace]
+
+members = [
+  "rustybot",
+  "rustybot_core",
+]
