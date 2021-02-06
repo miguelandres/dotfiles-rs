@@ -1,3 +1,5 @@
+extern crate yaml_rust;
+
 use crate::directive::DirectiveData;
 use crate::directive;
 use crate::directive::Action;

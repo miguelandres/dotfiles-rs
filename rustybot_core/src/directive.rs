@@ -1,3 +1,5 @@
+extern crate yaml_rust;
+
 use std::collections;
 use yaml_rust::Yaml;
 
