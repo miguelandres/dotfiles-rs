@@ -21,6 +21,7 @@
 
 extern crate yaml_rust;
 
+use crate::action::Action;
 use std::collections;
 use yaml_rust::Yaml;
 
@@ -57,8 +58,4 @@ pub trait Directive<'a, A: Action<'a>> {
         settings: &Settings,
         yaml: &Yaml,
     ) -> Result<Box<dyn Action<'a> + 'a>, String>;
-}
-
-pub trait Action<'a> {
-    fn execute(&self) -> Result<(), String>;
 }
