@@ -21,12 +21,12 @@
 
 extern crate yaml_rust;
 
-use crate::directive;
 use crate::directive::Action;
 use crate::directive::Directive;
 use crate::directive::DirectiveData;
 use crate::directive::Setting;
 use crate::directive::Settings;
+use crate::yaml_util;
 use filesystem::FileSystem;
 use filesystem::OsFileSystem;
 use log::error;
@@ -85,8 +85,8 @@ impl<F: FileSystem> Directive<'_, CreateAction<'_, F>> for CreateDirective<F> {
     ) -> Result<Box<dyn Action<'_> + '_>, String> {
         Ok(Box::from(CreateAction::<'_> {
             fs: self.fs(),
-            force: directive::get_boolean_setting(FORCE_SETTING, &settings, self.defaults())?,
-            directory: directive::get_string_content_or_keyed_value(yaml, Some(DIR_SETTING))?,
+            force: yaml_util::get_boolean_setting(FORCE_SETTING, &settings, self.defaults())?,
+            directory: yaml_util::get_string_content_or_keyed_value(yaml, Some(DIR_SETTING))?,
         }))
     }
 }

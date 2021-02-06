@@ -23,7 +23,7 @@
 
 extern crate yaml_rust;
 
-use rustybot_core::directive::*;
+use rustybot_core::yaml_util::*;
 use yaml_rust::YamlLoader;
 
 mod test_get_string_content_or_keyed_value {
