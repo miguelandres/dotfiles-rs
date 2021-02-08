@@ -36,6 +36,10 @@ pub const DIRECTIVE_NAME: &str = "create";
 pub const FORCE_SETTING: &str = "force";
 pub const DIR_SETTING: &str = "dir";
 
+pub fn new_native_create_directive() -> CreateDirective<OsFileSystem> {
+    CreateDirective::new(OsFileSystem::new())
+}
+
 pub fn init_directive_data() -> DirectiveData {
     let mut settings = Settings::new();
     settings.insert(String::from(FORCE_SETTING), Setting::Boolean(false));
@@ -57,13 +61,6 @@ impl<F: FileSystem> CreateDirective<F> {
             fs: Box::new(fs),
             data: init_directive_data(),
         }
-    }
-}
-
-impl CreateDirective<OsFileSystem> {
-    #[allow(dead_code)]
-    fn new_native() -> CreateDirective<OsFileSystem> {
-        CreateDirective::<OsFileSystem>::new(OsFileSystem::new())
     }
 }
 

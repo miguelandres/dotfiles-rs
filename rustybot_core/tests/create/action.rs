@@ -28,15 +28,6 @@ use rustybot_core::directive::*;
 use rustybot_core::new::directive::*;
 use std::io;
 
-trait CreateFake {
-    fn new_fake() -> Self;
-}
-impl CreateFake for CreateDirective<FakeFileSystem> {
-    fn new_fake() -> Self {
-        CreateDirective::<FakeFileSystem>::create(FakeFileSystem::new())
-    }
-}
-
 fn setup_fs(fs: &FakeFileSystem) -> io::Result<()> {
     fs.create_dir_all("/home/user/")?;
     fs.create_dir("/system")?;
@@ -46,9 +37,9 @@ fn setup_fs(fs: &FakeFileSystem) -> io::Result<()> {
 }
 
 #[test]
-fn create_dir_fails_on_nonexistent_path() -> Result<(), io::Error> {
+fn create_dir_fails_on_nonexistent_path() -> Result<(), String> {
     let fs = FakeFileSystem::new();
-    setup_fs(&fs)?;
+    setup_fs(&fs).expect("Failure setting up FakeFileSystem");
     let action = CreateAction::new(
         &fs,
         String::from("/home/user/nonexistent_path/target"),
