@@ -28,7 +28,7 @@ use rustybot_core::directive::*;
 use rustybot_core::new::directive::*;
 use std::io;
 
-fn setup_fs(fs: &FakeFileSystem) -> io::Result<()> {
+fn setup_fs_internal(fs: &FakeFileSystem) -> io::Result<()> {
     fs.create_dir_all("/home/user/")?;
     fs.create_dir("/system")?;
     fs.set_readonly("/system", true)?;
@@ -36,8 +36,16 @@ fn setup_fs(fs: &FakeFileSystem) -> io::Result<()> {
     Ok(())
 }
 
+fn setup_fs(fs: &FakeFileSystem) -> Result<(), String> {
+    if let Err(io_error) = setup_fs(fs) {
+        return Err(io_error.to_string());
+    }
+    Ok(())
+}
+
 #[test]
 fn create_dir_fails_on_nonexistent_path() -> Result<(), String> {
+    let err_fmt = "Could create directory in nonexistent path, {}";
     let fs = FakeFileSystem::new();
     setup_fs(&fs).expect("Failure setting up FakeFileSystem");
     let action = CreateAction::new(
@@ -45,46 +53,28 @@ fn create_dir_fails_on_nonexistent_path() -> Result<(), String> {
         String::from("/home/user/nonexistent_path/target"),
         false,
     );
-    if let Ok(()) = action.execute() {
-        panic!(
-            "Could create directory in nonexistent path {}",
-            action.directory()
-        )
-    }
-    Ok(())
+    check_action_fail(action, format!(err_fmt, action.directory()))?
 }
 
 #[test]
-fn create_dir_succeeds() -> Result<(), io::Error> {
+fn create_dir_succeeds() -> Result<(), String> {
     let fs = FakeFileSystem::new();
     setup_fs(&fs)?;
     let action = CreateAction::new(&fs, String::from("/home/user/target"), false);
-    if let Err(e) = action.execute() {
-        panic!(
-            "Could not create directory path {}: {:?}",
-            action.directory(),
-            e
-        )
-    }
-    Ok(())
+    action.execute()?
 }
 
 #[test]
-fn create_dir_fails_on_readonly_dir() -> Result<(), io::Error> {
+fn create_dir_fails_on_readonly_dir() -> Result<(), String> {
     let fs = FakeFileSystem::new();
     setup_fs(&fs)?;
     let action = CreateAction::new(&fs, String::from("/system/target"), false);
-    if let Ok(()) = action.execute() {
-        panic!(
-            "Could create directory in readonly path {}",
-            action.directory()
-        )
-    }
-    Ok(())
+    let err_fmt="Could create directory in readonly path {}";
+    check_action_fail(action, format!(err_fmt, action.directory()))?
 }
 
 #[test]
-fn force_create_dir_succeeds_on_nonexistent_path() -> Result<(), io::Error> {
+fn force_create_dir_succeeds_on_nonexistent_path() -> Result<(), String> {
     let fs = FakeFileSystem::new();
     setup_fs(&fs)?;
     let action = CreateAction::new(
@@ -92,41 +82,22 @@ fn force_create_dir_succeeds_on_nonexistent_path() -> Result<(), io::Error> {
         String::from("/home/user/nonexistent_path/target"),
         true,
     );
-    if let Err(e) = action.execute() {
-        panic!(
-            "Couldn't force create directory in nonexistent path {}: {:?}",
-            action.directory(),
-            e
-        )
-    }
-    Ok(())
+    action.execute()?
 }
 
 #[test]
-fn force_create_dir_succeeds() -> Result<(), io::Error> {
+fn force_create_dir_succeeds() -> Result<(), String> {
     let fs = FakeFileSystem::new();
     setup_fs(&fs)?;
     let action = CreateAction::new(&fs, String::from("/home/user/target"), true);
-    if let Err(e) = action.execute() {
-        panic!(
-            "Could not create directory path {}: {:?}",
-            action.directory(),
-            e
-        )
-    }
-    Ok(())
+    action.execute()?
 }
 
 #[test]
 fn force_create_dir_fails_on_readonly_dir() -> Result<(), io::Error> {
     let fs = FakeFileSystem::new();
     setup_fs(&fs)?;
+    let err_fmt="Could create directory in readonly path {}";
     let action = CreateAction::new(&fs, String::from("/system/target"), true);
-    if let Ok(()) = action.execute() {
-        panic!(
-            "Could create directory in readonly path {}",
-            action.directory()
-        )
-    }
-    Ok(())
+    check_action_fail(&action,format!(err_fmt, action.directory()))?
 }
