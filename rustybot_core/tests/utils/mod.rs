@@ -21,9 +21,13 @@
 
 use rustybot_core::action::Action;
 
-fn check_action_fail(action: dyn Action, error_message: String) -> Result<(), String> {
+pub fn check_action_fail<'a, A: Action<'a>>(
+    action: dyn A,
+    error_message: String,
+) -> Result<(), String> {
     if let Ok(()) = action.execute() {
         Err(error_message)
+    } else {
+        Ok(())
     }
-    Ok(())
 }
