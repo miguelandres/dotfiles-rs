@@ -7,6 +7,6 @@ edition = "2018"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-filesystem = { git = "ssh://git@github.com/miguelandres/filesystem-rs.git" }
+filesystem = { git = "https://github.com/miguelandres/filesystem-rs" }
 log = "0.4.14"
 yaml-rust = "0.4.5"
