@@ -1,1 +1,1 @@
-initSidebarItems({"fn":[["get_boolean_setting",""],["get_setting",""],["get_string_content_or_keyed_value",""]]});
+initSidebarItems({"fn":[["get_boolean_setting","Gets a boolean value for the setting named `name`."],["get_setting","Gets a String value for the setting named `name`."],["get_string_content_or_keyed_value","Gets the content of this YAML node or the value for a specific key in it."]]});
