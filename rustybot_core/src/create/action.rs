@@ -72,7 +72,7 @@ impl<F: FileSystem> CreateAction<'_, F> {
 impl<F: FileSystem> Action<'_> for CreateAction<'_, F> {
     /// Creates the [`directory`](CreateAction::directory).
     ///
-    /// Fails in the following cases:
+    /// # Errors
     /// - The parent directory does not exist and
     ///   [`force`](CreateAction::force) is false.
     /// - There is already a directory, file or symlink with the same name.
