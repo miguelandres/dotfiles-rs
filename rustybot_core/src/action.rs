@@ -19,7 +19,7 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-//! This module contains the base trait for all actions.
+//! This module contains the base trait for all [Action]s.
 
 /// An action to be run by a the rustybot runtime.
 pub trait Action<'a> {

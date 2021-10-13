@@ -19,6 +19,7 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
+//! This module defines [CreateDirective].
 extern crate yaml_rust;
 
 use crate::create::action::CreateAction;
@@ -31,14 +32,21 @@ use filesystem::FileSystem;
 use filesystem::OsFileSystem;
 use yaml_rust::Yaml;
 
+/// Constant for the name of the `create` directive.
 pub const DIRECTIVE_NAME: &str = "create";
+/// Constant for the name of the [`force`](CreateAction::force) Setting
+/// which forces to create all parent directories if necessary.
 pub const FORCE_SETTING: &str = "force";
+/// Constant for the name of the [`directory`](CreateAction::directory) Setting
+/// which forces to create all parent directories if necessary.
 pub const DIR_SETTING: &str = "dir";
 
+/// Constructs a new [CreateDirective] using the real filesystem
 pub fn new_native_create_directive() -> CreateDirective<OsFileSystem> {
     CreateDirective::new(OsFileSystem::new())
 }
 
+/// Initializes the default configuration for the [CreateDirective]
 pub fn init_directive_data() -> DirectiveData {
     let mut settings = Settings::new();
     settings.insert(String::from(FORCE_SETTING), Setting::Boolean(false));

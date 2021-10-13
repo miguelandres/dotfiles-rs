@@ -19,6 +19,9 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
+//! This module contains the [CreateAction] that creates a new directory
+//! when executed
+
 extern crate yaml_rust;
 
 use crate::action::Action;
@@ -27,13 +30,25 @@ use log::error;
 use log::info;
 use std::io;
 
+/// [CreateAction] creates a new [directory](CreateAction::directory) when executed
 pub struct CreateAction<'a, F: FileSystem> {
+    /// FileSystem to use to create the directory.
+    ///
+    /// Having a filesystem instance here allows us to use fakes/mocks to use
+    /// in unit tests.
     fs: &'a F,
+    /// Directory to create. Can be absolute or relative.
     directory: String,
+    /// Force creation of the directory and all its parents if they do not
+    /// exist already.
+    ///
+    /// Setting [`force`](CreateAction::force) to `true` is equivalent to using
+    /// the `-p` flag in `mkdir`.
     force: bool,
 }
 
 impl<F: FileSystem> CreateAction<'_, F> {
+    /// Constructs a new instance of CreateAction
     pub fn new(fs: &'_ F, directory: String, force: bool) -> CreateAction<'_, F> {
         CreateAction {
             fs,
@@ -41,15 +56,27 @@ impl<F: FileSystem> CreateAction<'_, F> {
             force,
         }
     }
+    /// Returns the directory to create.
     pub fn directory(&self) -> &str {
         &self.directory
     }
+    /// Returns true if the action will create parent directories if necessary.
+    ///
+    /// [`force`](CreateAction::force) being `true` is equivalent to using the
+    /// `-p` flag in `mkdir`
     pub fn force(&self) -> bool {
         self.force
     }
 }
 
 impl<F: FileSystem> Action<'_> for CreateAction<'_, F> {
+    /// Creates the [`directory`](CreateAction::directory).
+    ///
+    /// Fails in the following cases:
+    /// - The parent directory does not exist and
+    ///   [`force`](CreateAction::force) is false.
+    /// - There is already a directory, file or symlink with the same name.
+    /// - Permission denied.
     fn execute(&self) -> Result<(), String> {
         fn create_dir<F: FileSystem>(fs: &'_ F, directory: &str, force: bool) -> io::Result<()> {
             if force {

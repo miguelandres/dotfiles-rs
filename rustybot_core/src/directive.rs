@@ -19,7 +19,9 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-//! This module contains the base trait for all directives.
+//! This module contains the base trait for all [Directive] and all
+//! necessary conveniences to allow for user-configuration of directive
+//! defaults.
 
 extern crate yaml_rust;
 
@@ -42,7 +44,7 @@ pub enum Setting {
 /// A struct that contains the default settings for a Directive and the
 /// name it takes in configuration sources. The name must be unique.
 ///
-/// These default settings can be configured by the user.
+/// These default settings can be configured by the user as well.
 pub struct DirectiveData {
     /// Unique name of this directive.
     ///
