@@ -72,7 +72,11 @@ impl<'a, F: FileSystem> Directive<'a, CreateAction<'a, F>> for CreateDirective<F
         self.data.defaults()
     }
 
-    fn get_action(&self, settings: &Settings, yaml: &Yaml) -> Result<CreateAction<'_, F>, String> {
+    fn build_action(
+        &self,
+        settings: &Settings,
+        yaml: &Yaml,
+    ) -> Result<CreateAction<'_, F>, String> {
         Ok(CreateAction::<'_, F>::new(
             self.fs(),
             yaml_util::get_string_content_or_keyed_value(yaml, Some(DIR_SETTING))?,

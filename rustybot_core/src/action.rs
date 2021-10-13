@@ -19,6 +19,13 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
+//! This module contains the base trait for all actions.
+
+/// An action to be run by a the rustybot runtime.
 pub trait Action<'a> {
+    /// Executes the action.
+    ///
+    /// Returns an error String describing the issue, this string can be used
+    /// to log or display to the user.
     fn execute(&self) -> Result<(), String>;
 }

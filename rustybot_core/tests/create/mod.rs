@@ -29,16 +29,16 @@ use filesystem::FileSystem;
 use std::io;
 
 fn setup_fs_internal(fs: &FakeFileSystem) -> io::Result<()> {
-  fs.create_dir_all("/home/user/")?;
-  fs.create_dir("/system")?;
-  fs.set_readonly("/system", true)?;
-  fs.set_current_dir("/home/user/")?;
-  Ok(())
+    fs.create_dir_all("/home/user/")?;
+    fs.create_dir("/system")?;
+    fs.set_readonly("/system", true)?;
+    fs.set_current_dir("/home/user/")?;
+    Ok(())
 }
 
 pub fn setup_fs(fs: &FakeFileSystem) -> Result<(), String> {
-  if let Err(io_error) = setup_fs_internal(fs) {
-    return Err(io_error.to_string());
-  }
-  Ok(())
+    if let Err(io_error) = setup_fs_internal(fs) {
+        return Err(io_error.to_string());
+    }
+    Ok(())
 }
