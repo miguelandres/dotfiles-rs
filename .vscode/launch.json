@@ -7,8 +7,75 @@
     {
       "type": "lldb",
       "request": "launch",
-      "name": "Debug",
-      "program": "${workspaceFolder}/<your program>",
+      "name": "Debug executable 'rustybot'",
+      "cargo": {
+        "args": [
+          "build",
+          "--bin=rustybot",
+          "--package=rustybot"
+        ],
+        "filter": {
+          "name": "rustybot",
+          "kind": "bin"
+        }
+      },
+      "args": [],
+      "cwd": "${workspaceFolder}"
+    },
+    {
+      "type": "lldb",
+      "request": "launch",
+      "name": "Debug unit tests in executable 'rustybot'",
+      "cargo": {
+        "args": [
+          "test",
+          "--no-run",
+          "--bin=rustybot",
+          "--package=rustybot"
+        ],
+        "filter": {
+          "name": "rustybot",
+          "kind": "bin"
+        }
+      },
+      "args": [],
+      "cwd": "${workspaceFolder}"
+    },
+    {
+      "type": "lldb",
+      "request": "launch",
+      "name": "Debug unit tests in library 'rustybot_core'",
+      "cargo": {
+        "args": [
+          "test",
+          "--no-run",
+          "--lib",
+          "--package=rustybot_core"
+        ],
+        "filter": {
+          "name": "rustybot_core",
+          "kind": "lib"
+        }
+      },
+      "args": [],
+      "cwd": "${workspaceFolder}"
+    },
+    {
+      "type": "lldb",
+      "request": "launch",
+      "name": "Debug integration test 'yaml_util'",
+      "cargo": {
+        "args": [
+          "test",
+          "--no-run",
+          "--test=yaml_util",
+          "--package=rustybot_core"
+        ],
+        "filter": {
+          "name": "yaml_util",
+          "kind": "test"
+        }
+      },
       "args": [],
       "cwd": "${workspaceFolder}"
     }
