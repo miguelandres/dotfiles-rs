@@ -171,7 +171,7 @@
 <span class="kw">impl</span><span class="op">&lt;</span><span class="ident">F</span>: <span class="ident">FileSystem</span><span class="op">&gt;</span> <span class="ident">Action</span><span class="op">&lt;</span><span class="lifetime">&#39;_</span><span class="op">&gt;</span> <span class="kw">for</span> <span class="ident">CreateAction</span><span class="op">&lt;</span><span class="lifetime">&#39;_</span>, <span class="ident">F</span><span class="op">&gt;</span> {
     <span class="doccomment">/// Creates the [`directory`](CreateAction::directory).</span>
     <span class="doccomment">///</span>
-    <span class="doccomment">/// Fails in the following cases:</span>
+    <span class="doccomment">/// # Errors</span>
     <span class="doccomment">/// - The parent directory does not exist and</span>
     <span class="doccomment">///   [`force`](CreateAction::force) is false.</span>
     <span class="doccomment">/// - There is already a directory, file or symlink with the same name.</span>
