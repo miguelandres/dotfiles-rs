@@ -83,6 +83,8 @@
 <span id="83">83</span>
 <span id="84">84</span>
 <span id="85">85</span>
+<span id="86">86</span>
+<span id="87">87</span>
 </pre><pre class="rust"><code><span class="comment">// Copyright (c) 2021-2021 Miguel Barreto and others</span>
 <span class="comment">//</span>
 <span class="comment">// Permission is hereby granted, free of charge, to any person obtaining</span>
@@ -104,7 +106,9 @@
 <span class="comment">// OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION</span>
 <span class="comment">// WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.</span>
 
-<span class="doccomment">//! This module contains the base trait for all directives.</span>
+<span class="doccomment">//! This module contains the base trait for all [Directive] and all</span>
+<span class="doccomment">//! necessary conveniences to allow for user-configuration of directive</span>
+<span class="doccomment">//! defaults.</span>
 
 <span class="kw">extern</span> <span class="kw">crate</span> <span class="ident">yaml_rust</span>;
 
@@ -127,7 +131,7 @@
 <span class="doccomment">/// A struct that contains the default settings for a Directive and the</span>
 <span class="doccomment">/// name it takes in configuration sources. The name must be unique.</span>
 <span class="doccomment">///</span>
-<span class="doccomment">/// These default settings can be configured by the user.</span>
+<span class="doccomment">/// These default settings can be configured by the user as well.</span>
 <span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">DirectiveData</span> {
     <span class="doccomment">/// Unique name of this directive.</span>
     <span class="doccomment">///</span>

@@ -70,6 +70,33 @@
 <span id="70">70</span>
 <span id="71">71</span>
 <span id="72">72</span>
+<span id="73">73</span>
+<span id="74">74</span>
+<span id="75">75</span>
+<span id="76">76</span>
+<span id="77">77</span>
+<span id="78">78</span>
+<span id="79">79</span>
+<span id="80">80</span>
+<span id="81">81</span>
+<span id="82">82</span>
+<span id="83">83</span>
+<span id="84">84</span>
+<span id="85">85</span>
+<span id="86">86</span>
+<span id="87">87</span>
+<span id="88">88</span>
+<span id="89">89</span>
+<span id="90">90</span>
+<span id="91">91</span>
+<span id="92">92</span>
+<span id="93">93</span>
+<span id="94">94</span>
+<span id="95">95</span>
+<span id="96">96</span>
+<span id="97">97</span>
+<span id="98">98</span>
+<span id="99">99</span>
 </pre><pre class="rust"><code><span class="comment">// Copyright (c) 2021-2021 Miguel Barreto and others</span>
 <span class="comment">//</span>
 <span class="comment">// Permission is hereby granted, free of charge, to any person obtaining</span>
@@ -91,6 +118,9 @@
 <span class="comment">// OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION</span>
 <span class="comment">// WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.</span>
 
+<span class="doccomment">//! This module contains the [CreateAction] that creates a new directory</span>
+<span class="doccomment">//! when executed</span>
+
 <span class="kw">extern</span> <span class="kw">crate</span> <span class="ident">yaml_rust</span>;
 
 <span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::action::Action</span>;
@@ -99,13 +129,25 @@
 <span class="kw">use</span> <span class="ident">log::info</span>;
 <span class="kw">use</span> <span class="ident">std::io</span>;
 
+<span class="doccomment">/// [CreateAction] creates a new [directory](CreateAction::directory) when executed</span>
 <span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">CreateAction</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span>, <span class="ident">F</span>: <span class="ident">FileSystem</span><span class="op">&gt;</span> {
+    <span class="doccomment">/// FileSystem to use to create the directory.</span>
+    <span class="doccomment">///</span>
+    <span class="doccomment">/// Having a filesystem instance here allows us to use fakes/mocks to use</span>
+    <span class="doccomment">/// in unit tests.</span>
     <span class="ident">fs</span>: <span class="kw-2">&amp;</span><span class="lifetime">&#39;a</span> <span class="ident">F</span>,
+    <span class="doccomment">/// Directory to create. Can be absolute or relative.</span>
     <span class="ident">directory</span>: <span class="ident">String</span>,
+    <span class="doccomment">/// Force creation of the directory and all its parents if they do not</span>
+    <span class="doccomment">/// exist already.</span>
+    <span class="doccomment">///</span>
+    <span class="doccomment">/// Setting [`force`](CreateAction::force) to `true` is equivalent to using</span>
+    <span class="doccomment">/// the `-p` flag in `mkdir`.</span>
     <span class="ident">force</span>: <span class="ident">bool</span>,
 }
 
 <span class="kw">impl</span><span class="op">&lt;</span><span class="ident">F</span>: <span class="ident">FileSystem</span><span class="op">&gt;</span> <span class="ident">CreateAction</span><span class="op">&lt;</span><span class="lifetime">&#39;_</span>, <span class="ident">F</span><span class="op">&gt;</span> {
+    <span class="doccomment">/// Constructs a new instance of CreateAction</span>
     <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">new</span>(<span class="ident">fs</span>: <span class="kw-2">&amp;</span><span class="lifetime">&#39;_</span> <span class="ident">F</span>, <span class="ident">directory</span>: <span class="ident">String</span>, <span class="ident">force</span>: <span class="ident">bool</span>) -&gt; <span class="ident">CreateAction</span><span class="op">&lt;</span><span class="lifetime">&#39;_</span>, <span class="ident">F</span><span class="op">&gt;</span> {
         <span class="ident">CreateAction</span> {
             <span class="ident">fs</span>,
@@ -113,15 +155,27 @@
             <span class="ident">force</span>,
         }
     }
+    <span class="doccomment">/// Returns the directory to create.</span>
     <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">directory</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="kw-2">&amp;</span><span class="ident">str</span> {
         <span class="kw-2">&amp;</span><span class="self">self</span>.<span class="ident">directory</span>
     }
+    <span class="doccomment">/// Returns true if the action will create parent directories if necessary.</span>
+    <span class="doccomment">///</span>
+    <span class="doccomment">/// [`force`](CreateAction::force) being `true` is equivalent to using the</span>
+    <span class="doccomment">/// `-p` flag in `mkdir`</span>
     <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">force</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="ident">bool</span> {
         <span class="self">self</span>.<span class="ident">force</span>
     }
 }
 
 <span class="kw">impl</span><span class="op">&lt;</span><span class="ident">F</span>: <span class="ident">FileSystem</span><span class="op">&gt;</span> <span class="ident">Action</span><span class="op">&lt;</span><span class="lifetime">&#39;_</span><span class="op">&gt;</span> <span class="kw">for</span> <span class="ident">CreateAction</span><span class="op">&lt;</span><span class="lifetime">&#39;_</span>, <span class="ident">F</span><span class="op">&gt;</span> {
+    <span class="doccomment">/// Creates the [`directory`](CreateAction::directory).</span>
+    <span class="doccomment">///</span>
+    <span class="doccomment">/// Fails in the following cases:</span>
+    <span class="doccomment">/// - The parent directory does not exist and</span>
+    <span class="doccomment">///   [`force`](CreateAction::force) is false.</span>
+    <span class="doccomment">/// - There is already a directory, file or symlink with the same name.</span>
+    <span class="doccomment">/// - Permission denied.</span>
     <span class="kw">fn</span> <span class="ident">execute</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span>(), <span class="ident">String</span><span class="op">&gt;</span> {
         <span class="kw">fn</span> <span class="ident">create_dir</span><span class="op">&lt;</span><span class="ident">F</span>: <span class="ident">FileSystem</span><span class="op">&gt;</span>(<span class="ident">fs</span>: <span class="kw-2">&amp;</span><span class="lifetime">&#39;_</span> <span class="ident">F</span>, <span class="ident">directory</span>: <span class="kw-2">&amp;</span><span class="ident">str</span>, <span class="ident">force</span>: <span class="ident">bool</span>) -&gt; <span class="ident">io::Result</span><span class="op">&lt;</span>()<span class="op">&gt;</span> {
             <span class="kw">if</span> <span class="ident">force</span> {
