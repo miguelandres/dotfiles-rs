@@ -1,3 +1,5 @@
+#![cfg(test)]
+
 // Copyright (c) 2021-2021 Miguel Barreto and others
 //
 // Permission is hereby granted, free of charge, to any person obtaining
@@ -19,39 +21,24 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-extern crate yaml_rust;
+mod action;
+mod directive;
 
-use crate::action::Action;
-use std::collections;
-use yaml_rust::Yaml;
+use filesystem::FakeFileSystem;
+use filesystem::FileSystem;
+use std::io;
 
-pub type Settings = collections::HashMap<String, Setting>;
-
-#[derive(Clone, Debug)]
-pub enum Setting {
-    Boolean(bool),
-    String(String),
+fn setup_fs_internal(fs: &FakeFileSystem) -> io::Result<()> {
+  fs.create_dir_all("/home/user/")?;
+  fs.create_dir("/system")?;
+  fs.set_readonly("/system", true)?;
+  fs.set_current_dir("/home/user/")?;
+  Ok(())
 }
 
-pub struct DirectiveData {
-    name: &'static str,
-    defaults: Settings,
-}
-impl DirectiveData {
-    pub fn new(name: &'static str, defaults: Settings) -> DirectiveData {
-        DirectiveData { name, defaults }
-    }
-    pub fn name(&self) -> &str {
-        self.name
-    }
-    pub fn defaults(&self) -> &Settings {
-        &self.defaults
-    }
-}
-
-/// A parser for action steps, each directive represents a type of Action.
-pub trait Directive<'a, A: Action<'a>> {
-    fn name(&self) -> &str;
-    fn defaults(&self) -> &Settings;
-    fn get_action(&'a self, settings: &Settings, yaml: &Yaml) -> Result<A, String>;
+pub fn setup_fs(fs: &FakeFileSystem) -> Result<(), String> {
+  if let Err(io_error) = setup_fs_internal(fs) {
+    return Err(io_error.to_string());
+  }
+  Ok(())
 }

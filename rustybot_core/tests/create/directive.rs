@@ -22,18 +22,20 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 use filesystem::FakeFileSystem;
-use filesystem::FileSystem;
-use rustybot_core::create::action::*;
-use rustybot_core::directive::*;
-use rustybot_core::new::directive::*;
-use std::io;
+use rustybot_core::action::Action;
+use rustybot_core::create::action::CreateAction;
+use rustybot_core::create::directive::CreateDirective;
+use rustybot_core::directive::Directive;
+use rustybot_core::directive::Setting;
+use rustybot_core::directive::Settings;
+use yaml_rust::YamlLoader;
 
-mod utils;
-use utils::*;
+use super::setup_fs;
+use crate::utils::*;
 
 fn setup_defaults(force: bool) -> Settings {
   let mut settings = Settings::new();
-  settings.insert("force", Setting::Boolean(force));
+  settings.insert(String::from("force"), Setting::Boolean(force));
   settings
 }
 
@@ -44,29 +46,45 @@ static YAML_NONEXISTENT_PATH_NO_FORCE: &str = "dir: /home/user/nonexistent_path/
 force: false";
 
 #[test]
-fn create_dir_fails_on_nonexistent_path() -> Result<(), io::Error> {
-  let err_fmt = "Could create directory in nonexistent path, {}";
+fn create_dir_fails_on_nonexistent_path() -> Result<(), String> {
   let fs = FakeFileSystem::new();
   setup_fs(&fs)?;
   let settings = setup_defaults(false);
   let directive = CreateDirective::new(fs);
-  let action = directive.get_action(settings, YAML_NONEXISTENT_PATH);
-  check_action_fail(action, format!(err_fmt, action.directory()))?;
-  let action = directive.get_action(settings, YAML_NONEXISTENT_PATH_NO_FORCE);
-  check_action_fail(action, format!(err_fmt, action.directory()))?;
+  let yaml = &YamlLoader::load_from_str(YAML_NONEXISTENT_PATH).unwrap()[0];
+  let action = directive.get_action(&settings, yaml)?;
+  check_action_fail(
+    &action,
+    format!(
+      "Could create directory in nonexistent path, {}",
+      action.directory()
+    ),
+  )?;
+  let yaml = &YamlLoader::load_from_str(YAML_NONEXISTENT_PATH_NO_FORCE).unwrap()[0];
+  let action = directive.get_action(&settings, yaml)?;
+  check_action_fail(
+    &action,
+    format!(
+      "Could create directory in nonexistent path, {}",
+      action.directory()
+    ),
+  )?;
   Ok(())
 }
 
 #[test]
-fn create_dir_force_succeeds_on_nonexistent_path() -> Result<(), io::Error> {
+fn create_dir_force_succeeds_on_nonexistent_path() -> Result<(), String> {
   let fs = FakeFileSystem::new();
   setup_fs(&fs)?;
   let settings = setup_defaults(true);
   let directive = CreateDirective::new(fs);
-  let action = directive.get_action(settings, YAML_NONEXISTENT_PATH);
+  let yaml = &YamlLoader::load_from_str(YAML_NONEXISTENT_PATH).unwrap()[0];
+  let action: CreateAction<'_, FakeFileSystem> = directive.get_action(&settings, yaml)?;
   action.execute()?;
-  let action = directive.get_action(settings, YAML_NONEXISTENT_PATH_NO_FORCE);
+  let yaml = &YamlLoader::load_from_str(YAML_NONEXISTENT_PATH_NO_FORCE).unwrap()[0];
+  let action = directive.get_action(&settings, yaml)?;
   action.execute()?;
-  let action = directive.get_action(settings, YAML_NONEXISTENT_PATH_FORCE);
-  action.execute()?
+  let yaml = &YamlLoader::load_from_str(YAML_NONEXISTENT_PATH_FORCE).unwrap()[0];
+  let action = directive.get_action(&settings, yaml)?;
+  action.execute()
 }

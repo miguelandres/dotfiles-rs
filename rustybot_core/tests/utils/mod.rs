@@ -1,3 +1,4 @@
+#![cfg(test)]
 // Copyright (c) 2021-2021 Miguel Barreto and others
 //
 // Permission is hereby granted, free of charge, to any person obtaining
@@ -22,7 +23,7 @@
 use rustybot_core::action::Action;
 
 pub fn check_action_fail<'a, A: Action<'a>>(
-    action: dyn A,
+    action: &A,
     error_message: String,
 ) -> Result<(), String> {
     if let Ok(()) = action.execute() {
