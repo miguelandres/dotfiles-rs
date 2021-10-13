@@ -1,0 +1,1 @@
+initSidebarItems({"constant":[["DIRECTIVE_NAME",""],["DIR_SETTING",""],["FORCE_SETTING",""]],"fn":[["init_directive_data",""],["new_native_create_directive",""]],"struct":[["CreateDirective",""]]});
