@@ -19,11 +19,18 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
+//! Module that defines helper functions to process YAML configuration sources.
 extern crate yaml_rust;
 
 use crate::directive::{Setting, Settings};
 use yaml_rust::Yaml;
 
+/// Gets a boolean value for the setting named `name`.
+///
+/// First it tries to find a value for the setting in the `context_settings`
+/// argument, if it doesn't contain any it falls back to `directive-defaults`.
+///
+/// Returns an error if no such setting was found in either setting collection.
 pub fn get_boolean_setting(
     name: &str,
     context_settings: &Settings,
@@ -36,6 +43,12 @@ pub fn get_boolean_setting(
     }
 }
 
+/// Gets a String value for the setting named `name`.
+///
+/// First it tries to find a value for the setting in the `context_settings`
+/// argument, if it doesn't contain any it falls back to `directive-defaults`
+///
+/// Returns an error if no such setting was found in either setting collection.
 pub fn get_setting(
     name: &str,
     context_settings: &Settings,
@@ -53,6 +66,16 @@ pub fn get_setting(
     }
 }
 
+/// Gets the content of this YAML node or the value for a specific key in it.
+///
+/// If the Yaml node passed is a String node then it returns its contents,
+/// if the Yaml node is a Hash then it returns the string content of the
+/// value corresponding to the optional Key.
+///
+/// # Errors
+/// - `yaml` is neither a String nor a Hash
+/// - `yaml` is a hash but it does not contain a value for `key`
+/// - `yaml` is a hash but the value for `key` is not a String.
 pub fn get_string_content_or_keyed_value(yaml: &Yaml, key: Option<&str>) -> Result<String, String> {
     match (yaml, key) {
         (Yaml::String(s), _) => Ok(s.clone()),
@@ -68,10 +91,6 @@ pub fn get_string_content_or_keyed_value(yaml: &Yaml, key: Option<&str>) -> Resu
                 )),
             }
         }
-        (yaml, Some(key)) => Err(format!(
-            "Yaml value is not a string or does not contain key {}: {:?}",
-            key, yaml
-        )),
-        (yaml, None) => Err(format!("Yaml value is not a string: {:?}", yaml)),
+        (yaml, _) => Err(format!("Yaml value is not a string or hash: {:?}", yaml)),
     }
 }

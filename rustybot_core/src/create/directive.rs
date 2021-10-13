@@ -53,16 +53,20 @@ pub fn init_directive_data() -> DirectiveData {
     DirectiveData::new(DIRECTIVE_NAME, settings)
 }
 
+/// A directive that can build [CreateAction]s to create directories
+/// in the filesystem.
 pub struct CreateDirective<F: FileSystem> {
     fs: Box<F>,
     data: DirectiveData,
 }
 
 impl<F: FileSystem> CreateDirective<F> {
+    /// Returns the [FileSystem] instance being used.
     pub fn fs(&self) -> &F {
         self.fs.as_ref()
     }
 
+    /// Constructs a new instance of the create directive.
     pub fn new(fs: F) -> CreateDirective<F> {
         CreateDirective::<F> {
             fs: Box::new(fs),
