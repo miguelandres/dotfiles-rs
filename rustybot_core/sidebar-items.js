@@ -1,1 +1,1 @@
-initSidebarItems({"mod":[["action",""],["create",""],["directive",""],["yaml_util",""]]});
+initSidebarItems({"mod":[["action","This module contains the base trait for all actions."],["create",""],["directive","This module contains the base trait for all directives."],["yaml_util",""]]});

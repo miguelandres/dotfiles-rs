@@ -80,6 +80,10 @@
 <span id="80">80</span>
 <span id="81">81</span>
 <span id="82">82</span>
+<span id="83">83</span>
+<span id="84">84</span>
+<span id="85">85</span>
+<span id="86">86</span>
 </pre><pre class="rust"><code><span class="comment">// Copyright (c) 2021-2021 Miguel Barreto and others</span>
 <span class="comment">//</span>
 <span class="comment">// Permission is hereby granted, free of charge, to any person obtaining</span>
@@ -154,7 +158,11 @@
         <span class="self">self</span>.<span class="ident">data</span>.<span class="ident">defaults</span>()
     }
 
-    <span class="kw">fn</span> <span class="ident">get_action</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">settings</span>: <span class="kw-2">&amp;</span><span class="ident">Settings</span>, <span class="ident">yaml</span>: <span class="kw-2">&amp;</span><span class="ident">Yaml</span>) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">CreateAction</span><span class="op">&lt;</span><span class="lifetime">&#39;_</span>, <span class="ident">F</span><span class="op">&gt;</span>, <span class="ident">String</span><span class="op">&gt;</span> {
+    <span class="kw">fn</span> <span class="ident">build_action</span>(
+        <span class="kw-2">&amp;</span><span class="self">self</span>,
+        <span class="ident">settings</span>: <span class="kw-2">&amp;</span><span class="ident">Settings</span>,
+        <span class="ident">yaml</span>: <span class="kw-2">&amp;</span><span class="ident">Yaml</span>,
+    ) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">CreateAction</span><span class="op">&lt;</span><span class="lifetime">&#39;_</span>, <span class="ident">F</span><span class="op">&gt;</span>, <span class="ident">String</span><span class="op">&gt;</span> {
         <span class="prelude-val">Ok</span>(<span class="ident">CreateAction</span>::<span class="op">&lt;</span><span class="lifetime">&#39;_</span>, <span class="ident">F</span><span class="op">&gt;</span><span class="ident">::new</span>(
             <span class="self">self</span>.<span class="ident">fs</span>(),
             <span class="ident">yaml_util::get_string_content_or_keyed_value</span>(<span class="ident">yaml</span>, <span class="prelude-val">Some</span>(<span class="ident">DIR_SETTING</span>))<span class="question-mark">?</span>,

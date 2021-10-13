@@ -1,1 +1,1 @@
-initSidebarItems({"trait":[["Action",""]]});
+initSidebarItems({"trait":[["Action","An action to be run by a the rustybot runtime."]]});

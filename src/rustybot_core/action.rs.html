@@ -22,6 +22,13 @@
 <span id="22">22</span>
 <span id="23">23</span>
 <span id="24">24</span>
+<span id="25">25</span>
+<span id="26">26</span>
+<span id="27">27</span>
+<span id="28">28</span>
+<span id="29">29</span>
+<span id="30">30</span>
+<span id="31">31</span>
 </pre><pre class="rust"><code><span class="comment">// Copyright (c) 2021-2021 Miguel Barreto and others</span>
 <span class="comment">//</span>
 <span class="comment">// Permission is hereby granted, free of charge, to any person obtaining</span>
@@ -43,7 +50,14 @@
 <span class="comment">// OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION</span>
 <span class="comment">// WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.</span>
 
+<span class="doccomment">//! This module contains the base trait for all actions.</span>
+
+<span class="doccomment">/// An action to be run by a the rustybot runtime.</span>
 <span class="kw">pub</span> <span class="kw">trait</span> <span class="ident">Action</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span><span class="op">&gt;</span> {
+    <span class="doccomment">/// Executes the action.</span>
+    <span class="doccomment">///</span>
+    <span class="doccomment">/// Returns an error String describing the issue, this string can be used</span>
+    <span class="doccomment">/// to log or display to the user.</span>
     <span class="kw">fn</span> <span class="ident">execute</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span>(), <span class="ident">String</span><span class="op">&gt;</span>;
 }
 </code></pre></div>

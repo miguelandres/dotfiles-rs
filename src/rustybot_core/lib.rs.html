@@ -24,6 +24,30 @@
 <span id="24">24</span>
 <span id="25">25</span>
 <span id="26">26</span>
+<span id="27">27</span>
+<span id="28">28</span>
+<span id="29">29</span>
+<span id="30">30</span>
+<span id="31">31</span>
+<span id="32">32</span>
+<span id="33">33</span>
+<span id="34">34</span>
+<span id="35">35</span>
+<span id="36">36</span>
+<span id="37">37</span>
+<span id="38">38</span>
+<span id="39">39</span>
+<span id="40">40</span>
+<span id="41">41</span>
+<span id="42">42</span>
+<span id="43">43</span>
+<span id="44">44</span>
+<span id="45">45</span>
+<span id="46">46</span>
+<span id="47">47</span>
+<span id="48">48</span>
+<span id="49">49</span>
+<span id="50">50</span>
 </pre><pre class="rust"><code><span class="comment">// Copyright (c) 2021-2021 Miguel Barreto and others</span>
 <span class="comment">//</span>
 <span class="comment">// Permission is hereby granted, free of charge, to any person obtaining</span>
@@ -45,11 +69,35 @@
 <span class="comment">// OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION</span>
 <span class="comment">// WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.</span>
 
+<span class="attribute">#![<span class="ident">warn</span>(<span class="ident">missing_docs</span>)]</span>
+<span class="attribute">#![<span class="ident">deny</span>(<span class="ident">rustdoc::broken_intra_doc_links</span>)]</span>
+
+<span class="doccomment">//! The core of Rustybot is basically a set of [directives](</span>
+<span class="doccomment">//! directive::Directive) that can build executable [actions](action::Action)</span>
+<span class="doccomment">//! from configuration sources (Yaml is the only supported configuration source</span>
+<span class="doccomment">//! so far).</span>
+<span class="doccomment">//!</span>
+<span class="doccomment">//! Directives are responsible for parsing configuration from the configuration</span>
+<span class="doccomment">//! source, applying default [settings](directive::Settings) if necessary, and</span>
+<span class="doccomment">//! using these to build actions that can be executed.</span>
+<span class="doccomment">//!</span>
+<span class="doccomment">//! The base traits and classes for these building blocks can be found in the</span>
+<span class="doccomment">//! [action] and [directive] modules. The [yaml_util] module is a set of helper</span>
+<span class="doccomment">//! functions for Directives to parse configuration.</span>
+<span class="doccomment">//!</span>
+<span class="doccomment">//! Finally all concrete actions and directives can be found in the following</span>
+<span class="doccomment">//! modules:</span>
+<span class="doccomment">//!</span>
+<span class="doccomment">//! - [create]: Create a new directory</span>
 <span class="kw">pub</span> <span class="kw">mod</span> <span class="ident">action</span>;
 <span class="kw">pub</span> <span class="kw">mod</span> <span class="ident">create</span>;
 <span class="kw">pub</span> <span class="kw">mod</span> <span class="ident">directive</span>;
 <span class="kw">pub</span> <span class="kw">mod</span> <span class="ident">yaml_util</span>;
-<span class="kw">pub</span> <span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::directive::Directive</span>;
+
+<span class="kw">pub</span> <span class="kw">use</span> <span class="ident">action::Action</span>;
+<span class="kw">pub</span> <span class="kw">use</span> <span class="ident">directive::Directive</span>;
+<span class="kw">pub</span> <span class="kw">use</span> <span class="ident">directive::Setting</span>;
+<span class="kw">pub</span> <span class="kw">use</span> <span class="ident">directive::Settings</span>;
 </code></pre></div>
 </section><section id="search" class="content hidden"></section><div id="rustdoc-vars" data-root-path="../../" data-current-crate="rustybot_core" data-search-index-js="../../search-index.js" data-search-js="../../search.js"></div>
     <script src="../../main.js"></script><script src="../../source-script.js"></script><script src="../../source-files.js"></script>
