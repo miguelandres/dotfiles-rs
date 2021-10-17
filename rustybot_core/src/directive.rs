@@ -26,11 +26,11 @@
 extern crate yaml_rust;
 
 use crate::action::Action;
-use std::collections;
+use std::collections::HashMap;
 use yaml_rust::Yaml;
 
 /// The Settings object is a hashmap of option names to a default value
-pub type Settings = collections::HashMap<String, Setting>;
+pub type Settings = HashMap<String, Setting>;
 
 /// Represents a value for a setting
 #[derive(Clone, Debug)]
@@ -39,6 +39,15 @@ pub enum Setting {
     Boolean(bool),
     /// A string value for a setting
     String(String),
+}
+
+/// Returns a Settings object from an array as a bit of syntactic sugar
+pub fn initialize_settings_object(settings: &[(String, Setting)]) -> Settings {
+    let settings_object: Settings = settings
+        .iter()
+        .map(|(name, setting)| (name.clone(), setting.clone()))
+        .collect();
+    settings_object
 }
 
 /// A struct that contains the default settings for a Directive and the

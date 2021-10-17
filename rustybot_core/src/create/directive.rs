@@ -23,6 +23,7 @@
 extern crate yaml_rust;
 
 use crate::create::action::CreateAction;
+use crate::directive::initialize_settings_object;
 use crate::directive::Directive;
 use crate::directive::DirectiveData;
 use crate::directive::Setting;
@@ -48,9 +49,10 @@ pub fn new_native_create_directive() -> CreateDirective<OsFileSystem> {
 
 /// Initializes the default configuration for the [CreateDirective]
 pub fn init_directive_data() -> DirectiveData {
-    let mut settings = Settings::new();
-    settings.insert(String::from(FORCE_SETTING), Setting::Boolean(false));
-    DirectiveData::new(DIRECTIVE_NAME, settings)
+    DirectiveData::new(
+        DIRECTIVE_NAME,
+        initialize_settings_object(&[(String::from(FORCE_SETTING), Setting::Boolean(false))]),
+    )
 }
 
 /// A directive that can build [CreateAction]s to create directories
