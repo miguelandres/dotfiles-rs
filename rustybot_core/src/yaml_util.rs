@@ -25,6 +25,40 @@ extern crate yaml_rust;
 use crate::directive::{Setting, Settings};
 use yaml_rust::Yaml;
 
+/// Gets a Boolean value from YAML or defaults.
+///
+/// First it tries to find a value in `yaml`, if it can't find one then it
+/// falls back to `context_settings` or finally `default_settings`.
+///
+/// # Errors
+/// - Found a setting in YAML but that couldn't be parsed as a boolean.
+/// - Didn't find a setting matching this name anywhere
+pub fn get_boolean_setting_from_yaml_or_defaults(
+    name: &str,
+    yaml: &Yaml,
+    context_settings: &Settings,
+    directive_defaults: &Settings,
+) -> Result<bool, String> {
+    match yaml {
+        Yaml::Hash(hash) => match hash.get(&Yaml::String(String::from(name))) {
+            Some(Yaml::String(s)) => match s.trim().to_ascii_lowercase().as_str() {
+                "true" => Ok(true),
+                "false" => Ok(false),
+                _ => Err(format!(
+                    "{:} cannot be parsed as bool for setting {:}",
+                    s, name
+                )),
+            },
+            Some(other_yaml) => Err(format!(
+                "Setting {:} exists but it cannot be parsed: {:?}",
+                name, other_yaml
+            )),
+            None => get_boolean_setting(name, context_settings, directive_defaults),
+        },
+        _ => get_boolean_setting(name, context_settings, directive_defaults),
+    }
+}
+
 /// Gets a boolean value for the setting named `name`.
 ///
 /// First it tries to find a value for the setting in the `context_settings`
@@ -38,6 +72,24 @@ pub fn get_boolean_setting(
 ) -> Result<bool, String> {
     if let Setting::Boolean(b) = get_setting(name, context_settings, directive_defaults)? {
         Ok(b)
+    } else {
+        Err(format!("Setting {} was found but is not boolean", name))
+    }
+}
+
+/// Gets a String value for the setting named `name`.
+///
+/// First it tries to find a value for the setting in the `context_settings`
+/// argument, if it doesn't contain any it falls back to `directive-defaults`.
+///
+/// Returns an error if no such setting was found in either setting collection.
+pub fn get_string_setting(
+    name: &str,
+    context_settings: &Settings,
+    directive_defaults: &Settings,
+) -> Result<String, String> {
+    if let Setting::String(s) = get_setting(name, context_settings, directive_defaults)? {
+        Ok(s.clone())
     } else {
         Err(format!("Setting {} was found but is not boolean", name))
     }
@@ -63,6 +115,33 @@ pub fn get_setting(
             "Setting {} couldn't be found in context or defaults",
             name
         ))
+    }
+}
+
+/// Gets a String value from YAML or defaults.
+///
+/// First itb tries to find a value in `yaml`, if it can't find one then it
+/// falls back to `context_settings` or finally `default_settings`.
+///
+/// # Errors
+/// - Found a setting in YAML but that couldn't be parsed.
+/// - Didn't find a setting matching this name anywhere
+pub fn get_string_setting_from_yaml_or_defaults(
+    name: &str,
+    yaml: &Yaml,
+    context_settings: &Settings,
+    directive_defaults: &Settings,
+) -> Result<String, String> {
+    match yaml {
+        Yaml::Hash(hash) => match hash.get(&Yaml::String(String::from(name))) {
+            Some(Yaml::String(s)) => Ok(s.clone()),
+            Some(other_yaml) => Err(format!(
+                "Setting {:} exists but it cannot be parsed: {:?}",
+                name, other_yaml
+            )),
+            None => get_string_setting(name, context_settings, directive_defaults),
+        },
+        _ => get_string_setting(name, context_settings, directive_defaults),
     }
 }
 
