@@ -48,6 +48,8 @@
 <span id="48">48</span>
 <span id="49">49</span>
 <span id="50">50</span>
+<span id="51">51</span>
+<span id="52">52</span>
 </pre><pre class="rust"><code><span class="comment">// Copyright (c) 2021-2021 Miguel Barreto and others</span>
 <span class="comment">//</span>
 <span class="comment">// Permission is hereby granted, free of charge, to any person obtaining</span>
@@ -71,6 +73,7 @@
 
 <span class="attribute">#![<span class="ident">warn</span>(<span class="ident">missing_docs</span>)]</span>
 <span class="attribute">#![<span class="ident">deny</span>(<span class="ident">rustdoc::broken_intra_doc_links</span>)]</span>
+<span class="attribute">#![<span class="ident">feature</span>(<span class="ident">io_error_more</span>)]</span>
 
 <span class="doccomment">//! The core of Rustybot is basically a set of [directives](</span>
 <span class="doccomment">//! directive::Directive) that can build executable [actions](action::Action)</span>
@@ -92,6 +95,7 @@
 <span class="kw">pub</span> <span class="kw">mod</span> <span class="ident">action</span>;
 <span class="kw">pub</span> <span class="kw">mod</span> <span class="ident">create</span>;
 <span class="kw">pub</span> <span class="kw">mod</span> <span class="ident">directive</span>;
+<span class="kw">pub</span> <span class="kw">mod</span> <span class="ident">link</span>;
 <span class="kw">pub</span> <span class="kw">mod</span> <span class="ident">yaml_util</span>;
 
 <span class="kw">pub</span> <span class="kw">use</span> <span class="ident">action::Action</span>;
