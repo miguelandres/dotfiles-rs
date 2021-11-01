@@ -21,5 +21,6 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 mod create;
+mod link;
 mod utils;
 mod yaml_util;

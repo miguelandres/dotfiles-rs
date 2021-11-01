@@ -19,34 +19,8 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-#![warn(missing_docs)]
-#![deny(rustdoc::broken_intra_doc_links)]
-#![feature(io_error_more)]
-
-//! The core of Rustybot is basically a set of [directives](
-//! directive::Directive) that can build executable [actions](action::Action)
-//! from configuration sources (Yaml is the only supported configuration source
-//! so far).
-//!
-//! Directives are responsible for parsing configuration from the configuration
-//! source, applying default [settings](directive::Settings) if necessary, and
-//! using these to build actions that can be executed.
-//!
-//! The base traits and classes for these building blocks can be found in the
-//! [action] and [directive] modules. The [yaml_util] module is a set of helper
-//! functions for Directives to parse configuration.
-//!
-//! Finally all concrete actions and directives can be found in the following
-//! modules:
-//!
-//! - [create]: Create a new directory
+//! This module contains the [LinkAction](action::CreateAction) and
+//! [LinkDirective](directive::CreateDirective) classes that are used by the
+//! runtime to create a symlink.
 pub mod action;
-pub mod create;
 pub mod directive;
-pub mod link;
-pub mod yaml_util;
-
-pub use action::Action;
-pub use directive::Directive;
-pub use directive::Setting;
-pub use directive::Settings;
