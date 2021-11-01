@@ -19,8 +19,8 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-//! This module contains the [LinkAction](action::CreateAction) and
-//! [LinkDirective](directive::CreateDirective) classes that are used by the
+//! This module contains the [LinkAction](action::LinkAction) and
+//! [LinkDirective](directive::LinkDirective) classes that are used by the
 //! runtime to create a symlink.
 pub mod action;
 pub mod directive;
