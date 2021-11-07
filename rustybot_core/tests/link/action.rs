@@ -55,11 +55,12 @@ fn link_fails_on_nonexistent_path() -> Result<(), String> {
     let fs = FakeFileSystem::new();
     setup_fs(&fs).expect("Failure setting up FakeFileSystem");
     fs.create_dir("/home/user/target").unwrap();
+    let settings = Settings::new()
     let action = LinkAction::new(
         &fs,
         String::from("/home/user/nonexistent_path/path"),
         String::from("/home/user/target"),
-        &Settings::new(),
+        &settings,
         init_directive_data().defaults(),
     );
     check_action_fail(
@@ -78,11 +79,12 @@ fn link_fails_on_readonly_dir() -> Result<(), String> {
     setup_fs(&fs).expect("Failure setting up FakeFileSystem");
     fs.create_dir("/home/user/readonly").unwrap();
     fs.set_readonly("/home/user/readonly", true).unwrap();
+    let settings = Settings::new()
     let action = LinkAction::new(
         &fs,
         String::from("/home/user/readonly/some"),
         String::from("/home/user"),
-        &Settings::new(),
+        &settings,
         init_directive_data().defaults(),
     );
     check_action_fail(
@@ -98,11 +100,12 @@ fn link_fails_on_readonly_dir() -> Result<(), String> {
 fn link_fails_on_nonexistent_target() -> Result<(), String> {
     let fs = FakeFileSystem::new();
     setup_fs(&fs).expect("Failure setting up FakeFileSystem");
+    let settings = Settings::new()
     let action = LinkAction::new(
         &fs,
         String::from("/home/user/path"),
         String::from("/home/user/target"),
-        &Settings::new(),
+        &settings,
         init_directive_data().defaults(),
     );
     check_action_fail(
@@ -141,11 +144,12 @@ fn link_fails_on_existing_link() -> Result<(), String> {
     fs.create_dir("/home/user/target").unwrap();
     fs.create_dir("/home/user/target2").unwrap();
     fs.symlink("/home/user/target", "/home/user/path").unwrap();
+    let settings = Settings::new()
     let action = LinkAction::new(
         &fs,
         String::from("/home/user/path"),
         String::from("/home/user/target2"),
-        &Settings::new(),
+        &settings,
         init_directive_data().defaults(),
     );
     check_action_fail(
