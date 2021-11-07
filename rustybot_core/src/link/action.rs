@@ -125,8 +125,8 @@ impl<F: FileSystem + UnixFileSystem> Action<'_> for LinkAction<'_, F> {
             fs: &'_ F,
             action: &'_ LinkAction<F>,
         ) -> io::Result<()> {
-            let target = Path::new(action.target());
-            let mut path: PathBuf = PathBuf::from(action.path());
+            let mut target: PathBuf = PathBuf::from(action.target());
+            let path: PathBuf = PathBuf::from(action.path());
             let target_exists = fs.is_dir(&target) || fs.is_file(&target);
             let path_exists = fs.is_dir(&path) || fs.is_file(&path);
             let path_is_symlink = fs.get_symlink_src(&path).is_ok();
@@ -147,7 +147,7 @@ impl<F: FileSystem + UnixFileSystem> Action<'_> for LinkAction<'_, F> {
                         Err(e) => Err(e),
                     }
                 }
-                path = resolve_symlink_target(fs, &path)?
+                target = resolve_symlink_target(fs, &target)?
             }
             if target_exists || action.ignore_missing_target() {
                 if !fs.is_dir(path.parent().unwrap()) && action.create_parent_dirs() {

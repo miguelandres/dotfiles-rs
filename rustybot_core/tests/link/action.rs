@@ -33,7 +33,9 @@ use rustybot_core::link::action::LinkAction;
 
 use rustybot_core::directive::Settings;
 use rustybot_core::link::directive::*;
+
 use std::io;
+use std::path::PathBuf;
 
 fn setup_fs_internal<F: FileSystem + UnixFileSystem>(fs: &F) -> io::Result<()> {
     fs.create_dir_all("/home/user/")?;
@@ -78,7 +80,10 @@ fn link_succeeds_on_nonexistent_path_with_create_parent_dirs() -> Result<(), Str
     let fs = FakeFileSystem::new();
     setup_fs(&fs).expect("Failure setting up FakeFileSystem");
     fs.create_dir("/home/user/target").unwrap();
-    let settings = initialize_settings_object(&[(CREATE_PARENT_DIRS_SETTING.to_string(), Setting::Boolean(true))]);
+    let settings = initialize_settings_object(&[(
+        CREATE_PARENT_DIRS_SETTING.to_string(),
+        Setting::Boolean(true),
+    )]);
     let action = LinkAction::new(
         &fs,
         String::from("/home/user/nonexistent_path/path"),
@@ -205,7 +210,7 @@ fn link_fails_on_existing_file_with_relink() -> Result<(), String> {
     setup_fs(&fs).expect("Failure setting up FakeFileSystem");
     fs.create_dir("/home/user/target").unwrap();
     fs.create_dir("/home/user/target2").unwrap();
-    fs.create_file("/home/user/path","").unwrap();
+    fs.create_file("/home/user/path", "").unwrap();
     let settings =
         initialize_settings_object(&[(String::from(RELINK_SETTING), Setting::Boolean(true))]);
     let action = LinkAction::new(
@@ -253,7 +258,6 @@ fn link_fails_on_existing_dir_with_relink() -> Result<(), String> {
     )
 }
 
-
 #[test]
 fn link_succeeds_on_existing_link_with_force() -> Result<(), String> {
     let fs = FakeFileSystem::new();
@@ -279,7 +283,7 @@ fn link_fails_on_existing_file_with_force() -> Result<(), String> {
     setup_fs(&fs).expect("Failure setting up FakeFileSystem");
     fs.create_dir("/home/user/target").unwrap();
     fs.create_dir("/home/user/target2").unwrap();
-    fs.create_file("/home/user/path","").unwrap();
+    fs.create_file("/home/user/path", "").unwrap();
     let settings =
         initialize_settings_object(&[(String::from(FORCE_SETTING), Setting::Boolean(true))]);
     let action = LinkAction::new(
@@ -309,4 +313,27 @@ fn link_fails_on_existing_dir_with_force() -> Result<(), String> {
         init_directive_data().defaults(),
     );
     action.execute()
+}
+
+#[test]
+fn link_resolves_symlink_target() {
+    let fs = FakeFileSystem::new();
+    setup_fs(&fs).expect("Failure setting up FakeFileSystem");
+    fs.create_dir("/home/user/target").unwrap();
+    fs.symlink("/home/user/target", "/home/user/symlink")
+        .unwrap();
+    let settings = initialize_settings_object(&[(
+        RESOLVE_SYMLINK_TARGET_SETTING.to_string(),
+        Setting::Boolean(true),
+    )]);
+    let action = LinkAction::new(
+        &fs,
+        String::from("/home/user/path"),
+        String::from("/home/user/symlink"),
+        &settings,
+        init_directive_data().defaults(),
+    );
+    action.execute().unwrap();
+    let source = fs.get_symlink_src("/home/user/path").unwrap();
+    assert!(source == PathBuf::from("/home/user/target"));
 }
