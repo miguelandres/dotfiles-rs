@@ -236,3 +236,61 @@ fn link_fails_on_existing_dir_with_relink() -> Result<(), String> {
         ),
     )
 }
+
+
+#[test]
+fn link_succeeds_on_existing_link_with_force() -> Result<(), String> {
+    let fs = FakeFileSystem::new();
+    setup_fs(&fs).expect("Failure setting up FakeFileSystem");
+    fs.create_dir("/home/user/target").unwrap();
+    fs.create_dir("/home/user/target2").unwrap();
+    fs.symlink("/home/user/target", "/home/user/path").unwrap();
+    let settings =
+        initialize_settings_object(&[(String::from(FORCE_SETTING), Setting::Boolean(true))]);
+    let action = LinkAction::new(
+        &fs,
+        String::from("/home/user/path"),
+        String::from("/home/user/target2"),
+        &settings,
+        init_directive_data().defaults(),
+    );
+    action.execute()
+}
+
+#[test]
+fn link_fails_on_existing_file_with_force() -> Result<(), String> {
+    let fs = FakeFileSystem::new();
+    setup_fs(&fs).expect("Failure setting up FakeFileSystem");
+    fs.create_dir("/home/user/target").unwrap();
+    fs.create_dir("/home/user/target2").unwrap();
+    fs.create_file("/home/user/path","").unwrap();
+    let settings =
+        initialize_settings_object(&[(String::from(FORCE_SETTING), Setting::Boolean(true))]);
+    let action = LinkAction::new(
+        &fs,
+        String::from("/home/user/path"),
+        String::from("/home/user/target2"),
+        &settings,
+        init_directive_data().defaults(),
+    );
+    action.execute()
+}
+
+#[test]
+fn link_fails_on_existing_dir_with_force() -> Result<(), String> {
+    let fs = FakeFileSystem::new();
+    setup_fs(&fs).expect("Failure setting up FakeFileSystem");
+    fs.create_dir("/home/user/target").unwrap();
+    fs.create_dir("/home/user/target2").unwrap();
+    fs.create_dir("/home/user/path").unwrap();
+    let settings =
+        initialize_settings_object(&[(String::from(FORCE_SETTING), Setting::Boolean(true))]);
+    let action = LinkAction::new(
+        &fs,
+        String::from("/home/user/path"),
+        String::from("/home/user/target2"),
+        &settings,
+        init_directive_data().defaults(),
+    );
+    action.execute()
+}
