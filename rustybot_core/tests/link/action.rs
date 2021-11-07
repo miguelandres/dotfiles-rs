@@ -74,6 +74,22 @@ fn link_fails_on_nonexistent_path() -> Result<(), String> {
 }
 
 #[test]
+fn link_succeeds_on_nonexistent_path_with_create_parent_dirs() -> Result<(), String> {
+    let fs = FakeFileSystem::new();
+    setup_fs(&fs).expect("Failure setting up FakeFileSystem");
+    fs.create_dir("/home/user/target").unwrap();
+    let settings = initialize_settings_object(&[(CREATE_PARENT_DIRS_SETTING.to_string(), Setting::Boolean(true))]);
+    let action = LinkAction::new(
+        &fs,
+        String::from("/home/user/nonexistent_path/path"),
+        String::from("/home/user/target"),
+        &settings,
+        init_directive_data().defaults(),
+    );
+    action.execute()
+}
+
+#[test]
 fn link_fails_on_readonly_dir() -> Result<(), String> {
     let fs = FakeFileSystem::new();
     setup_fs(&fs).expect("Failure setting up FakeFileSystem");
