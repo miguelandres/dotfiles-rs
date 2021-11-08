@@ -97,6 +97,24 @@
 			},
 			"args": [],
 			"cwd": "${workspaceFolder}"
-		}
+		},
+		{
+			"type": "lldb",
+			"request": "launch",
+			"name": "Debug executable 'test_homebrew_install'",
+			"cargo": {
+				"args": [
+					"build",
+					"--bin=test_homebrew_install",
+					"--package=rustybot_core"
+				],
+				"filter": {
+					"name": "test_homebrew_install",
+					"kind": "bin"
+				}
+			},
+			"args": [],
+			"cwd": "${workspaceFolder}"
+		},
 	]
 }
