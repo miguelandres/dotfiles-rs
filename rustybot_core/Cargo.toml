@@ -4,9 +4,13 @@ version = "0.1.0"
 authors = ["Miguel Barreto <miguelandres@users.noreply.github.com>"]
 edition = "2018"
 
-# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+[lib]
+name = "rustybot_core"
+crate-type = ["staticlib", "cdylib"]
 
 [dependencies]
 filesystem = { git = "https://github.com/miguelandres/filesystem-rs" }
 log = "0.4.14"
+reqwest = { version = "0.11", features = ["json"] }
+tempfile = "3.2.0"
 yaml-rust = "0.4.5"
