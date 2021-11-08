@@ -2,5 +2,9 @@
   "files.watcherExclude": {
     "**/target": true
   },
-  "rust-client.channel": "nightly"
+  "rust-client.channel": "nightly",
+  "cSpell.words": [
+    "aarch",
+    "shellenv"
+  ]
 }
