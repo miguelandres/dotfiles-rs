@@ -19,9 +19,6 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-//! This module contains the [HomebrewInstallAction](action::HomebrewInstallAction) and
-//! [HomebrewInstall](directive::HomebrewInstallDirective) classes that are used by the
-//! runtime to create a symlink.
+//! This module contains the [HomebrewInstallAction](action::HomebrewInstallAction)
 #![cfg(unix)]
 pub mod action;
-pub mod directive;
