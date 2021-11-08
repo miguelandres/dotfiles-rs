@@ -57,10 +57,18 @@ impl Action<'_> for HomebrewInstallAction {
     fn execute(&self) -> Result<(), String> {
         if !self.check_brew_is_installed() {
             let result = Exec::shell("/bin/bash -c \"$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)\"")
-                .join().map_err(|_err|
-                    String::from("Error running homebrew installer")
+                .join().map_or_else(|_err|
+                        Err(String::from("Error running homebrew installer")),
+                        |status| match status  {
+                            ExitStatus::Exited(0) => Ok(()),
+                        ExitStatus::Exited(code) => Err(format!(
+                            "Couldn't run homebrew installer, Error status {}",
+                            code
+                        )),
+                        _ => Err(String::from("Unexpected error while running homebrew installer"))
+                    }
                 );
-            #[cfg(all(target_os = "macos", target_arch = "x86_64"))]
+            #[cfg(not(all(target_os = "macos", target_arch = "aarch64")))]
             return result;
             #[cfg(all(target_os = "macos", target_arch = "aarch64"))]
             {
