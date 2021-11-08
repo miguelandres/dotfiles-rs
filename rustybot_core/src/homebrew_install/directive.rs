@@ -23,16 +23,10 @@
 #![cfg(unix)]
 extern crate yaml_rust;
 
-use crate::directive::initialize_settings_object;
 use crate::directive::Directive;
 use crate::directive::DirectiveData;
-use crate::directive::Setting;
 use crate::directive::Settings;
-use crate::link::action::HomebrewInstallAction;
-use crate::yaml_util::*;
-use filesystem::FileSystem;
-use filesystem::OsFileSystem;
-use filesystem::UnixFileSystem;
+use crate::homebrew_install::action::HomebrewInstallAction;
 use yaml_rust::Yaml;
 
 /// Name of the link directive
@@ -48,6 +42,12 @@ pub struct HomebrewInstallDirective {
     data: DirectiveData,
 }
 
+impl Default for HomebrewInstallDirective {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
 impl HomebrewInstallDirective {
     /// Create a new [HomebrewInstallDirective]
     pub fn new() -> HomebrewInstallDirective {
@@ -55,45 +55,9 @@ impl HomebrewInstallDirective {
             data: init_directive_data(),
         }
     }
-
-    fn parse_full_action(
-        &self,
-        yaml: &Yaml,
-        context_settings: &Settings,
-    ) -> Result<HomebrewInstallAction, String> {
-        {
-            match yaml {
-                Yaml::Hash(_) => {
-                    
-                    let force_intel = get_boolean_setting_from_yaml_or_defaults(
-                        FORCE_INTEL_SETTING,
-                        yaml,
-                        context_settings,
-                        self.data.defaults(),
-                    )
-                    .unwrap();
-                    Ok(HomebrewInstallAction::new(force_intel)),
-                }
-                _ => Err(format!(
-                    "Yaml passed to configure a HomebrewInstallAction is not a Hash, thus cannot be parsed: {:?}",
-                    yaml
-                )),
-            }
-        }
-    }
-
-    fn parse_shortened_action(
-        &self,
-        yaml: &Yaml,
-        context_settings: &Settings,
-    ) -> Result<HomebrewInstallAction, String> {
-        Ok(HomebrewInstallAction())
-    }
 }
 
-impl Directive<HomebrewInstallAction>
-    for HomebrewInstallDirective
-{
+impl Directive<'_, HomebrewInstallAction> for HomebrewInstallDirective {
     fn name(&self) -> &str {
         self.data.name()
     }
@@ -103,14 +67,10 @@ impl Directive<HomebrewInstallAction>
     }
 
     fn build_action(
-        &'a self,
-        settings: &Settings,
-        yaml: &Yaml,
-    ) -> Result<HomebrewInstallAction<'a, F>, String> {
-        if let Ok(action) = self.parse_full_action(yaml, settings) {
-            Ok(action)
-        } else {
-            self.parse_shortened_action(yaml, settings)
-        }
+        &self,
+        _settings: &Settings,
+        _yaml: &Yaml,
+    ) -> Result<HomebrewInstallAction, String> {
+        Ok(HomebrewInstallAction {})
     }
 }

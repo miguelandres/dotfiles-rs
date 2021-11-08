@@ -7,6 +7,11 @@ edition = "2018"
 [dependencies]
 filesystem = { git = "https://github.com/miguelandres/filesystem-rs" }
 log = "0.4.14"
-reqwest = { version = "0.11", features = ["json"] }
+reqwest = { version = "0.11", features = ["json", "blocking"] }
 tempfile = "3.2.0"
 yaml-rust = "0.4.5"
+
+[[bin]]
+name = "test_homebrew_install"
+test = true
+doc = false

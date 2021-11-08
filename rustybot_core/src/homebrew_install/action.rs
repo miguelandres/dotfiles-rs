@@ -24,58 +24,80 @@
 
 #![cfg(unix)]
 use crate::action::Action;
-use crate::directive::Settings;
-use crate::homebrew_install::directive::*;
-use crate::yaml_util::get_boolean_setting;
-use log::error;
 use log::info;
 use std::fs::File;
+use std::io::copy;
 use std::os::unix::fs::PermissionsExt;
 use std::process::Command;
 
 /// [HomebrewInstallAction] installs homebrew.
-pub struct HomebrewInstallAction{
+pub struct HomebrewInstallAction {}
 
+impl Default for HomebrewInstallAction {
+    fn default() -> Self {
+        Self::new()
+    }
 }
 
 impl HomebrewInstallAction {
     /// Constructs a new [HomebrewInstallAction]
     pub fn new() -> HomebrewInstallAction {
-        HomebrewInstallAction{}
-
+        HomebrewInstallAction {}
     }
 }
 
-impl Action for HomebrewInstallAction {
+impl Action<'_> for HomebrewInstallAction {
     fn execute(&self) -> Result<(), String> {
         fn check_brew_is_installed() -> Result<bool, String> {
-            Command::new("which")
-                .arg("brew")
-                .status()
-                .and_then(|status| status == 0)
-                .or_else(|err| Err("Could not run `which brew` to check whether brew is installed"))
+            Command::new("which").arg("brew").status().map_or_else(
+                |_err| {
+                    Err(String::from(
+                        "Could not run `which brew` to check whether brew is installed",
+                    ))
+                },
+                |status| Ok(status.success()),
+            )
         }
 
-        if (check_brew_is_installed()?) {
-            let dir = tempfile::Builder::new().prefix("install_homebrew").tempdir().or_else(|err| Err("Couldn't create temporary dir to download homebrew install script.")?
+        if check_brew_is_installed()? {
+            let dir = tempfile::Builder::new()
+                .prefix("install_homebrew")
+                .tempdir()
+                .map_err(|_err| {
+                    String::from(
+                        "Couldn't create temporary dir to download homebrew install script.",
+                    )
+                })?;
             let filename = dir.path().join("install.sh");
-            let mut file = File::create(filename)?;
+            let mut file = File::create(&filename).map_err(|_err| {
+                format!("could not create temp file {}", filename.to_str().unwrap())
+            })?;
             let target = "https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh";
-            let response = reqwest::get(target).await?;
-            let content =  response.text().await?;
-            copy(&mut content.as_bytes(), &mut file)?;
-            let mut permissions = PermissionsExt::from_mode(0o755);
-            file.set_permissions(permissions).unwrap();
+            let response = reqwest::blocking::get(target)
+                .map_err(|_err| "Error downloading Homebrew install script")?;
+            let content = response
+                .text()
+                .map_err(|_err| "Error downloading Homebrew install script")?;
+            copy(&mut content.as_bytes(), &mut file)
+                .map_err(|_err| "Couldn't write script to file")?;
+            file.set_permissions(PermissionsExt::from_mode(0o755))
+                .unwrap();
             Command::new("/bin/bash")
                 .arg(filename)
                 .status()
-                .and_then(|status|
-                    if (status != 0) {
-                      Err(format!("Homebrew installation failed with status code {}", status))
-                    } else {
-                        Ok(())
-                    })
-                .or_else(|err| Err("Could not run homebrew installation"))
+                .map_or_else(
+                    |_err| Err(String::from("Could not run homebrew installation")),
+                    |status| match status.success() {
+                        true => Ok(()),
+                        false => Err(format!(
+                            "Homebrew installation failed with status code {}",
+                            status
+                        )),
+                    },
+                )
+        } else {
+            info!("Homebrew already installed, no need to re-install");
+            Ok(())
         }
     }
 }
