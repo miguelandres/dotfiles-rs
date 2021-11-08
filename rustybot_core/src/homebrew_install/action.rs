@@ -44,22 +44,19 @@ impl HomebrewInstallAction {
     pub fn new() -> HomebrewInstallAction {
         HomebrewInstallAction {}
     }
+    /// Returns true if it can find a brew command
+    pub fn check_brew_is_installed(&self) -> bool {
+        Command::new("which")
+            .arg("brew")
+            .status()
+            .unwrap()
+            .success()
+    }
 }
 
 impl Action<'_> for HomebrewInstallAction {
     fn execute(&self) -> Result<(), String> {
-        fn check_brew_is_installed() -> Result<bool, String> {
-            Command::new("which").arg("brew").status().map_or_else(
-                |_err| {
-                    Err(String::from(
-                        "Could not run `which brew` to check whether brew is installed",
-                    ))
-                },
-                |status| Ok(status.success()),
-            )
-        }
-
-        if check_brew_is_installed()? {
+        if !self.check_brew_is_installed() {
             let dir = tempfile::Builder::new()
                 .prefix("install_homebrew")
                 .tempdir()

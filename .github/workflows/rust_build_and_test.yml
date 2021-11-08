@@ -19,6 +19,10 @@ jobs:
         run: cargo build --verbose
       - name: Run tests
         run: cargo test --verbose
+      - name: Install Homebrew
+        run: cargo run --package rustybot_core --bin test_homebrew_install
+      - name: Check homebrew is installed
+        run: which brew
 
   build-mac-os:
     runs-on: macos-latest
@@ -29,3 +33,7 @@ jobs:
         run: cargo build --verbose
       - name: Run tests
         run: cargo test --verbose
+      - name: Install Homebrew
+        run: cargo run --package rustybot_core --bin test_homebrew_install
+      - name: Check homebrew is installed
+        run: which brew
