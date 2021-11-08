@@ -25,10 +25,8 @@
 #![cfg(unix)]
 use crate::action::Action;
 use log::info;
-use std::fs::File;
-use std::io::copy;
-use std::os::unix::fs::PermissionsExt;
 use std::process::Command;
+use subprocess::Exec;
 
 /// [HomebrewInstallAction] installs homebrew.
 pub struct HomebrewInstallAction {}
@@ -57,41 +55,21 @@ impl HomebrewInstallAction {
 impl Action<'_> for HomebrewInstallAction {
     fn execute(&self) -> Result<(), String> {
         if !self.check_brew_is_installed() {
-            let dir = tempfile::Builder::new()
-                .prefix("install_homebrew")
-                .tempdir()
+            Exec::shell("/bin/bash -c \"$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)\"")
+                .join().map_err(|err|
+                    String::from("Error running homebrew installer")
+                )?;
+            #[cfg(all(target_os = "macos", target_arch = "aarch64"))]
+            {
+                (Exec::shell("echo 'eval \"$(/opt/homebrew/bin/brew shellenv)\"' >> ~/.zprofile")
+                    | Exec::shell(
+                        "echo 'eval \"$(/opt/homebrew/bin/brew shellenv)\"' >> ~/.bash_profile",
+                    ))
+                .join()
                 .map_err(|_err| {
-                    String::from(
-                        "Couldn't create temporary dir to download homebrew install script.",
-                    )
+                    String::from("couldn't set .zprofile and bash_profile to use homebrew")
                 })?;
-            let filename = dir.path().join("install.sh");
-            let mut file = File::create(&filename).map_err(|_err| {
-                format!("could not create temp file {}", filename.to_str().unwrap())
-            })?;
-            let target = "https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh";
-            let response = reqwest::blocking::get(target)
-                .map_err(|_err| "Error downloading Homebrew install script")?;
-            let content = response
-                .text()
-                .map_err(|_err| "Error downloading Homebrew install script")?;
-            copy(&mut content.as_bytes(), &mut file)
-                .map_err(|_err| "Couldn't write script to file")?;
-            file.set_permissions(PermissionsExt::from_mode(0o755))
-                .unwrap();
-            Command::new("/bin/bash")
-                .arg(filename)
-                .status()
-                .map_or_else(
-                    |_err| Err(String::from("Could not run homebrew installation")),
-                    |status| match status.success() {
-                        true => Ok(()),
-                        false => Err(format!(
-                            "Homebrew installation failed with status code {}",
-                            status
-                        )),
-                    },
-                )
+            }
         } else {
             info!("Homebrew already installed, no need to re-install");
             Ok(())
