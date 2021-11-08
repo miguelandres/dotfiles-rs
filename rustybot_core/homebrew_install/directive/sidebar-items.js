@@ -1,0 +1,1 @@
+initSidebarItems({"constant":[["DIRECTIVE_NAME","Name of the link directive"]],"fn":[["init_directive_data","Initialize the defaults for the HomebrewInstallDirective."]],"struct":[["HomebrewInstallDirective","A directive that can build [HomebrewInstallAction] to set up homebrew"]]});

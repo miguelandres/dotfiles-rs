@@ -50,6 +50,8 @@
 <span id="50">50</span>
 <span id="51">51</span>
 <span id="52">52</span>
+<span id="53">53</span>
+<span id="54">54</span>
 </pre><pre class="rust"><code><span class="comment">// Copyright (c) 2021-2021 Miguel Barreto and others</span>
 <span class="comment">//</span>
 <span class="comment">// Permission is hereby granted, free of charge, to any person obtaining</span>
@@ -95,6 +97,8 @@
 <span class="kw">pub</span> <span class="kw">mod</span> <span class="ident">action</span>;
 <span class="kw">pub</span> <span class="kw">mod</span> <span class="ident">create</span>;
 <span class="kw">pub</span> <span class="kw">mod</span> <span class="ident">directive</span>;
+<span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">unix</span>)]</span>
+<span class="kw">pub</span> <span class="kw">mod</span> <span class="ident">homebrew_install</span>;
 <span class="kw">pub</span> <span class="kw">mod</span> <span class="ident">link</span>;
 <span class="kw">pub</span> <span class="kw">mod</span> <span class="ident">yaml_util</span>;
 
