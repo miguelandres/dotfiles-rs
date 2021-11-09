@@ -46,6 +46,8 @@ pub mod directive;
 #[cfg(unix)]
 pub mod homebrew_install;
 pub mod link;
+#[cfg(unix)]
+pub mod ohmyzsh_install;
 pub mod yaml_util;
 
 pub use action::Action;
