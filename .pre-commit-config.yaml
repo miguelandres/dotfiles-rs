@@ -1,6 +1,6 @@
 repos:
   - repo: https://github.com/pre-commit/pre-commit-hooks
-    rev: fb9fc7b71b63ea94e7cfb70f4351e9bddea181d3
+    rev: v4.0.1
     hooks:
       - id: check-added-large-files
       - id: check-case-conflict
@@ -17,13 +17,13 @@ repos:
       - id: trailing-whitespace
       - id: trailing-whitespace
   - repo: https://github.com/jumanjihouse/pre-commit-hooks
-    rev: 2.1.4
+    rev: 2.1.5
     hooks:
       - id: forbid-binary
       - id: git-dirty
       - id: markdownlint
   - repo: https://github.com/Lucas-C/pre-commit-hooks
-    rev: v1.1.9
+    rev: v1.1.10
     hooks:
       - id: forbid-tabs
       - id: remove-tabs
@@ -41,7 +41,7 @@ repos:
         args: ["--target=x86_64-apple-darwin", "--all-targets"]
       - id: cargo-check
         args: ["--all-targets"]
-      - id: cargo-clippy
+      - id: clippy
         args: ["--target=x86_64-apple-darwin", "--all-targets"]
-      - id: cargo-clippy
+      - id: clippy
         args: ["--all-targets"]
