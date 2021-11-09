@@ -24,13 +24,11 @@ jobs:
       - name: Check homebrew is installed
         run: which brew
 
-  build-mac-os:
+  build-mac-os-x86_64:
     runs-on: macos-latest
 
     steps:
       - uses: actions/checkout@v2
-      - name: Build aarch64
-        run: cargo build --target=aarch64-apple-darwin --verbose
       - name: Build x86_64
         run: cargo build --verbose
       - name: Run tests
