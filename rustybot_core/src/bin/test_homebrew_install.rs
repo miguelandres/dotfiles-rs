@@ -23,7 +23,7 @@ use rustybot_core::action::Action;
 use rustybot_core::homebrew_install::action::HomebrewInstallAction;
 
 fn main() {
-	let action = HomebrewInstallAction::new();
-	action.execute().unwrap();
-	assert!(action.check_brew_is_installed());
+    let action = HomebrewInstallAction::new();
+    action.execute().unwrap();
+    assert!(action.check_brew_is_installed());
 }

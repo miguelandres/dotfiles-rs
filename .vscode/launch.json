@@ -1,120 +1,120 @@
 {
-	// Use IntelliSense to learn about possible attributes.
-	// Hover to view descriptions of existing attributes.
-	// For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
-	"version": "0.2.0",
-	"configurations": [
-		{
-			"type": "lldb",
-			"request": "launch",
-			"name": "Debug executable 'rustybot'",
-			"cargo": {
-				"args": [
-					"build",
-					"--bin=rustybot",
-					"--package=rustybot"
-				],
-				"filter": {
-					"name": "rustybot",
-					"kind": "bin"
-				}
-			},
-			"args": [],
-			"cwd": "${workspaceFolder}"
-		},
-		{
-			"type": "lldb",
-			"request": "launch",
-			"name": "Debug unit tests in executable 'rustybot'",
-			"cargo": {
-				"args": [
-					"test",
-					"--no-run",
-					"--bin=rustybot",
-					"--package=rustybot"
-				],
-				"filter": {
-					"name": "rustybot",
-					"kind": "bin"
-				}
-			},
-			"args": [],
-			"cwd": "${workspaceFolder}"
-		},
-		{
-			"type": "lldb",
-			"request": "launch",
-			"name": "Debug unit tests in library 'rustybot_core'",
-			"cargo": {
-				"args": [
-					"test",
-					"--no-run",
-					"--lib",
-					"--package=rustybot_core"
-				],
-				"filter": {
-					"name": "rustybot_core",
-					"kind": "lib"
-				}
-			},
-			"args": [],
-			"cwd": "${workspaceFolder}"
-		},
-		{
-			"type": "lldb",
-			"request": "launch",
-			"name": "Debug integration test 'yaml_util'",
-			"cargo": {
-				"args": [
-					"test",
-					"--no-run",
-					"--test=yaml_util",
-					"--package=rustybot_core"
-				],
-				"filter": {
-					"name": "yaml_util",
-					"kind": "test"
-				}
-			},
-			"args": [],
-			"cwd": "${workspaceFolder}"
-		},
-		{
-			"type": "lldb",
-			"request": "launch",
-			"name": "Debug integration test 'lib'",
-			"cargo": {
-				"args": [
-					"test",
-					"--no-run",
-					"--test=lib",
-					"--package=rustybot_core"
-				],
-				"filter": {
-					"name": "lib",
-					"kind": "test"
-				}
-			},
-			"args": [],
-			"cwd": "${workspaceFolder}"
-		},
-		{
-			"type": "lldb",
-			"request": "launch",
-			"name": "Debug executable 'test_homebrew_install'",
-			"cargo": {
-				"args": [
-					"build",
-					"--bin=test_homebrew_install",
-					"--package=rustybot_core"
-				],
-				"filter": {
-					"name": "test_homebrew_install",
-					"kind": "bin"
-				}
-			},
-			"args": [],
-			"cwd": "${workspaceFolder}"
-		},
-	]
+  // Use IntelliSense to learn about possible attributes.
+  // Hover to view descriptions of existing attributes.
+  // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "type": "lldb",
+      "request": "launch",
+      "name": "Debug executable 'rustybot'",
+      "cargo": {
+        "args": [
+          "build",
+          "--bin=rustybot",
+          "--package=rustybot"
+        ],
+        "filter": {
+          "name": "rustybot",
+          "kind": "bin"
+        }
+      },
+      "args": [],
+      "cwd": "${workspaceFolder}"
+    },
+    {
+      "type": "lldb",
+      "request": "launch",
+      "name": "Debug unit tests in executable 'rustybot'",
+      "cargo": {
+        "args": [
+          "test",
+          "--no-run",
+          "--bin=rustybot",
+          "--package=rustybot"
+        ],
+        "filter": {
+          "name": "rustybot",
+          "kind": "bin"
+        }
+      },
+      "args": [],
+      "cwd": "${workspaceFolder}"
+    },
+    {
+      "type": "lldb",
+      "request": "launch",
+      "name": "Debug unit tests in library 'rustybot_core'",
+      "cargo": {
+        "args": [
+          "test",
+          "--no-run",
+          "--lib",
+          "--package=rustybot_core"
+        ],
+        "filter": {
+          "name": "rustybot_core",
+          "kind": "lib"
+        }
+      },
+      "args": [],
+      "cwd": "${workspaceFolder}"
+    },
+    {
+      "type": "lldb",
+      "request": "launch",
+      "name": "Debug integration test 'yaml_util'",
+      "cargo": {
+        "args": [
+          "test",
+          "--no-run",
+          "--test=yaml_util",
+          "--package=rustybot_core"
+        ],
+        "filter": {
+          "name": "yaml_util",
+          "kind": "test"
+        }
+      },
+      "args": [],
+      "cwd": "${workspaceFolder}"
+    },
+    {
+      "type": "lldb",
+      "request": "launch",
+      "name": "Debug integration test 'lib'",
+      "cargo": {
+        "args": [
+          "test",
+          "--no-run",
+          "--test=lib",
+          "--package=rustybot_core"
+        ],
+        "filter": {
+          "name": "lib",
+          "kind": "test"
+        }
+      },
+      "args": [],
+      "cwd": "${workspaceFolder}"
+    },
+    {
+      "type": "lldb",
+      "request": "launch",
+      "name": "Debug executable 'test_homebrew_install'",
+      "cargo": {
+        "args": [
+          "build",
+          "--bin=test_homebrew_install",
+          "--package=rustybot_core"
+        ],
+        "filter": {
+          "name": "test_homebrew_install",
+          "kind": "bin"
+        }
+      },
+      "args": [],
+      "cwd": "${workspaceFolder}"
+    },
+  ]
 }

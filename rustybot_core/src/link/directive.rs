@@ -67,10 +67,19 @@ pub fn init_directive_data() -> DirectiveData {
         initialize_settings_object(&[
             (String::from(FORCE_SETTING), Setting::Boolean(false)),
             (String::from(RELINK_SETTING), Setting::Boolean(false)),
-            (String::from(CREATE_PARENT_DIRS_SETTING), Setting::Boolean(false)),
-            (String::from(IGNORE_MISSING_TARGET_SETTING), Setting::Boolean(false)),
+            (
+                String::from(CREATE_PARENT_DIRS_SETTING),
+                Setting::Boolean(false),
+            ),
+            (
+                String::from(IGNORE_MISSING_TARGET_SETTING),
+                Setting::Boolean(false),
+            ),
             (String::from(RELATIVE_SETTING), Setting::Boolean(false)),
-            (String::from(RESOLVE_SYMLINK_TARGET_SETTING), Setting::Boolean(false)),
+            (
+                String::from(RESOLVE_SYMLINK_TARGET_SETTING),
+                Setting::Boolean(false),
+            ),
         ]),
     )
 }
@@ -96,7 +105,6 @@ impl<F: FileSystem + UnixFileSystem> LinkDirective<F> {
         }
     }
 
-
     fn parse_full_action(
         &self,
         yaml: &Yaml,
@@ -104,32 +112,47 @@ impl<F: FileSystem + UnixFileSystem> LinkDirective<F> {
     ) -> Result<LinkAction<'_, F>, String> {
         match yaml {
             Yaml::Hash(_) => {
-            let path = get_string_setting_from_yaml_or_defaults(
-                PATH_SETTING,
-                yaml,
-                context_settings,
-                self.data.defaults(),
-            ).unwrap();
-            let target = get_string_setting_from_yaml_or_defaults(
-                TARGET_SETTING,
-                yaml,
-                context_settings,
-                self.data.defaults(),
-            ).unwrap();
-            let action_settings:Settings = [
-                RELINK_SETTING, FORCE_SETTING, CREATE_PARENT_DIRS_SETTING, IGNORE_MISSING_TARGET_SETTING, RELATIVE_SETTING, RESOLVE_SYMLINK_TARGET_SETTING
+                let path = get_string_setting_from_yaml_or_defaults(
+                    PATH_SETTING,
+                    yaml,
+                    context_settings,
+                    self.data.defaults(),
+                )
+                .unwrap();
+                let target = get_string_setting_from_yaml_or_defaults(
+                    TARGET_SETTING,
+                    yaml,
+                    context_settings,
+                    self.data.defaults(),
+                )
+                .unwrap();
+                let action_settings: Settings = [
+                    RELINK_SETTING,
+                    FORCE_SETTING,
+                    CREATE_PARENT_DIRS_SETTING,
+                    IGNORE_MISSING_TARGET_SETTING,
+                    RELATIVE_SETTING,
+                    RESOLVE_SYMLINK_TARGET_SETTING,
                 ]
                 .iter()
-                .map(
-                    |&name|
-                    (String::from(name),
-                     Setting::Boolean(get_boolean_setting(name, context_settings, self.data.defaults()).unwrap()))
-                    ).collect();
-            Ok(LinkAction::new(
-                &self.fs,
-                path, target, &action_settings, self.data.defaults()
-            ))
-        },
+                .map(|&name| {
+                    (
+                        String::from(name),
+                        Setting::Boolean(
+                            get_boolean_setting(name, context_settings, self.data.defaults())
+                                .unwrap(),
+                        ),
+                    )
+                })
+                .collect();
+                Ok(LinkAction::new(
+                    &self.fs,
+                    path,
+                    target,
+                    &action_settings,
+                    self.data.defaults(),
+                ))
+            }
             _ => Err(format!(
                 "Yaml passed to configure a Link action is not a Hash, thus cannot be parsed: {:?}",
                 yaml
@@ -165,7 +188,7 @@ impl<F: FileSystem + UnixFileSystem> LinkDirective<F> {
     }
 }
 
-impl<'a, F: FileSystem + UnixFileSystem> Directive<'a, LinkAction<'a, F>> for LinkDirective< F> {
+impl<'a, F: FileSystem + UnixFileSystem> Directive<'a, LinkAction<'a, F>> for LinkDirective<F> {
     fn name(&self) -> &str {
         self.data.name()
     }
@@ -174,9 +197,13 @@ impl<'a, F: FileSystem + UnixFileSystem> Directive<'a, LinkAction<'a, F>> for Li
         self.data.defaults()
     }
 
-    fn build_action(&'a self, settings: &Settings, yaml: &Yaml) -> Result<LinkAction<'a, F>, String> {
+    fn build_action(
+        &'a self,
+        settings: &Settings,
+        yaml: &Yaml,
+    ) -> Result<LinkAction<'a, F>, String> {
         if let Ok(action) = self.parse_shortened_action(yaml, settings) {
-             Ok(action)
+            Ok(action)
         } else {
             self.parse_full_action(yaml, settings)
         }
