@@ -36,4 +36,12 @@ repos:
   - repo: https://github.com/doublify/pre-commit-rust
     rev: v1.0
     hooks:
+      - id: fmt
       - id: cargo-check
+        args: ["--target=x86_64-apple-darwin", "--all-targets"]
+      - id: cargo-check
+        args: ["--all-targets"]
+      - id: cargo-clippy
+        args: ["--target=x86_64-apple-darwin", "--all-targets"]
+      - id: cargo-clippy
+        args: ["--all-targets"]
