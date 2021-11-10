@@ -98,6 +98,8 @@
 <span id="98"> 98</span>
 <span id="99"> 99</span>
 <span id="100">100</span>
+<span id="101">101</span>
+<span id="102">102</span>
 </pre><pre class="rust"><code><span class="comment">// Copyright (c) 2021-2021 Miguel Barreto and others</span>
 <span class="comment">//</span>
 <span class="comment">// Permission is hereby granted, free of charge, to any person obtaining</span>
@@ -133,30 +135,30 @@
 <span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">HomebrewInstallAction</span> {}
 
 <span class="kw">impl</span> <span class="ident">Default</span> <span class="kw">for</span> <span class="ident">HomebrewInstallAction</span> {
-    <span class="kw">fn</span> <span class="ident">default</span>() -&gt; <span class="self">Self</span> {
-        <span class="ident"><span class="self">Self</span>::new</span>()
-    }
+  <span class="kw">fn</span> <span class="ident">default</span>() -&gt; <span class="self">Self</span> {
+    <span class="ident"><span class="self">Self</span>::new</span>()
+  }
 }
 
 <span class="kw">impl</span> <span class="ident">HomebrewInstallAction</span> {
-    <span class="doccomment">/// Constructs a new [HomebrewInstallAction]</span>
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">new</span>() -&gt; <span class="ident">HomebrewInstallAction</span> {
-        <span class="ident">HomebrewInstallAction</span> {}
-    }
-    <span class="doccomment">/// Returns true if it can find a brew command</span>
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">check_brew_is_installed</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="ident">bool</span> {
-        <span class="ident">Command::new</span>(<span class="string">&quot;which&quot;</span>)
-            .<span class="ident">arg</span>(<span class="string">&quot;brew&quot;</span>)
-            .<span class="ident">status</span>()
-            .<span class="ident">unwrap</span>()
-            .<span class="ident">success</span>()
-    }
+  <span class="doccomment">/// Constructs a new [HomebrewInstallAction]</span>
+  <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">new</span>() -&gt; <span class="ident">HomebrewInstallAction</span> {
+    <span class="ident">HomebrewInstallAction</span> {}
+  }
+  <span class="doccomment">/// Returns true if it can find a brew command</span>
+  <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">check_brew_is_installed</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="ident">bool</span> {
+    <span class="ident">Command::new</span>(<span class="string">&quot;which&quot;</span>)
+      .<span class="ident">arg</span>(<span class="string">&quot;brew&quot;</span>)
+      .<span class="ident">status</span>()
+      .<span class="ident">unwrap</span>()
+      .<span class="ident">success</span>()
+  }
 }
 
 <span class="kw">impl</span> <span class="ident">Action</span><span class="op">&lt;</span><span class="lifetime">&#39;_</span><span class="op">&gt;</span> <span class="kw">for</span> <span class="ident">HomebrewInstallAction</span> {
-    <span class="kw">fn</span> <span class="ident">execute</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span>(), <span class="ident">String</span><span class="op">&gt;</span> {
-        <span class="kw">if</span> <span class="op">!</span><span class="self">self</span>.<span class="ident">check_brew_is_installed</span>() {
-            <span class="kw">let</span> <span class="ident">result</span> <span class="op">=</span> <span class="ident">Exec::shell</span>(<span class="string">&quot;/bin/bash -c \&quot;$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)\&quot;&quot;</span>)
+  <span class="kw">fn</span> <span class="ident">execute</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span>(), <span class="ident">String</span><span class="op">&gt;</span> {
+    <span class="kw">if</span> <span class="op">!</span><span class="self">self</span>.<span class="ident">check_brew_is_installed</span>() {
+      <span class="kw">let</span> <span class="ident">result</span> <span class="op">=</span> <span class="ident">Exec::shell</span>(<span class="string">&quot;/bin/bash -c \&quot;$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)\&quot;&quot;</span>)
                 .<span class="ident">join</span>().<span class="ident">map_or_else</span>(<span class="op">|</span><span class="ident">_err</span><span class="op">|</span>
                         <span class="prelude-val">Err</span>(<span class="ident">String::from</span>(<span class="string">&quot;Error running homebrew installer&quot;</span>)),
                         <span class="op">|</span><span class="ident">status</span><span class="op">|</span> <span class="kw">match</span> <span class="ident">status</span>  {
@@ -168,35 +170,37 @@
                         <span class="kw">_</span> =&gt; <span class="prelude-val">Err</span>(<span class="ident">String::from</span>(<span class="string">&quot;Unexpected error while running homebrew installer&quot;</span>))
                     }
                 );
-            <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">not</span>(<span class="ident">all</span>(<span class="ident">target_os</span> <span class="op">=</span> <span class="string">&quot;macos&quot;</span>, <span class="ident">target_arch</span> <span class="op">=</span> <span class="string">&quot;aarch64&quot;</span>)))]</span>
-            <span class="kw">return</span> <span class="ident">result</span>;
-            <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">all</span>(<span class="ident">target_os</span> <span class="op">=</span> <span class="string">&quot;macos&quot;</span>, <span class="ident">target_arch</span> <span class="op">=</span> <span class="string">&quot;aarch64&quot;</span>))]</span>
-            {
-                <span class="ident">result</span><span class="question-mark">?</span>;
-                (
-                    <span class="ident">Exec::shell</span>(
-                        <span class="string">&quot;echo &#39;eval \&quot;$(/opt/homebrew/bin/brew shellenv)\&quot;&#39; &gt;&gt; ~/.zprofile&quot;</span>) <span class="op">|</span>
-                    <span class="ident">Exec::shell</span>(
-                        <span class="string">&quot;echo &#39;eval \&quot;$(/opt/homebrew/bin/brew shellenv)\&quot;&#39; &gt;&gt; ~/.bash_profile&quot;</span>)
-                )
-                .<span class="ident">join</span>()
-                .<span class="ident">map_or_else</span>(
-                    <span class="op">|</span><span class="ident">_err</span><span class="op">|</span> {<span class="prelude-val">Err</span>(<span class="ident">String::from</span>(<span class="string">&quot;couldn&#39;t set .zprofile and .bash_profile to use homebrew&quot;</span>))},
-                    <span class="op">|</span><span class="ident">status</span><span class="op">|</span> <span class="kw">match</span> <span class="ident">status</span> {
-                        <span class="ident">ExitStatus::Exited</span>(<span class="number">0</span>) =&gt; <span class="prelude-val">Ok</span>(()),
-                        <span class="ident">ExitStatus::Exited</span>(<span class="ident">code</span>) =&gt; <span class="prelude-val">Err</span>(<span class="macro">format!</span>(
-                            <span class="string">&quot;couldn&#39;t set .zprofile and .bash_profile to use homebrew, status {}&quot;</span>,
-                            <span class="ident">code</span>
-                        )),
-                        <span class="kw">_</span> =&gt; <span class="prelude-val">Err</span>(<span class="ident">String::from</span>(<span class="string">&quot;Unexpected error while setting .zprofile and .bash_profile to use homebrew&quot;</span>))
-                    },
-                )
-            }
-        } <span class="kw">else</span> {
-            <span class="macro">info!</span>(<span class="string">&quot;Homebrew already installed, no need to re-install&quot;</span>);
-            <span class="prelude-val">Ok</span>(())
-        }
+      <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">not</span>(<span class="ident">all</span>(<span class="ident">target_os</span> <span class="op">=</span> <span class="string">&quot;macos&quot;</span>, <span class="ident">target_arch</span> <span class="op">=</span> <span class="string">&quot;aarch64&quot;</span>)))]</span>
+      <span class="kw">return</span> <span class="ident">result</span>;
+      <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">all</span>(<span class="ident">target_os</span> <span class="op">=</span> <span class="string">&quot;macos&quot;</span>, <span class="ident">target_arch</span> <span class="op">=</span> <span class="string">&quot;aarch64&quot;</span>))]</span>
+      {
+        <span class="ident">result</span><span class="question-mark">?</span>;
+        (<span class="ident">Exec::shell</span>(<span class="string">&quot;echo &#39;eval \&quot;$(/opt/homebrew/bin/brew shellenv)\&quot;&#39; &gt;&gt; ~/.zprofile&quot;</span>)
+          <span class="op">|</span> <span class="ident">Exec::shell</span>(<span class="string">&quot;echo &#39;eval \&quot;$(/opt/homebrew/bin/brew shellenv)\&quot;&#39; &gt;&gt; ~/.bash_profile&quot;</span>))
+        .<span class="ident">join</span>()
+        .<span class="ident">map_or_else</span>(
+          <span class="op">|</span><span class="ident">_err</span><span class="op">|</span> {
+            <span class="prelude-val">Err</span>(<span class="ident">String::from</span>(
+              <span class="string">&quot;couldn&#39;t set .zprofile and .bash_profile to use homebrew&quot;</span>,
+            ))
+          },
+          <span class="op">|</span><span class="ident">status</span><span class="op">|</span> <span class="kw">match</span> <span class="ident">status</span> {
+            <span class="ident">ExitStatus::Exited</span>(<span class="number">0</span>) =&gt; <span class="prelude-val">Ok</span>(()),
+            <span class="ident">ExitStatus::Exited</span>(<span class="ident">code</span>) =&gt; <span class="prelude-val">Err</span>(<span class="macro">format!</span>(
+              <span class="string">&quot;couldn&#39;t set .zprofile and .bash_profile to use homebrew, status {}&quot;</span>,
+              <span class="ident">code</span>
+            )),
+            <span class="kw">_</span> =&gt; <span class="prelude-val">Err</span>(<span class="ident">String::from</span>(
+              <span class="string">&quot;Unexpected error while setting .zprofile and .bash_profile to use homebrew&quot;</span>,
+            )),
+          },
+        )
+      }
+    } <span class="kw">else</span> {
+      <span class="macro">info!</span>(<span class="string">&quot;Homebrew already installed, no need to re-install&quot;</span>);
+      <span class="prelude-val">Ok</span>(())
     }
+  }
 }
 </code></pre></div>
 </section><section id="search" class="content hidden"></section><div id="rustdoc-vars" data-root-path="../../../" data-current-crate="rustybot_core" data-search-index-js="../../../search-index.js" data-search-js="../../../search.js"></div>

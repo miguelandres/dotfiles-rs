@@ -86,33 +86,33 @@
 <span class="kw">use</span> <span class="ident">simplelog</span>::<span class="kw-2">*</span>;
 
 <span class="kw">fn</span> <span class="ident">process</span>() -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span>(), <span class="ident">String</span><span class="op">&gt;</span> {
-    <span class="kw">let</span> <span class="ident">flag_parser</span> <span class="op">=</span> <span class="ident">FlagParser::new</span>();
-    <span class="kw">let</span> <span class="ident">flags_vec</span>: <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">String</span><span class="op">&gt;</span> <span class="op">=</span> <span class="ident">std::env::args</span>().<span class="ident">collect</span>();
-    <span class="kw">let</span> <span class="ident">flag_data</span> <span class="op">=</span> <span class="ident">flag_parser</span>.<span class="ident">parse_flags</span>(<span class="kw-2">&amp;</span><span class="ident">flags_vec</span>[<span class="number">1</span>..])<span class="question-mark">?</span>;
-    <span class="kw">if</span> <span class="ident">flag_data</span>.<span class="ident">install_homebrew</span> {
-        <span class="ident">HomebrewInstallAction::new</span>().<span class="ident">execute</span>()<span class="question-mark">?</span>;
-    }
-    <span class="kw">if</span> <span class="ident">flag_data</span>.<span class="ident">install_ohmyzsh</span> {
-        <span class="ident">OhMyZshInstallAction::new</span>(<span class="ident">flag_data</span>.<span class="ident">skip_chsh</span>).<span class="ident">execute</span>()<span class="question-mark">?</span>;
-    }
-    <span class="prelude-val">Ok</span>(())
+  <span class="kw">let</span> <span class="ident">flag_parser</span> <span class="op">=</span> <span class="ident">FlagParser::new</span>();
+  <span class="kw">let</span> <span class="ident">flags_vec</span>: <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">String</span><span class="op">&gt;</span> <span class="op">=</span> <span class="ident">std::env::args</span>().<span class="ident">collect</span>();
+  <span class="kw">let</span> <span class="ident">flag_data</span> <span class="op">=</span> <span class="ident">flag_parser</span>.<span class="ident">parse_flags</span>(<span class="kw-2">&amp;</span><span class="ident">flags_vec</span>[<span class="number">1</span>..])<span class="question-mark">?</span>;
+  <span class="kw">if</span> <span class="ident">flag_data</span>.<span class="ident">install_homebrew</span> {
+    <span class="ident">HomebrewInstallAction::new</span>().<span class="ident">execute</span>()<span class="question-mark">?</span>;
+  }
+  <span class="kw">if</span> <span class="ident">flag_data</span>.<span class="ident">install_ohmyzsh</span> {
+    <span class="ident">OhMyZshInstallAction::new</span>(<span class="ident">flag_data</span>.<span class="ident">skip_chsh</span>).<span class="ident">execute</span>()<span class="question-mark">?</span>;
+  }
+  <span class="prelude-val">Ok</span>(())
 }
 
 <span class="kw">fn</span> <span class="ident">main</span>() {
-    <span class="ident">CombinedLogger::init</span>(<span class="macro">vec!</span>[<span class="ident">TermLogger::new</span>(
-        <span class="ident">LevelFilter::Info</span>,
-        <span class="ident">Config::default</span>(),
-        <span class="ident">TerminalMode::Mixed</span>,
-        <span class="ident">ColorChoice::Auto</span>,
-    )])
-    .<span class="ident">unwrap</span>();
-    <span class="kw">match</span> <span class="ident">process</span>() {
-        <span class="prelude-val">Ok</span>(<span class="kw">_</span>) =&gt; <span class="macro">log::info!</span>(<span class="string">&quot;Process completed successfully&quot;</span>),
-        <span class="prelude-val">Err</span>(<span class="ident">error</span>) =&gt; {
-            <span class="macro">log::error!</span>(<span class="string">&quot;Processing failed: {}&quot;</span>, <span class="ident">error</span>);
-            <span class="ident">std::process::exit</span>(<span class="number">1</span>);
-        }
+  <span class="ident">CombinedLogger::init</span>(<span class="macro">vec!</span>[<span class="ident">TermLogger::new</span>(
+    <span class="ident">LevelFilter::Info</span>,
+    <span class="ident">Config::default</span>(),
+    <span class="ident">TerminalMode::Mixed</span>,
+    <span class="ident">ColorChoice::Auto</span>,
+  )])
+  .<span class="ident">unwrap</span>();
+  <span class="kw">match</span> <span class="ident">process</span>() {
+    <span class="prelude-val">Ok</span>(<span class="kw">_</span>) =&gt; <span class="macro">log::info!</span>(<span class="string">&quot;Process completed successfully&quot;</span>),
+    <span class="prelude-val">Err</span>(<span class="ident">error</span>) =&gt; {
+      <span class="macro">log::error!</span>(<span class="string">&quot;Processing failed: {}&quot;</span>, <span class="ident">error</span>);
+      <span class="ident">std::process::exit</span>(<span class="number">1</span>);
     }
+  }
 }
 </code></pre></div>
 </section><section id="search" class="content hidden"></section><div id="rustdoc-vars" data-root-path="../../" data-current-crate="rustybot" data-search-index-js="../../search-index.js" data-search-js="../../search.js"></div>
