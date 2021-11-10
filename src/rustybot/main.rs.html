@@ -93,7 +93,7 @@
         <span class="ident">HomebrewInstallAction::new</span>().<span class="ident">execute</span>()<span class="question-mark">?</span>;
     }
     <span class="kw">if</span> <span class="ident">flag_data</span>.<span class="ident">install_ohmyzsh</span> {
-        <span class="ident">OhMyZshInstallAction::new</span>().<span class="ident">execute</span>()<span class="question-mark">?</span>;
+        <span class="ident">OhMyZshInstallAction::new</span>(<span class="ident">flag_data</span>.<span class="ident">skip_chsh</span>).<span class="ident">execute</span>()<span class="question-mark">?</span>;
     }
     <span class="prelude-val">Ok</span>(())
 }

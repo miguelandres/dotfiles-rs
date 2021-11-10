@@ -98,6 +98,22 @@
 <span id="98"> 98</span>
 <span id="99"> 99</span>
 <span id="100">100</span>
+<span id="101">101</span>
+<span id="102">102</span>
+<span id="103">103</span>
+<span id="104">104</span>
+<span id="105">105</span>
+<span id="106">106</span>
+<span id="107">107</span>
+<span id="108">108</span>
+<span id="109">109</span>
+<span id="110">110</span>
+<span id="111">111</span>
+<span id="112">112</span>
+<span id="113">113</span>
+<span id="114">114</span>
+<span id="115">115</span>
+<span id="116">116</span>
 </pre><pre class="rust"><code><span class="comment">// Copyright (c) 2021-2021 Miguel Barreto and others</span>
 <span class="comment">//</span>
 <span class="comment">// Permission is hereby granted, free of charge, to any person obtaining</span>
@@ -125,11 +141,13 @@
 <span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">FlagData</span> {
     <span class="kw">pub</span> <span class="ident">install_homebrew</span>: <span class="ident">bool</span>,
     <span class="kw">pub</span> <span class="ident">install_ohmyzsh</span>: <span class="ident">bool</span>,
+    <span class="kw">pub</span> <span class="ident">skip_chsh</span>: <span class="ident">bool</span>,
 }
 
 <span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">FlagParser</span> {
     <span class="ident">homebrew_install_flag_names</span>: <span class="ident">BTreeSet</span><span class="op">&lt;</span><span class="ident">String</span><span class="op">&gt;</span>,
     <span class="ident">ohmyzsh_install_flag_names</span>: <span class="ident">BTreeSet</span><span class="op">&lt;</span><span class="ident">String</span><span class="op">&gt;</span>,
+    <span class="ident">skip_chsh_flag_names</span>: <span class="ident">BTreeSet</span><span class="op">&lt;</span><span class="ident">String</span><span class="op">&gt;</span>,
     <span class="ident">all_flag_names</span>: <span class="ident">BTreeSet</span><span class="op">&lt;</span><span class="ident">String</span><span class="op">&gt;</span>,
 }
 
@@ -145,6 +163,11 @@
         .<span class="ident">copied</span>()
         .<span class="ident">map</span>(<span class="ident">String::from</span>)
         .<span class="ident">collect</span>();
+        <span class="kw">let</span> <span class="ident">skip_chsh_flag_names</span>: <span class="ident">BTreeSet</span><span class="op">&lt;</span><span class="ident">String</span><span class="op">&gt;</span> <span class="op">=</span> [<span class="string">&quot;--skip-chsh&quot;</span>, <span class="string">&quot;--skip_chsh&quot;</span>]
+            .<span class="ident">iter</span>()
+            .<span class="ident">copied</span>()
+            .<span class="ident">map</span>(<span class="ident">String::from</span>)
+            .<span class="ident">collect</span>();
 
         <span class="kw">let</span> <span class="ident">ohmyzsh_install_flag_names</span>: <span class="ident">BTreeSet</span><span class="op">&lt;</span><span class="ident">String</span><span class="op">&gt;</span> <span class="op">=</span>
             [<span class="string">&quot;--install_ohmyzsh&quot;</span>, <span class="string">&quot;--install-ohmyzsh&quot;</span>, <span class="string">&quot;--ohmyzsh&quot;</span>]
@@ -156,10 +179,15 @@
         <span class="kw">let</span> <span class="ident">all_flag_names</span>: <span class="ident">BTreeSet</span><span class="op">&lt;</span><span class="ident">String</span><span class="op">&gt;</span> <span class="op">=</span> <span class="ident">homebrew_install_flag_names</span>
             .<span class="ident">union</span>(<span class="kw-2">&amp;</span><span class="ident">ohmyzsh_install_flag_names</span>)
             .<span class="ident">cloned</span>()
+            .<span class="ident">collect</span>::<span class="op">&lt;</span><span class="ident">BTreeSet</span><span class="op">&lt;</span><span class="ident">String</span><span class="op">&gt;</span><span class="op">&gt;</span>()
+            .<span class="ident">union</span>(<span class="kw-2">&amp;</span><span class="ident">skip_chsh_flag_names</span>)
+            .<span class="ident">cloned</span>()
             .<span class="ident">collect</span>();
+
         <span class="ident">FlagParser</span> {
             <span class="ident">homebrew_install_flag_names</span>,
             <span class="ident">ohmyzsh_install_flag_names</span>,
+            <span class="ident">skip_chsh_flag_names</span>,
             <span class="ident">all_flag_names</span>,
         }
     }
@@ -186,6 +214,7 @@
         <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">flag_data</span> <span class="op">=</span> <span class="ident">FlagData</span> {
             <span class="ident">install_homebrew</span>: <span class="bool-val">false</span>,
             <span class="ident">install_ohmyzsh</span>: <span class="bool-val">false</span>,
+            <span class="ident">skip_chsh</span>: <span class="bool-val">false</span>,
         };
         <span class="kw">for</span> <span class="ident">flag</span> <span class="kw">in</span> <span class="ident">flags</span>.<span class="ident">iter</span>() {
             <span class="kw">if</span> <span class="self">self</span>.<span class="ident">homebrew_install_flag_names</span>.<span class="ident">contains</span>(<span class="ident">flag</span>) {
@@ -193,6 +222,9 @@
             }
             <span class="kw">if</span> <span class="self">self</span>.<span class="ident">ohmyzsh_install_flag_names</span>.<span class="ident">contains</span>(<span class="ident">flag</span>) {
                 <span class="ident">flag_data</span>.<span class="ident">install_ohmyzsh</span> <span class="op">=</span> <span class="bool-val">true</span>;
+            }
+            <span class="kw">if</span> <span class="self">self</span>.<span class="ident">skip_chsh_flag_names</span>.<span class="ident">contains</span>(<span class="ident">flag</span>) {
+                <span class="ident">flag_data</span>.<span class="ident">skip_chsh</span> <span class="op">=</span> <span class="bool-val">true</span>;
             }
         }
         <span class="prelude-val">Ok</span>(<span class="ident">flag_data</span>)

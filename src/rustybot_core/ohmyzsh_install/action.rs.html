@@ -104,9 +104,6 @@
 <span id="104">104</span>
 <span id="105">105</span>
 <span id="106">106</span>
-<span id="107">107</span>
-<span id="108">108</span>
-<span id="109">109</span>
 </pre><pre class="rust"><code><span class="comment">// Copyright (c) 2021-2021 Miguel Barreto and others</span>
 <span class="comment">//</span>
 <span class="comment">// Permission is hereby granted, free of charge, to any person obtaining</span>
@@ -137,18 +134,14 @@
 <span class="kw">use</span> <span class="ident">subprocess::ExitStatus</span>;
 
 <span class="doccomment">/// [OhMyZshInstallAction] sets up ohmyzsh.</span>
-<span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">OhMyZshInstallAction</span> {}
-
-<span class="kw">impl</span> <span class="ident">Default</span> <span class="kw">for</span> <span class="ident">OhMyZshInstallAction</span> {
-    <span class="kw">fn</span> <span class="ident">default</span>() -&gt; <span class="self">Self</span> {
-        <span class="ident"><span class="self">Self</span>::new</span>()
-    }
+<span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">OhMyZshInstallAction</span> {
+    <span class="ident">skip_chsh</span>: <span class="ident">bool</span>,
 }
 
 <span class="kw">impl</span> <span class="ident">OhMyZshInstallAction</span> {
     <span class="doccomment">/// Constructs a new [OhMyZshInstallAction]</span>
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">new</span>() -&gt; <span class="ident">OhMyZshInstallAction</span> {
-        <span class="ident">OhMyZshInstallAction</span> {}
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">new</span>(<span class="ident">skip_chsh</span>: <span class="ident">bool</span>) -&gt; <span class="ident">OhMyZshInstallAction</span> {
+        <span class="ident">OhMyZshInstallAction</span> { <span class="ident">skip_chsh</span> }
     }
     <span class="doccomment">/// Returns true if it can find a brew command</span>
     <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">check_zsh_is_installed</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="ident">bool</span> {
@@ -186,20 +179,21 @@
             )<span class="question-mark">?</span>;
         }
 
-        <span class="ident">Exec::shell</span>(<span class="string">&quot;chsh -s $(which zsh)&quot;</span>).<span class="ident">join</span>().<span class="ident">map_or_else</span>(
-            <span class="op">|</span><span class="ident">_err</span><span class="op">|</span> <span class="prelude-val">Err</span>(<span class="ident">String::from</span>(<span class="string">&quot;Error setting shell to zsh&quot;</span>)),
-            <span class="op">|</span><span class="ident">status</span><span class="op">|</span> <span class="kw">match</span> <span class="ident">status</span> {
-                <span class="ident">ExitStatus::Exited</span>(<span class="number">0</span>) =&gt; <span class="prelude-val">Ok</span>(()),
-                <span class="ident">ExitStatus::Exited</span>(<span class="ident">code</span>) =&gt; <span class="prelude-val">Err</span>(<span class="macro">format!</span>(
-                    <span class="string">&quot;Couldn&#39;t run chsh to set the shell to zsh, Error status {}&quot;</span>,
-                    <span class="ident">code</span>
-                )),
-                <span class="kw">_</span> =&gt; <span class="prelude-val">Err</span>(<span class="ident">String::from</span>(
-                    <span class="string">&quot;Unexpected error while running chsh to set the shell to zsh&quot;</span>,
-                )),
-            },
-        )<span class="question-mark">?</span>;
-
+        <span class="kw">if</span> <span class="op">!</span><span class="self">self</span>.<span class="ident">skip_chsh</span> {
+            <span class="ident">Exec::shell</span>(<span class="string">&quot;chsh -s $(which zsh)&quot;</span>).<span class="ident">join</span>().<span class="ident">map_or_else</span>(
+                <span class="op">|</span><span class="ident">_err</span><span class="op">|</span> <span class="prelude-val">Err</span>(<span class="ident">String::from</span>(<span class="string">&quot;Error setting shell to zsh&quot;</span>)),
+                <span class="op">|</span><span class="ident">status</span><span class="op">|</span> <span class="kw">match</span> <span class="ident">status</span> {
+                    <span class="ident">ExitStatus::Exited</span>(<span class="number">0</span>) =&gt; <span class="prelude-val">Ok</span>(()),
+                    <span class="ident">ExitStatus::Exited</span>(<span class="ident">code</span>) =&gt; <span class="prelude-val">Err</span>(<span class="macro">format!</span>(
+                        <span class="string">&quot;Couldn&#39;t run chsh to set the shell to zsh, Error status {}&quot;</span>,
+                        <span class="ident">code</span>
+                    )),
+                    <span class="kw">_</span> =&gt; <span class="prelude-val">Err</span>(<span class="ident">String::from</span>(
+                        <span class="string">&quot;Unexpected error while running chsh to set the shell to zsh&quot;</span>,
+                    )),
+                },
+            )<span class="question-mark">?</span>;
+        }
         <span class="ident">Exec::shell</span>(<span class="string">&quot;sh -c \&quot;$(curl -fsSL https://raw.github.com/ohmyzsh/ohmyzsh/master/tools/install.sh)\&quot;&quot;</span>)
         .<span class="ident">join</span>().<span class="ident">map_or_else</span>(
             <span class="op">|</span><span class="ident">_err</span><span class="op">|</span> <span class="prelude-val">Err</span>(<span class="ident">String::from</span>(<span class="string">&quot;Error installing ohmyzsh&quot;</span>)),
