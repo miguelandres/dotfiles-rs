@@ -20,7 +20,7 @@ jobs:
       - name: Run tests
         run: cargo test --verbose
       - name: Install Homebrew & ohmyzsh
-        run: cargo run -- --install-homebrew --install-ohmyzsh
+        run: cargo run -- --install-homebrew --install-ohmyzsh --skip-chsh
       - name: Check homebrew is installed
         run: which brew
 
@@ -34,6 +34,6 @@ jobs:
       - name: Run tests
         run: cargo test --verbose
       - name: Install Homebrew
-        run: cargo run -- --install-homebrew --install-ohmyzsh
+        run: cargo run -- --install-homebrew --install-ohmyzsh --skip-chsh
       - name: Check homebrew is installed
         run: which brew

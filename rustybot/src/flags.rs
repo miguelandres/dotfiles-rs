@@ -25,11 +25,13 @@ use std::collections::BTreeSet;
 pub struct FlagData {
     pub install_homebrew: bool,
     pub install_ohmyzsh: bool,
+    pub skip_chsh: bool,
 }
 
 pub struct FlagParser {
     homebrew_install_flag_names: BTreeSet<String>,
     ohmyzsh_install_flag_names: BTreeSet<String>,
+    skip_chsh_flag_names: BTreeSet<String>,
     all_flag_names: BTreeSet<String>,
 }
 
@@ -45,6 +47,11 @@ impl FlagParser {
         .copied()
         .map(String::from)
         .collect();
+        let skip_chsh_flag_names: BTreeSet<String> = ["--skip-chsh", "--skip_chsh"]
+            .iter()
+            .copied()
+            .map(String::from)
+            .collect();
 
         let ohmyzsh_install_flag_names: BTreeSet<String> =
             ["--install_ohmyzsh", "--install-ohmyzsh", "--ohmyzsh"]
@@ -56,10 +63,15 @@ impl FlagParser {
         let all_flag_names: BTreeSet<String> = homebrew_install_flag_names
             .union(&ohmyzsh_install_flag_names)
             .cloned()
+            .collect::<BTreeSet<String>>()
+            .union(&skip_chsh_flag_names)
+            .cloned()
             .collect();
+
         FlagParser {
             homebrew_install_flag_names,
             ohmyzsh_install_flag_names,
+            skip_chsh_flag_names,
             all_flag_names,
         }
     }
@@ -86,6 +98,7 @@ impl FlagParser {
         let mut flag_data = FlagData {
             install_homebrew: false,
             install_ohmyzsh: false,
+            skip_chsh: false,
         };
         for flag in flags.iter() {
             if self.homebrew_install_flag_names.contains(flag) {
@@ -93,6 +106,9 @@ impl FlagParser {
             }
             if self.ohmyzsh_install_flag_names.contains(flag) {
                 flag_data.install_ohmyzsh = true;
+            }
+            if self.skip_chsh_flag_names.contains(flag) {
+                flag_data.skip_chsh = true;
             }
         }
         Ok(flag_data)

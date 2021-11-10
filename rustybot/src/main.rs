@@ -35,7 +35,7 @@ fn process() -> Result<(), String> {
         HomebrewInstallAction::new().execute()?;
     }
     if flag_data.install_ohmyzsh {
-        OhMyZshInstallAction::new().execute()?;
+        OhMyZshInstallAction::new(flag_data.skip_chsh).execute()?;
     }
     Ok(())
 }

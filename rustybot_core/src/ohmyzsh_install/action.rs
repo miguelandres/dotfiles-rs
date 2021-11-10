@@ -28,18 +28,14 @@ use subprocess::Exec;
 use subprocess::ExitStatus;
 
 /// [OhMyZshInstallAction] sets up ohmyzsh.
-pub struct OhMyZshInstallAction {}
-
-impl Default for OhMyZshInstallAction {
-    fn default() -> Self {
-        Self::new()
-    }
+pub struct OhMyZshInstallAction {
+    skip_chsh: bool,
 }
 
 impl OhMyZshInstallAction {
     /// Constructs a new [OhMyZshInstallAction]
-    pub fn new() -> OhMyZshInstallAction {
-        OhMyZshInstallAction {}
+    pub fn new(skip_chsh: bool) -> OhMyZshInstallAction {
+        OhMyZshInstallAction { skip_chsh }
     }
     /// Returns true if it can find a brew command
     pub fn check_zsh_is_installed(&self) -> bool {
@@ -77,20 +73,21 @@ impl Action<'_> for OhMyZshInstallAction {
             )?;
         }
 
-        Exec::shell("chsh -s $(which zsh)").join().map_or_else(
-            |_err| Err(String::from("Error setting shell to zsh")),
-            |status| match status {
-                ExitStatus::Exited(0) => Ok(()),
-                ExitStatus::Exited(code) => Err(format!(
-                    "Couldn't run chsh to set the shell to zsh, Error status {}",
-                    code
-                )),
-                _ => Err(String::from(
-                    "Unexpected error while running chsh to set the shell to zsh",
-                )),
-            },
-        )?;
-
+        if !self.skip_chsh {
+            Exec::shell("chsh -s $(which zsh)").join().map_or_else(
+                |_err| Err(String::from("Error setting shell to zsh")),
+                |status| match status {
+                    ExitStatus::Exited(0) => Ok(()),
+                    ExitStatus::Exited(code) => Err(format!(
+                        "Couldn't run chsh to set the shell to zsh, Error status {}",
+                        code
+                    )),
+                    _ => Err(String::from(
+                        "Unexpected error while running chsh to set the shell to zsh",
+                    )),
+                },
+            )?;
+        }
         Exec::shell("sh -c \"$(curl -fsSL https://raw.github.com/ohmyzsh/ohmyzsh/master/tools/install.sh)\"")
         .join().map_or_else(
             |_err| Err(String::from("Error installing ohmyzsh")),
