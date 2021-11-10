@@ -19,8 +19,8 @@ jobs:
         run: cargo build --verbose
       - name: Run tests
         run: cargo test --verbose
-      - name: Install Homebrew
-        run: cargo run --package rustybot_core --bin test_homebrew_install
+      - name: Install Homebrew & ohmyzsh
+        run: cargo run -- --install-homebrew --install-ohmyzsh
       - name: Check homebrew is installed
         run: which brew
 
@@ -34,6 +34,6 @@ jobs:
       - name: Run tests
         run: cargo test --verbose
       - name: Install Homebrew
-        run: cargo run --package rustybot_core --bin test_homebrew_install
+        run: cargo run -- --install-homebrew --install-ohmyzsh
       - name: Check homebrew is installed
         run: which brew

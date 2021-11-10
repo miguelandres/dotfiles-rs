@@ -19,6 +19,40 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
+mod flags;
+use flags::FlagParser;
+use log;
+use rustybot_core::homebrew_install::action::HomebrewInstallAction;
+use rustybot_core::ohmyzsh_install::action::OhMyZshInstallAction;
+use rustybot_core::Action;
+use simplelog::*;
+
+fn process() -> Result<(), String> {
+    let flag_parser = FlagParser::new();
+    let flags_vec: Vec<String> = std::env::args().collect();
+    let flag_data = flag_parser.parse_flags(&flags_vec[1..])?;
+    if flag_data.install_homebrew {
+        HomebrewInstallAction::new().execute()?;
+    }
+    if flag_data.install_ohmyzsh {
+        OhMyZshInstallAction::new().execute()?;
+    }
+    Ok(())
+}
+
 fn main() {
-    println!("Hello, world!");
+    CombinedLogger::init(vec![TermLogger::new(
+        LevelFilter::Info,
+        Config::default(),
+        TerminalMode::Mixed,
+        ColorChoice::Auto,
+    )])
+    .unwrap();
+    match process() {
+        Ok(_) => log::info!("Process completed successfully"),
+        Err(error) => {
+            log::error!("Processing failed: {}", error);
+            std::process::exit(1);
+        }
+    }
 }

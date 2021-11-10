@@ -45,10 +45,18 @@ impl OhMyZshInstallAction {
     pub fn check_zsh_is_installed(&self) -> bool {
         Command::new("which").arg("zsh").status().unwrap().success()
     }
+    /// Returns true if the $ZSH environment var is set
+    pub fn check_oh_my_zsh_is_installed(&self) -> bool {
+        matches!(std::env::var("ZSH"), Ok(_))
+    }
 }
 
 impl Action<'_> for OhMyZshInstallAction {
     fn execute(&self) -> Result<(), String> {
+        if self.check_oh_my_zsh_is_installed() {
+            log::info!("oh-my-zsh is already installed, no need to reinstall");
+            return Ok(());
+        }
         if !self.check_zsh_is_installed() {
             #[cfg(target_os = "linux")]
             let cmd = Exec::shell("sudo apt install zsh");

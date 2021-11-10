@@ -11,8 +11,3 @@ reqwest = { version = "0.11", features = ["json", "blocking"] }
 subprocess = "0.2.8"
 tempfile = "3.2.0"
 yaml-rust = "0.4.5"
-
-[[bin]]
-name = "test_homebrew_install"
-test = true
-doc = false
