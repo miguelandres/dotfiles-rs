@@ -99,6 +99,14 @@
 <span id="99"> 99</span>
 <span id="100">100</span>
 <span id="101">101</span>
+<span id="102">102</span>
+<span id="103">103</span>
+<span id="104">104</span>
+<span id="105">105</span>
+<span id="106">106</span>
+<span id="107">107</span>
+<span id="108">108</span>
+<span id="109">109</span>
 </pre><pre class="rust"><code><span class="comment">// Copyright (c) 2021-2021 Miguel Barreto and others</span>
 <span class="comment">//</span>
 <span class="comment">// Permission is hereby granted, free of charge, to any person obtaining</span>
@@ -146,10 +154,18 @@
     <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">check_zsh_is_installed</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="ident">bool</span> {
         <span class="ident">Command::new</span>(<span class="string">&quot;which&quot;</span>).<span class="ident">arg</span>(<span class="string">&quot;zsh&quot;</span>).<span class="ident">status</span>().<span class="ident">unwrap</span>().<span class="ident">success</span>()
     }
+    <span class="doccomment">/// Returns true if the $ZSH environment var is set</span>
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">check_oh_my_zsh_is_installed</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="ident">bool</span> {
+        <span class="macro">matches!</span>(<span class="ident">std::env::var</span>(<span class="string">&quot;ZSH&quot;</span>), <span class="prelude-val">Ok</span>(<span class="kw">_</span>))
+    }
 }
 
 <span class="kw">impl</span> <span class="ident">Action</span><span class="op">&lt;</span><span class="lifetime">&#39;_</span><span class="op">&gt;</span> <span class="kw">for</span> <span class="ident">OhMyZshInstallAction</span> {
     <span class="kw">fn</span> <span class="ident">execute</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span>(), <span class="ident">String</span><span class="op">&gt;</span> {
+        <span class="kw">if</span> <span class="self">self</span>.<span class="ident">check_oh_my_zsh_is_installed</span>() {
+            <span class="macro">log::info!</span>(<span class="string">&quot;oh-my-zsh is already installed, no need to reinstall&quot;</span>);
+            <span class="kw">return</span> <span class="prelude-val">Ok</span>(());
+        }
         <span class="kw">if</span> <span class="op">!</span><span class="self">self</span>.<span class="ident">check_zsh_is_installed</span>() {
             <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">target_os</span> <span class="op">=</span> <span class="string">&quot;linux&quot;</span>)]</span>
             <span class="kw">let</span> <span class="ident">cmd</span> <span class="op">=</span> <span class="ident">Exec::shell</span>(<span class="string">&quot;sudo apt install zsh&quot;</span>);
