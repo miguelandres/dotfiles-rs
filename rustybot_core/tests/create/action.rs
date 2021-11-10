@@ -30,74 +30,74 @@ use crate::utils::check_action_fail;
 
 #[test]
 fn create_dir_fails_on_nonexistent_path() -> Result<(), String> {
-    let fs = FakeFileSystem::new();
-    setup_fs(&fs).expect("Failure setting up FakeFileSystem");
-    let action = CreateAction::new(
-        &fs,
-        String::from("/home/user/nonexistent_path/target"),
-        false,
-    );
-    check_action_fail(
-        &action,
-        format!(
-            "Could create directory in nonexistent path, {}",
-            action.directory()
-        ),
-    )
+  let fs = FakeFileSystem::new();
+  setup_fs(&fs).expect("Failure setting up FakeFileSystem");
+  let action = CreateAction::new(
+    &fs,
+    String::from("/home/user/nonexistent_path/target"),
+    false,
+  );
+  check_action_fail(
+    &action,
+    format!(
+      "Could create directory in nonexistent path, {}",
+      action.directory()
+    ),
+  )
 }
 
 #[test]
 fn create_dir_succeeds() -> Result<(), String> {
-    let fs = FakeFileSystem::new();
-    setup_fs(&fs)?;
-    let action = CreateAction::new(&fs, String::from("/home/user/target"), false);
-    action.execute()
+  let fs = FakeFileSystem::new();
+  setup_fs(&fs)?;
+  let action = CreateAction::new(&fs, String::from("/home/user/target"), false);
+  action.execute()
 }
 
 #[test]
 fn create_dir_fails_on_readonly_dir() -> Result<(), String> {
-    let fs = FakeFileSystem::new();
-    setup_fs(&fs)?;
-    let action = CreateAction::new(&fs, String::from("/system/target"), false);
-    check_action_fail(
-        &action,
-        format!(
-            "Could create directory in readonly path {}",
-            action.directory()
-        ),
-    )
+  let fs = FakeFileSystem::new();
+  setup_fs(&fs)?;
+  let action = CreateAction::new(&fs, String::from("/system/target"), false);
+  check_action_fail(
+    &action,
+    format!(
+      "Could create directory in readonly path {}",
+      action.directory()
+    ),
+  )
 }
 
 #[test]
 fn force_create_dir_succeeds_on_nonexistent_path() -> Result<(), String> {
-    let fs = FakeFileSystem::new();
-    setup_fs(&fs)?;
-    let action = CreateAction::new(
-        &fs,
-        String::from("/home/user/nonexistent_path/target"),
-        true,
-    );
-    action.execute()
+  let fs = FakeFileSystem::new();
+  setup_fs(&fs)?;
+  let action = CreateAction::new(
+    &fs,
+    String::from("/home/user/nonexistent_path/target"),
+    true,
+  );
+  action.execute()
 }
 
 #[test]
 fn force_create_dir_succeeds() -> Result<(), String> {
-    let fs = FakeFileSystem::new();
-    setup_fs(&fs)?;
-    let action = CreateAction::new(&fs, String::from("/home/user/target"), true);
-    action.execute()
+  let fs = FakeFileSystem::new();
+  setup_fs(&fs)?;
+  let action = CreateAction::new(&fs, String::from("/home/user/target"), true);
+  action.execute()
 }
 
 #[test]
 fn force_create_dir_fails_on_readonly_dir() -> Result<(), String> {
-    let fs = FakeFileSystem::new();
-    setup_fs(&fs)?;
-    let action = CreateAction::new(&fs, String::from("/system/target"), true);
-    check_action_fail(
-        &action,
-        format!(
-            "Could create directory in readonly path {}",
-            action.directory()
-        ),
-    )
+  let fs = FakeFileSystem::new();
+  setup_fs(&fs)?;
+  let action = CreateAction::new(&fs, String::from("/system/target"), true);
+  check_action_fail(
+    &action,
+    format!(
+      "Could create directory in readonly path {}",
+      action.directory()
+    ),
+  )
 }

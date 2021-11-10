@@ -38,142 +38,142 @@ use std::io;
 use std::path::PathBuf;
 
 fn setup_fs_internal<F: FileSystem + UnixFileSystem>(fs: &F) -> io::Result<()> {
-    fs.create_dir_all("/home/user/")?;
-    fs.create_dir("/system")?;
-    fs.set_readonly("/system", true)?;
-    fs.set_current_dir("/home/user/")?;
-    Ok(())
+  fs.create_dir_all("/home/user/")?;
+  fs.create_dir("/system")?;
+  fs.set_readonly("/system", true)?;
+  fs.set_current_dir("/home/user/")?;
+  Ok(())
 }
 
 fn setup_fs<F: FileSystem + UnixFileSystem>(fs: &F) -> Result<(), String> {
-    if let Err(io_error) = setup_fs_internal(fs) {
-        return Err(io_error.to_string());
-    }
-    Ok(())
+  if let Err(io_error) = setup_fs_internal(fs) {
+    return Err(io_error.to_string());
+  }
+  Ok(())
 }
 
 #[test]
 fn link_fails_on_nonexistent_path() -> Result<(), String> {
-    let fs = FakeFileSystem::new();
-    setup_fs(&fs).expect("Failure setting up FakeFileSystem");
-    fs.create_dir("/home/user/target").unwrap();
-    let settings = Settings::new();
-    let action = LinkAction::new(
-        &fs,
-        String::from("/home/user/nonexistent_path/path"),
-        String::from("/home/user/target"),
-        &settings,
-        init_directive_data().defaults(),
-    );
-    check_action_fail(
-        &action,
-        format!(
-            "Could create {} pointing to {}, this shouldn't happen since the path doesn't exist",
-            action.path(),
-            action.target()
-        ),
-    )
+  let fs = FakeFileSystem::new();
+  setup_fs(&fs).expect("Failure setting up FakeFileSystem");
+  fs.create_dir("/home/user/target").unwrap();
+  let settings = Settings::new();
+  let action = LinkAction::new(
+    &fs,
+    String::from("/home/user/nonexistent_path/path"),
+    String::from("/home/user/target"),
+    &settings,
+    init_directive_data().defaults(),
+  );
+  check_action_fail(
+    &action,
+    format!(
+      "Could create {} pointing to {}, this shouldn't happen since the path doesn't exist",
+      action.path(),
+      action.target()
+    ),
+  )
 }
 
 #[test]
 fn link_succeeds_on_nonexistent_path_with_create_parent_dirs() -> Result<(), String> {
-    let fs = FakeFileSystem::new();
-    setup_fs(&fs).expect("Failure setting up FakeFileSystem");
-    fs.create_dir("/home/user/target").unwrap();
-    let settings = initialize_settings_object(&[(
-        CREATE_PARENT_DIRS_SETTING.to_string(),
-        Setting::Boolean(true),
-    )]);
-    let action = LinkAction::new(
-        &fs,
-        String::from("/home/user/nonexistent_path/path"),
-        String::from("/home/user/target"),
-        &settings,
-        init_directive_data().defaults(),
-    );
-    action.execute()
+  let fs = FakeFileSystem::new();
+  setup_fs(&fs).expect("Failure setting up FakeFileSystem");
+  fs.create_dir("/home/user/target").unwrap();
+  let settings = initialize_settings_object(&[(
+    CREATE_PARENT_DIRS_SETTING.to_string(),
+    Setting::Boolean(true),
+  )]);
+  let action = LinkAction::new(
+    &fs,
+    String::from("/home/user/nonexistent_path/path"),
+    String::from("/home/user/target"),
+    &settings,
+    init_directive_data().defaults(),
+  );
+  action.execute()
 }
 
 #[test]
 fn link_fails_on_readonly_dir() -> Result<(), String> {
-    let fs = FakeFileSystem::new();
-    setup_fs(&fs).expect("Failure setting up FakeFileSystem");
-    fs.create_dir("/home/user/readonly").unwrap();
-    fs.set_readonly("/home/user/readonly", true).unwrap();
-    let settings = Settings::new();
-    let action = LinkAction::new(
-        &fs,
-        String::from("/home/user/readonly/some"),
-        String::from("/home/user"),
-        &settings,
-        init_directive_data().defaults(),
-    );
-    check_action_fail(
-        &action,
-        format!(
-            "Could create {}, this shouldn't happen since it's in a readonly dor",
-            action.path(),
-        ),
-    )
+  let fs = FakeFileSystem::new();
+  setup_fs(&fs).expect("Failure setting up FakeFileSystem");
+  fs.create_dir("/home/user/readonly").unwrap();
+  fs.set_readonly("/home/user/readonly", true).unwrap();
+  let settings = Settings::new();
+  let action = LinkAction::new(
+    &fs,
+    String::from("/home/user/readonly/some"),
+    String::from("/home/user"),
+    &settings,
+    init_directive_data().defaults(),
+  );
+  check_action_fail(
+    &action,
+    format!(
+      "Could create {}, this shouldn't happen since it's in a readonly dor",
+      action.path(),
+    ),
+  )
 }
 
 #[test]
 fn link_fails_on_nonexistent_target() -> Result<(), String> {
-    let fs = FakeFileSystem::new();
-    setup_fs(&fs).expect("Failure setting up FakeFileSystem");
-    let settings = Settings::new();
-    let action = LinkAction::new(
-        &fs,
-        String::from("/home/user/path"),
-        String::from("/home/user/target"),
-        &settings,
-        init_directive_data().defaults(),
-    );
-    check_action_fail(
-        &action,
-        format!(
-            "Could create {} pointing to {}, this shouldn't happen since the target doesn't exist",
-            action.path(),
-            action.target()
-        ),
-    )
+  let fs = FakeFileSystem::new();
+  setup_fs(&fs).expect("Failure setting up FakeFileSystem");
+  let settings = Settings::new();
+  let action = LinkAction::new(
+    &fs,
+    String::from("/home/user/path"),
+    String::from("/home/user/target"),
+    &settings,
+    init_directive_data().defaults(),
+  );
+  check_action_fail(
+    &action,
+    format!(
+      "Could create {} pointing to {}, this shouldn't happen since the target doesn't exist",
+      action.path(),
+      action.target()
+    ),
+  )
 }
 
 #[test]
 fn link_succeeds_on_nonexistent_target_if_ignoring_missing_target() -> Result<(), String> {
-    let fs = FakeFileSystem::new();
-    setup_fs(&fs).expect("Failure setting up FakeFileSystem");
-    fs.create_dir("/home/user/target").unwrap();
-    let settings = initialize_settings_object(&[(
-        String::from(IGNORE_MISSING_TARGET_SETTING),
-        Setting::Boolean(true),
-    )]);
-    let action = LinkAction::new(
-        &fs,
-        String::from("/home/user/path"),
-        String::from("/home/user/target"),
-        &settings,
-        init_directive_data().defaults(),
-    );
-    action.execute()
+  let fs = FakeFileSystem::new();
+  setup_fs(&fs).expect("Failure setting up FakeFileSystem");
+  fs.create_dir("/home/user/target").unwrap();
+  let settings = initialize_settings_object(&[(
+    String::from(IGNORE_MISSING_TARGET_SETTING),
+    Setting::Boolean(true),
+  )]);
+  let action = LinkAction::new(
+    &fs,
+    String::from("/home/user/path"),
+    String::from("/home/user/target"),
+    &settings,
+    init_directive_data().defaults(),
+  );
+  action.execute()
 }
 
 #[test]
 fn link_fails_on_existing_link() -> Result<(), String> {
-    let fs = FakeFileSystem::new();
-    setup_fs(&fs).expect("Failure setting up FakeFileSystem");
-    fs.create_dir("/home/user/target").unwrap();
-    fs.create_dir("/home/user/target2").unwrap();
-    fs.symlink("/home/user/target", "/home/user/path").unwrap();
-    let settings = Settings::new();
-    let action = LinkAction::new(
-        &fs,
-        String::from("/home/user/path"),
-        String::from("/home/user/target2"),
-        &settings,
-        init_directive_data().defaults(),
-    );
-    check_action_fail(
+  let fs = FakeFileSystem::new();
+  setup_fs(&fs).expect("Failure setting up FakeFileSystem");
+  fs.create_dir("/home/user/target").unwrap();
+  fs.create_dir("/home/user/target2").unwrap();
+  fs.symlink("/home/user/target", "/home/user/path").unwrap();
+  let settings = Settings::new();
+  let action = LinkAction::new(
+    &fs,
+    String::from("/home/user/path"),
+    String::from("/home/user/target2"),
+    &settings,
+    init_directive_data().defaults(),
+  );
+  check_action_fail(
         &action,
         format!(
             "Could create {} pointing to {}, this shouldn't happen since the {} already exists as a symlink to {}",
@@ -187,153 +187,153 @@ fn link_fails_on_existing_link() -> Result<(), String> {
 
 #[test]
 fn link_succeeds_on_existing_link_with_relink() -> Result<(), String> {
-    let fs = FakeFileSystem::new();
-    setup_fs(&fs).expect("Failure setting up FakeFileSystem");
-    fs.create_dir("/home/user/target").unwrap();
-    fs.create_dir("/home/user/target2").unwrap();
-    fs.symlink("/home/user/target", "/home/user/path").unwrap();
-    let settings =
-        initialize_settings_object(&[(String::from(RELINK_SETTING), Setting::Boolean(true))]);
-    let action = LinkAction::new(
-        &fs,
-        String::from("/home/user/path"),
-        String::from("/home/user/target2"),
-        &settings,
-        init_directive_data().defaults(),
-    );
-    action.execute()
+  let fs = FakeFileSystem::new();
+  setup_fs(&fs).expect("Failure setting up FakeFileSystem");
+  fs.create_dir("/home/user/target").unwrap();
+  fs.create_dir("/home/user/target2").unwrap();
+  fs.symlink("/home/user/target", "/home/user/path").unwrap();
+  let settings =
+    initialize_settings_object(&[(String::from(RELINK_SETTING), Setting::Boolean(true))]);
+  let action = LinkAction::new(
+    &fs,
+    String::from("/home/user/path"),
+    String::from("/home/user/target2"),
+    &settings,
+    init_directive_data().defaults(),
+  );
+  action.execute()
 }
 
 #[test]
 fn link_fails_on_existing_file_with_relink() -> Result<(), String> {
-    let fs = FakeFileSystem::new();
-    setup_fs(&fs).expect("Failure setting up FakeFileSystem");
-    fs.create_dir("/home/user/target").unwrap();
-    fs.create_dir("/home/user/target2").unwrap();
-    fs.create_file("/home/user/path", "").unwrap();
-    let settings =
-        initialize_settings_object(&[(String::from(RELINK_SETTING), Setting::Boolean(true))]);
-    let action = LinkAction::new(
-        &fs,
-        String::from("/home/user/path"),
-        String::from("/home/user/target2"),
-        &settings,
-        init_directive_data().defaults(),
-    );
-    check_action_fail(
-        &action,
-        format!(
-            "Could create {} pointing to {}, this shouldn't happen since the {} already exists as a file",
-            action.path(),
-            action.target(),
-            action.path(),
-        ),
-    )
+  let fs = FakeFileSystem::new();
+  setup_fs(&fs).expect("Failure setting up FakeFileSystem");
+  fs.create_dir("/home/user/target").unwrap();
+  fs.create_dir("/home/user/target2").unwrap();
+  fs.create_file("/home/user/path", "").unwrap();
+  let settings =
+    initialize_settings_object(&[(String::from(RELINK_SETTING), Setting::Boolean(true))]);
+  let action = LinkAction::new(
+    &fs,
+    String::from("/home/user/path"),
+    String::from("/home/user/target2"),
+    &settings,
+    init_directive_data().defaults(),
+  );
+  check_action_fail(
+    &action,
+    format!(
+      "Could create {} pointing to {}, this shouldn't happen since the {} already exists as a file",
+      action.path(),
+      action.target(),
+      action.path(),
+    ),
+  )
 }
 
 #[test]
 fn link_fails_on_existing_dir_with_relink() -> Result<(), String> {
-    let fs = FakeFileSystem::new();
-    setup_fs(&fs).expect("Failure setting up FakeFileSystem");
-    fs.create_dir("/home/user/target").unwrap();
-    fs.create_dir("/home/user/target2").unwrap();
-    fs.create_dir("/home/user/path").unwrap();
-    let settings =
-        initialize_settings_object(&[(String::from(RELINK_SETTING), Setting::Boolean(true))]);
-    let action = LinkAction::new(
-        &fs,
-        String::from("/home/user/path"),
-        String::from("/home/user/target2"),
-        &settings,
-        init_directive_data().defaults(),
-    );
-    check_action_fail(
-        &action,
-        format!(
-            "Could create {} pointing to {}, this shouldn't happen since the {} already exists as a dir",
-            action.path(),
-            action.target(),
-            action.path(),
-        ),
-    )
+  let fs = FakeFileSystem::new();
+  setup_fs(&fs).expect("Failure setting up FakeFileSystem");
+  fs.create_dir("/home/user/target").unwrap();
+  fs.create_dir("/home/user/target2").unwrap();
+  fs.create_dir("/home/user/path").unwrap();
+  let settings =
+    initialize_settings_object(&[(String::from(RELINK_SETTING), Setting::Boolean(true))]);
+  let action = LinkAction::new(
+    &fs,
+    String::from("/home/user/path"),
+    String::from("/home/user/target2"),
+    &settings,
+    init_directive_data().defaults(),
+  );
+  check_action_fail(
+    &action,
+    format!(
+      "Could create {} pointing to {}, this shouldn't happen since the {} already exists as a dir",
+      action.path(),
+      action.target(),
+      action.path(),
+    ),
+  )
 }
 
 #[test]
 fn link_succeeds_on_existing_link_with_force() -> Result<(), String> {
-    let fs = FakeFileSystem::new();
-    setup_fs(&fs).expect("Failure setting up FakeFileSystem");
-    fs.create_dir("/home/user/target").unwrap();
-    fs.create_dir("/home/user/target2").unwrap();
-    fs.symlink("/home/user/target", "/home/user/path").unwrap();
-    let settings =
-        initialize_settings_object(&[(String::from(FORCE_SETTING), Setting::Boolean(true))]);
-    let action = LinkAction::new(
-        &fs,
-        String::from("/home/user/path"),
-        String::from("/home/user/target2"),
-        &settings,
-        init_directive_data().defaults(),
-    );
-    action.execute()
+  let fs = FakeFileSystem::new();
+  setup_fs(&fs).expect("Failure setting up FakeFileSystem");
+  fs.create_dir("/home/user/target").unwrap();
+  fs.create_dir("/home/user/target2").unwrap();
+  fs.symlink("/home/user/target", "/home/user/path").unwrap();
+  let settings =
+    initialize_settings_object(&[(String::from(FORCE_SETTING), Setting::Boolean(true))]);
+  let action = LinkAction::new(
+    &fs,
+    String::from("/home/user/path"),
+    String::from("/home/user/target2"),
+    &settings,
+    init_directive_data().defaults(),
+  );
+  action.execute()
 }
 
 #[test]
 fn link_fails_on_existing_file_with_force() -> Result<(), String> {
-    let fs = FakeFileSystem::new();
-    setup_fs(&fs).expect("Failure setting up FakeFileSystem");
-    fs.create_dir("/home/user/target").unwrap();
-    fs.create_dir("/home/user/target2").unwrap();
-    fs.create_file("/home/user/path", "").unwrap();
-    let settings =
-        initialize_settings_object(&[(String::from(FORCE_SETTING), Setting::Boolean(true))]);
-    let action = LinkAction::new(
-        &fs,
-        String::from("/home/user/path"),
-        String::from("/home/user/target2"),
-        &settings,
-        init_directive_data().defaults(),
-    );
-    action.execute()
+  let fs = FakeFileSystem::new();
+  setup_fs(&fs).expect("Failure setting up FakeFileSystem");
+  fs.create_dir("/home/user/target").unwrap();
+  fs.create_dir("/home/user/target2").unwrap();
+  fs.create_file("/home/user/path", "").unwrap();
+  let settings =
+    initialize_settings_object(&[(String::from(FORCE_SETTING), Setting::Boolean(true))]);
+  let action = LinkAction::new(
+    &fs,
+    String::from("/home/user/path"),
+    String::from("/home/user/target2"),
+    &settings,
+    init_directive_data().defaults(),
+  );
+  action.execute()
 }
 
 #[test]
 fn link_fails_on_existing_dir_with_force() -> Result<(), String> {
-    let fs = FakeFileSystem::new();
-    setup_fs(&fs).expect("Failure setting up FakeFileSystem");
-    fs.create_dir("/home/user/target").unwrap();
-    fs.create_dir("/home/user/target2").unwrap();
-    fs.create_dir("/home/user/path").unwrap();
-    let settings =
-        initialize_settings_object(&[(String::from(FORCE_SETTING), Setting::Boolean(true))]);
-    let action = LinkAction::new(
-        &fs,
-        String::from("/home/user/path"),
-        String::from("/home/user/target2"),
-        &settings,
-        init_directive_data().defaults(),
-    );
-    action.execute()
+  let fs = FakeFileSystem::new();
+  setup_fs(&fs).expect("Failure setting up FakeFileSystem");
+  fs.create_dir("/home/user/target").unwrap();
+  fs.create_dir("/home/user/target2").unwrap();
+  fs.create_dir("/home/user/path").unwrap();
+  let settings =
+    initialize_settings_object(&[(String::from(FORCE_SETTING), Setting::Boolean(true))]);
+  let action = LinkAction::new(
+    &fs,
+    String::from("/home/user/path"),
+    String::from("/home/user/target2"),
+    &settings,
+    init_directive_data().defaults(),
+  );
+  action.execute()
 }
 
 #[test]
 fn link_resolves_symlink_target() {
-    let fs = FakeFileSystem::new();
-    setup_fs(&fs).expect("Failure setting up FakeFileSystem");
-    fs.create_dir("/home/user/target").unwrap();
-    fs.symlink("/home/user/target", "/home/user/symlink")
-        .unwrap();
-    let settings = initialize_settings_object(&[(
-        RESOLVE_SYMLINK_TARGET_SETTING.to_string(),
-        Setting::Boolean(true),
-    )]);
-    let action = LinkAction::new(
-        &fs,
-        String::from("/home/user/path"),
-        String::from("/home/user/symlink"),
-        &settings,
-        init_directive_data().defaults(),
-    );
-    action.execute().unwrap();
-    let source = fs.get_symlink_src("/home/user/path").unwrap();
-    assert!(source == PathBuf::from("/home/user/target"));
+  let fs = FakeFileSystem::new();
+  setup_fs(&fs).expect("Failure setting up FakeFileSystem");
+  fs.create_dir("/home/user/target").unwrap();
+  fs.symlink("/home/user/target", "/home/user/symlink")
+    .unwrap();
+  let settings = initialize_settings_object(&[(
+    RESOLVE_SYMLINK_TARGET_SETTING.to_string(),
+    Setting::Boolean(true),
+  )]);
+  let action = LinkAction::new(
+    &fs,
+    String::from("/home/user/path"),
+    String::from("/home/user/symlink"),
+    &settings,
+    init_directive_data().defaults(),
+  );
+  action.execute().unwrap();
+  let source = fs.get_symlink_src("/home/user/path").unwrap();
+  assert!(source == PathBuf::from("/home/user/target"));
 }

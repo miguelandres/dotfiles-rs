@@ -44,57 +44,53 @@ pub const DIR_SETTING: &str = "dir";
 
 /// Constructs a new [CreateDirective] using the real filesystem
 pub fn new_native_create_directive() -> CreateDirective<OsFileSystem> {
-    CreateDirective::new(OsFileSystem::new())
+  CreateDirective::new(OsFileSystem::new())
 }
 
 /// Initializes the default configuration for the [CreateDirective]
 pub fn init_directive_data() -> DirectiveData {
-    DirectiveData::new(
-        DIRECTIVE_NAME,
-        initialize_settings_object(&[(String::from(FORCE_SETTING), Setting::Boolean(false))]),
-    )
+  DirectiveData::new(
+    DIRECTIVE_NAME,
+    initialize_settings_object(&[(String::from(FORCE_SETTING), Setting::Boolean(false))]),
+  )
 }
 
 /// A directive that can build [CreateAction]s to create directories
 /// in the filesystem.
 pub struct CreateDirective<F: FileSystem> {
-    fs: Box<F>,
-    data: DirectiveData,
+  fs: Box<F>,
+  data: DirectiveData,
 }
 
 impl<F: FileSystem> CreateDirective<F> {
-    /// Returns the [FileSystem] instance being used.
-    pub fn fs(&self) -> &F {
-        self.fs.as_ref()
-    }
+  /// Returns the [FileSystem] instance being used.
+  pub fn fs(&self) -> &F {
+    self.fs.as_ref()
+  }
 
-    /// Constructs a new instance of the create directive.
-    pub fn new(fs: F) -> CreateDirective<F> {
-        CreateDirective::<F> {
-            fs: Box::new(fs),
-            data: init_directive_data(),
-        }
+  /// Constructs a new instance of the create directive.
+  pub fn new(fs: F) -> CreateDirective<F> {
+    CreateDirective::<F> {
+      fs: Box::new(fs),
+      data: init_directive_data(),
     }
+  }
 }
 
 impl<'a, F: FileSystem> Directive<'a, CreateAction<'a, F>> for CreateDirective<F> {
-    fn name(&self) -> &str {
-        self.data.name()
-    }
+  fn name(&self) -> &str {
+    self.data.name()
+  }
 
-    fn defaults(&self) -> &Settings {
-        self.data.defaults()
-    }
+  fn defaults(&self) -> &Settings {
+    self.data.defaults()
+  }
 
-    fn build_action(
-        &self,
-        settings: &Settings,
-        yaml: &Yaml,
-    ) -> Result<CreateAction<'_, F>, String> {
-        Ok(CreateAction::<'_, F>::new(
-            self.fs(),
-            yaml_util::get_string_content_or_keyed_value(yaml, Some(DIR_SETTING))?,
-            yaml_util::get_boolean_setting(FORCE_SETTING, settings, self.defaults())?,
-        ))
-    }
+  fn build_action(&self, settings: &Settings, yaml: &Yaml) -> Result<CreateAction<'_, F>, String> {
+    Ok(CreateAction::<'_, F>::new(
+      self.fs(),
+      yaml_util::get_string_content_or_keyed_value(yaml, Some(DIR_SETTING))?,
+      yaml_util::get_boolean_setting(FORCE_SETTING, settings, self.defaults())?,
+    ))
+  }
 }

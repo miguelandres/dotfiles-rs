@@ -33,30 +33,30 @@ use subprocess::ExitStatus;
 pub struct HomebrewInstallAction {}
 
 impl Default for HomebrewInstallAction {
-    fn default() -> Self {
-        Self::new()
-    }
+  fn default() -> Self {
+    Self::new()
+  }
 }
 
 impl HomebrewInstallAction {
-    /// Constructs a new [HomebrewInstallAction]
-    pub fn new() -> HomebrewInstallAction {
-        HomebrewInstallAction {}
-    }
-    /// Returns true if it can find a brew command
-    pub fn check_brew_is_installed(&self) -> bool {
-        Command::new("which")
-            .arg("brew")
-            .status()
-            .unwrap()
-            .success()
-    }
+  /// Constructs a new [HomebrewInstallAction]
+  pub fn new() -> HomebrewInstallAction {
+    HomebrewInstallAction {}
+  }
+  /// Returns true if it can find a brew command
+  pub fn check_brew_is_installed(&self) -> bool {
+    Command::new("which")
+      .arg("brew")
+      .status()
+      .unwrap()
+      .success()
+  }
 }
 
 impl Action<'_> for HomebrewInstallAction {
-    fn execute(&self) -> Result<(), String> {
-        if !self.check_brew_is_installed() {
-            let result = Exec::shell("/bin/bash -c \"$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)\"")
+  fn execute(&self) -> Result<(), String> {
+    if !self.check_brew_is_installed() {
+      let result = Exec::shell("/bin/bash -c \"$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)\"")
                 .join().map_or_else(|_err|
                         Err(String::from("Error running homebrew installer")),
                         |status| match status  {
@@ -68,33 +68,35 @@ impl Action<'_> for HomebrewInstallAction {
                         _ => Err(String::from("Unexpected error while running homebrew installer"))
                     }
                 );
-            #[cfg(not(all(target_os = "macos", target_arch = "aarch64")))]
-            return result;
-            #[cfg(all(target_os = "macos", target_arch = "aarch64"))]
-            {
-                result?;
-                (
-                    Exec::shell(
-                        "echo 'eval \"$(/opt/homebrew/bin/brew shellenv)\"' >> ~/.zprofile") |
-                    Exec::shell(
-                        "echo 'eval \"$(/opt/homebrew/bin/brew shellenv)\"' >> ~/.bash_profile")
-                )
-                .join()
-                .map_or_else(
-                    |_err| {Err(String::from("couldn't set .zprofile and .bash_profile to use homebrew"))},
-                    |status| match status {
-                        ExitStatus::Exited(0) => Ok(()),
-                        ExitStatus::Exited(code) => Err(format!(
-                            "couldn't set .zprofile and .bash_profile to use homebrew, status {}",
-                            code
-                        )),
-                        _ => Err(String::from("Unexpected error while setting .zprofile and .bash_profile to use homebrew"))
-                    },
-                )
-            }
-        } else {
-            info!("Homebrew already installed, no need to re-install");
-            Ok(())
-        }
+      #[cfg(not(all(target_os = "macos", target_arch = "aarch64")))]
+      return result;
+      #[cfg(all(target_os = "macos", target_arch = "aarch64"))]
+      {
+        result?;
+        (Exec::shell("echo 'eval \"$(/opt/homebrew/bin/brew shellenv)\"' >> ~/.zprofile")
+          | Exec::shell("echo 'eval \"$(/opt/homebrew/bin/brew shellenv)\"' >> ~/.bash_profile"))
+        .join()
+        .map_or_else(
+          |_err| {
+            Err(String::from(
+              "couldn't set .zprofile and .bash_profile to use homebrew",
+            ))
+          },
+          |status| match status {
+            ExitStatus::Exited(0) => Ok(()),
+            ExitStatus::Exited(code) => Err(format!(
+              "couldn't set .zprofile and .bash_profile to use homebrew, status {}",
+              code
+            )),
+            _ => Err(String::from(
+              "Unexpected error while setting .zprofile and .bash_profile to use homebrew",
+            )),
+          },
+        )
+      }
+    } else {
+      info!("Homebrew already installed, no need to re-install");
+      Ok(())
     }
+  }
 }

@@ -35,19 +35,19 @@ pub type Settings = HashMap<String, Setting>;
 /// Represents a value for a setting
 #[derive(Clone, Debug)]
 pub enum Setting {
-    /// A boolean value for a setting
-    Boolean(bool),
-    /// A string value for a setting
-    String(String),
+  /// A boolean value for a setting
+  Boolean(bool),
+  /// A string value for a setting
+  String(String),
 }
 
 /// Returns a Settings object from an array as a bit of syntactic sugar
 pub fn initialize_settings_object(settings: &[(String, Setting)]) -> Settings {
-    let settings_object: Settings = settings
-        .iter()
-        .map(|(name, setting)| (name.clone(), setting.clone()))
-        .collect();
-    settings_object
+  let settings_object: Settings = settings
+    .iter()
+    .map(|(name, setting)| (name.clone(), setting.clone()))
+    .collect();
+  settings_object
 }
 
 /// A struct that contains the default settings for a Directive and the
@@ -55,42 +55,42 @@ pub fn initialize_settings_object(settings: &[(String, Setting)]) -> Settings {
 ///
 /// These default settings can be configured by the user as well.
 pub struct DirectiveData {
-    /// Unique name of this directive.
-    ///
-    /// This name will be used in configuration sources to instantiate actions
-    /// of this directive
-    name: &'static str,
-    /// Default settings for this directive.
-    ///
-    /// Any setting that is not in the defaults for a directive but is part of
-    /// the corresponding Action struct is considered to be mandatory.
-    defaults: Settings,
+  /// Unique name of this directive.
+  ///
+  /// This name will be used in configuration sources to instantiate actions
+  /// of this directive
+  name: &'static str,
+  /// Default settings for this directive.
+  ///
+  /// Any setting that is not in the defaults for a directive but is part of
+  /// the corresponding Action struct is considered to be mandatory.
+  defaults: Settings,
 }
 impl DirectiveData {
-    /// Constructs a new directive from a name and a set of default settings.
-    pub fn new(name: &'static str, defaults: Settings) -> DirectiveData {
-        DirectiveData { name, defaults }
-    }
-    /// Returns the name of the directive
-    pub fn name(&self) -> &str {
-        self.name
-    }
-    /// Returns the collection of default settings.
-    pub fn defaults(&self) -> &Settings {
-        &self.defaults
-    }
+  /// Constructs a new directive from a name and a set of default settings.
+  pub fn new(name: &'static str, defaults: Settings) -> DirectiveData {
+    DirectiveData { name, defaults }
+  }
+  /// Returns the name of the directive
+  pub fn name(&self) -> &str {
+    self.name
+  }
+  /// Returns the collection of default settings.
+  pub fn defaults(&self) -> &Settings {
+    &self.defaults
+  }
 }
 
 /// A parser for action steps, each directive represents a type of Action.
 pub trait Directive<'a, A: Action<'a>> {
-    /// Returns the name of the directive.
-    fn name(&self) -> &str;
-    /// Returns the defaults settings as configured.
-    fn defaults(&self) -> &Settings;
-    /// Builds an action from a Yaml configuration source and a set of
-    /// default settings.
-    ///
-    /// Returns an Error containing a human readable string in case there
-    /// was an issue building the action.
-    fn build_action(&'a self, settings: &Settings, yaml: &Yaml) -> Result<A, String>;
+  /// Returns the name of the directive.
+  fn name(&self) -> &str;
+  /// Returns the defaults settings as configured.
+  fn defaults(&self) -> &Settings;
+  /// Builds an action from a Yaml configuration source and a set of
+  /// default settings.
+  ///
+  /// Returns an Error containing a human readable string in case there
+  /// was an issue building the action.
+  fn build_action(&'a self, settings: &Settings, yaml: &Yaml) -> Result<A, String>;
 }

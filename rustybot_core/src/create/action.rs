@@ -32,68 +32,68 @@ use std::io;
 
 /// [CreateAction] creates a new [directory](CreateAction::directory) when executed
 pub struct CreateAction<'a, F: FileSystem> {
-    /// FileSystem to use to create the directory.
-    ///
-    /// Having a filesystem instance here allows us to use fakes/mocks to use
-    /// in unit tests.
-    fs: &'a F,
-    /// Directory to create. Can be absolute or relative.
-    directory: String,
-    /// Force creation of the directory and all its parents if they do not
-    /// exist already.
-    ///
-    /// Setting [`force`](CreateAction::force) to `true` is equivalent to using
-    /// the `-p` flag in `mkdir`.
-    force: bool,
+  /// FileSystem to use to create the directory.
+  ///
+  /// Having a filesystem instance here allows us to use fakes/mocks to use
+  /// in unit tests.
+  fs: &'a F,
+  /// Directory to create. Can be absolute or relative.
+  directory: String,
+  /// Force creation of the directory and all its parents if they do not
+  /// exist already.
+  ///
+  /// Setting [`force`](CreateAction::force) to `true` is equivalent to using
+  /// the `-p` flag in `mkdir`.
+  force: bool,
 }
 
 impl<F: FileSystem> CreateAction<'_, F> {
-    /// Constructs a new instance of CreateAction
-    pub fn new(fs: &'_ F, directory: String, force: bool) -> CreateAction<'_, F> {
-        CreateAction {
-            fs,
-            directory,
-            force,
-        }
+  /// Constructs a new instance of CreateAction
+  pub fn new(fs: &'_ F, directory: String, force: bool) -> CreateAction<'_, F> {
+    CreateAction {
+      fs,
+      directory,
+      force,
     }
-    /// Returns the directory to create.
-    pub fn directory(&self) -> &str {
-        &self.directory
-    }
-    /// Returns true if the action will create parent directories if necessary.
-    ///
-    /// [`force`](CreateAction::force) being `true` is equivalent to using the
-    /// `-p` flag in `mkdir`
-    pub fn force(&self) -> bool {
-        self.force
-    }
+  }
+  /// Returns the directory to create.
+  pub fn directory(&self) -> &str {
+    &self.directory
+  }
+  /// Returns true if the action will create parent directories if necessary.
+  ///
+  /// [`force`](CreateAction::force) being `true` is equivalent to using the
+  /// `-p` flag in `mkdir`
+  pub fn force(&self) -> bool {
+    self.force
+  }
 }
 
 impl<F: FileSystem> Action<'_> for CreateAction<'_, F> {
-    /// Creates the [`directory`](CreateAction::directory).
-    ///
-    /// # Errors
-    /// - The parent directory does not exist and
-    ///   [`force`](CreateAction::force) is false.
-    /// - There is already a directory, file or symlink with the same name.
-    /// - Permission denied.
-    fn execute(&self) -> Result<(), String> {
-        fn create_dir<F: FileSystem>(fs: &'_ F, directory: &str, force: bool) -> io::Result<()> {
-            if force {
-                Ok(fs.create_dir_all(&directory)?)
-            } else {
-                Ok(fs.create_dir(&directory)?)
-            }
-        }
-        match create_dir(self.fs, &self.directory, self.force) {
-            Ok(()) => {
-                info!("Created directory {}", &self.directory);
-                Ok(())
-            }
-            Err(s) => {
-                error!("Couldn't create directory {}: {}", &self.directory, s);
-                Err(s.to_string())
-            }
-        }
+  /// Creates the [`directory`](CreateAction::directory).
+  ///
+  /// # Errors
+  /// - The parent directory does not exist and
+  ///   [`force`](CreateAction::force) is false.
+  /// - There is already a directory, file or symlink with the same name.
+  /// - Permission denied.
+  fn execute(&self) -> Result<(), String> {
+    fn create_dir<F: FileSystem>(fs: &'_ F, directory: &str, force: bool) -> io::Result<()> {
+      if force {
+        Ok(fs.create_dir_all(&directory)?)
+      } else {
+        Ok(fs.create_dir(&directory)?)
+      }
     }
+    match create_dir(self.fs, &self.directory, self.force) {
+      Ok(()) => {
+        info!("Created directory {}", &self.directory);
+        Ok(())
+      }
+      Err(s) => {
+        error!("Couldn't create directory {}: {}", &self.directory, s);
+        Err(s.to_string())
+      }
+    }
+  }
 }
