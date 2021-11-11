@@ -21,7 +21,6 @@
 
 mod flags;
 use flags::FlagParser;
-use log;
 use rustybot_core::homebrew_install::action::HomebrewInstallAction;
 use rustybot_core::ohmyzsh_install::action::OhMyZshInstallAction;
 use rustybot_core::Action;
