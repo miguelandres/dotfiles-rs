@@ -69,30 +69,39 @@ jobs:
           prerelease: true
 
   build:
-    name: Build ${{ matrix.build_name }}
+    name: Build ${{ matrix.target.name }}
     needs: create-nightly-release
     if: needs.create-nightly-release.outputs.activity_check == 'true'
     strategy:
       fail-fast: false
       matrix:
+        rust: [nightly]
+        target:
+          - name: x86_64-unknown-linux-gnu
+            gh_env: ubuntu-latest
+          - name: aarch64-apple-darwin
+            gh_env: macos-11
+          - name: x86_64-apple-darwin
+            gh_env: macos-11
         include:
-          - build_name: linux-x86_64
-            os: ubuntu-latest
-
-          # Mac does two Rust builds to make a universal binary
-          - build_name: macos-x86_64
-            os: macos-11
-            target: x86_64-apple-darwin
-
-          - build_name: macos-aarch64
-            os: macos-11
-            target: aarch64-apple-darwin
+          - target:
+              gh_env: ubuntu-latest
+            sccache-path: /home/runner/.cache/sccache
+          - target:
+              gh_env: macos-11
+            sccache-path: /Users/runner/Library/Caches/Mozilla.sccache
 
     env:
-      PACKAGE_FILE: ${{ needs.create-nightly-release.outputs.package_prefix }}-${{ matrix.build_name }}.${{ 'tar.gz' }}
-      CARGO_BUILD_DIR: target/${{ matrix.target }}/release
+      PACKAGE_FILE: ${{ needs.create-nightly-release.outputs.package_prefix }}-${{ matrix.target.name }}.${{ 'tar.gz' }}
+      CARGO_BUILD_DIR: target/${{ matrix.target.name }}/release
+      RUST_BACKTRACE: full
+      RUSTC_WRAPPER: sccache
+      RUSTV: ${{ matrix.rust }}
+      SCCACHE_CACHE_SIZE: 2G
+      SCCACHE_DIR: ${{ matrix.sccache-path }}
+      # SCCACHE_RECACHE: 1 # Uncomment this to clear cache, then comment it back out
 
-    runs-on: ${{ matrix.os }}
+    runs-on: ${{ matrix.target.gh_env }}
     steps:
       - name: Clone repo
         uses: actions/checkout@v2
@@ -101,7 +110,7 @@ jobs:
         uses: actions-rs/cargo@v1
         with:
           command: build
-          args: --package rustybot --release ${{ matrix.target && '--target' }} ${{ matrix.target }}
+          args: --package rustybot --release ${{ matrix.target.name }} --target ${{ matrix.target.name }}
         env:
           RUSTFLAGS: ${{ matrix.RUSTFLAGS }}
 
@@ -109,7 +118,7 @@ jobs:
         run: |
           mkdir package
           cp README.md package/README.md
-          cp LICENSE.md package/LICENSE.md
+          cp LICENSE.txt package/LICENSE.txt
 
       - name: Package Linux
         if: runner.os == 'Linux'
@@ -133,7 +142,7 @@ jobs:
         if: runner.os == 'macOS'
         uses: actions/upload-artifact@v2
         with:
-          name: ${{ matrix.build_name }}
+          name: ${{ matrix.target.name }}
           path: |
             ${{ env.CARGO_BUILD_DIR }}/rustybot
             package
@@ -148,12 +157,12 @@ jobs:
       - name: Download aarch64 binary
         uses: actions/download-artifact@v2
         with:
-          name: macos-aarch64
+          name: aarch64-apple-darwin
 
       - name: Download x86_64 binary
         uses: actions/download-artifact@v2
         with:
-          name: macos-x86_64
+          name: x86_64-apple-darwin
 
       - name: Make universal binary
         run: |
