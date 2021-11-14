@@ -105,7 +105,42 @@ jobs:
     steps:
       - name: Clone repo
         uses: actions/checkout@v2
-
+      - name: Install sccache (ubuntu-latest)
+        if: matrix.target.gh_env == 'ubuntu-latest'
+        env:
+          LINK: https://github.com/mozilla/sccache/releases/download
+          SCCACHE_VERSION: 0.2.13
+        run: |
+          SCCACHE_FILE=sccache-$SCCACHE_VERSION-x86_64-unknown-linux-musl
+          mkdir -p $HOME/.local/bin
+          curl -L "$LINK/$SCCACHE_VERSION/$SCCACHE_FILE.tar.gz" | tar xz
+          mv -f $SCCACHE_FILE/sccache $HOME/.local/bin/sccache
+          echo "$HOME/.local/bin" >> $GITHUB_PATH
+      - name: Install sccache (macos-11)
+        if: matrix.target.gh_env == 'macos-11'
+        run: |
+          brew update
+          brew install sccache
+      - name: Cache cargo registry
+        uses: actions/cache@v2
+        continue-on-error: false
+        with:
+          path: |
+            ~/.cargo/registry
+            ~/.cargo/git
+          key: ${{ matrix.target.name }}-cargo-${{ hashFiles('**/Cargo.lock') }}
+          restore-keys: |
+            ${{ matrix.target.name }}-cargo-
+      - name: Save sccache
+        uses: actions/cache@v2
+        continue-on-error: false
+        with:
+          path: ${{ matrix.sccache-path }}
+          key: ${{ matrix.target.name }}-sccache-${{ hashFiles('**/Cargo.lock') }}
+          restore-keys: |
+            ${{ matrix.target.name }}-sccache-
+      - name: Start sccache server
+        run: sccache --start-server
       - name: Cargo build
         uses: actions-rs/cargo@v1
         with:
