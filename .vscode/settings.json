@@ -5,6 +5,7 @@
   "rust-client.channel": "nightly",
   "cSpell.words": [
     "aarch",
+    "dotfiles",
     "shellenv"
   ]
 }
