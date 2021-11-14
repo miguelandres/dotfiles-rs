@@ -82,7 +82,9 @@ impl DirectiveData {
 }
 
 /// A parser for action steps, each directive represents a type of Action.
-pub trait Directive<'a, A: Action<'a>> {
+pub trait Directive<'a> {
+  /// Type of action to create
+  type ActionType: Action<'a>;
   /// Returns the name of the directive.
   fn name(&self) -> &str;
   /// Returns the defaults settings as configured.
@@ -92,5 +94,5 @@ pub trait Directive<'a, A: Action<'a>> {
   ///
   /// Returns an Error containing a human readable string in case there
   /// was an issue building the action.
-  fn build_action(&'a self, settings: &Settings, yaml: &Yaml) -> Result<A, String>;
+  fn build_action(&'a self, settings: &Settings, yaml: &Yaml) -> Result<Self::ActionType, String>;
 }

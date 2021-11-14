@@ -194,7 +194,8 @@ impl<F: FileSystem + UnixFileSystem> LinkDirective<F> {
   }
 }
 
-impl<'a, F: FileSystem + UnixFileSystem> Directive<'a, LinkAction<'a, F>> for LinkDirective<F> {
+impl<'a, F: 'a + FileSystem + UnixFileSystem> Directive<'a> for LinkDirective<F> {
+  type ActionType = LinkAction<'a, F>;
   fn name(&self) -> &str {
     self.data.name()
   }
@@ -203,7 +204,7 @@ impl<'a, F: FileSystem + UnixFileSystem> Directive<'a, LinkAction<'a, F>> for Li
     self.data.defaults()
   }
 
-  fn build_action(&'a self, settings: &Settings, yaml: &Yaml) -> Result<LinkAction<'a, F>, String> {
+  fn build_action(&'a self, settings: &Settings, yaml: &Yaml) -> Result<Self::ActionType, String> {
     if let Ok(action) = self.parse_shortened_action(yaml, settings) {
       Ok(action)
     } else {
