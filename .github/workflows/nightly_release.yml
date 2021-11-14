@@ -110,7 +110,7 @@ jobs:
         uses: actions-rs/cargo@v1
         with:
           command: build
-          args: --package rustybot --release ${{ matrix.target.name }} --target ${{ matrix.target.name }}
+          args: --package rustybot --release --target ${{ matrix.target.name }}
         env:
           RUSTFLAGS: ${{ matrix.RUSTFLAGS }}
 
