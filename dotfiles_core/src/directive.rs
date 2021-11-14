@@ -98,3 +98,45 @@ pub trait Directive<'a> {
     yaml: &Yaml,
   ) -> Result<Box<dyn 'a + Action<'a>>, String>;
 }
+
+/// A struct that contains the currently registered directives.
+pub struct DirectiveSet<'a> {
+  /// Set of directives.
+  ///
+  /// This is a hashmap of directive name to the actual directive object, used during parsing.`
+  directives: HashMap<String, Box<dyn Directive<'a>>>,
+}
+
+impl<'a> Default for DirectiveSet<'a> {
+  fn default() -> Self {
+    Self::new()
+  }
+}
+
+impl<'a> DirectiveSet<'a> {
+  /// Create a new directive set
+  pub fn new() -> DirectiveSet<'a> {
+    DirectiveSet {
+      directives: HashMap::new(),
+    }
+  }
+
+  /// Add a new directive
+  ///
+  /// This fails with an error if another directive with the same name already exists.
+  pub fn add(&mut self, dir: Box<dyn Directive<'a>>) -> Result<(), String> {
+    let name = String::from(dir.name());
+    self
+      .directives
+      .try_insert(String::from(name.as_str()), dir)
+      .map_or_else(
+        |_err| {
+          Err(format!(
+            "Cannot add a {} directive since there is another directive with the same name already",
+            name
+          ))
+        },
+        |_box| Ok(()),
+      )
+  }
+}

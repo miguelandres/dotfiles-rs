@@ -20,7 +20,10 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 mod flags;
+use dotfiles_core::create::directive::new_native_create_directive;
+use dotfiles_core::directive::DirectiveSet;
 use dotfiles_core::homebrew_install::action::HomebrewInstallAction;
+use dotfiles_core::link::directive::new_native_link_directive;
 use dotfiles_core::ohmyzsh_install::action::OhMyZshInstallAction;
 use dotfiles_core::Action;
 use flags::FlagParser;
@@ -36,6 +39,9 @@ fn process() -> Result<(), String> {
   if flag_data.install_ohmyzsh {
     OhMyZshInstallAction::new(flag_data.skip_chsh).execute()?;
   }
+  let mut directive_set: DirectiveSet = Default::default();
+  directive_set.add(Box::new(new_native_link_directive()))?;
+  directive_set.add(Box::new(new_native_create_directive()))?;
   Ok(())
 }
 

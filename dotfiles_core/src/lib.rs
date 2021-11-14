@@ -22,6 +22,7 @@
 #![warn(missing_docs)]
 #![deny(rustdoc::broken_intra_doc_links)]
 #![feature(io_error_more)]
+#![feature(map_try_insert)]
 
 //! The core of Dotfiles-rs is basically a set of [directives](
 //! directive::Directive) that can build executable [actions](action::Action)
@@ -43,7 +44,6 @@
 pub mod action;
 pub mod create;
 pub mod directive;
-//pub mod directive_set;
 #[cfg(unix)]
 pub mod homebrew_install;
 pub mod link;
