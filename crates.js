@@ -1,1 +1,1 @@
-window.ALL_CRATES = ["rustybot","rustybot_core"];
+window.ALL_CRATES = ["dotfiles","dotfiles_core"];
