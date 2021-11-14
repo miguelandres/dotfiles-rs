@@ -1,0 +1,176 @@
+name: Release Nightly
+
+on:
+  # Run nightly
+  schedule:
+    - cron: "0 0 * * *"
+
+  # Allow for manual dispatch on GitHub
+  workflow_dispatch:
+
+jobs:
+  create-nightly-release:
+    name: Create Nightly Release
+    runs-on: ubuntu-latest
+    outputs:
+      activity_check: ${{ env.GHA_REPO_ALIVE }}
+      date: ${{ steps.current_time_underscores.outputs.formattedTime }}
+      upload_url: ${{ steps.create_release.outputs.upload_url }}
+      package_prefix: rustybot-nightly-${{ steps.current_time_underscores.outputs.formattedTime }}
+    steps:
+      - name: Activity check
+        run: |
+          :
+          # Based off https://github.community/t/trigger-workflow-if-there-is-commit-in-last-24-hours/17074/3
+          curl -sL https://api.github.com/repos/$GITHUB_REPOSITORY/commits | jq -r '[.[]][0]' > $HOME/commit.json
+          date="$(jq -r '.commit.committer.date' $HOME/commit.json)"
+          timestamp=$(date --utc -d "$date" +%s)
+          days=$(( ( $(date --utc +%s) - $timestamp ) / 86400 ))
+          author="$(jq -r '.commit.committer.name' $HOME/commit.json)"
+          url="$(jq -r '.html_url' $HOME/commit.json)"
+          rm -f $HOME/commit.json
+          echo "Repository activity: $timestamp $author $url"
+          alive=0
+          if [ "${{ github.event_name }}" == "repository_dispatch" ] || [ "${{ github.event_name }}" == "workflow_dispatch" ]; then
+            echo "[WARNING] Ignoring activity check: workflow triggered manually."
+            alive=1
+          elif [[ $days < 1 ]]; then
+            echo Repository active
+            alive=1
+          else
+            echo "[WARNING] Repository not updated: event ${{ github.event_name }} not allowed to modify stale repository."
+          fi
+          if [[ $alive == 1 ]]; then
+            echo "GHA_REPO_ALIVE=true" >> $GITHUB_ENV
+          fi
+        shell: bash
+
+      - name: Get current time with dashes
+        uses: 1466587594/get-current-time@v2
+        id: current_time_dashes
+        with:
+          format: YYYY-MM-DD
+
+      - name: Get current time with underscores
+        uses: 1466587594/get-current-time@v2
+        id: current_time_underscores
+        with:
+          format: YYYY_MM_DD
+
+      - name: Create release
+        if: env.GHA_REPO_ALIVE == 'true'
+        id: create_release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: nightly-${{ steps.current_time_dashes.outputs.formattedTime }}
+          release_name: Nightly ${{ steps.current_time_dashes.outputs.formattedTime }}
+          prerelease: true
+
+  build:
+    name: Build ${{ matrix.build_name }}
+    needs: create-nightly-release
+    if: needs.create-nightly-release.outputs.activity_check == 'true'
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - build_name: linux-x86_64
+            os: ubuntu-latest
+
+          # Mac does two Rust builds to make a universal binary
+          - build_name: macos-x86_64
+            os: macos-11
+            target: x86_64-apple-darwin
+
+          - build_name: macos-aarch64
+            os: macos-11
+            target: aarch64-apple-darwin
+
+    env:
+      PACKAGE_FILE: ${{ needs.create-nightly-release.outputs.package_prefix }}-${{ matrix.build_name }}.${{ 'tar.gz' }}
+      CARGO_BUILD_DIR: target/${{ matrix.target }}/release
+
+    runs-on: ${{ matrix.os }}
+    steps:
+      - name: Clone repo
+        uses: actions/checkout@v2
+
+      - name: Cargo build
+        uses: actions-rs/cargo@v1
+        with:
+          command: build
+          args: --package rustybot --release ${{ matrix.target && '--target' }} ${{ matrix.target }}
+        env:
+          RUSTFLAGS: ${{ matrix.RUSTFLAGS }}
+
+      - name: Package common
+        run: |
+          mkdir package
+          cp README.md package/README.md
+          cp LICENSE.md package/LICENSE.md
+
+      - name: Package Linux
+        if: runner.os == 'Linux'
+        run: |
+          cp ${{ env.CARGO_BUILD_DIR }}/rustybot package/rustybot
+          cd package/
+          tar -czvf ../${{ env.PACKAGE_FILE }} *
+
+      - name: Upload package
+        if: runner.os != 'macOS'
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ needs.create-nightly-release.outputs.upload_url }}
+          asset_path: ./${{ env.PACKAGE_FILE }}
+          asset_name: ${{ env.PACKAGE_FILE }}
+          asset_content_type: ${{ endsWith(env.PACKAGE_FILE, 'tar.gz') && 'application/gzip' || 'application/zip' }}
+
+      - name: Upload macOS build artifact
+        if: runner.os == 'macOS'
+        uses: actions/upload-artifact@v2
+        with:
+          name: ${{ matrix.build_name }}
+          path: |
+            ${{ env.CARGO_BUILD_DIR }}/rustybot
+            package
+
+  build-mac-universal-binary:
+    name: Build macOS universal binary
+    needs: [create-nightly-release, build]
+    runs-on: macos-latest
+    env:
+      PACKAGE_FILE: ${{ needs.create-nightly-release.outputs.package_prefix }}-macos-universal.tar.gz
+    steps:
+      - name: Download aarch64 binary
+        uses: actions/download-artifact@v2
+        with:
+          name: macos-aarch64
+
+      - name: Download x86_64 binary
+        uses: actions/download-artifact@v2
+        with:
+          name: macos-x86_64
+
+      - name: Make universal binary
+        run: |
+          lipo -create -output package/rustybot target/x86_64-apple-darwin/release/rustybot target/aarch64-apple-darwin/release/rustybot
+          chmod +x package/rustybot
+
+      - name: Package macOS
+        run: |
+          cd package
+          tar -czvf ../${{ env.PACKAGE_FILE }} *
+
+      - name: Upload package
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ needs.create-nightly-release.outputs.upload_url }}
+          asset_path: ./${{ env.PACKAGE_FILE }}
+          asset_name: ${{ env.PACKAGE_FILE }}
+          asset_content_type: application/gzip
