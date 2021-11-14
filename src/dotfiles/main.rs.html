@@ -55,6 +55,12 @@
 <span id="55">55</span>
 <span id="56">56</span>
 <span id="57">57</span>
+<span id="58">58</span>
+<span id="59">59</span>
+<span id="60">60</span>
+<span id="61">61</span>
+<span id="62">62</span>
+<span id="63">63</span>
 </pre><pre class="rust"><code><span class="comment">// Copyright (c) 2021-2021 Miguel Barreto and others</span>
 <span class="comment">//</span>
 <span class="comment">// Permission is hereby granted, free of charge, to any person obtaining</span>
@@ -77,7 +83,10 @@
 <span class="comment">// WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.</span>
 
 <span class="kw">mod</span> <span class="ident">flags</span>;
+<span class="kw">use</span> <span class="ident">dotfiles_core::create::directive::new_native_create_directive</span>;
+<span class="kw">use</span> <span class="ident">dotfiles_core::directive::DirectiveSet</span>;
 <span class="kw">use</span> <span class="ident">dotfiles_core::homebrew_install::action::HomebrewInstallAction</span>;
+<span class="kw">use</span> <span class="ident">dotfiles_core::link::directive::new_native_link_directive</span>;
 <span class="kw">use</span> <span class="ident">dotfiles_core::ohmyzsh_install::action::OhMyZshInstallAction</span>;
 <span class="kw">use</span> <span class="ident">dotfiles_core::Action</span>;
 <span class="kw">use</span> <span class="ident">flags::FlagParser</span>;
@@ -93,6 +102,9 @@
   <span class="kw">if</span> <span class="ident">flag_data</span>.<span class="ident">install_ohmyzsh</span> {
     <span class="ident">OhMyZshInstallAction::new</span>(<span class="ident">flag_data</span>.<span class="ident">skip_chsh</span>).<span class="ident">execute</span>()<span class="question-mark">?</span>;
   }
+  <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">directive_set</span>: <span class="ident">DirectiveSet</span> <span class="op">=</span> <span class="ident">Default::default</span>();
+  <span class="ident">directive_set</span>.<span class="ident">add</span>(<span class="ident">Box::new</span>(<span class="ident">new_native_link_directive</span>()))<span class="question-mark">?</span>;
+  <span class="ident">directive_set</span>.<span class="ident">add</span>(<span class="ident">Box::new</span>(<span class="ident">new_native_create_directive</span>()))<span class="question-mark">?</span>;
   <span class="prelude-val">Ok</span>(())
 }
 
