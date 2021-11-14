@@ -23,6 +23,7 @@
 
 extern crate yaml_rust;
 
+use crate::action::Action;
 use crate::directive::initialize_settings_object;
 use crate::directive::Directive;
 use crate::directive::DirectiveData;
@@ -33,6 +34,7 @@ use crate::yaml_util::*;
 use filesystem::FileSystem;
 use filesystem::OsFileSystem;
 use filesystem::UnixFileSystem;
+use std::marker::PhantomData;
 use yaml_rust::Yaml;
 
 /// Name of the link directive
@@ -56,8 +58,8 @@ pub const RELATIVE_SETTING: &str = "relative";
 pub const RESOLVE_SYMLINK_TARGET_SETTING: &str = "resolve_symlink_target";
 
 /// Create a new link directive using the native filesystem
-pub fn new_native_link_directive() -> LinkDirective<OsFileSystem> {
-  LinkDirective::new(OsFileSystem::new())
+pub fn new_native_link_directive<'a>() -> LinkDirective<'a, OsFileSystem> {
+  LinkDirective::<'a>::new(OsFileSystem::new())
 }
 
 /// Initialize the defaults for the LinkDirective.
@@ -86,30 +88,32 @@ pub fn init_directive_data() -> DirectiveData {
 
 /// A directive that can build [LinkAction]s to create directories
 /// in the filesystem.
-pub struct LinkDirective<F: FileSystem> {
+pub struct LinkDirective<'a, F: 'a + FileSystem> {
   fs: Box<F>,
   data: DirectiveData,
+  phantom: PhantomData<&'a F>,
 }
 
-impl<F: FileSystem + UnixFileSystem> LinkDirective<F> {
+impl<'a, F: 'a + FileSystem + UnixFileSystem> LinkDirective<'a, F> {
   /// Returns the [FileSystem] instance being used.
   pub fn fs(&self) -> &F {
     self.fs.as_ref()
   }
 
   /// Create a new [LinkDirective]
-  pub fn new(fs: F) -> LinkDirective<F> {
+  pub fn new(fs: F) -> LinkDirective<'a, F> {
     LinkDirective::<F> {
       fs: Box::new(fs),
       data: init_directive_data(),
+      phantom: PhantomData,
     }
   }
 
   fn parse_full_action(
-    &self,
+    &'a self,
     yaml: &Yaml,
     context_settings: &Settings,
-  ) -> Result<LinkAction<'_, F>, String> {
+  ) -> Result<Box<dyn Action<'a> + 'a>, String> {
     match yaml {
       Yaml::Hash(_) => {
         let path = get_string_setting_from_yaml_or_defaults(
@@ -144,13 +148,13 @@ impl<F: FileSystem + UnixFileSystem> LinkDirective<F> {
           )
         })
         .collect();
-        Ok(LinkAction::new(
-          &self.fs,
+        Ok(Box::new(LinkAction::<'a, F>::new(
+          self.fs.as_ref(),
           path,
           target,
           &action_settings,
           self.data.defaults(),
-        ))
+        )))
       }
       _ => Err(format!(
         "Yaml passed to configure a Link action is not a Hash, thus cannot be parsed: {:?}",
@@ -160,21 +164,21 @@ impl<F: FileSystem + UnixFileSystem> LinkDirective<F> {
   }
 
   fn parse_shortened_action(
-    &self,
+    &'a self,
     yaml: &Yaml,
     context_settings: &Settings,
-  ) -> Result<LinkAction<'_, F>, String> {
+  ) -> Result<Box<dyn Action<'a> + 'a>, String> {
     match yaml {
       Yaml::Hash(hash) => match hash.len() {
         1 => {
           if let (Yaml::String(path), Yaml::String(target)) = hash.front().unwrap() {
-            Ok(LinkAction::new(
+            Ok(Box::new(LinkAction::<'a, F>::new(
               &self.fs,
               path.clone(),
               target.clone(),
               context_settings,
               self.data.defaults(),
-            ))
+            )))
           } else {
             Err(format!(
                         "Yaml passed to configure a short Link action is not a hash of string to string, cant parse: {:?}", yaml
@@ -194,8 +198,7 @@ impl<F: FileSystem + UnixFileSystem> LinkDirective<F> {
   }
 }
 
-impl<'a, F: 'a + FileSystem + UnixFileSystem> Directive<'a> for LinkDirective<F> {
-  type ActionType = LinkAction<'a, F>;
+impl<'a, F: 'a + FileSystem + UnixFileSystem> Directive<'a> for LinkDirective<'a, F> {
   fn name(&self) -> &str {
     self.data.name()
   }
@@ -204,7 +207,11 @@ impl<'a, F: 'a + FileSystem + UnixFileSystem> Directive<'a> for LinkDirective<F>
     self.data.defaults()
   }
 
-  fn build_action(&'a self, settings: &Settings, yaml: &Yaml) -> Result<Self::ActionType, String> {
+  fn build_action(
+    &'a self,
+    settings: &Settings,
+    yaml: &Yaml,
+  ) -> Result<Box<dyn Action<'a> + 'a>, String> {
     if let Ok(action) = self.parse_shortened_action(yaml, settings) {
       Ok(action)
     } else {

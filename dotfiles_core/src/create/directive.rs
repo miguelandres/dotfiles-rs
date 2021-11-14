@@ -22,6 +22,7 @@
 //! This module defines [CreateDirective].
 extern crate yaml_rust;
 
+use crate::action::Action;
 use crate::create::action::CreateAction;
 use crate::directive::initialize_settings_object;
 use crate::directive::Directive;
@@ -81,7 +82,6 @@ impl<'a, F: 'a + FileSystem> CreateDirective<'a, F> {
 }
 
 impl<'a, F: 'a + FileSystem> Directive<'a> for CreateDirective<'a, F> {
-  type ActionType = CreateAction<'a, F>;
   fn name(&self) -> &str {
     self.data.name()
   }
@@ -90,11 +90,15 @@ impl<'a, F: 'a + FileSystem> Directive<'a> for CreateDirective<'a, F> {
     self.data.defaults()
   }
 
-  fn build_action(&'a self, settings: &Settings, yaml: &Yaml) -> Result<Self::ActionType, String> {
-    Ok(CreateAction::<'_, F>::new(
+  fn build_action(
+    &'a self,
+    settings: &Settings,
+    yaml: &Yaml,
+  ) -> Result<Box<dyn Action<'a> + 'a>, String> {
+    Ok(Box::new(CreateAction::<'a, F>::new(
       self.fs(),
       yaml_util::get_string_content_or_keyed_value(yaml, Some(DIR_SETTING))?,
       yaml_util::get_boolean_setting(FORCE_SETTING, settings, self.defaults())?,
-    ))
+    )))
   }
 }
