@@ -7,15 +7,15 @@
     {
       "type": "lldb",
       "request": "launch",
-      "name": "Debug executable 'rustybot'",
+      "name": "Debug executable 'dotfiles'",
       "cargo": {
         "args": [
           "build",
-          "--bin=rustybot",
-          "--package=rustybot"
+          "--bin=dotfiles",
+          "--package=dotfiles"
         ],
         "filter": {
-          "name": "rustybot",
+          "name": "dotfiles",
           "kind": "bin"
         }
       },
@@ -25,16 +25,16 @@
     {
       "type": "lldb",
       "request": "launch",
-      "name": "Debug unit tests in executable 'rustybot'",
+      "name": "Debug unit tests in executable 'dotfiles'",
       "cargo": {
         "args": [
           "test",
           "--no-run",
-          "--bin=rustybot",
-          "--package=rustybot"
+          "--bin=dotfiles",
+          "--package=dotfiles"
         ],
         "filter": {
-          "name": "rustybot",
+          "name": "dotfiles",
           "kind": "bin"
         }
       },
@@ -44,16 +44,16 @@
     {
       "type": "lldb",
       "request": "launch",
-      "name": "Debug unit tests in library 'rustybot_core'",
+      "name": "Debug unit tests in library 'dotfiles_core'",
       "cargo": {
         "args": [
           "test",
           "--no-run",
           "--lib",
-          "--package=rustybot_core"
+          "--package=dotfiles_core"
         ],
         "filter": {
-          "name": "rustybot_core",
+          "name": "dotfiles_core",
           "kind": "lib"
         }
       },
@@ -69,7 +69,7 @@
           "test",
           "--no-run",
           "--test=yaml_util",
-          "--package=rustybot_core"
+          "--package=dotfiles_core"
         ],
         "filter": {
           "name": "yaml_util",
@@ -88,7 +88,7 @@
           "test",
           "--no-run",
           "--test=lib",
-          "--package=rustybot_core"
+          "--package=dotfiles_core"
         ],
         "filter": {
           "name": "lib",

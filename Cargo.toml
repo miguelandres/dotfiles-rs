@@ -1,6 +1,6 @@
 [workspace]
 
 members = [
-  "rustybot",
-  "rustybot_core",
+  "dotfiles",
+  "dotfiles_core",
 ]

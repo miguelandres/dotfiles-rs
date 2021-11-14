@@ -16,7 +16,7 @@ jobs:
       activity_check: ${{ env.GHA_REPO_ALIVE }}
       date: ${{ steps.current_time_underscores.outputs.formattedTime }}
       upload_url: ${{ steps.create_release.outputs.upload_url }}
-      package_prefix: rustybot-nightly-${{ steps.current_time_underscores.outputs.formattedTime }}
+      package_prefix: dotfiles-nightly-${{ steps.current_time_underscores.outputs.formattedTime }}
     steps:
       - name: Activity check
         run: |
@@ -145,7 +145,7 @@ jobs:
         uses: actions-rs/cargo@v1
         with:
           command: build
-          args: --package rustybot --release --target ${{ matrix.target.name }}
+          args: --package dotfiles --release --target ${{ matrix.target.name }}
         env:
           RUSTFLAGS: ${{ matrix.RUSTFLAGS }}
 
@@ -158,7 +158,7 @@ jobs:
       - name: Package Linux
         if: runner.os == 'Linux'
         run: |
-          cp ${{ env.CARGO_BUILD_DIR }}/rustybot package/rustybot
+          cp ${{ env.CARGO_BUILD_DIR }}/dotfiles package/dotfiles
           cd package/
           tar -czvf ../${{ env.PACKAGE_FILE }} *
 
@@ -179,7 +179,7 @@ jobs:
         with:
           name: ${{ matrix.target.name }}
           path: |
-            ${{ env.CARGO_BUILD_DIR }}/rustybot
+            ${{ env.CARGO_BUILD_DIR }}/dotfiles
             package
 
   build-mac-universal-binary:
@@ -201,8 +201,8 @@ jobs:
 
       - name: Make universal binary
         run: |
-          lipo -create -output package/rustybot target/x86_64-apple-darwin/release/rustybot target/aarch64-apple-darwin/release/rustybot
-          chmod +x package/rustybot
+          lipo -create -output package/dotfiles target/x86_64-apple-darwin/release/dotfiles target/aarch64-apple-darwin/release/dotfiles
+          chmod +x package/dotfiles
 
       - name: Package macOS
         run: |

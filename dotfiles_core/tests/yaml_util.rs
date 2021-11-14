@@ -23,7 +23,7 @@
 
 extern crate yaml_rust;
 
-use rustybot_core::yaml_util::*;
+use dotfiles_core::yaml_util::*;
 use yaml_rust::YamlLoader;
 
 const YAML_STRING: &str = "

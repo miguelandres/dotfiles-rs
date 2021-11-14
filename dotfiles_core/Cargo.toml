@@ -1,5 +1,5 @@
 [package]
-name = "rustybot_core"
+name = "dotfiles_core"
 version = "0.1.0"
 authors = ["Miguel Barreto <miguelandres@users.noreply.github.com>"]
 edition = "2018"

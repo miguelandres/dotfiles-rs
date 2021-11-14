@@ -1,4 +1,3 @@
-#![cfg(test)]
 // Copyright (c) 2021-2021 Miguel Barreto and others
 //
 // Permission is hereby granted, free of charge, to any person obtaining
@@ -20,15 +19,39 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-use rustybot_core::action::Action;
+mod flags;
+use dotfiles_core::homebrew_install::action::HomebrewInstallAction;
+use dotfiles_core::ohmyzsh_install::action::OhMyZshInstallAction;
+use dotfiles_core::Action;
+use flags::FlagParser;
+use simplelog::*;
 
-pub fn check_action_fail<'a, A: Action<'a>>(
-  action: &A,
-  error_message: String,
-) -> Result<(), String> {
-  if let Ok(()) = action.execute() {
-    Err(error_message)
-  } else {
-    Ok(())
+fn process() -> Result<(), String> {
+  let flag_parser = FlagParser::new();
+  let flags_vec: Vec<String> = std::env::args().collect();
+  let flag_data = flag_parser.parse_flags(&flags_vec[1..])?;
+  if flag_data.install_homebrew {
+    HomebrewInstallAction::new().execute()?;
+  }
+  if flag_data.install_ohmyzsh {
+    OhMyZshInstallAction::new(flag_data.skip_chsh).execute()?;
+  }
+  Ok(())
+}
+
+fn main() {
+  CombinedLogger::init(vec![TermLogger::new(
+    LevelFilter::Info,
+    Config::default(),
+    TerminalMode::Mixed,
+    ColorChoice::Auto,
+  )])
+  .unwrap();
+  match process() {
+    Ok(_) => log::info!("Process completed successfully"),
+    Err(error) => {
+      log::error!("Processing failed: {}", error);
+      std::process::exit(1);
+    }
   }
 }

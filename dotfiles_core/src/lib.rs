@@ -23,7 +23,7 @@
 #![deny(rustdoc::broken_intra_doc_links)]
 #![feature(io_error_more)]
 
-//! The core of Rustybot is basically a set of [directives](
+//! The core of Dotfiles-rs is basically a set of [directives](
 //! directive::Directive) that can build executable [actions](action::Action)
 //! from configuration sources (Yaml is the only supported configuration source
 //! so far).

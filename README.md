@@ -1,11 +1,11 @@
-# rustybot
+# dotfiles
 
-[![Build Status](https://github.com/miguelandres/rustybot/actions/workflows/rust_build_and_test.yml/badge.svg?branch=main)](https://github.com/miguelandres/rustybot/actions/workflows/rust_build_and_test.yml)
-[![Documentation](https://github.com/miguelandres/rustybot/actions/workflows/rust_doc_generator.yml/badge.svg?branch=main)](https://miguelandres.github.io/rustybot/rustybot_core/)
+[![Build Status](https://github.com/miguelandres/dotfiles/actions/workflows/rust_build_and_test.yml/badge.svg?branch=main)](https://github.com/miguelandres/dotfiles/actions/workflows/rust_build_and_test.yml)
+[![Documentation](https://github.com/miguelandres/dotfiles/actions/workflows/rust_doc_generator.yml/badge.svg?branch=main)](https://miguelandres.github.io/dotfiles/dotfiles_core/)
 
-[Documentation](https://miguelandres.github.io/rustybot/rustybot_core/)
+[Documentation](https://miguelandres.github.io/dotfiles/dotfiles_core/)
 
-Rustybot is an automation framework that can be used for dotfiles configuration.
+Dotfiles-rs is an automation framework that can be used for dotfiles configuration.
 I have taken a lot of *ahem* inspiration *cough* from
 [`anishathalye/dotbot`](https://github.com/anishathalye/dotbot). This is a
 rewrite of `dotbot` to teach myself rust, and also because I find python

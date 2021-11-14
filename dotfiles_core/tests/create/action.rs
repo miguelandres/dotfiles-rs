@@ -21,9 +21,9 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
+use dotfiles_core::action::Action;
+use dotfiles_core::create::action::CreateAction;
 use filesystem::FakeFileSystem;
-use rustybot_core::action::Action;
-use rustybot_core::create::action::CreateAction;
 
 use super::setup_fs;
 use crate::utils::check_action_fail;

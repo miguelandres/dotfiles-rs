@@ -26,13 +26,13 @@ use filesystem::FakeFileSystem;
 use filesystem::FileSystem;
 use filesystem::UnixFileSystem;
 
-use rustybot_core::action::Action;
-use rustybot_core::directive::initialize_settings_object;
-use rustybot_core::directive::Setting;
-use rustybot_core::link::action::LinkAction;
+use dotfiles_core::action::Action;
+use dotfiles_core::directive::initialize_settings_object;
+use dotfiles_core::directive::Setting;
+use dotfiles_core::link::action::LinkAction;
 
-use rustybot_core::directive::Settings;
-use rustybot_core::link::directive::*;
+use dotfiles_core::directive::Settings;
+use dotfiles_core::link::directive::*;
 
 use std::io;
 use std::path::PathBuf;

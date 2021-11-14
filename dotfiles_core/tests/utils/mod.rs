@@ -1,3 +1,4 @@
+#![cfg(test)]
 // Copyright (c) 2021-2021 Miguel Barreto and others
 //
 // Permission is hereby granted, free of charge, to any person obtaining
@@ -19,13 +20,15 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-//! This module contains the base trait for all [Action]s.
+use dotfiles_core::action::Action;
 
-/// An action to be run by a the rustybot runtime.
-pub trait Action<'a> {
-  /// Executes the action.
-  ///
-  /// Returns an error String describing the issue, this string can be used
-  /// to log or display to the user.
-  fn execute(&self) -> Result<(), String>;
+pub fn check_action_fail<'a, A: Action<'a>>(
+  action: &A,
+  error_message: String,
+) -> Result<(), String> {
+  if let Ok(()) = action.execute() {
+    Err(error_message)
+  } else {
+    Ok(())
+  }
 }
