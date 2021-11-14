@@ -1,7 +1,7 @@
 # dotfiles
 
 [![Build Status](https://github.com/miguelandres/dotfiles-rs/actions/workflows/rust_build_and_test.yml/badge.svg?branch=main)](https://github.com/miguelandres/dotfiles/actions/workflows/rust_build_and_test.yml)
-[![Documentation](https://github.com/miguelandres/dotfiles-rs/actions/workflows/rust_doc_generator.yml/badge.svg?branch=main)](https://miguelandres.github.io/dotfiles/dotfiles_core/)
+[![Documentation](https://github.com/miguelandres/dotfiles-rs/actions/workflows/rust_doc_generator.yml/badge.svg?branch=main)](https://miguelandres.github.io/dotfiles-rs/dotfiles_core/)
 
 [Documentation](https://miguelandres.github.io/dotfiles-rs/dotfiles_core/)
 
