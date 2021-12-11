@@ -39,6 +39,8 @@ pub enum Setting {
   Boolean(bool),
   /// A string value for a setting
   String(String),
+  /// An Integer value for a setting
+  Integer(i32),
 }
 
 /// Returns a Settings object from an array as a bit of syntactic sugar
@@ -103,7 +105,7 @@ pub trait Directive<'a> {
 pub struct DirectiveSet<'a> {
   /// Set of directives.
   ///
-  /// This is a hashmap of directive name to the actual directive object, used during parsing.`
+  /// This is a hashmap of directive name to the actual directive object, used during parsing.
   directives: HashMap<String, Box<dyn Directive<'a>>>,
 }
 

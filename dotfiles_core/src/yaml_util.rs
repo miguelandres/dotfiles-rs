@@ -91,7 +91,25 @@ pub fn get_string_setting(
   if let Setting::String(s) = get_setting(name, context_settings, directive_defaults)? {
     Ok(s.clone())
   } else {
-    Err(format!("Setting {} was found but is not boolean", name))
+    Err(format!("Setting {} was found but is not a string", name))
+  }
+}
+
+/// Gets a Int value for the setting named `name`.
+///
+/// First it tries to find a value for the setting in the `context_settings`
+/// argument, if it doesn't contain any it falls back to `directive-defaults`.
+///
+/// Returns an error if no such setting was found in either setting collection.
+pub fn get_int_setting(
+  name: &str,
+  context_settings: &Settings,
+  directive_defaults: &Settings,
+) -> Result<i32, String> {
+  if let Setting::Integer(x) = get_setting(name, context_settings, directive_defaults)? {
+    Ok(x)
+  } else {
+    Err(format!("Setting {} was found but is not an integer", name))
   }
 }
 
@@ -115,6 +133,35 @@ pub fn get_setting(
       "Setting {} couldn't be found in context or defaults",
       name
     ))
+  }
+}
+
+/// Gets a Integer value from YAML or defaults.
+///
+/// First it tries to find a value in `yaml`, if it can't find one then it
+/// falls back to `context_settings` or finally `default_settings`.
+///
+/// # Errors
+/// - Found a setting in YAML but that couldn't be parsed.
+/// - Didn't find a setting matching this name anywhere
+pub fn get_integer_setting_from_yaml_or_defaults(
+  name: &str,
+  yaml: &Yaml,
+  context_settings: &Settings,
+  directive_defaults: &Settings,
+) -> Result<i32, String> {
+  match yaml {
+    Yaml::Hash(hash) => match hash.get(&Yaml::String(String::from(name))) {
+      Some(Yaml::String(s)) => s
+        .parse::<i32>()
+        .map_err(|_| format!("{} is not a valid integer", s)),
+      Some(other_yaml) => Err(format!(
+        "Setting {:} exists but it cannot be parsed: {:?}",
+        name, other_yaml
+      )),
+      None => get_int_setting(name, context_settings, directive_defaults),
+    },
+    _ => get_int_setting(name, context_settings, directive_defaults),
   }
 }
 
