@@ -42,6 +42,8 @@
 //!
 //! - [create]: Create a new directory
 pub mod action;
+#[cfg(unix)]
+pub mod brew;
 pub mod create;
 pub mod directive;
 #[cfg(unix)]

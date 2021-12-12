@@ -220,3 +220,25 @@ pub fn get_string_content_or_keyed_value(yaml: &Yaml, key: Option<&str>) -> Resu
     (yaml, _) => Err(format!("Yaml value is not a string or hash: {:?}", yaml)),
   }
 }
+
+/// Gets a native `Vec<String>` from a Yaml::Array. It errors out if the passed yaml is not an array or if not all the items in the array are plain Yaml Strings
+pub fn get_string_array(yaml: &Yaml, array_name: &str) -> Result<Vec<String>, String> {
+  match yaml {
+    Yaml::Array(arr) => {
+      let mut vec = Vec::<String>::with_capacity(arr.len());
+      for item in arr {
+        match item {
+          Yaml::String(str) => vec.push(str.to_owned()),
+          _ => {
+            return Err(format!(
+              "Not all members of the {} array are Strings",
+              array_name
+            ))
+          }
+        }
+      }
+      Ok(vec)
+    }
+    _ => Err(String::from("Passed Yaml is not an array")),
+  }
+}
