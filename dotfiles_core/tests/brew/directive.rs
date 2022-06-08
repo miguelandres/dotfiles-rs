@@ -20,8 +20,19 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 #![cfg(test)]
-mod brew;
-mod create;
-mod link;
-mod utils;
-mod yaml_util;
+use crate::utils::read_test_yaml;
+
+use dotfiles_core::brew::directive::BrewDirective;
+use dotfiles_core::directive::Settings;
+
+#[test]
+fn brew_directive_parsed() -> Result<(), String> {
+  let default_settings = Settings::new();
+  let yaml = read_test_yaml("directive/brew/plain_functional.yaml")
+    .unwrap()
+    .pop()
+    .unwrap();
+  let directive = BrewDirective::new();
+  let _action = directive.parse_brew_action(&default_settings, &yaml)?;
+  Ok(())
+}
