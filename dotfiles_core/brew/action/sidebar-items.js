@@ -1,0 +1,1 @@
+initSidebarItems({"struct":[["BrewAction","[BrewAction] Installs software using homebrew."]]});
