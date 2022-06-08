@@ -1,0 +1,10 @@
+taps:
+  - homebrew/cask
+  - homebrew/cask-fonts
+  - miguelandres/homebrew-tap
+  - spotify/public
+formulae:
+  - fzf
+  - zsh
+casks:
+  - firefox

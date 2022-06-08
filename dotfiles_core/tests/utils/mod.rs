@@ -21,6 +21,11 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 use dotfiles_core::action::Action;
+use std::path::PathBuf;
+use std::str::FromStr;
+use yaml_rust::ScanError;
+use yaml_rust::Yaml;
+use yaml_rust::YamlLoader;
 
 pub fn check_action_fail<'a, A: Action<'a>>(
   action: &A,
@@ -31,4 +36,14 @@ pub fn check_action_fail<'a, A: Action<'a>>(
   } else {
     Ok(())
   }
+}
+
+/// Reads a yaml file from test resources.
+pub fn read_test_yaml(test_file_path: &str) -> Result<Vec<Yaml>, ScanError> {
+  let base_dir = env!("CARGO_MANIFEST_DIR");
+  let mut file: PathBuf = PathBuf::from_str(base_dir).unwrap();
+  file.push("resources/tests");
+  file.push(test_file_path);
+  let contents = std::fs::read_to_string(&file).unwrap();
+  YamlLoader::load_from_str(&contents)
 }
