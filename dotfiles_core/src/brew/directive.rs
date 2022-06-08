@@ -58,6 +58,13 @@ pub struct BrewDirective<'a> {
   phantom_data: PhantomData<&'a DirectiveData>,
 }
 
+/// Default for [BrewDirective]
+impl<'a> Default for BrewDirective<'a> {
+  fn default() -> Self {
+    Self::new()
+  }
+}
+
 impl<'a> BrewDirective<'a> {
   /// Create a new [BrewDirective]
   pub fn new() -> BrewDirective<'a> {
@@ -67,11 +74,12 @@ impl<'a> BrewDirective<'a> {
     }
   }
 
-  fn parse_full_action(
+  /// Parse a brew action for the following yaml section.
+  pub fn parse_brew_action(
     &'a self,
-    yaml: &Yaml,
     context_settings: &Settings,
-  ) -> Result<Box<dyn Action<'a> + 'a>, String> {
+    yaml: &Yaml,
+  ) -> Result<BrewAction<'a>, String> {
     match yaml {
       Yaml::Hash(hash) => {
         let force_casks = get_boolean_setting_from_yaml_or_defaults(
@@ -89,12 +97,7 @@ impl<'a> BrewDirective<'a> {
         let casks = hash
           .get(&Yaml::String(String::from("cask")))
           .map_or(Ok(Vec::new()), |vec| get_string_array(vec, "cask"))?;
-        Ok(Box::from(BrewAction::new(
-          force_casks,
-          taps,
-          formulae,
-          casks,
-        )))
+        Ok(BrewAction::new(force_casks, taps, formulae, casks))
       }
       _ => Err(format!(
         "Yaml passed to configure a Brew action is not a Hash, thus cannot be parsed: {:?}",
@@ -118,6 +121,6 @@ impl<'a> Directive<'a> for BrewDirective<'a> {
     settings: &Settings,
     yaml: &Yaml,
   ) -> Result<Box<dyn Action<'a> + 'a>, String> {
-    self.parse_full_action(yaml, settings)
+    Ok(Box::new(self.parse_brew_action(settings, yaml)?))
   }
 }

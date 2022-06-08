@@ -25,35 +25,37 @@
 #![cfg(unix)]
 use crate::action::Action;
 use log::info;
+use std::marker::PhantomData;
 use subprocess::Exec;
 use subprocess::ExitStatus;
 
 /// [BrewAction] Installs software using homebrew.
-pub struct BrewAction {
+pub struct BrewAction<'a> {
   force_casks: bool,
   taps: Vec<String>,
   formulae: Vec<String>,
   casks: Vec<String>,
+  phantom_data: PhantomData<&'a String>,
 }
-
-impl BrewAction {
+impl<'a> BrewAction<'a> {
   /// Constructs a new [BrewAction]
   pub fn new(
     force_casks: bool,
     taps: Vec<String>,
     formulae: Vec<String>,
     casks: Vec<String>,
-  ) -> BrewAction {
+  ) -> BrewAction<'a> {
     BrewAction {
       force_casks,
       taps,
       formulae,
       casks,
+      phantom_data: PhantomData,
     }
   }
 }
 
-impl Action<'_> for BrewAction {
+impl Action<'_> for BrewAction<'_> {
   fn execute(&self) -> Result<(), String> {
     for tap in &self.taps {
       info!("Tapping {}", tap);

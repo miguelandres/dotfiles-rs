@@ -111,9 +111,9 @@ impl<'a, F: 'a + FileSystem + UnixFileSystem> LinkDirective<'a, F> {
 
   fn parse_full_action(
     &'a self,
-    yaml: &Yaml,
     context_settings: &Settings,
-  ) -> Result<Box<dyn Action<'a> + 'a>, String> {
+    yaml: &Yaml,
+  ) -> Result<LinkAction<'a, F>, String> {
     match yaml {
       Yaml::Hash(_) => {
         let path = get_string_setting_from_yaml_or_defaults(
@@ -148,13 +148,13 @@ impl<'a, F: 'a + FileSystem + UnixFileSystem> LinkDirective<'a, F> {
           )
         })
         .collect();
-        Ok(Box::new(LinkAction::<'a, F>::new(
+        Ok(LinkAction::<'a, F>::new(
           self.fs.as_ref(),
           path,
           target,
           &action_settings,
           self.data.defaults(),
-        )))
+        ))
       }
       _ => Err(format!(
         "Yaml passed to configure a Link action is not a Hash, thus cannot be parsed: {:?}",
@@ -165,20 +165,20 @@ impl<'a, F: 'a + FileSystem + UnixFileSystem> LinkDirective<'a, F> {
 
   fn parse_shortened_action(
     &'a self,
-    yaml: &Yaml,
     context_settings: &Settings,
-  ) -> Result<Box<dyn Action<'a> + 'a>, String> {
+    yaml: &Yaml,
+  ) -> Result<LinkAction<'a, F>, String> {
     match yaml {
       Yaml::Hash(hash) => match hash.len() {
         1 => {
           if let (Yaml::String(path), Yaml::String(target)) = hash.front().unwrap() {
-            Ok(Box::new(LinkAction::<'a, F>::new(
+            Ok(LinkAction::<'a, F>::new(
               &self.fs,
               path.clone(),
               target.clone(),
               context_settings,
               self.data.defaults(),
-            )))
+            ))
           } else {
             Err(format!(
                         "Yaml passed to configure a short Link action is not a hash of string to string, cant parse: {:?}", yaml
@@ -212,10 +212,10 @@ impl<'a, F: 'a + FileSystem + UnixFileSystem> Directive<'a> for LinkDirective<'a
     settings: &Settings,
     yaml: &Yaml,
   ) -> Result<Box<dyn Action<'a> + 'a>, String> {
-    if let Ok(action) = self.parse_shortened_action(yaml, settings) {
-      Ok(action)
+    if let Ok(action) = self.parse_shortened_action(settings, yaml) {
+      Ok(Box::new(action))
     } else {
-      self.parse_full_action(yaml, settings)
+      Ok(Box::new(self.parse_full_action(settings, yaml)?))
     }
   }
 }
