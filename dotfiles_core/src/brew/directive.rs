@@ -34,8 +34,8 @@ use crate::yaml_util::*;
 use std::marker::PhantomData;
 use yaml_rust::Yaml;
 
-/// Name of the link directive
-pub const DIRECTIVE_NAME: &str = "fetch";
+/// Name of the Brew directive
+pub const DIRECTIVE_NAME: &str = "brew";
 /// force casks to deal with previously installed apps
 pub const FORCE_CASKS_SETTING: &str = "force_casks";
 

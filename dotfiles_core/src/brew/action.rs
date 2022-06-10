@@ -31,10 +31,15 @@ use subprocess::ExitStatus;
 
 /// [BrewAction] Installs software using homebrew.
 pub struct BrewAction<'a> {
-  force_casks: bool,
-  taps: Vec<String>,
-  formulae: Vec<String>,
-  casks: Vec<String>,
+  /// Passes `--force` to `brew install --cask` to prevent the install failure
+  /// when the app is already installed before the cask install.
+  pub force_casks: bool,
+  /// List of repositories to tap into using `brew tap`.
+  pub taps: Vec<String>,
+  /// List of brew formulae to `brew install`, usually command line tools.
+  pub formulae: Vec<String>,
+  /// List of casks to install. Casks usually are macOS apps with some sort of UI or framework dependencies.
+  pub casks: Vec<String>,
   phantom_data: PhantomData<&'a String>,
 }
 impl<'a> BrewAction<'a> {

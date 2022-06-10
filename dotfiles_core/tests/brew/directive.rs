@@ -33,6 +33,32 @@ fn brew_directive_parsed() -> Result<(), String> {
     .pop()
     .unwrap();
   let directive = BrewDirective::new();
-  let _action = directive.parse_brew_action(&default_settings, &yaml)?;
+  let action = directive.parse_brew_action(&default_settings, &yaml)?;
+  assert_eq!(action.force_casks, false);
+  assert_eq!(
+    action.taps,
+    Vec::from([
+      "homebrew/cask",
+      "homebrew/cask-fonts",
+      "miguelandres/homebrew-tap",
+      "spotify/public"
+    ])
+  );
+  assert_eq!(action.casks, Vec::from(["firefox"]));
+  assert_eq!(action.formulae, Vec::from(["fzf", "zsh"]));
+  Ok(())
+}
+
+#[test]
+fn brew_directive_fails_on_invalid_force_casks() -> Result<(), String> {
+  let default_settings = Settings::new();
+  let yaml = read_test_yaml("directive/brew/force_casks_not_boolean.yaml")
+    .unwrap()
+    .pop()
+    .unwrap();
+  let directive = BrewDirective::new();
+  assert!(directive
+    .parse_brew_action(&default_settings, &yaml)
+    .is_err());
   Ok(())
 }
