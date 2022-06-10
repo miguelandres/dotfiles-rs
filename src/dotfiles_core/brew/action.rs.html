@@ -114,6 +114,11 @@
 <span id="107">107</span>
 <span id="108">108</span>
 <span id="109">109</span>
+<span id="110">110</span>
+<span id="111">111</span>
+<span id="112">112</span>
+<span id="113">113</span>
+<span id="114">114</span>
 </pre><pre class="rust"><code><span class="comment">// Copyright (c) 2021-2021 Miguel Barreto and others</span>
 <span class="comment">//</span>
 <span class="comment">// Permission is hereby granted, free of charge, to any person obtaining</span>
@@ -147,10 +152,15 @@
 
 <span class="doccomment">/// [BrewAction] Installs software using homebrew.</span>
 <span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">BrewAction</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span><span class="op">&gt;</span> {
-  <span class="ident">force_casks</span>: <span class="ident">bool</span>,
-  <span class="ident">taps</span>: <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">String</span><span class="op">&gt;</span>,
-  <span class="ident">formulae</span>: <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">String</span><span class="op">&gt;</span>,
-  <span class="ident">casks</span>: <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">String</span><span class="op">&gt;</span>,
+  <span class="doccomment">/// Passes `--force` to `brew install --cask` to prevent the install failure</span>
+  <span class="doccomment">/// when the app is already installed before the cask install.</span>
+  <span class="kw">pub</span> <span class="ident">force_casks</span>: <span class="ident">bool</span>,
+  <span class="doccomment">/// List of repositories to tap into using `brew tap`.</span>
+  <span class="kw">pub</span> <span class="ident">taps</span>: <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">String</span><span class="op">&gt;</span>,
+  <span class="doccomment">/// List of brew formulae to `brew install`, usually command line tools.</span>
+  <span class="kw">pub</span> <span class="ident">formulae</span>: <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">String</span><span class="op">&gt;</span>,
+  <span class="doccomment">/// List of casks to install. Casks usually are macOS apps with some sort of UI or framework dependencies.</span>
+  <span class="kw">pub</span> <span class="ident">casks</span>: <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">String</span><span class="op">&gt;</span>,
   <span class="ident">phantom_data</span>: <span class="ident">PhantomData</span><span class="op">&lt;</span><span class="kw-2">&amp;</span><span class="lifetime">&#39;a</span> <span class="ident">String</span><span class="op">&gt;</span>,
 }
 <span class="kw">impl</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span><span class="op">&gt;</span> <span class="ident">BrewAction</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span><span class="op">&gt;</span> {
@@ -224,5 +234,5 @@
   }
 }
 </code></pre></div>
-</section></div></main><div id="rustdoc-vars" data-root-path="../../../" data-current-crate="dotfiles_core" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.63.0-nightly (5435ed691 2022-06-07)" ></div>
+</section></div></main><div id="rustdoc-vars" data-root-path="../../../" data-current-crate="dotfiles_core" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.63.0-nightly (420c970cb 2022-06-09)" ></div>
 </body></html>
