@@ -41,6 +41,7 @@ pub fn get_boolean_setting_from_yaml_or_defaults(
 ) -> Result<bool, String> {
   match yaml {
     Yaml::Hash(hash) => match hash.get(&Yaml::String(String::from(name))) {
+      Some(Yaml::Boolean(b)) => Ok(b.clone()),
       Some(Yaml::String(s)) => match s.trim().to_ascii_lowercase().as_str() {
         "true" => Ok(true),
         "false" => Ok(false),
@@ -105,7 +106,7 @@ pub fn get_int_setting(
   name: &str,
   context_settings: &Settings,
   directive_defaults: &Settings,
-) -> Result<i32, String> {
+) -> Result<i64, String> {
   if let Setting::Integer(x) = get_setting(name, context_settings, directive_defaults)? {
     Ok(x)
   } else {
@@ -149,11 +150,12 @@ pub fn get_integer_setting_from_yaml_or_defaults(
   yaml: &Yaml,
   context_settings: &Settings,
   directive_defaults: &Settings,
-) -> Result<i32, String> {
+) -> Result<i64, String> {
   match yaml {
     Yaml::Hash(hash) => match hash.get(&Yaml::String(String::from(name))) {
+      Some(Yaml::Integer(i)) => Ok(i.clone()),
       Some(Yaml::String(s)) => s
-        .parse::<i32>()
+        .parse::<i64>()
         .map_err(|_| format!("{} is not a valid integer", s)),
       Some(other_yaml) => Err(format!(
         "Setting {:} exists but it cannot be parsed: {:?}",

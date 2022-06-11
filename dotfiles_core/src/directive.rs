@@ -40,7 +40,7 @@ pub enum Setting {
   /// A string value for a setting
   String(String),
   /// An Integer value for a setting
-  Integer(i32),
+  Integer(i64),
 }
 
 /// Returns a Settings object from an array as a bit of syntactic sugar
