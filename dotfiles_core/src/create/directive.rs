@@ -72,7 +72,7 @@ impl<'a, F: 'a + FileSystem> CreateDirective<'a, F> {
   }
 
   /// Constructs a new instance of the create directive.
-  pub fn new(fs: F) -> CreateDirective<'a, F> {
+  pub fn new(fs: F) -> Self {
     CreateDirective::<'a, F> {
       fs: Box::new(fs),
       data: init_directive_data(),

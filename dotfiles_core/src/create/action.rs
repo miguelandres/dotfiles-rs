@@ -47,9 +47,9 @@ pub struct CreateAction<'a, F: FileSystem> {
   force: bool,
 }
 
-impl<F: FileSystem> CreateAction<'_, F> {
+impl<'a, F: FileSystem> CreateAction<'a, F> {
   /// Constructs a new instance of CreateAction
-  pub fn new(fs: &'_ F, directory: String, force: bool) -> CreateAction<'_, F> {
+  pub fn new(fs: &'a F, directory: String, force: bool) -> Self {
     CreateAction {
       fs,
       directory,

@@ -60,7 +60,7 @@ impl<'a, F: FileSystem + UnixFileSystem> LinkAction<'a, F> {
     target: String,
     context_settings: &'_ Settings,
     defaults: &'_ Settings,
-  ) -> LinkAction<'a, F> {
+  ) -> Self {
     let relink = get_boolean_setting(RELINK_SETTING, context_settings, defaults).unwrap();
     let force = get_boolean_setting(FORCE_SETTING, context_settings, defaults).unwrap();
     let create_parent_dirs =

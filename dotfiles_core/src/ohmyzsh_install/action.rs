@@ -34,7 +34,7 @@ pub struct OhMyZshInstallAction {
 
 impl OhMyZshInstallAction {
   /// Constructs a new [OhMyZshInstallAction]
-  pub fn new(skip_chsh: bool) -> OhMyZshInstallAction {
+  pub fn new(skip_chsh: bool) -> Self {
     OhMyZshInstallAction { skip_chsh }
   }
   /// Returns true if it can find a brew command

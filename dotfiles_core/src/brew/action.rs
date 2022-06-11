@@ -50,7 +50,7 @@ impl<'a> BrewAction<'a> {
     taps: Vec<String>,
     formulae: Vec<String>,
     casks: Vec<String>,
-  ) -> BrewAction<'a> {
+  ) -> Self {
     BrewAction {
       force_casks,
       taps,

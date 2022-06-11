@@ -40,7 +40,7 @@ impl Default for HomebrewInstallAction {
 
 impl HomebrewInstallAction {
   /// Constructs a new [HomebrewInstallAction]
-  pub fn new() -> HomebrewInstallAction {
+  pub fn new() -> Self {
     HomebrewInstallAction {}
   }
   /// Returns true if it can find a brew command

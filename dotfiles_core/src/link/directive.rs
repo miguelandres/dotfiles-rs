@@ -101,7 +101,7 @@ impl<'a, F: 'a + FileSystem + UnixFileSystem> LinkDirective<'a, F> {
   }
 
   /// Create a new [LinkDirective]
-  pub fn new(fs: F) -> LinkDirective<'a, F> {
+  pub fn new(fs: F) -> Self {
     LinkDirective::<F> {
       fs: Box::new(fs),
       data: init_directive_data(),
