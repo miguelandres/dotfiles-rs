@@ -20,37 +20,44 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 #![cfg(test)]
+use crate::create::setup_fs;
 use crate::utils::read_test_yaml;
 
 use dotfiles_core::create::directive::CreateDirective;
 use dotfiles_core::directive::Settings;
+use dotfiles_core::Action;
 use filesystem::FakeFileSystem;
 
 #[test]
 fn create_directive_parsed_from_single_dir_name() -> Result<(), String> {
+  let fs = FakeFileSystem::new();
+  setup_fs(&fs)?;
+  let directive = CreateDirective::new(fs);
   let default_settings = Settings::new();
   let yaml = read_test_yaml("directive/create/plain_directory_name.yaml")
     .unwrap()
     .pop()
     .unwrap();
-  let directive = CreateDirective::new(FakeFileSystem::new());
-  let action = directive.parse_create_action(&default_settings, &yaml)?;
 
+  let action = directive.parse_create_action(&default_settings, &yaml)?;
   assert_eq!(action.directory, "directory");
   assert_eq!(action.force, false);
-  Ok(())
+
+  action.execute()
 }
 
 #[test]
 fn create_directive_parsed_from_full_action() -> Result<(), String> {
+  let fs = FakeFileSystem::new();
+  setup_fs(&fs)?;
+  let directive = CreateDirective::new(fs);
   let default_settings = Settings::new();
   let yaml = read_test_yaml("directive/create/full_action.yaml")
     .unwrap()
     .pop()
     .unwrap();
-  let directive = CreateDirective::new(FakeFileSystem::new());
   let action = directive.parse_create_action(&default_settings, &yaml)?;
-  assert_eq!(action.directory, "dir");
+  assert_eq!(action.directory, "some/dir");
   assert_eq!(action.force, true);
-  Ok(())
+  action.execute()
 }
