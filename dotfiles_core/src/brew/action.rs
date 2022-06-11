@@ -33,13 +33,14 @@ use subprocess::ExitStatus;
 pub struct BrewAction<'a> {
   /// Passes `--force` to `brew install --cask` to prevent the install failure
   /// when the app is already installed before the cask install.
-  pub force_casks: bool,
+  force_casks: bool,
   /// List of repositories to tap into using `brew tap`.
-  pub taps: Vec<String>,
+  taps: Vec<String>,
   /// List of brew formulae to `brew install`, usually command line tools.
-  pub formulae: Vec<String>,
+  formulae: Vec<String>,
+
   /// List of casks to install. Casks usually are macOS apps with some sort of UI or framework dependencies.
-  pub casks: Vec<String>,
+  casks: Vec<String>,
   phantom_data: PhantomData<&'a String>,
 }
 impl<'a> BrewAction<'a> {
@@ -57,6 +58,26 @@ impl<'a> BrewAction<'a> {
       casks,
       phantom_data: PhantomData,
     }
+  }
+
+  /// List of casks to install.
+  pub fn casks(&self) -> &[String] {
+    self.casks.as_ref()
+  }
+
+  /// List of formulae to install.
+  pub fn formulae(&self) -> &[String] {
+    self.formulae.as_ref()
+  }
+
+  /// List of taps to tap into.
+  pub fn taps(&self) -> &[String] {
+    self.taps.as_ref()
+  }
+
+  /// Whether to pass `--force` to cask installation.
+  pub fn force_casks(&self) -> bool {
+    self.force_casks
   }
 }
 

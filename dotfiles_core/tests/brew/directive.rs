@@ -34,9 +34,9 @@ fn brew_directive_parsed() -> Result<(), String> {
     .unwrap();
   let directive = BrewDirective::new();
   let action = directive.parse_brew_action(&default_settings, &yaml)?;
-  assert_eq!(action.force_casks, true);
+  assert_eq!(action.force_casks(), true);
   assert_eq!(
-    action.taps,
+    action.taps(),
     Vec::from([
       "homebrew/cask",
       "homebrew/cask-fonts",
@@ -44,7 +44,7 @@ fn brew_directive_parsed() -> Result<(), String> {
       "spotify/public"
     ])
   );
-  assert_eq!(action.casks, Vec::from(["firefox"]));
-  assert_eq!(action.formulae, Vec::from(["fzf", "zsh"]));
+  assert_eq!(action.casks(), Vec::from(["firefox"]));
+  assert_eq!(action.formulae(), Vec::from(["fzf", "zsh"]));
   Ok(())
 }

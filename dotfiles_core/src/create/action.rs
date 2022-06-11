@@ -38,13 +38,13 @@ pub struct CreateAction<'a, F: FileSystem> {
   /// in unit tests.
   fs: &'a F,
   /// Directory to create. Can be absolute or relative.
-  pub directory: String,
+  directory: String,
   /// Force creation of the directory and all its parents if they do not
   /// exist already.
   ///
   /// Setting [`force`](CreateAction::force) to `true` is equivalent to using
   /// the `-p` flag in `mkdir`.
-  pub force: bool,
+  force: bool,
 }
 
 impl<F: FileSystem> CreateAction<'_, F> {

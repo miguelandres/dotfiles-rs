@@ -40,8 +40,8 @@ fn create_directive_parsed_from_single_dir_name() -> Result<(), String> {
     .unwrap();
 
   let action = directive.parse_create_action(&default_settings, &yaml)?;
-  assert_eq!(action.directory, "directory");
-  assert_eq!(action.force, false);
+  assert_eq!(action.directory(), "directory");
+  assert_eq!(action.force(), false);
 
   action.execute()
 }
@@ -57,7 +57,7 @@ fn create_directive_parsed_from_full_action() -> Result<(), String> {
     .pop()
     .unwrap();
   let action = directive.parse_create_action(&default_settings, &yaml)?;
-  assert_eq!(action.directory, "some/dir");
-  assert_eq!(action.force, true);
+  assert_eq!(action.directory(), "some/dir");
+  assert_eq!(action.force(), true);
   action.execute()
 }
