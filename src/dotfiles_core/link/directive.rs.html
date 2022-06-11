@@ -226,6 +226,7 @@
 <span id="219">219</span>
 <span id="220">220</span>
 <span id="221">221</span>
+<span id="222">222</span>
 </pre><pre class="rust"><code><span class="comment">// Copyright (c) 2021-2021 Miguel Barreto and others</span>
 <span class="comment">//</span>
 <span class="comment">// Permission is hereby granted, free of charge, to any person obtaining</span>
@@ -391,7 +392,8 @@
     }
   }
 
-  <span class="kw">fn</span> <span class="ident">parse_shortened_action</span>(
+  <span class="doccomment">/// Parse a shortened action with only link name to target name</span>
+  <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">parse_shortened_action</span>(
     <span class="kw-2">&amp;</span><span class="lifetime">&#39;a</span> <span class="self">self</span>,
     <span class="ident">context_settings</span>: <span class="kw-2">&amp;</span><span class="ident">Settings</span>,
     <span class="ident">yaml</span>: <span class="kw-2">&amp;</span><span class="ident">Yaml</span>,
