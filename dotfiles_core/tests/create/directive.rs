@@ -1,5 +1,3 @@
-#![cfg(test)]
-
 // Copyright (c) 2021-2021 Miguel Barreto and others
 //
 // Permission is hereby granted, free of charge, to any person obtaining
@@ -21,24 +19,38 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-mod action;
-mod directive;
+#![cfg(test)]
+use crate::utils::read_test_yaml;
 
+use dotfiles_core::create::directive::CreateDirective;
+use dotfiles_core::directive::Settings;
 use filesystem::FakeFileSystem;
-use filesystem::FileSystem;
-use std::io;
 
-fn setup_fs_internal(fs: &FakeFileSystem) -> io::Result<()> {
-  fs.create_dir_all("/home/user/")?;
-  fs.create_dir("/system")?;
-  fs.set_readonly("/system", true)?;
-  fs.set_current_dir("/home/user/")?;
+#[test]
+fn create_directive_parsed_from_single_dir_name() -> Result<(), String> {
+  let default_settings = Settings::new();
+  let yaml = read_test_yaml("directive/create/plain_directory_name.yaml")
+    .unwrap()
+    .pop()
+    .unwrap();
+  let directive = CreateDirective::new(FakeFileSystem::new());
+  let action = directive.parse_create_action(&default_settings, &yaml)?;
+
+  assert_eq!(action.directory, "directory");
+  assert_eq!(action.force, false);
   Ok(())
 }
 
-pub fn setup_fs(fs: &FakeFileSystem) -> Result<(), String> {
-  if let Err(io_error) = setup_fs_internal(fs) {
-    return Err(io_error.to_string());
-  }
+#[test]
+fn create_directive_parsed_from_full_action() -> Result<(), String> {
+  let default_settings = Settings::new();
+  let yaml = read_test_yaml("directive/create/full_action.yaml")
+    .unwrap()
+    .pop()
+    .unwrap();
+  let directive = CreateDirective::new(FakeFileSystem::new());
+  let action = directive.parse_create_action(&default_settings, &yaml)?;
+  assert_eq!(action.directory, "dir");
+  assert_eq!(action.force, true);
   Ok(())
 }

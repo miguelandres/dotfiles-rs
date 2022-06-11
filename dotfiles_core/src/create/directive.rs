@@ -79,6 +79,23 @@ impl<'a, F: 'a + FileSystem> CreateDirective<'a, F> {
       phantom: PhantomData,
     }
   }
+  /// Parses a create action from a yaml file
+  pub fn parse_create_action(
+    &'a self,
+    settings: &std::collections::HashMap<String, Setting>,
+    yaml: &Yaml,
+  ) -> Result<CreateAction<F>, String> {
+    Ok(CreateAction::<'a, F>::new(
+      self.fs(),
+      yaml_util::get_string_content_or_keyed_value(yaml, Some(DIR_SETTING))?,
+      yaml_util::get_boolean_setting_from_yaml_or_defaults(
+        FORCE_SETTING,
+        yaml,
+        settings,
+        self.defaults(),
+      )?,
+    ))
+  }
 }
 
 impl<'a, F: 'a + FileSystem> Directive<'a> for CreateDirective<'a, F> {
@@ -95,10 +112,6 @@ impl<'a, F: 'a + FileSystem> Directive<'a> for CreateDirective<'a, F> {
     settings: &Settings,
     yaml: &Yaml,
   ) -> Result<Box<dyn Action<'a> + 'a>, String> {
-    Ok(Box::new(CreateAction::<'a, F>::new(
-      self.fs(),
-      yaml_util::get_string_content_or_keyed_value(yaml, Some(DIR_SETTING))?,
-      yaml_util::get_boolean_setting(FORCE_SETTING, settings, self.defaults())?,
-    )))
+    Ok(Box::new(self.parse_create_action(settings, yaml)?))
   }
 }
