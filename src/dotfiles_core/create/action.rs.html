@@ -144,13 +144,13 @@
   <span class="doccomment">/// in unit tests.</span>
   <span class="ident">fs</span>: <span class="kw-2">&amp;</span><span class="lifetime">&#39;a</span> <span class="ident">F</span>,
   <span class="doccomment">/// Directory to create. Can be absolute or relative.</span>
-  <span class="ident">directory</span>: <span class="ident">String</span>,
+  <span class="kw">pub</span> <span class="ident">directory</span>: <span class="ident">String</span>,
   <span class="doccomment">/// Force creation of the directory and all its parents if they do not</span>
   <span class="doccomment">/// exist already.</span>
   <span class="doccomment">///</span>
   <span class="doccomment">/// Setting [`force`](CreateAction::force) to `true` is equivalent to using</span>
   <span class="doccomment">/// the `-p` flag in `mkdir`.</span>
-  <span class="ident">force</span>: <span class="ident">bool</span>,
+  <span class="kw">pub</span> <span class="ident">force</span>: <span class="ident">bool</span>,
 }
 
 <span class="kw">impl</span><span class="op">&lt;</span><span class="ident">F</span>: <span class="ident">FileSystem</span><span class="op">&gt;</span> <span class="ident">CreateAction</span><span class="op">&lt;</span><span class="lifetime">&#39;_</span>, <span class="ident">F</span><span class="op">&gt;</span> {
