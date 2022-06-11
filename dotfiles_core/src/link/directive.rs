@@ -163,7 +163,8 @@ impl<'a, F: 'a + FileSystem + UnixFileSystem> LinkDirective<'a, F> {
     }
   }
 
-  fn parse_shortened_action(
+  /// Parse a shortened action with only link name to target name
+  pub fn parse_shortened_action(
     &'a self,
     context_settings: &Settings,
     yaml: &Yaml,
