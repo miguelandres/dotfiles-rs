@@ -21,6 +21,9 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 use dotfiles_core::action::Action;
+use filesystem::FakeFileSystem;
+use filesystem::FileSystem;
+use std::io;
 use std::path::PathBuf;
 use std::str::FromStr;
 use yaml_rust::ScanError;
@@ -46,4 +49,20 @@ pub fn read_test_yaml(test_file_path: &str) -> Result<Vec<Yaml>, ScanError> {
   file.push(test_file_path);
   let contents = std::fs::read_to_string(&file).unwrap();
   YamlLoader::load_from_str(&contents)
+}
+
+fn setup_fs_internal(fs: &FakeFileSystem) -> io::Result<()> {
+  fs.create_dir_all("/home/user/")?;
+  fs.create_dir("/system")?;
+  fs.set_readonly("/system", true)?;
+  fs.set_current_dir("/home/user/")?;
+  Ok(())
+}
+
+/// Setups a test FakeFileSystem
+pub fn setup_fs(fs: &FakeFileSystem) -> Result<(), String> {
+  if let Err(io_error) = setup_fs_internal(fs) {
+    return Err(io_error.to_string());
+  }
+  Ok(())
 }

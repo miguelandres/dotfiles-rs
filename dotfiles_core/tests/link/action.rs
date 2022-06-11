@@ -22,6 +22,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 use crate::utils::check_action_fail;
+use crate::utils::setup_fs;
 use filesystem::FakeFileSystem;
 use filesystem::FileSystem;
 use filesystem::UnixFileSystem;
@@ -34,23 +35,7 @@ use dotfiles_core::link::action::LinkAction;
 use dotfiles_core::directive::Settings;
 use dotfiles_core::link::directive::*;
 
-use std::io;
 use std::path::PathBuf;
-
-fn setup_fs_internal<F: FileSystem + UnixFileSystem>(fs: &F) -> io::Result<()> {
-  fs.create_dir_all("/home/user/")?;
-  fs.create_dir("/system")?;
-  fs.set_readonly("/system", true)?;
-  fs.set_current_dir("/home/user/")?;
-  Ok(())
-}
-
-fn setup_fs<F: FileSystem + UnixFileSystem>(fs: &F) -> Result<(), String> {
-  if let Err(io_error) = setup_fs_internal(fs) {
-    return Err(io_error.to_string());
-  }
-  Ok(())
-}
 
 #[test]
 fn link_fails_on_nonexistent_path() -> Result<(), String> {

@@ -25,8 +25,7 @@ use dotfiles_core::action::Action;
 use dotfiles_core::create::action::CreateAction;
 use filesystem::FakeFileSystem;
 
-use super::setup_fs;
-use crate::utils::check_action_fail;
+use crate::utils::{check_action_fail, setup_fs};
 
 #[test]
 fn create_dir_fails_on_nonexistent_path() -> Result<(), String> {

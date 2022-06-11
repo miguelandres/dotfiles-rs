@@ -20,8 +20,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 #![cfg(test)]
-use crate::create::setup_fs;
-use crate::utils::read_test_yaml;
+use crate::utils::{read_test_yaml, setup_fs};
 
 use dotfiles_core::create::directive::CreateDirective;
 use dotfiles_core::directive::Settings;
