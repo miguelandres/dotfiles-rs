@@ -255,7 +255,7 @@
     <span class="ident">target</span>: <span class="ident">String</span>,
     <span class="ident">context_settings</span>: <span class="kw-2">&amp;</span><span class="lifetime">&#39;_</span> <span class="ident">Settings</span>,
     <span class="ident">defaults</span>: <span class="kw-2">&amp;</span><span class="lifetime">&#39;_</span> <span class="ident">Settings</span>,
-  ) -&gt; <span class="ident">LinkAction</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span>, <span class="ident">F</span><span class="op">&gt;</span> {
+  ) -&gt; <span class="self">Self</span> {
     <span class="kw">let</span> <span class="ident">relink</span> <span class="op">=</span> <span class="ident">get_boolean_setting</span>(<span class="ident">RELINK_SETTING</span>, <span class="ident">context_settings</span>, <span class="ident">defaults</span>).<span class="ident">unwrap</span>();
     <span class="kw">let</span> <span class="ident">force</span> <span class="op">=</span> <span class="ident">get_boolean_setting</span>(<span class="ident">FORCE_SETTING</span>, <span class="ident">context_settings</span>, <span class="ident">defaults</span>).<span class="ident">unwrap</span>();
     <span class="kw">let</span> <span class="ident">create_parent_dirs</span> <span class="op">=</span>
@@ -382,5 +382,5 @@
   }
 }
 </code></pre></div>
-</section></div></main><div id="rustdoc-vars" data-root-path="../../../" data-current-crate="dotfiles_core" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.63.0-nightly (ec55c6130 2022-06-10)" ></div>
+</section></div></main><div id="rustdoc-vars" data-root-path="../../../" data-current-crate="dotfiles_core" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.63.0-nightly (99930ac7f 2022-06-11)" ></div>
 </body></html>
