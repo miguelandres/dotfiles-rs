@@ -120,7 +120,7 @@ impl<'a> Directive<'a> for BrewDirective<'a> {
     &'a self,
     settings: &Settings,
     yaml: &Yaml,
-  ) -> Result<Box<dyn Action<'a> + 'a>, String> {
-    Ok(Box::new(self.parse_brew_action(settings, yaml)?))
+  ) -> Result<Vec<Box<(dyn Action<'a> + 'a)>>, std::string::String> {
+    Ok(vec![Box::new(self.parse_brew_action(settings, yaml)?)])
   }
 }

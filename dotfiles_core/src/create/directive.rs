@@ -32,7 +32,9 @@ use crate::directive::Settings;
 use crate::yaml_util;
 use filesystem::FileSystem;
 use filesystem::OsFileSystem;
+
 use std::marker::PhantomData;
+use std::vec::Vec;
 use yaml_rust::Yaml;
 
 /// Constant for the name of the `create` directive.
@@ -96,6 +98,36 @@ impl<'a, F: 'a + FileSystem> CreateDirective<'a, F> {
       )?,
     ))
   }
+
+  /// Parses a list of create actions from a yaml file
+  pub fn parse_create_action_list(
+    &'a self,
+    settings: &std::collections::HashMap<String, Setting>,
+    yaml: &Yaml,
+  ) -> Result<Vec<CreateAction<F>>, String> {
+    let actions: Vec<Result<CreateAction<F>, String>>;
+    match yaml {
+      Yaml::Array(arr) => {
+        actions = arr
+          .iter()
+          .map(|yaml_item| self.parse_create_action(settings, yaml_item))
+          .collect();
+        if let Some(Err(error_string)) = actions.iter().find(|res| res.is_err()) {
+          Err(error_string.to_string())
+        } else {
+          Ok(
+            actions
+              .into_iter()
+              .map(|res_action| res_action.unwrap())
+              .collect(),
+          )
+        }
+      }
+      _ => Err(
+        "create directive expects an array of create actions, did not find an array.".to_string(),
+      ),
+    }
+  }
 }
 
 impl<'a, F: 'a + FileSystem> Directive<'a> for CreateDirective<'a, F> {
@@ -111,7 +143,16 @@ impl<'a, F: 'a + FileSystem> Directive<'a> for CreateDirective<'a, F> {
     &'a self,
     settings: &Settings,
     yaml: &Yaml,
-  ) -> Result<Box<dyn Action<'a> + 'a>, String> {
-    Ok(Box::new(self.parse_create_action(settings, yaml)?))
+  ) -> Result<Vec<Box<(dyn Action<'a> + 'a)>>, std::string::String> {
+    self.parse_create_action_list(settings, yaml).map(|vec| {
+      let result: Vec<Box<(dyn Action<'a> + 'a)>> = vec
+        .into_iter()
+        .map(|action| {
+          let boxed: Box<(dyn Action<'a> + 'a)> = Box::new(action);
+          boxed
+        })
+        .collect();
+      result
+    })
   }
 }

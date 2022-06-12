@@ -98,7 +98,7 @@ pub trait Directive<'a> {
     &'a self,
     settings: &Settings,
     yaml: &Yaml,
-  ) -> Result<Box<dyn 'a + Action<'a>>, String>;
+  ) -> Result<Vec<Box<dyn 'a + Action<'a>>>, String>;
 }
 
 /// A struct that contains the currently registered directives.

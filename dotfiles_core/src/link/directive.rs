@@ -197,6 +197,49 @@ impl<'a, F: 'a + FileSystem + UnixFileSystem> LinkDirective<'a, F> {
       )),
     }
   }
+
+  /// Parses a single link action from yaml
+  pub fn parse_link_action(
+    &'a self,
+    settings: &Settings,
+    yaml: &Yaml,
+  ) -> Result<LinkAction<'a, F>, String> {
+    if let Ok(action) = self.parse_shortened_action(settings, yaml) {
+      Ok(action)
+    } else {
+      Ok(self.parse_full_action(settings, yaml)?)
+    }
+  }
+
+  /// Parses a list of link actions from a yaml file
+  pub fn parse_link_action_list(
+    &'a self,
+    settings: &std::collections::HashMap<String, Setting>,
+    yaml: &Yaml,
+  ) -> Result<Vec<LinkAction<F>>, String> {
+    let actions: Vec<Result<LinkAction<F>, String>>;
+    match yaml {
+      Yaml::Array(arr) => {
+        actions = arr
+          .iter()
+          .map(|yaml_item| self.parse_link_action(settings, yaml_item))
+          .collect();
+        if let Some(Err(error_string)) = actions.iter().find(|res| res.is_err()) {
+          Err(error_string.to_string())
+        } else {
+          Ok(
+            actions
+              .into_iter()
+              .map(|res_action| res_action.unwrap())
+              .collect(),
+          )
+        }
+      }
+      _ => {
+        Err("create directive expects an array of link actions, did not find an array.".to_string())
+      }
+    }
+  }
 }
 
 impl<'a, F: 'a + FileSystem + UnixFileSystem> Directive<'a> for LinkDirective<'a, F> {
@@ -212,11 +255,16 @@ impl<'a, F: 'a + FileSystem + UnixFileSystem> Directive<'a> for LinkDirective<'a
     &'a self,
     settings: &Settings,
     yaml: &Yaml,
-  ) -> Result<Box<dyn Action<'a> + 'a>, String> {
-    if let Ok(action) = self.parse_shortened_action(settings, yaml) {
-      Ok(Box::new(action))
-    } else {
-      Ok(Box::new(self.parse_full_action(settings, yaml)?))
-    }
+  ) -> Result<Vec<Box<(dyn Action<'a> + 'a)>>, std::string::String> {
+    self.parse_link_action_list(settings, yaml).map(|vec| {
+      let result: Vec<Box<(dyn Action<'a> + 'a)>> = vec
+        .into_iter()
+        .map(|action| {
+          let boxed: Box<(dyn Action<'a> + 'a)> = Box::new(action);
+          boxed
+        })
+        .collect();
+      result
+    })
   }
 }
