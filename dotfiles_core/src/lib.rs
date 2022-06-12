@@ -46,6 +46,7 @@ pub mod action;
 pub mod brew;
 pub mod create;
 pub mod directive;
+pub mod exec;
 #[cfg(unix)]
 pub mod homebrew_install;
 pub mod link;
