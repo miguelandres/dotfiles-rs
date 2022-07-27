@@ -25,12 +25,13 @@ use std::{collections, marker::PhantomData};
 
 use yaml_rust::Yaml;
 
-use crate::{
+use dotfiles_core::{
   check_action_list_or_err,
   directive::{initialize_settings_object, DirectiveData},
-  exec::action::ExecAction,
   yaml_util, Action, Directive, Setting, Settings,
 };
+
+use crate::exec::action::ExecAction;
 
 /// Name of the Exec directive
 pub const DIRECTIVE_NAME: &str = "exec";

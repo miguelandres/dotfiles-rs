@@ -6,6 +6,7 @@ edition = "2018"
 
 [dependencies]
 dotfiles_core = {path = "../dotfiles_core"}
+dotfiles_actions = {path = "../dotfiles_actions"}
 log = "0.4.14"
 itertools = "0.10.1"
 simplelog = "^0.10.0"

@@ -24,7 +24,7 @@
 
 extern crate yaml_rust;
 
-use crate::action::Action;
+use dotfiles_core::action::Action;
 use filesystem::FileSystem;
 use log::error;
 use log::info;

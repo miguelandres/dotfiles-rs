@@ -20,4 +20,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 #![cfg(test)]
-mod yaml_util;
+mod brew;
+mod create;
+mod link;
+mod utils;

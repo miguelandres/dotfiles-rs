@@ -22,15 +22,15 @@
 //! This module defines [CreateDirective].
 extern crate yaml_rust;
 
-use crate::action::Action;
-use crate::check_action_list_or_err;
 use crate::create::action::CreateAction;
-use crate::directive::initialize_settings_object;
-use crate::directive::Directive;
-use crate::directive::DirectiveData;
-use crate::directive::Setting;
-use crate::directive::Settings;
-use crate::yaml_util;
+use dotfiles_core::action::Action;
+use dotfiles_core::check_action_list_or_err;
+use dotfiles_core::directive::initialize_settings_object;
+use dotfiles_core::directive::Directive;
+use dotfiles_core::directive::DirectiveData;
+use dotfiles_core::directive::Setting;
+use dotfiles_core::directive::Settings;
+use dotfiles_core::yaml_util;
 use filesystem::FileSystem;
 use filesystem::OsFileSystem;
 

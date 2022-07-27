@@ -36,22 +36,8 @@
 //! The base traits and classes for these building blocks can be found in the
 //! [action] and [directive] modules. The [yaml_util] module is a set of helper
 //! functions for Directives to parse configuration.
-//!
-//! Finally all concrete actions and directives can be found in the following
-//! modules:
-//!
-//! - [create]: Create a new directory
 pub mod action;
-#[cfg(unix)]
-pub mod brew;
-pub mod create;
 pub mod directive;
-pub mod exec;
-#[cfg(unix)]
-pub mod homebrew_install;
-pub mod link;
-#[cfg(unix)]
-pub mod ohmyzsh_install;
 pub mod yaml_util;
 
 pub use action::Action;

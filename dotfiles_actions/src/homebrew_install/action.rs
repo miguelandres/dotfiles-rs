@@ -23,7 +23,7 @@
 //! homebrew on a macOS computer
 
 #![cfg(unix)]
-use crate::action::Action;
+use dotfiles_core::action::Action;
 use log::info;
 use std::process::Command;
 use subprocess::Exec;

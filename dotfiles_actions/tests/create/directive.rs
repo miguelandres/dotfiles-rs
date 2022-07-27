@@ -22,7 +22,7 @@
 #![cfg(test)]
 use crate::utils::{read_test_yaml, setup_fs};
 
-use dotfiles_core::create::directive::CreateDirective;
+use dotfiles_actions::create::directive::CreateDirective;
 use dotfiles_core::directive::Settings;
 use dotfiles_core::Action;
 use filesystem::FakeFileSystem;

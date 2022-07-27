@@ -26,7 +26,7 @@ use std::marker::PhantomData;
 use subprocess::Exec;
 use subprocess::ExitStatus;
 
-use crate::Action;
+use dotfiles_core::Action;
 
 /// [ExecAction] Installs software using homebrew.
 pub struct ExecAction<'a> {

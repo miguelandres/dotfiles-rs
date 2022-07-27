@@ -19,5 +19,35 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-#![cfg(test)]
-mod yaml_util;
+#![warn(missing_docs)]
+#![deny(rustdoc::broken_intra_doc_links)]
+#![feature(io_error_more)]
+#![feature(map_try_insert)]
+
+//! The core of Dotfiles-rs is basically a set of [directives](
+//! directive::Directive) that can build executable [actions](action::Action)
+//! from configuration sources (Yaml is the only supported configuration source
+//! so far).
+//!
+//! Directives are responsible for parsing configuration from the configuration
+//! source, applying default [settings](directive::Settings) if necessary, and
+//! using these to build actions that can be executed.
+//!
+//! The base traits and classes for these building blocks can be found in the
+//! [action] and [directive] modules. The [yaml_util] module is a set of helper
+//! functions for Directives to parse configuration.
+//!
+//! Finally all concrete actions and directives can be found in the following
+//! modules:
+//!
+//! - [create]: Create a new directory
+#[cfg(unix)]
+pub mod brew;
+pub mod create;
+pub mod exec;
+#[cfg(unix)]
+pub mod homebrew_install;
+#[cfg(unix)]
+pub mod link;
+#[cfg(unix)]
+pub mod ohmyzsh_install;

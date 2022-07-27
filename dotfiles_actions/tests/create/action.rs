@@ -21,8 +21,8 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
+use dotfiles_actions::create::action::CreateAction;
 use dotfiles_core::action::Action;
-use dotfiles_core::create::action::CreateAction;
 use filesystem::FakeFileSystem;
 
 use crate::utils::{check_action_fail, setup_fs};

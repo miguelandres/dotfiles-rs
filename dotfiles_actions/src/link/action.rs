@@ -22,10 +22,10 @@
 //! This module contains the [LinkAction] that creates a new symlink
 //! when executed
 
-use crate::action::Action;
-use crate::directive::Settings;
 use crate::link::directive::*;
-use crate::yaml_util::get_boolean_setting;
+use dotfiles_core::action::Action;
+use dotfiles_core::directive::Settings;
+use dotfiles_core::yaml_util::get_boolean_setting;
 use filesystem::FileSystem;
 use filesystem::UnixFileSystem;
 use log::error;

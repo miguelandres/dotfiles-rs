@@ -22,7 +22,7 @@
 //! This module contains the [OhMyZshInstallAction] that sets up ohmyzsh
 
 #![cfg(unix)]
-use crate::action::Action;
+use dotfiles_core::action::Action;
 use std::process::Command;
 use subprocess::Exec;
 use subprocess::ExitStatus;

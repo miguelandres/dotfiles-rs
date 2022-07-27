@@ -21,30 +21,33 @@
 
 #![cfg(test)]
 use crate::utils::read_test_yaml;
+use crate::utils::setup_fs;
 
-use dotfiles_core::brew::directive::BrewDirective;
+use dotfiles_actions::link::directive::LinkDirective;
 use dotfiles_core::directive::Settings;
+use dotfiles_core::Action;
+use filesystem::FakeFileSystem;
+use filesystem::FileSystem;
 
 #[test]
-fn brew_directive_parsed() -> Result<(), String> {
+fn link_directive_parsed_from_plain_link() -> Result<(), String> {
+  let fs = FakeFileSystem::new();
+  setup_fs(&fs)?;
+  fs.create_file("/home/user/the_file", String::from("aaa").as_bytes())
+    .unwrap();
+  let directive = LinkDirective::new(fs);
   let default_settings = Settings::new();
-  let yaml = read_test_yaml("directive/brew/plain_functional.yaml")
+  let yaml = read_test_yaml("directive/link/plain_link.yaml")
     .unwrap()
     .pop()
     .unwrap();
-  let directive = BrewDirective::new();
-  let action = directive.parse_brew_action(&default_settings, &yaml)?;
-  assert_eq!(action.force_casks(), true);
-  assert_eq!(
-    action.taps(),
-    Vec::from([
-      "homebrew/cask",
-      "homebrew/cask-fonts",
-      "miguelandres/homebrew-tap",
-      "spotify/public"
-    ])
-  );
-  assert_eq!(action.casks(), Vec::from(["firefox"]));
-  assert_eq!(action.formulae(), Vec::from(["fzf", "zsh"]));
+
+  let action = directive.parse_shortened_action(&default_settings, &yaml)?;
+  assert_eq!(action.path(), "a_link");
+  assert_eq!(action.target(), "the_file");
+
+  action.execute()?;
+  assert!(directive.fs().is_file("a_link"));
+  assert!(directive.fs().is_file("/home/user/a_link"));
   Ok(())
 }

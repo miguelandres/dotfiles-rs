@@ -23,7 +23,7 @@
 //! a brew formula using homebrew
 
 #![cfg(unix)]
-use crate::action::Action;
+use dotfiles_core::action::Action;
 use log::info;
 use std::marker::PhantomData;
 use subprocess::Exec;
