@@ -19,17 +19,25 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-use std::marker::PhantomData;
+use std::{collections, marker::PhantomData};
+
+use yaml_rust::Yaml;
 
 use crate::{
+  check_action_list_or_err,
   directive::{initialize_settings_object, DirectiveData},
-  Setting,
+  exec::action::ExecAction,
+  yaml_util, Action, Directive, Setting, Settings,
 };
 
 /// Name of the Exec directive
 pub const DIRECTIVE_NAME: &str = "exec";
 /// Echo the command to run before running it.
 pub const ECHO_SETTING: &str = "echo";
+/// Command to run
+pub const COMMAND_SETTING: &str = "cmd";
+/// Optional description for the command to run
+pub const DESCRIPTION_SETTING: &str = "description";
 
 /// Create a new brew directive.
 pub fn new_exec_directive<'a>() -> ExecDirective<'a> {
@@ -51,10 +59,81 @@ pub struct ExecDirective<'a> {
 }
 
 impl<'a> ExecDirective<'a> {
+  /// Creates a new Exec Directives
   pub fn new() -> Self {
     Self {
       data: init_directive_data(),
       phantom_data: PhantomData,
     }
+  }
+
+  /// Parses a exec action from a yaml file
+  pub fn parse_exec_action(
+    &'a self,
+    settings: &collections::HashMap<String, Setting>,
+    yaml: &Yaml,
+  ) -> Result<ExecAction, String> {
+    Ok(ExecAction::new(
+      yaml_util::get_string_content_or_keyed_value(yaml, Some(COMMAND_SETTING))?,
+      yaml_util::get_string_setting_from_yaml_or_defaults(
+        DESCRIPTION_SETTING,
+        yaml,
+        settings,
+        self.defaults(),
+      )
+      .map_or(Option::<String>::None, |desc| Some(desc)),
+      yaml_util::get_boolean_setting_from_yaml_or_defaults(
+        ECHO_SETTING,
+        yaml,
+        settings,
+        self.defaults(),
+      )?,
+    ))
+  }
+
+  /// Parses a list of exec actions from a yaml file
+  pub fn parse_exec_action_list(
+    &'a self,
+    settings: &std::collections::HashMap<String, Setting>,
+    yaml: &Yaml,
+  ) -> Result<Vec<ExecAction>, String> {
+    if let Yaml::Array(arr) = yaml {
+      check_action_list_or_err!(
+        ExecAction,
+        arr
+          .iter()
+          .map(|yaml_item| self.parse_exec_action(settings, yaml_item))
+          .collect()
+      )
+    } else {
+      Err("Exec directive expects an array of create actions, did not find an array.".to_string())
+    }
+  }
+}
+
+impl<'a> Directive<'a> for ExecDirective<'a> {
+  fn name(&self) -> &str {
+    return self.data.name();
+  }
+
+  fn defaults(&self) -> &Settings {
+    return self.data.defaults();
+  }
+
+  fn build_action(
+    &'a self,
+    settings: &Settings,
+    yaml: &yaml_rust::Yaml,
+  ) -> Result<Vec<Box<dyn 'a + Action<'a>>>, String> {
+    self.parse_exec_action_list(settings, yaml).map(|vec| {
+      let result: Vec<Box<(dyn Action<'a> + 'a)>> = vec
+        .into_iter()
+        .map(|action| {
+          let boxed: Box<(dyn Action<'a> + 'a)> = Box::new(action);
+          boxed
+        })
+        .collect();
+      result
+    })
   }
 }
