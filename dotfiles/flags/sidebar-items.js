@@ -1,1 +1,1 @@
-initSidebarItems({"struct":[["FlagData",""],["FlagParser",""]]});
+window.SIDEBAR_ITEMS = {"struct":[["FlagData",""],["FlagParser",""]]};

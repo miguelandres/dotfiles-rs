@@ -1,1 +1,0 @@
-initSidebarItems({"mod":[["action","This module contains the [OhMyZshInstallAction] that sets up ohmyzsh"]]});

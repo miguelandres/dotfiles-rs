@@ -1,1 +1,0 @@
-initSidebarItems({"mod":[["action","This module contains the [BrewAction] that installs a brew formula using homebrew"],["directive","This module defines [BrewDirective]."]]});

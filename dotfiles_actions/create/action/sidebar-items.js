@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"struct":[["CreateAction","[CreateAction] creates a new directory when executed"]]};
