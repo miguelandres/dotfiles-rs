@@ -24,6 +24,7 @@
 
 extern crate yaml_rust;
 
+use derivative::Derivative;
 use dotfiles_core::action::Action;
 use filesystem::FileSystem;
 use log::error;
@@ -31,11 +32,14 @@ use log::info;
 use std::io;
 
 /// [CreateAction] creates a new [directory](CreateAction::directory) when executed
+#[derive(Derivative)]
+#[derivative(Debug, PartialEq)]
 pub struct CreateAction<'a, F: FileSystem> {
   /// FileSystem to use to create the directory.
   ///
   /// Having a filesystem instance here allows us to use fakes/mocks to use
   /// in unit tests.
+  #[derivative(Debug = "ignore", PartialEq = "ignore")]
   fs: &'a F,
   /// Directory to create. Can be absolute or relative.
   directory: String,

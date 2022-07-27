@@ -30,6 +30,7 @@ use subprocess::Exec;
 use subprocess::ExitStatus;
 
 /// [BrewAction] Installs software using homebrew.
+#[derive(Debug, PartialEq, Eq)]
 pub struct BrewAction<'a> {
   /// Passes `--force` to `brew install --cask` to prevent the install failure
   /// when the app is already installed before the cask install.

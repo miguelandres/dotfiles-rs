@@ -23,6 +23,7 @@
 //! when executed
 
 use crate::link::directive::*;
+use derivative::Derivative;
 use dotfiles_core::action::Action;
 use dotfiles_core::directive::Settings;
 use dotfiles_core::yaml_util::get_boolean_setting;
@@ -39,7 +40,10 @@ use std::path::PathBuf;
 /// [LinkAction] creates a new symlink `path` that points to `target`.
 ///
 /// It is equivalent to running `ln -s <target> <path>`
+#[derive(Derivative)]
+#[derivative(Debug, PartialEq)]
 pub struct LinkAction<'a, F: FileSystem + UnixFileSystem> {
+  #[derivative(Debug = "ignore", PartialEq = "ignore")]
   fs: &'a F,
   path: String,
   target: String,
