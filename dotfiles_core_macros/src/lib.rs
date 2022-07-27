@@ -18,3 +18,16 @@
 // LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+mod action_list;
+use action_list::expand_action_list_directive;
+use proc_macro::TokenStream;
+use syn::{parse_macro_input, DeriveInput};
+
+#[proc_macro_derive(ActionListDirective)]
+/// Generates a Directive<'a> implementation for the struct that calls a member
+/// function called `parse_action_list` to generate the result of `build_action`
+pub fn action_list_directive(input: TokenStream) -> TokenStream {
+  let input = parse_macro_input!(input as DeriveInput);
+  expand_action_list_directive(input).into()
+}

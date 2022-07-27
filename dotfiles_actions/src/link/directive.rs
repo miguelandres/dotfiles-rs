@@ -32,6 +32,7 @@ use dotfiles_core::directive::DirectiveData;
 use dotfiles_core::directive::Setting;
 use dotfiles_core::directive::Settings;
 use dotfiles_core::yaml_util::*;
+use dotfiles_core_macros::ActionListDirective;
 use filesystem::FileSystem;
 use filesystem::OsFileSystem;
 use filesystem::UnixFileSystem;
@@ -89,7 +90,8 @@ pub fn init_directive_data() -> DirectiveData {
 
 /// A directive that can build [LinkAction]s to create directories
 /// in the filesystem.
-pub struct LinkDirective<'a, F: 'a + FileSystem> {
+#[derive(ActionListDirective)]
+pub struct LinkDirective<'a, F: 'a + FileSystem + UnixFileSystem> {
   fs: Box<F>,
   data: DirectiveData,
   phantom: PhantomData<&'a F>,
@@ -213,7 +215,7 @@ impl<'a, F: 'a + FileSystem + UnixFileSystem> LinkDirective<'a, F> {
   }
 
   /// Parses a list of link actions from a yaml file
-  pub fn parse_link_action_list(
+  pub fn parse_action_list(
     &'a self,
     settings: &std::collections::HashMap<String, Setting>,
     yaml: &Yaml,
@@ -227,34 +229,7 @@ impl<'a, F: 'a + FileSystem + UnixFileSystem> LinkDirective<'a, F> {
           .collect()
       )
     } else {
-      Err("create directive expects an array of link actions, did not find an array.".to_string())
+      Err("Link directive expects an array of link actions, did not find an array.".to_string())
     }
-  }
-}
-
-impl<'a, F: 'a + FileSystem + UnixFileSystem> Directive<'a> for LinkDirective<'a, F> {
-  fn name(&self) -> &str {
-    self.data.name()
-  }
-
-  fn defaults(&self) -> &Settings {
-    self.data.defaults()
-  }
-
-  fn build_action(
-    &'a self,
-    settings: &Settings,
-    yaml: &Yaml,
-  ) -> Result<Vec<Box<(dyn Action<'a> + 'a)>>, std::string::String> {
-    self.parse_link_action_list(settings, yaml).map(|vec| {
-      let result: Vec<Box<(dyn Action<'a> + 'a)>> = vec
-        .into_iter()
-        .map(|action| {
-          let boxed: Box<(dyn Action<'a> + 'a)> = Box::new(action);
-          boxed
-        })
-        .collect();
-      result
-    })
   }
 }

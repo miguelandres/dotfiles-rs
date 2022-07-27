@@ -31,6 +31,7 @@ use dotfiles_core::directive::DirectiveData;
 use dotfiles_core::directive::Setting;
 use dotfiles_core::directive::Settings;
 use dotfiles_core::yaml_util;
+use dotfiles_core_macros::ActionListDirective;
 use filesystem::FileSystem;
 use filesystem::OsFileSystem;
 
@@ -62,6 +63,7 @@ pub fn init_directive_data() -> DirectiveData {
 
 /// A directive that can build [CreateAction]s to create directories
 /// in the filesystem.
+#[derive(ActionListDirective)]
 pub struct CreateDirective<'a, F: 'a + FileSystem> {
   fs: Box<F>,
   data: DirectiveData,
@@ -101,7 +103,7 @@ impl<'a, F: 'a + FileSystem> CreateDirective<'a, F> {
   }
 
   /// Parses a list of create actions from a yaml file
-  pub fn parse_create_action_list(
+  pub fn parse_action_list(
     &'a self,
     settings: &std::collections::HashMap<String, Setting>,
     yaml: &Yaml,
@@ -117,32 +119,5 @@ impl<'a, F: 'a + FileSystem> CreateDirective<'a, F> {
     } else {
       Err("create directive expects an array of create actions, did not find an array.".to_string())
     }
-  }
-}
-
-impl<'a, F: 'a + FileSystem> Directive<'a> for CreateDirective<'a, F> {
-  fn name(&self) -> &str {
-    self.data.name()
-  }
-
-  fn defaults(&self) -> &Settings {
-    self.data.defaults()
-  }
-
-  fn build_action(
-    &'a self,
-    settings: &Settings,
-    yaml: &Yaml,
-  ) -> Result<Vec<Box<(dyn Action<'a> + 'a)>>, std::string::String> {
-    self.parse_create_action_list(settings, yaml).map(|vec| {
-      let result: Vec<Box<(dyn Action<'a> + 'a)>> = vec
-        .into_iter()
-        .map(|action| {
-          let boxed: Box<(dyn Action<'a> + 'a)> = Box::new(action);
-          boxed
-        })
-        .collect();
-      result
-    })
   }
 }

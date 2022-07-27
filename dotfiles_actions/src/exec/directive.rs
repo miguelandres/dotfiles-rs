@@ -23,6 +23,7 @@
 
 use std::{collections, marker::PhantomData};
 
+use dotfiles_core_macros::ActionListDirective;
 use yaml_rust::Yaml;
 
 use dotfiles_core::{
@@ -56,6 +57,7 @@ pub fn init_directive_data() -> DirectiveData {
 }
 
 /// A directive that can build [ExecAction]s to run commands
+#[derive(ActionListDirective)]
 pub struct ExecDirective<'a> {
   data: DirectiveData,
   phantom_data: PhantomData<&'a DirectiveData>,
@@ -95,7 +97,7 @@ impl<'a> ExecDirective<'a> {
   }
 
   /// Parses a list of exec actions from a yaml file
-  pub fn parse_exec_action_list(
+  pub fn parse_action_list(
     &'a self,
     settings: &std::collections::HashMap<String, Setting>,
     yaml: &Yaml,
@@ -109,34 +111,7 @@ impl<'a> ExecDirective<'a> {
           .collect()
       )
     } else {
-      Err("Exec directive expects an array of create actions, did not find an array.".to_string())
+      Err("Exec directive expects an array of exec actions, did not find an array.".to_string())
     }
-  }
-}
-
-impl<'a> Directive<'a> for ExecDirective<'a> {
-  fn name(&self) -> &str {
-    return self.data.name();
-  }
-
-  fn defaults(&self) -> &Settings {
-    return self.data.defaults();
-  }
-
-  fn build_action(
-    &'a self,
-    settings: &Settings,
-    yaml: &yaml_rust::Yaml,
-  ) -> Result<Vec<Box<dyn 'a + Action<'a>>>, String> {
-    self.parse_exec_action_list(settings, yaml).map(|vec| {
-      let result: Vec<Box<(dyn Action<'a> + 'a)>> = vec
-        .into_iter()
-        .map(|action| {
-          let boxed: Box<(dyn Action<'a> + 'a)> = Box::new(action);
-          boxed
-        })
-        .collect();
-      result
-    })
   }
 }
