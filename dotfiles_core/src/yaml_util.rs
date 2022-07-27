@@ -241,6 +241,6 @@ pub fn get_string_array(yaml: &Yaml, array_name: &str) -> Result<Vec<String>, St
       }
       Ok(vec)
     }
-    _ => Err(String::from("Passed Yaml is not an array")),
+    _ => Err(format!("Passed Yaml for {} is not an array", array_name)),
   }
 }
