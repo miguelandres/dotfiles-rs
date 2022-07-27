@@ -24,23 +24,17 @@
 #![feature(io_error_more)]
 #![feature(map_try_insert)]
 
-//! The core of Dotfiles-rs is basically a set of [directives](
-//! directive::Directive) that can build executable [actions](action::Action)
-//! from configuration sources (Yaml is the only supported configuration source
-//! so far).
+//! This crate contains all concrete [actions](dotfiles_core::action::Action)
+//! and [directives](dotfiles_core::directive::Directive). They are contained in
+//! each of the modules in this crate:
 //!
-//! Directives are responsible for parsing configuration from the configuration
-//! source, applying default [settings](directive::Settings) if necessary, and
-//! using these to build actions that can be executed.
-//!
-//! The base traits and classes for these building blocks can be found in the
-//! [action] and [directive] modules. The [yaml_util] module is a set of helper
-//! functions for Directives to parse configuration.
-//!
-//! Finally all concrete actions and directives can be found in the following
-//! modules:
-//!
-//! - [create]: Create a new directory
+//! - [brew]: A set of actions and directive that act as wrappers around
+//!   [homebrew](http://brew.sh).
+//! - [create]: Creates a new directory
+//! - [exec]: runs a command in the shell
+//! - [homebrew_install]: installs [homebrew](http://brew.sh).
+//! - [link]: Creates a symlink to a file or directory
+//! - [ohmyzsh_install]: installs ohmyzsh
 #[cfg(unix)]
 pub mod brew;
 pub mod create;

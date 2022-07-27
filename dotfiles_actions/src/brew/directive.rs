@@ -30,6 +30,7 @@ use dotfiles_core::directive::DirectiveData;
 use dotfiles_core::directive::Setting;
 use dotfiles_core::directive::Settings;
 use dotfiles_core::yaml_util::*;
+use dotfiles_core_macros::ActionListDirective;
 use std::marker::PhantomData;
 use yaml_rust::Yaml;
 
@@ -52,6 +53,7 @@ pub fn init_directive_data() -> DirectiveData {
 }
 
 /// A directive that can build [BrewAction]s to install formulae, casks
+#[derive(ActionListDirective)]
 pub struct BrewDirective<'a> {
   data: DirectiveData,
   phantom_data: PhantomData<&'a DirectiveData>,
@@ -104,22 +106,14 @@ impl<'a> BrewDirective<'a> {
       )),
     }
   }
-}
 
-impl<'a> Directive<'a> for BrewDirective<'a> {
-  fn name(&self) -> &str {
-    self.data.name()
-  }
-
-  fn defaults(&self) -> &Settings {
-    self.data.defaults()
-  }
-
-  fn build_action(
+  /// Parse the list of actions from yaml, in this case it's only one action so
+  /// this function only wraps [BrewDirective::parse_brew_action]
+  pub fn parse_action_list(
     &'a self,
-    settings: &Settings,
+    context_settings: &Settings,
     yaml: &Yaml,
-  ) -> Result<Vec<Box<(dyn Action<'a> + 'a)>>, std::string::String> {
-    Ok(vec![Box::new(self.parse_brew_action(settings, yaml)?)])
+  ) -> Result<Vec<BrewAction<'a>>, String> {
+    Ok(vec![self.parse_brew_action(context_settings, yaml)?])
   }
 }
