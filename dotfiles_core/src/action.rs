@@ -29,3 +29,23 @@ pub trait Action<'a> {
   /// to log or display to the user.
   fn execute(&self) -> Result<(), String>;
 }
+
+/// Macro to check that all actions in a Vector of results of parsing actions from yaml
+/// does not contain a single error. If it contains at least an error it returns the first
+/// Error, otherwise it returns Ok with a list of all the actions.
+#[macro_export]
+macro_rules! check_action_list_or_err {
+  ( $action_type:ty, $actions_expr:expr) => {{
+    let actions_expr_list: Vec<Result<$action_type, String>> = $actions_expr;
+    if let Some(Err(error_string)) = actions_expr_list.iter().find(|res| res.is_err()) {
+      Err(error_string.to_string())
+    } else {
+      Ok(
+        actions_expr_list
+          .into_iter()
+          .map(|res_action| res_action.unwrap())
+          .collect(),
+      )
+    }
+  }};
+}

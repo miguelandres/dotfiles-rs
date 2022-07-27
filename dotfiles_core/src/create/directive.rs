@@ -23,6 +23,7 @@
 extern crate yaml_rust;
 
 use crate::action::Action;
+use crate::check_action_list_or_err;
 use crate::create::action::CreateAction;
 use crate::directive::initialize_settings_object;
 use crate::directive::Directive;
@@ -105,27 +106,16 @@ impl<'a, F: 'a + FileSystem> CreateDirective<'a, F> {
     settings: &std::collections::HashMap<String, Setting>,
     yaml: &Yaml,
   ) -> Result<Vec<CreateAction<F>>, String> {
-    let actions: Vec<Result<CreateAction<F>, String>>;
-    match yaml {
-      Yaml::Array(arr) => {
-        actions = arr
+    if let Yaml::Array(arr) = yaml {
+      check_action_list_or_err!(
+        CreateAction<F>,
+        arr
           .iter()
           .map(|yaml_item| self.parse_create_action(settings, yaml_item))
-          .collect();
-        if let Some(Err(error_string)) = actions.iter().find(|res| res.is_err()) {
-          Err(error_string.to_string())
-        } else {
-          Ok(
-            actions
-              .into_iter()
-              .map(|res_action| res_action.unwrap())
-              .collect(),
-          )
-        }
-      }
-      _ => Err(
-        "create directive expects an array of create actions, did not find an array.".to_string(),
-      ),
+          .collect()
+      )
+    } else {
+      Err("create directive expects an array of create actions, did not find an array.".to_string())
     }
   }
 }

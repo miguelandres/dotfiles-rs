@@ -24,6 +24,7 @@
 extern crate yaml_rust;
 
 use crate::action::Action;
+use crate::check_action_list_or_err;
 use crate::directive::initialize_settings_object;
 use crate::directive::Directive;
 use crate::directive::DirectiveData;
@@ -217,27 +218,16 @@ impl<'a, F: 'a + FileSystem + UnixFileSystem> LinkDirective<'a, F> {
     settings: &std::collections::HashMap<String, Setting>,
     yaml: &Yaml,
   ) -> Result<Vec<LinkAction<F>>, String> {
-    let actions: Vec<Result<LinkAction<F>, String>>;
-    match yaml {
-      Yaml::Array(arr) => {
-        actions = arr
+    if let Yaml::Array(arr) = yaml {
+      check_action_list_or_err!(
+        LinkAction<F>,
+        arr
           .iter()
           .map(|yaml_item| self.parse_link_action(settings, yaml_item))
-          .collect();
-        if let Some(Err(error_string)) = actions.iter().find(|res| res.is_err()) {
-          Err(error_string.to_string())
-        } else {
-          Ok(
-            actions
-              .into_iter()
-              .map(|res_action| res_action.unwrap())
-              .collect(),
-          )
-        }
-      }
-      _ => {
-        Err("create directive expects an array of link actions, did not find an array.".to_string())
-      }
+          .collect()
+      )
+    } else {
+      Err("create directive expects an array of link actions, did not find an array.".to_string())
     }
   }
 }
