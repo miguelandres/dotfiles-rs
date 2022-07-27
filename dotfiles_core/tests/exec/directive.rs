@@ -20,9 +20,35 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 #![cfg(test)]
-mod brew;
-mod create;
-mod exec;
-mod link;
-mod utils;
-mod yaml_util;
+use crate::utils::read_test_yaml;
+
+use dotfiles_core::directive::Settings;
+use dotfiles_core::exec::action::ExecAction;
+use dotfiles_core::exec::directive::ExecDirective;
+
+#[test]
+fn parse_list_of_execs() -> Result<(), String> {
+  let directive = ExecDirective::new();
+  let default_settings = Settings::new();
+  let yaml = read_test_yaml("directive/exec/exec_list.yaml")
+    .unwrap()
+    .pop()
+    .unwrap();
+
+  let actions = directive.parse_exec_action_list(&default_settings, &yaml)?;
+  assert_eq!(actions.len(), 3);
+  assert_eq!(
+    actions[0],
+    ExecAction::new(r#"echo "hello world""#.into(), None, false)
+  );
+  assert_eq!(
+    actions[1],
+    ExecAction::new(
+      r#"sleep 5"#.into(),
+      Some(String::from("waste some time")),
+      true
+    )
+  );
+  assert_eq!(actions[2], ExecAction::new(r#"ls"#.into(), None, false));
+  Ok(())
+}
