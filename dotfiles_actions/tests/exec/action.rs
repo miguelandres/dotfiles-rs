@@ -1,3 +1,5 @@
+#![cfg(test)]
+
 // Copyright (c) 2021-2022 Miguel Barreto and others
 //
 // Permission is hereby granted, free of charge, to any person obtaining
@@ -19,9 +21,22 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-#![cfg(test)]
-mod brew;
-mod create;
-mod exec;
-mod link;
-mod utils;
+use dotfiles_actions::exec::action::ExecAction;
+use dotfiles_core::action::Action;
+
+use crate::utils::check_action_fail;
+
+#[test]
+fn failed_command_returns_error() -> Result<(), String> {
+  let action = ExecAction::new("exit 1".into(), None, false);
+  check_action_fail(
+    &action,
+    format!("An error was expected when exit 1 was called but no error was returned",),
+  )
+}
+
+#[test]
+fn exec_succeeds() -> Result<(), String> {
+  let action = ExecAction::new("exit 0".into(), None, false);
+  action.execute()
+}

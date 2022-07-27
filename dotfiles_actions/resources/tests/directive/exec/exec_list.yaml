@@ -1,0 +1,6 @@
+- echo "hello world"
+- cmd: sleep 5
+  echo: true
+  description: waste some time
+- cmd: ls
+  echo: false

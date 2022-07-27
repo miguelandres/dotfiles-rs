@@ -29,6 +29,7 @@ use subprocess::ExitStatus;
 use dotfiles_core::Action;
 
 /// [ExecAction] Installs software using homebrew.
+#[derive(Eq, PartialEq, Debug)]
 pub struct ExecAction<'a> {
   /// Command to run
   command: String,
