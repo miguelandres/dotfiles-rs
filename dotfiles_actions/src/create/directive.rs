@@ -30,6 +30,8 @@ use dotfiles_core::directive::Directive;
 use dotfiles_core::directive::DirectiveData;
 use dotfiles_core::directive::Setting;
 use dotfiles_core::directive::Settings;
+use dotfiles_core::error::DotfilesError;
+use dotfiles_core::error::ErrorType;
 use dotfiles_core::yaml_util;
 use dotfiles_core_macros::ActionListDirective;
 use filesystem::FileSystem;
@@ -89,7 +91,7 @@ impl<'a, F: 'a + FileSystem> CreateDirective<'a, F> {
     &'a self,
     settings: &std::collections::HashMap<String, Setting>,
     yaml: &Yaml,
-  ) -> Result<CreateAction<F>, String> {
+  ) -> Result<CreateAction<F>, DotfilesError> {
     Ok(CreateAction::<'a, F>::new(
       self.fs(),
       yaml_util::get_string_content_or_keyed_value(yaml, Some(DIR_SETTING))?,
@@ -107,7 +109,7 @@ impl<'a, F: 'a + FileSystem> CreateDirective<'a, F> {
     &'a self,
     settings: &std::collections::HashMap<String, Setting>,
     yaml: &Yaml,
-  ) -> Result<Vec<CreateAction<F>>, String> {
+  ) -> Result<Vec<CreateAction<F>>, DotfilesError> {
     if let Yaml::Array(arr) = yaml {
       check_action_list_or_err!(
         CreateAction<F>,
@@ -117,7 +119,10 @@ impl<'a, F: 'a + FileSystem> CreateDirective<'a, F> {
           .collect()
       )
     } else {
-      Err("create directive expects an array of create actions, did not find an array.".to_string())
+      Err(DotfilesError::from(
+        "create directive expects an array of create actions, did not find an array.".into(),
+        ErrorType::UnexpectedYamlTypeError,
+      ))
     }
   }
 }

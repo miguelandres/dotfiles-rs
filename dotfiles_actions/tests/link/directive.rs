@@ -25,12 +25,13 @@ use crate::utils::setup_fs;
 
 use dotfiles_actions::link::directive::LinkDirective;
 use dotfiles_core::directive::Settings;
+use dotfiles_core::error::DotfilesError;
 use dotfiles_core::Action;
 use filesystem::FakeFileSystem;
 use filesystem::FileSystem;
 
 #[test]
-fn link_directive_parsed_from_plain_link() -> Result<(), String> {
+fn link_directive_parsed_from_plain_link() -> Result<(), DotfilesError> {
   let fs = FakeFileSystem::new();
   setup_fs(&fs)?;
   fs.create_file("/home/user/the_file", String::from("aaa").as_bytes())

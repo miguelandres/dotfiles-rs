@@ -21,13 +21,15 @@
 
 //! This module contains the base trait for all [Action]s.
 
+use crate::error::DotfilesError;
+
 /// An action to be run by a the dotfiles runtime.
 pub trait Action<'a> {
   /// Executes the action.
   ///
   /// Returns an error String describing the issue, this string can be used
   /// to log or display to the user.
-  fn execute(&self) -> Result<(), String>;
+  fn execute(&self) -> Result<(), DotfilesError>;
 }
 
 /// Macro to check that all actions in a Vector of results of parsing actions from yaml
@@ -36,16 +38,15 @@ pub trait Action<'a> {
 #[macro_export]
 macro_rules! check_action_list_or_err {
   ( $action_type:ty, $actions_expr:expr) => {{
-    let actions_expr_list: Vec<Result<$action_type, String>> = $actions_expr;
-    if let Some(Err(error_string)) = actions_expr_list.iter().find(|res| res.is_err()) {
-      Err(error_string.to_string())
-    } else {
-      Ok(
-        actions_expr_list
-          .into_iter()
-          .map(|res_action| res_action.unwrap())
-          .collect(),
-      )
+    let mut actions_expr_list: Vec<Result<$action_type, dotfiles_core::error::DotfilesError>> =
+      $actions_expr;
+    let mut list_successes = Vec::<$action_type>::new();
+    for res in actions_expr_list.into_iter() {
+      match res {
+        Err(err) => return Err(err),
+        Ok(act) => list_successes.push(act),
+      }
     }
+    Ok(list_successes)
   }};
 }

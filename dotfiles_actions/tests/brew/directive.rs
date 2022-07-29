@@ -23,10 +23,10 @@
 use crate::utils::read_test_yaml;
 
 use dotfiles_actions::brew::directive::BrewDirective;
-use dotfiles_core::directive::Settings;
+use dotfiles_core::{directive::Settings, error::DotfilesError};
 
 #[test]
-fn brew_directive_parsed() -> Result<(), String> {
+fn brew_directive_parsed() -> Result<(), DotfilesError> {
   let default_settings = Settings::new();
   let yaml = read_test_yaml("directive/brew/plain_functional.yaml")
     .unwrap()

@@ -29,6 +29,7 @@ use dotfiles_core::directive::Directive;
 use dotfiles_core::directive::DirectiveData;
 use dotfiles_core::directive::Setting;
 use dotfiles_core::directive::Settings;
+use dotfiles_core::error::DotfilesError;
 use dotfiles_core::yaml_util::*;
 use dotfiles_core_macros::ActionListDirective;
 use std::marker::PhantomData;
@@ -80,7 +81,7 @@ impl<'a> BrewDirective<'a> {
     &'a self,
     context_settings: &Settings,
     yaml: &Yaml,
-  ) -> Result<BrewAction<'a>, String> {
+  ) -> Result<BrewAction<'a>, DotfilesError> {
     match yaml {
       Yaml::Hash(hash) => {
         let force_casks = get_boolean_setting_from_yaml_or_defaults(
@@ -100,9 +101,12 @@ impl<'a> BrewDirective<'a> {
           .map_or(Ok(Vec::new()), |vec| get_string_array(vec, "cask"))?;
         Ok(BrewAction::new(force_casks, taps, formulae, casks))
       }
-      _ => Err(format!(
-        "Yaml passed to configure a Brew action is not a Hash, thus cannot be parsed: {:?}",
-        yaml
+      _ => Err(DotfilesError::from(
+        format!(
+          "Yaml passed to configure a Brew action is not a Hash, thus cannot be parsed: {:?}",
+          yaml
+        ),
+        dotfiles_core::error::ErrorType::UnexpectedYamlTypeError,
       )),
     }
   }
@@ -113,7 +117,7 @@ impl<'a> BrewDirective<'a> {
     &'a self,
     context_settings: &Settings,
     yaml: &Yaml,
-  ) -> Result<Vec<BrewAction<'a>>, String> {
+  ) -> Result<Vec<BrewAction<'a>>, DotfilesError> {
     Ok(vec![self.parse_brew_action(context_settings, yaml)?])
   }
 }

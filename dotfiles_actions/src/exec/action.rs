@@ -23,6 +23,8 @@
 
 use std::marker::PhantomData;
 
+use dotfiles_core::error::execution_error;
+use dotfiles_core::error::DotfilesError;
 use subprocess::Exec;
 use subprocess::ExitStatus;
 
@@ -67,7 +69,7 @@ impl<'a> ExecAction<'a> {
 }
 
 impl<'a> Action<'a> for ExecAction<'a> {
-  fn execute(&self) -> Result<(), String> {
+  fn execute(&self) -> Result<(), DotfilesError> {
     if let Some(description) = self.description.as_ref() {
       log::info!("{}", description);
     }
@@ -76,22 +78,31 @@ impl<'a> Action<'a> for ExecAction<'a> {
     }
     Exec::shell(self.command()).join().map_or_else(
       |err| {
-        Err(format!(
-          "Couldn't run command `{0}`, failed with error {1}",
-          self.command(),
-          err.to_string()
+        Err(DotfilesError::from(
+          format!(
+            "Couldn't run command `{0}`, failed with error {1}",
+            self.command(),
+            err.to_string()
+          ),
+          execution_error(Some(err), None),
         ))
       },
       |status| match status {
         ExitStatus::Exited(0) => Ok(()),
-        ExitStatus::Exited(code) => Err(format!(
-          "Command `{0}` failed with error code {1}",
-          self.command(),
-          code
+        ExitStatus::Exited(code) => Err(DotfilesError::from(
+          format!(
+            "Command `{0}` failed with error code {1}",
+            self.command(),
+            code
+          ),
+          execution_error(None, Some(status)),
         )),
-        _ => Err(format!(
-          "Unexpected error while running command `{0}`",
-          self.command()
+        _ => Err(DotfilesError::from(
+          format!(
+            "Unexpected error while running command `{0}`",
+            self.command()
+          ),
+          execution_error(None, Some(status)),
         )),
       },
     )

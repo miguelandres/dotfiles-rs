@@ -6,3 +6,5 @@ edition = "2018"
 
 [dependencies]
 yaml-rust = "0.4.5"
+getset = "0.1.2"
+subprocess = "0.2.8"

@@ -22,7 +22,10 @@
 //! Module that defines helper functions to process YAML configuration sources.
 extern crate yaml_rust;
 
-use crate::directive::{Setting, Settings};
+use crate::{
+  directive::{Setting, Settings},
+  error::{DotfilesError, ErrorType},
+};
 use yaml_rust::Yaml;
 
 /// Gets a Boolean value from YAML or defaults.
@@ -38,21 +41,17 @@ pub fn get_boolean_setting_from_yaml_or_defaults(
   yaml: &Yaml,
   context_settings: &Settings,
   directive_defaults: &Settings,
-) -> Result<bool, String> {
+) -> Result<bool, DotfilesError> {
   match yaml {
     Yaml::Hash(hash) => match hash.get(&Yaml::String(String::from(name))) {
       Some(Yaml::Boolean(b)) => Ok(b.clone()),
-      Some(Yaml::String(s)) => match s.trim().to_ascii_lowercase().as_str() {
-        "true" => Ok(true),
-        "false" => Ok(false),
-        _ => Err(format!(
-          "{:} cannot be parsed as bool for setting {:}",
-          s, name
-        )),
-      },
-      Some(other_yaml) => Err(format!(
-        "Setting {:} exists but it cannot be parsed: {:?}",
-        name, other_yaml
+      Some(other_yaml) => Err(DotfilesError::from(
+        format!(
+          "{:} exists but it is not parseable as boolean: {:}",
+          name,
+          other_yaml.as_str().unwrap_or("<Empty Yaml>")
+        ),
+        ErrorType::UnexpectedYamlTypeError,
       )),
       None => get_boolean_setting(name, context_settings, directive_defaults),
     },
@@ -70,11 +69,14 @@ pub fn get_boolean_setting(
   name: &str,
   context_settings: &Settings,
   directive_defaults: &Settings,
-) -> Result<bool, String> {
+) -> Result<bool, DotfilesError> {
   if let Setting::Boolean(b) = get_setting(name, context_settings, directive_defaults)? {
     Ok(b)
   } else {
-    Err(format!("Setting {} was found but is not boolean", name))
+    Err(DotfilesError::from(
+      format!("Setting {} was found but is not boolean", name),
+      ErrorType::CoreError,
+    ))
   }
 }
 
@@ -88,11 +90,14 @@ pub fn get_string_setting(
   name: &str,
   context_settings: &Settings,
   directive_defaults: &Settings,
-) -> Result<String, String> {
+) -> Result<String, DotfilesError> {
   if let Setting::String(s) = get_setting(name, context_settings, directive_defaults)? {
     Ok(s.clone())
   } else {
-    Err(format!("Setting {} was found but is not a string", name))
+    Err(DotfilesError::from(
+      format!("Setting {} was found but is not a string", name),
+      ErrorType::CoreError,
+    ))
   }
 }
 
@@ -106,11 +111,14 @@ pub fn get_int_setting(
   name: &str,
   context_settings: &Settings,
   directive_defaults: &Settings,
-) -> Result<i64, String> {
+) -> Result<i64, DotfilesError> {
   if let Setting::Integer(x) = get_setting(name, context_settings, directive_defaults)? {
     Ok(x)
   } else {
-    Err(format!("Setting {} was found but is not an integer", name))
+    Err(DotfilesError::from(
+      format!("Setting {} was found but is not an integer", name),
+      ErrorType::CoreError,
+    ))
   }
 }
 
@@ -124,15 +132,15 @@ pub fn get_setting(
   name: &str,
   context_settings: &Settings,
   directive_defaults: &Settings,
-) -> Result<Setting, String> {
+) -> Result<Setting, DotfilesError> {
   if let Some(setting) = context_settings.get(name) {
     Ok(setting.clone())
   } else if let Some(setting) = directive_defaults.get(name) {
     Ok(setting.clone())
   } else {
-    Err(format!(
-      "Setting {} couldn't be found in context or defaults",
-      name
+    Err(DotfilesError::from(
+      format!("Setting {} couldn't be found in context or defaults", name),
+      ErrorType::CoreError,
     ))
   }
 }
@@ -150,16 +158,17 @@ pub fn get_integer_setting_from_yaml_or_defaults(
   yaml: &Yaml,
   context_settings: &Settings,
   directive_defaults: &Settings,
-) -> Result<i64, String> {
+) -> Result<i64, DotfilesError> {
   match yaml {
     Yaml::Hash(hash) => match hash.get(&Yaml::String(String::from(name))) {
       Some(Yaml::Integer(i)) => Ok(i.clone()),
-      Some(Yaml::String(s)) => s
-        .parse::<i64>()
-        .map_err(|_| format!("{} is not a valid integer", s)),
-      Some(other_yaml) => Err(format!(
-        "Setting {:} exists but it cannot be parsed: {:?}",
-        name, other_yaml
+      Some(other_yaml) => Err(DotfilesError::from(
+        format!(
+          "Setting {:} exists but it cannot be parsed as integer: {:}",
+          name,
+          other_yaml.as_str().unwrap_or("<Empty Yaml>")
+        ),
+        ErrorType::UnexpectedYamlTypeError,
       )),
       None => get_int_setting(name, context_settings, directive_defaults),
     },
@@ -180,13 +189,16 @@ pub fn get_string_setting_from_yaml_or_defaults(
   yaml: &Yaml,
   context_settings: &Settings,
   directive_defaults: &Settings,
-) -> Result<String, String> {
+) -> Result<String, DotfilesError> {
   match yaml {
     Yaml::Hash(hash) => match hash.get(&Yaml::String(String::from(name))) {
       Some(Yaml::String(s)) => Ok(s.clone()),
-      Some(other_yaml) => Err(format!(
-        "Setting {:} exists but it cannot be parsed: {:?}",
-        name, other_yaml
+      Some(other_yaml) => Err(DotfilesError::from(
+        format!(
+          "Setting {:} exists but it cannot be parsed: {:?}",
+          name, other_yaml
+        ),
+        ErrorType::YamlParseError,
       )),
       None => get_string_setting(name, context_settings, directive_defaults),
     },
@@ -204,27 +216,40 @@ pub fn get_string_setting_from_yaml_or_defaults(
 /// - `yaml` is neither a String nor a Hash
 /// - `yaml` is a hash but it does not contain a value for `key`
 /// - `yaml` is a hash but the value for `key` is not a String.
-pub fn get_string_content_or_keyed_value(yaml: &Yaml, key: Option<&str>) -> Result<String, String> {
+pub fn get_string_content_or_keyed_value(
+  yaml: &Yaml,
+  key: Option<&str>,
+) -> Result<String, DotfilesError> {
   match (yaml, key) {
     (Yaml::String(s), _) => Ok(s.clone()),
     (Yaml::Hash(hash), Some(key)) => {
-      match hash.get(&Yaml::String(String::from(key))).ok_or(format!(
-        "Yaml hash does not contain key {}: {:?}",
-        key, hash
-      ))? {
+      match hash
+        .get(&Yaml::String(String::from(key)))
+        .ok_or(DotfilesError::from(
+          format!("Yaml hash does not contain key {}: {:?}", key, hash),
+          ErrorType::IncompleteConfigurationError {
+            missing_field: key.into(),
+          },
+        ))? {
         Yaml::String(s) => Ok(s.clone()),
-        yaml => Err(format!(
-          "Yaml Hash contains key {} but its value is not a string: {:?}",
-          key, yaml
+        yaml => Err(DotfilesError::from(
+          format!(
+            "Yaml Hash contains key {} but its value is not a string: {:?}",
+            key, yaml
+          ),
+          ErrorType::UnexpectedYamlTypeError,
         )),
       }
     }
-    (yaml, _) => Err(format!("Yaml value is not a string or hash: {:?}", yaml)),
+    (yaml, _) => Err(DotfilesError::from(
+      format!("Yaml value is not a string or hash: {:?}", yaml),
+      ErrorType::UnexpectedYamlTypeError,
+    )),
   }
 }
 
 /// Gets a native `Vec<String>` from a Yaml::Array. It errors out if the passed yaml is not an array or if not all the items in the array are plain Yaml Strings
-pub fn get_string_array(yaml: &Yaml, array_name: &str) -> Result<Vec<String>, String> {
+pub fn get_string_array(yaml: &Yaml, array_name: &str) -> Result<Vec<String>, DotfilesError> {
   match yaml {
     Yaml::Array(arr) => {
       let mut vec = Vec::<String>::with_capacity(arr.len());
@@ -232,15 +257,18 @@ pub fn get_string_array(yaml: &Yaml, array_name: &str) -> Result<Vec<String>, St
         match item {
           Yaml::String(str) => vec.push(str.to_owned()),
           _ => {
-            return Err(format!(
-              "Not all members of the {} array are Strings",
-              array_name
+            return Err(DotfilesError::from(
+              format!("Not all members of the {} array are Strings", array_name),
+              ErrorType::UnexpectedYamlTypeError,
             ))
           }
         }
       }
       Ok(vec)
     }
-    _ => Err(format!("Passed Yaml for {} is not an array", array_name)),
+    _ => Err(DotfilesError::from(
+      format!("Passed Yaml for {} is not an array", array_name),
+      ErrorType::UnexpectedYamlTypeError,
+    )),
   }
 }

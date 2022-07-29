@@ -24,11 +24,12 @@ use crate::utils::{read_test_yaml, setup_fs};
 
 use dotfiles_actions::create::directive::CreateDirective;
 use dotfiles_core::directive::Settings;
+use dotfiles_core::error::DotfilesError;
 use dotfiles_core::Action;
 use filesystem::FakeFileSystem;
 
 #[test]
-fn create_directive_parsed_from_single_dir_name() -> Result<(), String> {
+fn create_directive_parsed_from_single_dir_name() -> Result<(), DotfilesError> {
   let fs = FakeFileSystem::new();
   setup_fs(&fs)?;
   let directive = CreateDirective::new(fs);
@@ -46,7 +47,7 @@ fn create_directive_parsed_from_single_dir_name() -> Result<(), String> {
 }
 
 #[test]
-fn create_directive_parsed_from_full_action() -> Result<(), String> {
+fn create_directive_parsed_from_full_action() -> Result<(), DotfilesError> {
   let fs = FakeFileSystem::new();
   setup_fs(&fs)?;
   let directive = CreateDirective::new(fs);

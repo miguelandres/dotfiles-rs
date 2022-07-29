@@ -21,6 +21,8 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 use dotfiles_core::action::Action;
+use dotfiles_core::error::DotfilesError;
+use dotfiles_core::error::ErrorType;
 use filesystem::FakeFileSystem;
 use filesystem::FileSystem;
 use std::io;
@@ -33,9 +35,12 @@ use yaml_rust::YamlLoader;
 pub fn check_action_fail<'a, A: Action<'a>>(
   action: &A,
   error_message: String,
-) -> Result<(), String> {
+) -> Result<(), DotfilesError> {
   if let Ok(()) = action.execute() {
-    Err(error_message)
+    Err(DotfilesError::from(
+      error_message,
+      ErrorType::TestingErrorActionSucceedsWhenItShouldFail,
+    ))
   } else {
     Ok(())
   }
@@ -60,9 +65,9 @@ fn setup_fs_internal(fs: &FakeFileSystem) -> io::Result<()> {
 }
 
 /// Setups a test FakeFileSystem
-pub fn setup_fs(fs: &FakeFileSystem) -> Result<(), String> {
+pub fn setup_fs(fs: &FakeFileSystem) -> Result<(), DotfilesError> {
   if let Err(io_error) = setup_fs_internal(fs) {
-    return Err(io_error.to_string());
+    return Err(DotfilesError::from_io_error(io_error));
   }
   Ok(())
 }

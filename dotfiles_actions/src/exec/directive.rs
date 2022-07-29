@@ -29,6 +29,7 @@ use yaml_rust::Yaml;
 use dotfiles_core::{
   check_action_list_or_err,
   directive::{initialize_settings_object, DirectiveData},
+  error::{DotfilesError, ErrorType},
   yaml_util, Action, Directive, Setting, Settings,
 };
 
@@ -77,7 +78,7 @@ impl<'a> ExecDirective<'a> {
     &'a self,
     settings: &collections::HashMap<String, Setting>,
     yaml: &Yaml,
-  ) -> Result<ExecAction, String> {
+  ) -> Result<ExecAction, DotfilesError> {
     Ok(ExecAction::new(
       yaml_util::get_string_content_or_keyed_value(yaml, Some(COMMAND_SETTING))?,
       yaml_util::get_string_setting_from_yaml_or_defaults(
@@ -101,7 +102,7 @@ impl<'a> ExecDirective<'a> {
     &'a self,
     settings: &std::collections::HashMap<String, Setting>,
     yaml: &Yaml,
-  ) -> Result<Vec<ExecAction>, String> {
+  ) -> Result<Vec<ExecAction>, DotfilesError> {
     if let Yaml::Array(arr) = yaml {
       check_action_list_or_err!(
         ExecAction,
@@ -111,7 +112,10 @@ impl<'a> ExecDirective<'a> {
           .collect()
       )
     } else {
-      Err("Exec directive expects an array of exec actions, did not find an array.".to_string())
+      Err(DotfilesError::from(
+        "Exec directive expects an array of exec actions, did not find an array.".to_string(),
+        ErrorType::UnexpectedYamlTypeError,
+      ))
     }
   }
 }

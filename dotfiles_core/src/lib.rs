@@ -21,7 +21,6 @@
 
 #![warn(missing_docs)]
 #![deny(rustdoc::broken_intra_doc_links)]
-#![feature(io_error_more)]
 #![feature(map_try_insert)]
 
 //! The core of Dotfiles-rs is basically a set of [directives](
@@ -38,6 +37,8 @@
 //! functions for Directives to parse configuration.
 pub mod action;
 pub mod directive;
+pub mod error;
+pub mod exec_wrapper;
 pub mod yaml_util;
 
 pub use action::Action;

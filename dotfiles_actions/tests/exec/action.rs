@@ -22,12 +22,12 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 use dotfiles_actions::exec::action::ExecAction;
-use dotfiles_core::action::Action;
+use dotfiles_core::{action::Action, error::DotfilesError};
 
 use crate::utils::check_action_fail;
 
 #[test]
-fn failed_command_returns_error() -> Result<(), String> {
+fn failed_command_returns_error() -> Result<(), DotfilesError> {
   let action = ExecAction::new("exit 1".into(), None, false);
   check_action_fail(
     &action,
@@ -36,7 +36,7 @@ fn failed_command_returns_error() -> Result<(), String> {
 }
 
 #[test]
-fn exec_succeeds() -> Result<(), String> {
+fn exec_succeeds() -> Result<(), DotfilesError> {
   let action = ExecAction::new("exit 0".into(), None, false);
   action.execute()
 }

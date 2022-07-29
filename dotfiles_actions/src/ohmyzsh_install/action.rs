@@ -23,9 +23,10 @@
 
 #![cfg(unix)]
 use dotfiles_core::action::Action;
+use dotfiles_core::error::DotfilesError;
+use dotfiles_core::exec_wrapper::execute_command;
 use std::process::Command;
 use subprocess::Exec;
-use subprocess::ExitStatus;
 
 /// [OhMyZshInstallAction] sets up ohmyzsh.
 pub struct OhMyZshInstallAction {
@@ -48,7 +49,7 @@ impl OhMyZshInstallAction {
 }
 
 impl Action<'_> for OhMyZshInstallAction {
-  fn execute(&self) -> Result<(), String> {
+  fn execute(&self) -> Result<(), DotfilesError> {
     if self.check_oh_my_zsh_is_installed() {
       log::info!("oh-my-zsh is already installed, no need to reinstall");
       return Ok(());
@@ -58,47 +59,26 @@ impl Action<'_> for OhMyZshInstallAction {
       let cmd = Exec::shell("sudo apt install zsh");
       #[cfg(target_os = "macos")]
       let cmd = Exec::shell("brew install zsh");
-      cmd.join().map_or_else(
-        |_err| Err(String::from("Error zsh installation")),
-        |status| match status {
-          ExitStatus::Exited(0) => Ok(()),
-          ExitStatus::Exited(code) => Err(format!(
-            "Couldn't run zsh installation, Error status {}",
-            code
-          )),
-          _ => Err(String::from(
-            "Unexpected error while running zsh installation",
-          )),
-        },
+      execute_command(
+        cmd,
+        "Couldn't run zsh installation".into(),
+        "Unexpected error while running zsh installation".into(),
       )?;
     }
 
     if !self.skip_chsh {
-      Exec::shell("chsh -s $(which zsh)").join().map_or_else(
-        |_err| Err(String::from("Error setting shell to zsh")),
-        |status| match status {
-          ExitStatus::Exited(0) => Ok(()),
-          ExitStatus::Exited(code) => Err(format!(
-            "Couldn't run chsh to set the shell to zsh, Error status {}",
-            code
-          )),
-          _ => Err(String::from(
-            "Unexpected error while running chsh to set the shell to zsh",
-          )),
-        },
+      execute_command(
+        Exec::shell("chsh -s $(which zsh)"),
+        "Couldn't run chsh to set the shell to zsh",
+        "Unexpected error while running chsh to set the shell to zsh",
       )?;
     }
-    Exec::shell(
-      "sh -c \"$(curl -fsSL https://raw.github.com/ohmyzsh/ohmyzsh/master/tools/install.sh)\"",
-    )
-    .join()
-    .map_or_else(
-      |_err| Err(String::from("Error installing ohmyzsh")),
-      |status| match status {
-        ExitStatus::Exited(0) => Ok(()),
-        ExitStatus::Exited(code) => Err(format!("Couldn't install ohmyzsh, Error status {}", code)),
-        _ => Err(String::from("Unexpected error while installing ohmyzsh")),
-      },
+    execute_command(
+      Exec::shell(
+        "sh -c \"$(curl -fsSL https://raw.github.com/ohmyzsh/ohmyzsh/master/tools/install.sh)\"",
+      ),
+      "Couldn't install ohmyzsh".into(),
+      "Unexpected error while installing ohmyzsh".into(),
     )
   }
 }

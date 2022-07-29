@@ -19,6 +19,7 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
+use dotfiles_core::error::{DotfilesError, ErrorType};
 use itertools::Itertools;
 use std::collections::BTreeSet;
 
@@ -76,7 +77,7 @@ impl FlagParser {
     }
   }
 
-  fn check_flags_are_valid(&self, flags: &[String]) -> Result<(), String> {
+  fn check_flags_are_valid(&self, flags: &[String]) -> Result<(), DotfilesError> {
     let mut invalid_flags: Vec<&str> = Vec::new();
     for flag in flags.iter() {
       if !self.all_flag_names.contains(flag) {
@@ -85,15 +86,18 @@ impl FlagParser {
     }
     match invalid_flags.len() {
       0 => Ok(()),
-      _ => Err(format!(
-        "Unrecognized flag(s): {}\n\n  Hint: valid flags are {}",
-        invalid_flags.join(", "),
-        self.all_flag_names.iter().format(", ")
+      _ => Err(DotfilesError::from(
+        format!(
+          "Unrecognized flag(s): {}\n\n  Hint: valid flags are {}",
+          invalid_flags.join(", "),
+          self.all_flag_names.iter().format(", ")
+        ),
+        ErrorType::CoreError,
       )),
     }
   }
 
-  pub fn parse_flags(&self, flags: &[String]) -> Result<FlagData, String> {
+  pub fn parse_flags(&self, flags: &[String]) -> Result<FlagData, DotfilesError> {
     self.check_flags_are_valid(flags)?;
     let mut flag_data = FlagData {
       install_homebrew: false,

@@ -25,9 +25,10 @@ use crate::utils::read_test_yaml;
 use dotfiles_actions::exec::action::ExecAction;
 use dotfiles_actions::exec::directive::ExecDirective;
 use dotfiles_core::directive::Settings;
+use dotfiles_core::error::DotfilesError;
 
 #[test]
-fn parse_list_of_execs() -> Result<(), String> {
+fn parse_list_of_execs() -> Result<(), DotfilesError> {
   let directive = ExecDirective::new();
   let default_settings = Settings::new();
   let yaml = read_test_yaml("directive/exec/exec_list.yaml")

@@ -26,6 +26,7 @@ extern crate yaml_rust;
 
 use derivative::Derivative;
 use dotfiles_core::action::Action;
+use dotfiles_core::error::DotfilesError;
 use filesystem::FileSystem;
 use log::error;
 use log::info;
@@ -81,7 +82,7 @@ impl<F: FileSystem> Action<'_> for CreateAction<'_, F> {
   ///   [`force`](CreateAction::force) is false.
   /// - There is already a directory, file or symlink with the same name.
   /// - Permission denied.
-  fn execute(&self) -> Result<(), String> {
+  fn execute(&self) -> Result<(), DotfilesError> {
     fn create_dir<F: FileSystem>(fs: &'_ F, directory: &str, force: bool) -> io::Result<()> {
       if force {
         Ok(fs.create_dir_all(&directory)?)
@@ -94,9 +95,9 @@ impl<F: FileSystem> Action<'_> for CreateAction<'_, F> {
         info!("Created directory {}", &self.directory);
         Ok(())
       }
-      Err(s) => {
-        error!("Couldn't create directory {}: {}", &self.directory, s);
-        Err(s.to_string())
+      Err(err) => {
+        error!("Couldn't create directory {}: {}", &self.directory, err);
+        Err(DotfilesError::from_io_error(err))
       }
     }
   }

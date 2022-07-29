@@ -24,10 +24,64 @@
 
 #![cfg(unix)]
 use dotfiles_core::action::Action;
+use dotfiles_core::error::DotfilesError;
+use dotfiles_core::exec_wrapper::execute_command;
 use log::info;
 use std::marker::PhantomData;
 use subprocess::Exec;
-use subprocess::ExitStatus;
+
+struct BrewCommand {
+  item: String,
+  args: Vec<String>,
+  action_name: String,
+  action_description: String,
+}
+
+impl BrewCommand {
+  fn tap(item: &str) -> BrewCommand {
+    BrewCommand {
+      item: item.into(),
+      args: vec!["tap".into(), item.into()],
+      action_name: "tap".into(),
+      action_description: "tapping".into(),
+    }
+  }
+
+  fn install_formula(item: &str) -> BrewCommand {
+    BrewCommand {
+      item: item.into(),
+      args: vec!["install".into(), item.into()],
+      action_name: "install formula".into(),
+      action_description: "installing formula".into(),
+    }
+  }
+
+  fn install_cask(item: &str) -> BrewCommand {
+    BrewCommand {
+      item: item.into(),
+      args: vec!["install".into(), "--cask".into(), item.into()],
+      action_name: "install cask".into(),
+      action_description: "installing cask".into(),
+    }
+  }
+
+  pub fn execute(&self) -> Result<(), DotfilesError> {
+    info!("{} {}", self.action_description, self.item);
+    let mut cmd = Exec::cmd("brew");
+    for arg in self.args.iter() {
+      cmd = cmd.arg(arg);
+    }
+    execute_command(
+      cmd.into(),
+      format!("Couldn't {} {}", self.action_name, self.item).as_str(),
+      format!(
+        "Unexpected error while {} {}",
+        self.action_description, self.item
+      )
+      .as_str(),
+    )
+  }
+}
 
 /// [BrewAction] Installs software using homebrew.
 #[derive(Debug, PartialEq, Eq)]
@@ -83,53 +137,15 @@ impl<'a> BrewAction<'a> {
 }
 
 impl Action<'_> for BrewAction<'_> {
-  fn execute(&self) -> Result<(), String> {
+  fn execute(&self) -> Result<(), DotfilesError> {
     for tap in &self.taps {
-      info!("Tapping {}", tap);
-      Exec::cmd("brew").arg("tap").arg(tap).join().map_or_else(
-        |_err| Err(format!("Error tapping {}", tap)),
-        |status| match status {
-          ExitStatus::Exited(0) => Ok(()),
-          ExitStatus::Exited(code) => Err(format!("Couldn't tap {}, Error status {}", tap, code)),
-          _ => Err(format!("Unexpected error while tapping {}", tap)),
-        },
-      )?
+      BrewCommand::tap(tap).execute()?;
     }
     for formula in &self.formulae {
-      info!("Installing {} formula", formula);
-      Exec::cmd("brew")
-        .arg("install")
-        .arg(formula)
-        .join()
-        .map_or_else(
-          |_err| Err(format!("Error installing {}", formula)),
-          |status| match status {
-            ExitStatus::Exited(0) => Ok(()),
-            ExitStatus::Exited(code) => Err(format!(
-              "Couldn't install {}, Error status {}",
-              formula, code
-            )),
-            _ => Err(format!("Unexpected error while installing {}", formula)),
-          },
-        )?
+      BrewCommand::install_formula(formula).execute()?;
     }
     for cask in &self.casks {
-      info!("Installing {} cask", cask);
-      let mut cmd = Exec::cmd("brew").arg("install").arg("--cask");
-      if self.force_casks {
-        cmd = cmd.arg("--force");
-      }
-      cmd.arg(cask).join().map_or_else(
-        |_err| Err(format!("Error installing {} cask", cask)),
-        |status| match status {
-          ExitStatus::Exited(0) => Ok(()),
-          ExitStatus::Exited(code) => Err(format!(
-            "Couldn't install {} cask, Error status {}",
-            cask, code
-          )),
-          _ => Err(format!("Unexpected error while installing {} cask", cask)),
-        },
-      )?
+      BrewCommand::install_cask(cask).execute()?;
     }
     Ok(())
   }

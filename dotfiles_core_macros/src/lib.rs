@@ -19,6 +19,10 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
+//! This crate provides procedural macros to generate directive boilerplate
+#![warn(missing_docs)]
+#![deny(rustdoc::broken_intra_doc_links)]
+
 mod action_list;
 use action_list::expand_action_list_directive;
 use proc_macro::TokenStream;

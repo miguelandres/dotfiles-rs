@@ -25,11 +25,12 @@ use dotfiles_actions::homebrew_install::action::HomebrewInstallAction;
 use dotfiles_actions::link::directive::new_native_link_directive;
 use dotfiles_actions::ohmyzsh_install::action::OhMyZshInstallAction;
 use dotfiles_core::directive::DirectiveSet;
+use dotfiles_core::error::DotfilesError;
 use dotfiles_core::Action;
 use flags::FlagParser;
 use simplelog::*;
 
-fn process() -> Result<(), String> {
+fn process() -> Result<(), DotfilesError> {
   let flag_parser = FlagParser::new();
   let flags_vec: Vec<String> = std::env::args().collect();
   let flag_data = flag_parser.parse_flags(&flags_vec[1..])?;
@@ -56,7 +57,7 @@ fn main() {
   match process() {
     Ok(_) => log::info!("Process completed successfully"),
     Err(error) => {
-      log::error!("Processing failed: {}", error);
+      log::error!("Processing failed: {:?}", error);
       std::process::exit(1);
     }
   }

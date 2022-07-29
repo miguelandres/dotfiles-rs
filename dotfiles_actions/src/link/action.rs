@@ -26,9 +26,13 @@ use crate::link::directive::*;
 use derivative::Derivative;
 use dotfiles_core::action::Action;
 use dotfiles_core::directive::Settings;
+use dotfiles_core::error::DotfilesError;
+use dotfiles_core::error::ErrorType;
 use dotfiles_core::yaml_util::get_boolean_setting;
 use filesystem::FileSystem;
 use filesystem::UnixFileSystem;
+use getset::CopyGetters;
+use getset::Getters;
 use log::error;
 use log::info;
 use std::format;
@@ -40,18 +44,36 @@ use std::path::PathBuf;
 /// [LinkAction] creates a new symlink `path` that points to `target`.
 ///
 /// It is equivalent to running `ln -s <target> <path>`
-#[derive(Derivative)]
+#[derive(Derivative, Getters, CopyGetters)]
 #[derivative(Debug, PartialEq)]
 pub struct LinkAction<'a, F: FileSystem + UnixFileSystem> {
   #[derivative(Debug = "ignore", PartialEq = "ignore")]
   fs: &'a F,
+  /// Path of the new symlink
+  #[getset(get = "pub")]
   path: String,
+  /// Path that the symlink points to.
+  #[getset(get = "pub")]
   target: String,
+  /// Force to re-create the symlink if it exists already
+  #[getset(get_copy = "pub")]
   relink: bool,
+  /// Force to replace an existing file or directory when executed.
+  #[getset(get_copy = "pub")]
   force: bool,
+  /// Create all parent directories if they do not exist already
+  #[getset(get_copy = "pub")]
   create_parent_dirs: bool,
+  /// Succeed even if `target` doesn't point to an existing file or dir.
+  #[getset(get_copy = "pub")]
   ignore_missing_target: bool,
+  /// Allow relative linking.
+  /// TODO: actually implement relative linking.
+  #[getset(get_copy = "pub")]
   relative: bool,
+  /// If the target is another symlink, resolve the ultimate concrete file
+  /// or directory that it points to and make it the target
+  #[getset(get_copy = "pub")]
   resolve_symlink_target: bool,
 }
 
@@ -86,44 +108,10 @@ impl<'a, F: FileSystem + UnixFileSystem> LinkAction<'a, F> {
       resolve_symlink_target,
     }
   }
-  /// Path of the new symlink
-  pub fn path(&self) -> &str {
-    &self.path
-  }
-  /// Path that the symlink points to.
-  pub fn target(&self) -> &str {
-    &self.target
-  }
-  /// Force to re-create the symlink if it exists already
-  pub fn relink(&self) -> bool {
-    self.relink
-  }
-  /// Force to replace an existing file or directory when executed.
-  pub fn force(&self) -> bool {
-    self.force
-  }
-  /// Create all parent directories if they do not exist already
-  pub fn create_parent_dirs(&self) -> bool {
-    self.create_parent_dirs
-  }
-  /// Succeed even if `target` doesn't point to an existing file or dir.
-  pub fn ignore_missing_target(&self) -> bool {
-    self.ignore_missing_target
-  }
-  /// Allow relative linking.
-  /// TODO: actually implement relative linking.
-  pub fn relative(&self) -> bool {
-    self.relative
-  }
-  /// If the target is another symlink, resolve the ultimate concrete file
-  /// or directory that it points to and make it the target
-  pub fn resolve_symlink_target(&self) -> bool {
-    self.resolve_symlink_target
-  }
 }
 
 impl<F: FileSystem + UnixFileSystem> Action<'_> for LinkAction<'_, F> {
-  fn execute(&self) -> Result<(), String> {
+  fn execute(&self) -> Result<(), DotfilesError> {
     fn create_symlink<F: FileSystem + UnixFileSystem>(
       fs: &'_ F,
       action: &'_ LinkAction<F>,
@@ -180,12 +168,15 @@ impl<F: FileSystem + UnixFileSystem> Action<'_> for LinkAction<'_, F> {
         info!("Created symlink {} -> {}", &self.path, &self.target);
         Ok(())
       }
-      Err(s) => {
+      Err(err) => {
         error!(
           "Couldn't create symlink {} -> {}: {}",
-          &self.path, &self.target, s
+          &self.path, &self.target, err
         );
-        Err(s.to_string())
+        Err(DotfilesError::from(
+          err.to_string(),
+          ErrorType::FileSystemError { fs_error: err },
+        ))
       }
     }
   }

@@ -31,6 +31,8 @@ use dotfiles_core::directive::Directive;
 use dotfiles_core::directive::DirectiveData;
 use dotfiles_core::directive::Setting;
 use dotfiles_core::directive::Settings;
+use dotfiles_core::error::DotfilesError;
+use dotfiles_core::error::ErrorType;
 use dotfiles_core::yaml_util::*;
 use dotfiles_core_macros::ActionListDirective;
 use filesystem::FileSystem;
@@ -116,7 +118,7 @@ impl<'a, F: 'a + FileSystem + UnixFileSystem> LinkDirective<'a, F> {
     &'a self,
     context_settings: &Settings,
     yaml: &Yaml,
-  ) -> Result<LinkAction<'a, F>, String> {
+  ) -> Result<LinkAction<'a, F>, DotfilesError> {
     match yaml {
       Yaml::Hash(_) => {
         let path = get_string_setting_from_yaml_or_defaults(
@@ -159,9 +161,12 @@ impl<'a, F: 'a + FileSystem + UnixFileSystem> LinkDirective<'a, F> {
           self.data.defaults(),
         ))
       }
-      _ => Err(format!(
-        "Yaml passed to configure a Link action is not a Hash, thus cannot be parsed: {:?}",
-        yaml
+      _ => Err(DotfilesError::from(
+        format!(
+          "Yaml passed to configure a Link action is not a Hash, thus cannot be parsed: {:?}",
+          yaml
+        ),
+        ErrorType::UnexpectedYamlTypeError,
       )),
     }
   }
@@ -171,7 +176,7 @@ impl<'a, F: 'a + FileSystem + UnixFileSystem> LinkDirective<'a, F> {
     &'a self,
     context_settings: &Settings,
     yaml: &Yaml,
-  ) -> Result<LinkAction<'a, F>, String> {
+  ) -> Result<LinkAction<'a, F>, DotfilesError> {
     match yaml {
       Yaml::Hash(hash) => match hash.len() {
         1 => {
@@ -184,20 +189,21 @@ impl<'a, F: 'a + FileSystem + UnixFileSystem> LinkDirective<'a, F> {
               self.data.defaults(),
             ))
           } else {
-            Err(format!(
+            Err(DotfilesError::from(format!(
                         "Yaml passed to configure a short Link action is not a hash of string to string, cant parse: {:?}", yaml
-                    ))
+                    ), ErrorType::UnexpectedYamlTypeError))
           }
         }
-        x => Err(format!(
-          "Yaml passed to configure a short Link action is a hash with {:} values, must be just 1",
-          x
+        x => Err(DotfilesError::from(
+          format!("Yaml passed to configure a short Link action is a hash with {:} values, must be just 1",x),
+          ErrorType::UnexpectedYamlTypeError,
         )),
       },
-      _ => Err(format!(
+      _ => Err(DotfilesError::from(format!(
         "Yaml passed to configure a Link action is not a Hash, thus cannot be parsed: {:?}",
         yaml
-      )),
+      ),           ErrorType::UnexpectedYamlTypeError,
+    )),
     }
   }
 
@@ -206,7 +212,7 @@ impl<'a, F: 'a + FileSystem + UnixFileSystem> LinkDirective<'a, F> {
     &'a self,
     settings: &Settings,
     yaml: &Yaml,
-  ) -> Result<LinkAction<'a, F>, String> {
+  ) -> Result<LinkAction<'a, F>, DotfilesError> {
     if let Ok(action) = self.parse_shortened_action(settings, yaml) {
       Ok(action)
     } else {
@@ -219,7 +225,7 @@ impl<'a, F: 'a + FileSystem + UnixFileSystem> LinkDirective<'a, F> {
     &'a self,
     settings: &std::collections::HashMap<String, Setting>,
     yaml: &Yaml,
-  ) -> Result<Vec<LinkAction<F>>, String> {
+  ) -> Result<Vec<LinkAction<F>>, DotfilesError> {
     if let Yaml::Array(arr) = yaml {
       check_action_list_or_err!(
         LinkAction<F>,
@@ -229,7 +235,10 @@ impl<'a, F: 'a + FileSystem + UnixFileSystem> LinkDirective<'a, F> {
           .collect()
       )
     } else {
-      Err("Link directive expects an array of link actions, did not find an array.".to_string())
+      Err(DotfilesError::from(
+        "Link directive expects an array of link actions, did not find an array.".into(),
+        ErrorType::UnexpectedYamlTypeError,
+      ))
     }
   }
 }

@@ -23,7 +23,7 @@
 
 extern crate yaml_rust;
 
-use dotfiles_core::yaml_util::*;
+use dotfiles_core::{error::DotfilesError, yaml_util::*};
 use yaml_rust::YamlLoader;
 
 const YAML_STRING: &str = "
@@ -38,7 +38,7 @@ const YAML_HASH_WITHOUT_EXPECTED_KEY: &str = "
     - what: /home/user/somedir";
 
 #[test]
-fn gets_bare_string_successfully() -> Result<(), String> {
+fn gets_bare_string_successfully() -> Result<(), DotfilesError> {
   let docs = YamlLoader::load_from_str(YAML_STRING).unwrap();
   let doc = &docs[0];
   let list = &doc[0]["create"][0];
@@ -53,7 +53,7 @@ fn gets_bare_string_successfully() -> Result<(), String> {
   Ok(())
 }
 #[test]
-fn gets_string_in_hash_successfully() -> Result<(), String> {
+fn gets_string_in_hash_successfully() -> Result<(), DotfilesError> {
   let docs = YamlLoader::load_from_str(YAML_HASH).unwrap();
   let doc = &docs[0];
   let list = &doc[0]["create"][0];

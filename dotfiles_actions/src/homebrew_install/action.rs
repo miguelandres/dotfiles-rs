@@ -24,10 +24,12 @@
 
 #![cfg(unix)]
 use dotfiles_core::action::Action;
+use dotfiles_core::error::DotfilesError;
+use dotfiles_core::exec_wrapper::execute_command;
+use dotfiles_core::exec_wrapper::execute_pipeline;
 use log::info;
 use std::process::Command;
 use subprocess::Exec;
-use subprocess::ExitStatus;
 
 /// [HomebrewInstallAction] installs homebrew.
 pub struct HomebrewInstallAction {}
@@ -54,44 +56,23 @@ impl HomebrewInstallAction {
 }
 
 impl Action<'_> for HomebrewInstallAction {
-  fn execute(&self) -> Result<(), String> {
+  fn execute(&self) -> Result<(), DotfilesError> {
     if !self.check_brew_is_installed() {
-      let result = Exec::shell("/bin/bash -c \"$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)\"")
-                .join().map_or_else(|_err|
-                        Err(String::from("Error running homebrew installer")),
-                        |status| match status  {
-                            ExitStatus::Exited(0) => Ok(()),
-                        ExitStatus::Exited(code) => Err(format!(
-                            "Couldn't run homebrew installer, Error status {}",
-                            code
-                        )),
-                        _ => Err(String::from("Unexpected error while running homebrew installer"))
-                    }
-                );
+      let result = execute_command(
+        Exec::shell(
+          "/bin/bash -c \"$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)\""),
+        "Error running homebrew installer".into(),
+        "Couldn't run homebrew installer".into());
       #[cfg(not(all(target_os = "macos", target_arch = "aarch64")))]
       return result;
       #[cfg(all(target_os = "macos", target_arch = "aarch64"))]
       {
         result?;
-        (Exec::shell("echo 'eval \"$(/opt/homebrew/bin/brew shellenv)\"' >> ~/.zprofile")
-          | Exec::shell("echo 'eval \"$(/opt/homebrew/bin/brew shellenv)\"' >> ~/.bash_profile"))
-        .join()
-        .map_or_else(
-          |_err| {
-            Err(String::from(
-              "couldn't set .zprofile and .bash_profile to use homebrew",
-            ))
-          },
-          |status| match status {
-            ExitStatus::Exited(0) => Ok(()),
-            ExitStatus::Exited(code) => Err(format!(
-              "couldn't set .zprofile and .bash_profile to use homebrew, status {}",
-              code
-            )),
-            _ => Err(String::from(
-              "Unexpected error while setting .zprofile and .bash_profile to use homebrew",
-            )),
-          },
+        execute_pipeline(
+          Exec::shell("echo 'eval \"$(/opt/homebrew/bin/brew shellenv)\"' >> ~/.zprofile")
+            | Exec::shell("echo 'eval \"$(/opt/homebrew/bin/brew shellenv)\"' >> ~/.bash_profile"),
+          "couldn't set .zprofile and .bash_profile to use homebrew".into(),
+          "couldn't set .zprofile and .bash_profile to use homebrew".into(),
         )
       }
     } else {

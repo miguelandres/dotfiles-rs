@@ -25,7 +25,11 @@
 
 extern crate yaml_rust;
 
-use crate::action::Action;
+use crate::{
+  action::Action,
+  error::{DotfilesError, ErrorType},
+};
+use getset::Getters;
 use std::collections::HashMap;
 use yaml_rust::Yaml;
 
@@ -56,30 +60,25 @@ pub fn initialize_settings_object(settings: &[(String, Setting)]) -> Settings {
 /// name it takes in configuration sources. The name must be unique.
 ///
 /// These default settings can be configured by the user as well.
+#[derive(Getters, Debug, Clone)]
 pub struct DirectiveData {
   /// Unique name of this directive.
   ///
   /// This name will be used in configuration sources to instantiate actions
   /// of this directive
+  #[getset(get = "pub")]
   name: &'static str,
   /// Default settings for this directive.
   ///
   /// Any setting that is not in the defaults for a directive but is part of
   /// the corresponding Action struct is considered to be mandatory.
+  #[getset(get = "pub")]
   defaults: Settings,
 }
 impl DirectiveData {
   /// Constructs a new directive from a name and a set of default settings.
   pub fn new(name: &'static str, defaults: Settings) -> DirectiveData {
     DirectiveData { name, defaults }
-  }
-  /// Returns the name of the directive
-  pub fn name(&self) -> &str {
-    self.name
-  }
-  /// Returns the collection of default settings.
-  pub fn defaults(&self) -> &Settings {
-    &self.defaults
   }
 }
 
@@ -98,7 +97,7 @@ pub trait Directive<'a> {
     &'a self,
     settings: &Settings,
     yaml: &Yaml,
-  ) -> Result<Vec<Box<dyn 'a + Action<'a>>>, String>;
+  ) -> Result<Vec<Box<dyn 'a + Action<'a>>>, DotfilesError>;
 }
 
 /// A struct that contains the currently registered directives.
@@ -126,17 +125,18 @@ impl<'a> DirectiveSet<'a> {
   /// Add a new directive
   ///
   /// This fails with an error if another directive with the same name already exists.
-  pub fn add(&mut self, dir: Box<dyn Directive<'a>>) -> Result<(), String> {
+  pub fn add(&mut self, dir: Box<dyn Directive<'a>>) -> Result<(), DotfilesError> {
     let name = String::from(dir.name());
     self
       .directives
       .try_insert(String::from(name.as_str()), dir)
       .map_or_else(
         |_err| {
-          Err(format!(
-            "Cannot add a {} directive since there is another directive with the same name already",
-            name
-          ))
+          Err(DotfilesError::from(format!(
+              "Cannot add a {} directive since there is another directive with the same name already",
+              name
+            ),
+            ErrorType::CoreError))
         },
         |_box| Ok(()),
       )
