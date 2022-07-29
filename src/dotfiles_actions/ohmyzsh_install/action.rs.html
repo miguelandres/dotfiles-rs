@@ -151,8 +151,8 @@
       <span class="kw">let</span> <span class="ident">cmd</span> <span class="op">=</span> <span class="ident">Exec::shell</span>(<span class="string">&quot;brew install zsh&quot;</span>);
       <span class="ident">execute_command</span>(
         <span class="ident">cmd</span>,
-        <span class="string">&quot;Couldn&#39;t run zsh installation&quot;</span>.<span class="ident">into</span>(),
-        <span class="string">&quot;Unexpected error while running zsh installation&quot;</span>.<span class="ident">into</span>(),
+        <span class="string">&quot;Couldn&#39;t run zsh installation&quot;</span>,
+        <span class="string">&quot;Unexpected error while running zsh installation&quot;</span>,
       )<span class="question-mark">?</span>;
     }
 
@@ -167,8 +167,8 @@
       <span class="ident">Exec::shell</span>(
         <span class="string">&quot;sh -c \&quot;$(curl -fsSL https://raw.github.com/ohmyzsh/ohmyzsh/master/tools/install.sh)\&quot;&quot;</span>,
       ),
-      <span class="string">&quot;Couldn&#39;t install ohmyzsh&quot;</span>.<span class="ident">into</span>(),
-      <span class="string">&quot;Unexpected error while installing ohmyzsh&quot;</span>.<span class="ident">into</span>(),
+      <span class="string">&quot;Couldn&#39;t install ohmyzsh&quot;</span>,
+      <span class="string">&quot;Unexpected error while installing ohmyzsh&quot;</span>,
     )
   }
 }

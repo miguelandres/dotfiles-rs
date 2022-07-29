@@ -230,7 +230,7 @@
       <span class="ident">cmd</span> <span class="op">=</span> <span class="ident">cmd</span>.<span class="ident">arg</span>(<span class="ident">arg</span>);
     }
     <span class="ident">execute_command</span>(
-      <span class="ident">cmd</span>.<span class="ident">into</span>(),
+      <span class="ident">cmd</span>,
       <span class="macro">format!</span>(<span class="string">&quot;Couldn&#39;t {} {}&quot;</span>, <span class="self">self</span>.<span class="ident">action_name</span>, <span class="self">self</span>.<span class="ident">item</span>).<span class="ident">as_str</span>(),
       <span class="macro">format!</span>(
         <span class="string">&quot;Unexpected error while {} {}&quot;</span>,
