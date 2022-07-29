@@ -61,8 +61,8 @@ impl Action<'_> for OhMyZshInstallAction {
       let cmd = Exec::shell("brew install zsh");
       execute_command(
         cmd,
-        "Couldn't run zsh installation".into(),
-        "Unexpected error while running zsh installation".into(),
+        "Couldn't run zsh installation",
+        "Unexpected error while running zsh installation",
       )?;
     }
 
@@ -77,8 +77,8 @@ impl Action<'_> for OhMyZshInstallAction {
       Exec::shell(
         "sh -c \"$(curl -fsSL https://raw.github.com/ohmyzsh/ohmyzsh/master/tools/install.sh)\"",
       ),
-      "Couldn't install ohmyzsh".into(),
-      "Unexpected error while installing ohmyzsh".into(),
+      "Couldn't install ohmyzsh",
+      "Unexpected error while installing ohmyzsh",
     )
   }
 }

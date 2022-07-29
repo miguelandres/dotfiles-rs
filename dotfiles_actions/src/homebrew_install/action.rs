@@ -61,8 +61,8 @@ impl Action<'_> for HomebrewInstallAction {
       let result = execute_command(
         Exec::shell(
           "/bin/bash -c \"$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)\""),
-        "Error running homebrew installer".into(),
-        "Couldn't run homebrew installer".into());
+        "Error running homebrew installer",
+        "Couldn't run homebrew installer");
       #[cfg(not(all(target_os = "macos", target_arch = "aarch64")))]
       return result;
       #[cfg(all(target_os = "macos", target_arch = "aarch64"))]
@@ -71,8 +71,8 @@ impl Action<'_> for HomebrewInstallAction {
         execute_pipeline(
           Exec::shell("echo 'eval \"$(/opt/homebrew/bin/brew shellenv)\"' >> ~/.zprofile")
             | Exec::shell("echo 'eval \"$(/opt/homebrew/bin/brew shellenv)\"' >> ~/.bash_profile"),
-          "couldn't set .zprofile and .bash_profile to use homebrew".into(),
-          "couldn't set .zprofile and .bash_profile to use homebrew".into(),
+          "couldn't set .zprofile and .bash_profile to use homebrew",
+          "couldn't set .zprofile and .bash_profile to use homebrew",
         )
       }
     } else {

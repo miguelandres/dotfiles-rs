@@ -44,7 +44,7 @@ pub fn get_boolean_setting_from_yaml_or_defaults(
 ) -> Result<bool, DotfilesError> {
   match yaml {
     Yaml::Hash(hash) => match hash.get(&Yaml::String(String::from(name))) {
-      Some(Yaml::Boolean(b)) => Ok(b.clone()),
+      Some(Yaml::Boolean(b)) => Ok(*b),
       Some(other_yaml) => Err(DotfilesError::from(
         format!(
           "{:} exists but it is not parseable as boolean: {:}",
@@ -92,7 +92,7 @@ pub fn get_string_setting(
   directive_defaults: &Settings,
 ) -> Result<String, DotfilesError> {
   if let Setting::String(s) = get_setting(name, context_settings, directive_defaults)? {
-    Ok(s.clone())
+    Ok(s)
   } else {
     Err(DotfilesError::from(
       format!("Setting {} was found but is not a string", name),
@@ -161,7 +161,7 @@ pub fn get_integer_setting_from_yaml_or_defaults(
 ) -> Result<i64, DotfilesError> {
   match yaml {
     Yaml::Hash(hash) => match hash.get(&Yaml::String(String::from(name))) {
-      Some(Yaml::Integer(i)) => Ok(i.clone()),
+      Some(Yaml::Integer(i)) => Ok(*i),
       Some(other_yaml) => Err(DotfilesError::from(
         format!(
           "Setting {:} exists but it cannot be parsed as integer: {:}",

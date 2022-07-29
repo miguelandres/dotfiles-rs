@@ -154,13 +154,13 @@ impl<F: FileSystem + UnixFileSystem> Action<'_> for LinkAction<'_, F> {
                     }
         fs.symlink(&target, &path)
       } else {
-        return Err(io::Error::new(
+        Err(io::Error::new(
           ErrorKind::NotFound,
           format!(
             "Couldn't find target file {:?} to link to, use `ignore_missing_target` to ignore",
             target
           ),
-        ));
+        ))
       }
     }
     match create_symlink(self.fs, self) {

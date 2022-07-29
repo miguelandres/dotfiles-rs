@@ -82,7 +82,7 @@ impl<'a> Action<'a> for ExecAction<'a> {
           format!(
             "Couldn't run command `{0}`, failed with error {1}",
             self.command(),
-            err.to_string()
+            err
           ),
           execution_error(Some(err), None),
         ))

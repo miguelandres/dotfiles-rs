@@ -81,8 +81,8 @@ impl DotfilesError {
   /// Creates a new Dotfiles error with the given message and error type
   pub fn from(message: String, error_type: ErrorType) -> Self {
     DotfilesError {
-      message: message,
-      error_type: error_type,
+      message,
+      error_type,
     }
   }
   /// Creates a new Dotfiles error with the given message and error type

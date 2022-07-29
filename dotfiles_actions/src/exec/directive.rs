@@ -91,7 +91,7 @@ impl<'a> ActionParser<'a> for ExecDirective<'a> {
         settings,
         self.defaults(),
       )
-      .map_or(Option::<String>::None, |desc| Some(desc)),
+      .ok(),
       yaml_util::get_boolean_setting_from_yaml_or_defaults(
         ECHO_SETTING,
         yaml,

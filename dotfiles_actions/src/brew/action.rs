@@ -72,7 +72,7 @@ impl BrewCommand {
       cmd = cmd.arg(arg);
     }
     execute_command(
-      cmd.into(),
+      cmd,
       format!("Couldn't {} {}", self.action_name, self.item).as_str(),
       format!(
         "Unexpected error while {} {}",

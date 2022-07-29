@@ -31,7 +31,7 @@ fn failed_command_returns_error() -> Result<(), DotfilesError> {
   let action = ExecAction::new("exit 1".into(), None, false);
   check_action_fail(
     &action,
-    format!("An error was expected when exit 1 was called but no error was returned",),
+    "An error was expected when exit 1 was called but no error was returned".to_string(),
   )
 }
 
