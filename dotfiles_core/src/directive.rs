@@ -67,7 +67,7 @@ pub struct DirectiveData {
   /// This name will be used in configuration sources to instantiate actions
   /// of this directive
   #[getset(get = "pub")]
-  name: &'static str,
+  name: String,
   /// Default settings for this directive.
   ///
   /// Any setting that is not in the defaults for a directive but is part of
@@ -77,17 +77,31 @@ pub struct DirectiveData {
 }
 impl DirectiveData {
   /// Constructs a new directive from a name and a set of default settings.
-  pub fn from(name: &'static str, defaults: Settings) -> DirectiveData {
-    DirectiveData { name, defaults }
+  pub fn from(name: String, defaults: Settings) -> DirectiveData {
+    DirectiveData {
+      name: name,
+      defaults,
+    }
   }
 }
 
+/// A trait for all directives, it is shared between [crate::action::ActionParser] and [Directive]
+pub trait HasDirectiveData<'a> {
+  /// Returns the directive data for this object
+  fn directive_data(&'a self) -> &'a DirectiveData;
+}
+
 /// A parser for action steps, each directive represents a type of Action.
-pub trait Directive<'a> {
+pub trait Directive<'a>: HasDirectiveData<'a> {
   /// Returns the name of the directive.
-  fn name(&self) -> &str;
-  /// Returns the defaults settings as configured.
-  fn defaults(&self) -> &Settings;
+  fn name(&'a self) -> &'a str {
+    self.directive_data().name()
+  }
+
+  /// Returns the default settings as configured.
+  fn defaults(&'a self) -> &'a Settings {
+    self.directive_data().defaults()
+  }
   /// Builds a list of actions for this directive from a Yaml configuration
   /// object and a set of default settings.
   ///
@@ -125,11 +139,10 @@ impl<'a> DirectiveSet<'a> {
   /// Add a new directive
   ///
   /// This fails with an error if another directive with the same name already exists.
-  pub fn add(&mut self, dir: Box<dyn Directive<'a>>) -> Result<(), DotfilesError> {
-    let name = String::from(dir.name());
+  pub fn add(&mut self, name: &str, dir: Box<dyn Directive<'a>>) -> Result<(), DotfilesError> {
     self
       .directives
-      .try_insert(String::from(name.as_str()), dir)
+      .try_insert(String::from(name), dir)
       .map_or_else(
         |_err| {
           Err(DotfilesError::from(format!(

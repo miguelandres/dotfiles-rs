@@ -28,6 +28,7 @@ use dotfiles_core::action::ActionParser;
 use dotfiles_core::directive::initialize_settings_object;
 use dotfiles_core::directive::Directive;
 use dotfiles_core::directive::DirectiveData;
+use dotfiles_core::directive::HasDirectiveData;
 use dotfiles_core::directive::Setting;
 use dotfiles_core::directive::Settings;
 use dotfiles_core::error::DotfilesError;
@@ -57,7 +58,7 @@ pub fn new_native_create_directive<'a>() -> CreateDirective<'a, OsFileSystem> {
 /// Initializes the default configuration for the [CreateDirective]
 pub fn init_directive_data() -> DirectiveData {
   DirectiveData::from(
-    DIRECTIVE_NAME,
+    DIRECTIVE_NAME.into(),
     initialize_settings_object(&[(String::from(FORCE_SETTING), Setting::Boolean(false))]),
   )
 }

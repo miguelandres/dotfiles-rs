@@ -24,6 +24,7 @@
 use yaml_rust::Yaml;
 
 use crate::{
+  directive::HasDirectiveData,
   error::{DotfilesError, ErrorType},
   Settings,
 };
@@ -38,12 +39,14 @@ pub trait Action<'a> {
 }
 
 /// Trait to parse a specific action type from Yaml.
-pub trait ActionParser<'a> {
+pub trait ActionParser<'a>: HasDirectiveData<'a> {
   /// The action type this object parses
   type ActionType: Action<'a>;
 
   /// The name of the action this object parses
-  fn name(&'a self) -> &'static str;
+  fn name(&'a self) -> &'a str {
+    self.directive_data().name()
+  }
 
   /// Builds a single action of type [ActionParser::ActionType] from Yaml tree object
   /// that represents the action's configuration and a default settings object.

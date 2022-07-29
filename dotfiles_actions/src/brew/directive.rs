@@ -28,6 +28,7 @@ use dotfiles_core::action::ActionParser;
 use dotfiles_core::directive::initialize_settings_object;
 use dotfiles_core::directive::Directive;
 use dotfiles_core::directive::DirectiveData;
+use dotfiles_core::directive::HasDirectiveData;
 use dotfiles_core::directive::Setting;
 use dotfiles_core::directive::Settings;
 use dotfiles_core::error::DotfilesError;
@@ -49,7 +50,7 @@ pub fn new_brew_directive<'a>() -> BrewDirective<'a> {
 /// Initialize the defaults for the BrewDirective.
 pub fn init_directive_data() -> DirectiveData {
   DirectiveData::from(
-    DIRECTIVE_NAME,
+    DIRECTIVE_NAME.into(),
     initialize_settings_object(&[(String::from(FORCE_CASKS_SETTING), Setting::Boolean(false))]),
   )
 }
@@ -59,13 +60,6 @@ pub fn init_directive_data() -> DirectiveData {
 pub struct BrewDirective<'a> {
   data: DirectiveData,
   phantom_data: PhantomData<&'a DirectiveData>,
-}
-
-/// Default for [BrewDirective]
-impl<'a> Default for BrewDirective<'a> {
-  fn default() -> Self {
-    Self::new()
-  }
 }
 
 impl<'a> BrewDirective<'a> {
@@ -119,7 +113,7 @@ impl<'a> ActionParser<'a> for BrewDirective<'a> {
   }
 
   /// Parse the list of actions from yaml, in this case it's only one action so
-  /// this function only wraps [BrewDirective::parse_brew_action]
+  /// this function only wraps [BrewDirective::parse_action]
   fn parse_action_list(
     &'a self,
     context_settings: &Settings,

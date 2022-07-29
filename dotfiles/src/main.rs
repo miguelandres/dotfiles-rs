@@ -20,7 +20,10 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 mod flags;
+
+use dotfiles_actions::brew::directive::BrewDirective;
 use dotfiles_actions::create::directive::new_native_create_directive;
+use dotfiles_actions::exec::directive::ExecDirective;
 use dotfiles_actions::homebrew_install::action::HomebrewInstallAction;
 use dotfiles_actions::link::directive::new_native_link_directive;
 use dotfiles_actions::ohmyzsh_install::action::OhMyZshInstallAction;
@@ -41,8 +44,11 @@ fn process() -> Result<(), DotfilesError> {
     OhMyZshInstallAction::new(flag_data.skip_chsh).execute()?;
   }
   let mut directive_set: DirectiveSet = Default::default();
-  directive_set.add(Box::new(new_native_link_directive()))?;
-  directive_set.add(Box::new(new_native_create_directive()))?;
+  directive_set.add("brew", Box::new(BrewDirective::new()))?;
+  directive_set.add("create", Box::new(new_native_create_directive()))?;
+  directive_set.add("exec", Box::new(ExecDirective::new()))?;
+  directive_set.add("link", Box::new(new_native_link_directive()))?;
+
   Ok(())
 }
 

@@ -23,6 +23,7 @@
 
 use std::{collections, marker::PhantomData};
 
+use dotfiles_core::directive::HasDirectiveData;
 use dotfiles_core_macros::ActionListDirective;
 use yaml_rust::Yaml;
 
@@ -52,7 +53,7 @@ pub fn new_exec_directive<'a>() -> ExecDirective<'a> {
 /// Initialize the defaults for the BrewDirective.
 pub fn init_directive_data() -> DirectiveData {
   DirectiveData::from(
-    DIRECTIVE_NAME,
+    DIRECTIVE_NAME.into(),
     initialize_settings_object(&[(String::from(ECHO_SETTING), Setting::Boolean(false))]),
   )
 }

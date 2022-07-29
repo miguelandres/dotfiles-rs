@@ -31,15 +31,12 @@ pub fn expand_action_list_directive(input: DeriveInput) -> TokenStream {
 
   quote! {
       #[automatically_derived]
-      impl #impl_generics Directive <#lifetimes> for  #st_name #ty_generics #where_clause{
-        fn name(&self) -> &str {
-          self.data.name()
+      impl #impl_generics HasDirectiveData <'a> for  #st_name #ty_generics #where_clause{
+        fn directive_data(&'a self) -> &'a DirectiveData {
+          &self.data
         }
-
-        fn defaults(&self) -> &Settings {
-          self.data.defaults()
-        }
-
+      }
+        impl #impl_generics Directive <#lifetimes> for  #st_name #ty_generics #where_clause{
         fn build_action_list(
           &'a self,
           settings: &Settings,
