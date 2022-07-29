@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"enum":[["ErrorType","A collection of types of errors that may occur while parsing or executing actions"]],"fn":[["execution_error","Creates an [ErrorType::ExecutionError]"]],"struct":[["DotfilesError","Struct that represents an error that happened while parsing or executing actions."]]};

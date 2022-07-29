@@ -103,6 +103,17 @@
 <span id="97">97</span>
 <span id="98">98</span>
 <span id="99">99</span>
+<span id="100">100</span>
+<span id="101">101</span>
+<span id="102">102</span>
+<span id="103">103</span>
+<span id="104">104</span>
+<span id="105">105</span>
+<span id="106">106</span>
+<span id="107">107</span>
+<span id="108">108</span>
+<span id="109">109</span>
+<span id="110">110</span>
 </pre><pre class="rust"><code><span class="comment">// Copyright (c) 2021-2022 Miguel Barreto and others</span>
 <span class="comment">//</span>
 <span class="comment">// Permission is hereby granted, free of charge, to any person obtaining</span>
@@ -128,6 +139,8 @@
 
 <span class="kw">use</span> <span class="ident">std::marker::PhantomData</span>;
 
+<span class="kw">use</span> <span class="ident">dotfiles_core::error::execution_error</span>;
+<span class="kw">use</span> <span class="ident">dotfiles_core::error::DotfilesError</span>;
 <span class="kw">use</span> <span class="ident">subprocess::Exec</span>;
 <span class="kw">use</span> <span class="ident">subprocess::ExitStatus</span>;
 
@@ -172,7 +185,7 @@
 }
 
 <span class="kw">impl</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span><span class="op">&gt;</span> <span class="ident">Action</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span><span class="op">&gt;</span> <span class="kw">for</span> <span class="ident">ExecAction</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span><span class="op">&gt;</span> {
-  <span class="kw">fn</span> <span class="ident">execute</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span>(), <span class="ident">String</span><span class="op">&gt;</span> {
+  <span class="kw">fn</span> <span class="ident">execute</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span>(), <span class="ident">DotfilesError</span><span class="op">&gt;</span> {
     <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Some</span>(<span class="ident">description</span>) <span class="op">=</span> <span class="self">self</span>.<span class="ident">description</span>.<span class="ident">as_ref</span>() {
       <span class="macro">log::info!</span>(<span class="string">&quot;{}&quot;</span>, <span class="ident">description</span>);
     }
@@ -181,27 +194,36 @@
     }
     <span class="ident">Exec::shell</span>(<span class="self">self</span>.<span class="ident">command</span>()).<span class="ident">join</span>().<span class="ident">map_or_else</span>(
       <span class="op">|</span><span class="ident">err</span><span class="op">|</span> {
-        <span class="prelude-val">Err</span>(<span class="macro">format!</span>(
-          <span class="string">&quot;Couldn&#39;t run command `{0}`, failed with error {1}&quot;</span>,
-          <span class="self">self</span>.<span class="ident">command</span>(),
-          <span class="ident">err</span>.<span class="ident">to_string</span>()
+        <span class="prelude-val">Err</span>(<span class="ident">DotfilesError::from</span>(
+          <span class="macro">format!</span>(
+            <span class="string">&quot;Couldn&#39;t run command `{0}`, failed with error {1}&quot;</span>,
+            <span class="self">self</span>.<span class="ident">command</span>(),
+            <span class="ident">err</span>.<span class="ident">to_string</span>()
+          ),
+          <span class="ident">execution_error</span>(<span class="prelude-val">Some</span>(<span class="ident">err</span>), <span class="prelude-val">None</span>),
         ))
       },
       <span class="op">|</span><span class="ident">status</span><span class="op">|</span> <span class="kw">match</span> <span class="ident">status</span> {
         <span class="ident">ExitStatus::Exited</span>(<span class="number">0</span>) =&gt; <span class="prelude-val">Ok</span>(()),
-        <span class="ident">ExitStatus::Exited</span>(<span class="ident">code</span>) =&gt; <span class="prelude-val">Err</span>(<span class="macro">format!</span>(
-          <span class="string">&quot;Command `{0}` failed with error code {1}&quot;</span>,
-          <span class="self">self</span>.<span class="ident">command</span>(),
-          <span class="ident">code</span>
+        <span class="ident">ExitStatus::Exited</span>(<span class="ident">code</span>) =&gt; <span class="prelude-val">Err</span>(<span class="ident">DotfilesError::from</span>(
+          <span class="macro">format!</span>(
+            <span class="string">&quot;Command `{0}` failed with error code {1}&quot;</span>,
+            <span class="self">self</span>.<span class="ident">command</span>(),
+            <span class="ident">code</span>
+          ),
+          <span class="ident">execution_error</span>(<span class="prelude-val">None</span>, <span class="prelude-val">Some</span>(<span class="ident">status</span>)),
         )),
-        <span class="kw">_</span> =&gt; <span class="prelude-val">Err</span>(<span class="macro">format!</span>(
-          <span class="string">&quot;Unexpected error while running command `{0}`&quot;</span>,
-          <span class="self">self</span>.<span class="ident">command</span>()
+        <span class="kw">_</span> =&gt; <span class="prelude-val">Err</span>(<span class="ident">DotfilesError::from</span>(
+          <span class="macro">format!</span>(
+            <span class="string">&quot;Unexpected error while running command `{0}`&quot;</span>,
+            <span class="self">self</span>.<span class="ident">command</span>()
+          ),
+          <span class="ident">execution_error</span>(<span class="prelude-val">None</span>, <span class="prelude-val">Some</span>(<span class="ident">status</span>)),
         )),
       },
     )
   }
 }
 </code></pre></div>
-</section></div></main><div id="rustdoc-vars" data-root-path="../../../" data-current-crate="dotfiles_actions" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.64.0-nightly (4d6d601c8 2022-07-26)" ></div>
+</section></div></main><div id="rustdoc-vars" data-root-path="../../../" data-current-crate="dotfiles_actions" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.64.0-nightly (9067d5277 2022-07-28)" ></div>
 </body></html>

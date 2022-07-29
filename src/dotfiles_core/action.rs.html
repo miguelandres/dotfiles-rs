@@ -55,6 +55,7 @@
 <span id="49">49</span>
 <span id="50">50</span>
 <span id="51">51</span>
+<span id="52">52</span>
 </pre><pre class="rust"><code><span class="comment">// Copyright (c) 2021-2022 Miguel Barreto and others</span>
 <span class="comment">//</span>
 <span class="comment">// Permission is hereby granted, free of charge, to any person obtaining</span>
@@ -78,13 +79,15 @@
 
 <span class="doccomment">//! This module contains the base trait for all [Action]s.</span>
 
+<span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::error::DotfilesError</span>;
+
 <span class="doccomment">/// An action to be run by a the dotfiles runtime.</span>
 <span class="kw">pub</span> <span class="kw">trait</span> <span class="ident">Action</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span><span class="op">&gt;</span> {
   <span class="doccomment">/// Executes the action.</span>
   <span class="doccomment">///</span>
   <span class="doccomment">/// Returns an error String describing the issue, this string can be used</span>
   <span class="doccomment">/// to log or display to the user.</span>
-  <span class="kw">fn</span> <span class="ident">execute</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span>(), <span class="ident">String</span><span class="op">&gt;</span>;
+  <span class="kw">fn</span> <span class="ident">execute</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span>(), <span class="ident">DotfilesError</span><span class="op">&gt;</span>;
 }
 
 <span class="doccomment">/// Macro to check that all actions in a Vector of results of parsing actions from yaml</span>
@@ -93,19 +96,18 @@
 <span class="attribute">#[<span class="ident">macro_export</span>]</span>
 <span class="macro">macro_rules!</span> <span class="ident">check_action_list_or_err</span> {
   ( <span class="macro-nonterminal">$</span><span class="macro-nonterminal">action_type</span>:<span class="ident">ty</span>, <span class="macro-nonterminal">$</span><span class="macro-nonterminal">actions_expr</span>:<span class="ident">expr</span>) =&gt; {{
-    <span class="kw">let</span> <span class="ident">actions_expr_list</span>: <span class="ident">Vec</span><span class="op">&lt;</span><span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="macro-nonterminal">$</span><span class="macro-nonterminal">action_type</span>, <span class="ident">String</span><span class="op">&gt;</span><span class="op">&gt;</span> <span class="op">=</span> <span class="macro-nonterminal">$</span><span class="macro-nonterminal">actions_expr</span>;
-    <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Some</span>(<span class="prelude-val">Err</span>(<span class="ident">error_string</span>)) <span class="op">=</span> <span class="ident">actions_expr_list</span>.<span class="ident">iter</span>().<span class="ident">find</span>(<span class="op">|</span><span class="ident">res</span><span class="op">|</span> <span class="ident">res</span>.<span class="ident">is_err</span>()) {
-      <span class="prelude-val">Err</span>(<span class="ident">error_string</span>.<span class="ident">to_string</span>())
-    } <span class="kw">else</span> {
-      <span class="prelude-val">Ok</span>(
-        <span class="ident">actions_expr_list</span>
-          .<span class="ident">into_iter</span>()
-          .<span class="ident">map</span>(<span class="op">|</span><span class="ident">res_action</span><span class="op">|</span> <span class="ident">res_action</span>.<span class="ident">unwrap</span>())
-          .<span class="ident">collect</span>(),
-      )
+    <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">actions_expr_list</span>: <span class="ident">Vec</span><span class="op">&lt;</span><span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="macro-nonterminal">$</span><span class="macro-nonterminal">action_type</span>, <span class="ident">dotfiles_core::error::DotfilesError</span><span class="op">&gt;</span><span class="op">&gt;</span> <span class="op">=</span>
+      <span class="macro-nonterminal">$</span><span class="macro-nonterminal">actions_expr</span>;
+    <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">list_successes</span> <span class="op">=</span> <span class="ident">Vec</span>::<span class="op">&lt;</span><span class="macro-nonterminal">$</span><span class="macro-nonterminal">action_type</span><span class="op">&gt;</span><span class="ident">::new</span>();
+    <span class="kw">for</span> <span class="ident">res</span> <span class="kw">in</span> <span class="ident">actions_expr_list</span>.<span class="ident">into_iter</span>() {
+      <span class="kw">match</span> <span class="ident">res</span> {
+        <span class="prelude-val">Err</span>(<span class="ident">err</span>) =&gt; <span class="kw">return</span> <span class="prelude-val">Err</span>(<span class="ident">err</span>),
+        <span class="prelude-val">Ok</span>(<span class="ident">act</span>) =&gt; <span class="ident">list_successes</span>.<span class="ident">push</span>(<span class="ident">act</span>),
+      }
     }
+    <span class="prelude-val">Ok</span>(<span class="ident">list_successes</span>)
   }};
 }
 </code></pre></div>
-</section></div></main><div id="rustdoc-vars" data-root-path="../../" data-current-crate="dotfiles_core" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.64.0-nightly (4d6d601c8 2022-07-26)" ></div>
+</section></div></main><div id="rustdoc-vars" data-root-path="../../" data-current-crate="dotfiles_core" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.64.0-nightly (9067d5277 2022-07-28)" ></div>
 </body></html>

@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"fn":[["execute_command","Executes the `cmd` and waits for it to finish."],["execute_pipeline","Executes the `pipeline` and waits for it to finish."]]};
