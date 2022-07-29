@@ -40,7 +40,7 @@ pub fn expand_action_list_directive(input: DeriveInput) -> TokenStream {
           self.data.defaults()
         }
 
-        fn build_action(
+        fn build_action_list(
           &'a self,
           settings: &Settings,
           yaml: &Yaml,

@@ -77,7 +77,7 @@ pub struct DirectiveData {
 }
 impl DirectiveData {
   /// Constructs a new directive from a name and a set of default settings.
-  pub fn new(name: &'static str, defaults: Settings) -> DirectiveData {
+  pub fn from(name: &'static str, defaults: Settings) -> DirectiveData {
     DirectiveData { name, defaults }
   }
 }
@@ -88,12 +88,12 @@ pub trait Directive<'a> {
   fn name(&self) -> &str;
   /// Returns the defaults settings as configured.
   fn defaults(&self) -> &Settings;
-  /// Builds an action from a Yaml configuration source and a set of
-  /// default settings.
+  /// Builds a list of actions for this directive from a Yaml configuration
+  /// object and a set of default settings.
   ///
   /// Returns an Error containing a human readable string in case there
-  /// was an issue building the action.
-  fn build_action(
+  /// was an issue building the actions.
+  fn build_action_list(
     &'a self,
     settings: &Settings,
     yaml: &Yaml,

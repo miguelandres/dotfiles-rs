@@ -25,7 +25,8 @@ extern crate yaml_rust;
 
 use crate::link::action::LinkAction;
 use dotfiles_core::action::Action;
-use dotfiles_core::check_action_list_or_err;
+use dotfiles_core::action::ActionParser;
+
 use dotfiles_core::directive::initialize_settings_object;
 use dotfiles_core::directive::Directive;
 use dotfiles_core::directive::DirectiveData;
@@ -68,7 +69,7 @@ pub fn new_native_link_directive<'a>() -> LinkDirective<'a, OsFileSystem> {
 
 /// Initialize the defaults for the LinkDirective.
 pub fn init_directive_data() -> DirectiveData {
-  DirectiveData::new(
+  DirectiveData::from(
     DIRECTIVE_NAME,
     initialize_settings_object(&[
       (String::from(FORCE_SETTING), Setting::Boolean(false)),
@@ -206,9 +207,13 @@ impl<'a, F: 'a + FileSystem + UnixFileSystem> LinkDirective<'a, F> {
     )),
     }
   }
-
-  /// Parses a single link action from yaml
-  pub fn parse_link_action(
+}
+impl<'a, F: FileSystem + UnixFileSystem> ActionParser<'a> for LinkDirective<'a, F> {
+  type ActionType = LinkAction<'a, F>;
+  fn name(&'a self) -> &'static str {
+    "link"
+  }
+  fn parse_action(
     &'a self,
     settings: &Settings,
     yaml: &Yaml,
@@ -217,28 +222,6 @@ impl<'a, F: 'a + FileSystem + UnixFileSystem> LinkDirective<'a, F> {
       Ok(action)
     } else {
       Ok(self.parse_full_action(settings, yaml)?)
-    }
-  }
-
-  /// Parses a list of link actions from a yaml file
-  pub fn parse_action_list(
-    &'a self,
-    settings: &std::collections::HashMap<String, Setting>,
-    yaml: &Yaml,
-  ) -> Result<Vec<LinkAction<F>>, DotfilesError> {
-    if let Yaml::Array(arr) = yaml {
-      check_action_list_or_err!(
-        LinkAction<F>,
-        arr
-          .iter()
-          .map(|yaml_item| self.parse_link_action(settings, yaml_item))
-          .collect()
-      )
-    } else {
-      Err(DotfilesError::from(
-        "Link directive expects an array of link actions, did not find an array.".into(),
-        ErrorType::UnexpectedYamlTypeError,
-      ))
     }
   }
 }

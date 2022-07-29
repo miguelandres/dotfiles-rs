@@ -23,7 +23,7 @@
 use crate::utils::read_test_yaml;
 
 use dotfiles_actions::brew::directive::BrewDirective;
-use dotfiles_core::{directive::Settings, error::DotfilesError};
+use dotfiles_core::{action::ActionParser, directive::Settings, error::DotfilesError};
 
 #[test]
 fn brew_directive_parsed() -> Result<(), DotfilesError> {
@@ -33,7 +33,7 @@ fn brew_directive_parsed() -> Result<(), DotfilesError> {
     .pop()
     .unwrap();
   let directive = BrewDirective::new();
-  let action = directive.parse_brew_action(&default_settings, &yaml)?;
+  let action = directive.parse_action(&default_settings, &yaml)?;
   assert_eq!(action.force_casks(), true);
   assert_eq!(
     action.taps(),

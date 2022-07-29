@@ -24,14 +24,13 @@ extern crate yaml_rust;
 
 use crate::create::action::CreateAction;
 use dotfiles_core::action::Action;
-use dotfiles_core::check_action_list_or_err;
+use dotfiles_core::action::ActionParser;
 use dotfiles_core::directive::initialize_settings_object;
 use dotfiles_core::directive::Directive;
 use dotfiles_core::directive::DirectiveData;
 use dotfiles_core::directive::Setting;
 use dotfiles_core::directive::Settings;
 use dotfiles_core::error::DotfilesError;
-use dotfiles_core::error::ErrorType;
 use dotfiles_core::yaml_util;
 use dotfiles_core_macros::ActionListDirective;
 use filesystem::FileSystem;
@@ -57,7 +56,7 @@ pub fn new_native_create_directive<'a>() -> CreateDirective<'a, OsFileSystem> {
 
 /// Initializes the default configuration for the [CreateDirective]
 pub fn init_directive_data() -> DirectiveData {
-  DirectiveData::new(
+  DirectiveData::from(
     DIRECTIVE_NAME,
     initialize_settings_object(&[(String::from(FORCE_SETTING), Setting::Boolean(false))]),
   )
@@ -86,8 +85,16 @@ impl<'a, F: 'a + FileSystem> CreateDirective<'a, F> {
       phantom: PhantomData,
     }
   }
-  /// Parses a create action from a yaml file
-  pub fn parse_create_action(
+}
+
+impl<'a, F: 'a + FileSystem> ActionParser<'a> for CreateDirective<'a, F> {
+  type ActionType = CreateAction<'a, F>;
+
+  fn name(&'a self) -> &'static str {
+    "create"
+  }
+
+  fn parse_action(
     &'a self,
     settings: &std::collections::HashMap<String, Setting>,
     yaml: &Yaml,
@@ -102,27 +109,5 @@ impl<'a, F: 'a + FileSystem> CreateDirective<'a, F> {
         self.defaults(),
       )?,
     ))
-  }
-
-  /// Parses a list of create actions from a yaml file
-  pub fn parse_action_list(
-    &'a self,
-    settings: &std::collections::HashMap<String, Setting>,
-    yaml: &Yaml,
-  ) -> Result<Vec<CreateAction<F>>, DotfilesError> {
-    if let Yaml::Array(arr) = yaml {
-      check_action_list_or_err!(
-        CreateAction<F>,
-        arr
-          .iter()
-          .map(|yaml_item| self.parse_create_action(settings, yaml_item))
-          .collect()
-      )
-    } else {
-      Err(DotfilesError::from(
-        "create directive expects an array of create actions, did not find an array.".into(),
-        ErrorType::UnexpectedYamlTypeError,
-      ))
-    }
   }
 }

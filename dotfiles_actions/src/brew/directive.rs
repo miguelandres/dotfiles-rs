@@ -24,6 +24,7 @@ extern crate yaml_rust;
 
 use crate::brew::action::BrewAction;
 use dotfiles_core::action::Action;
+use dotfiles_core::action::ActionParser;
 use dotfiles_core::directive::initialize_settings_object;
 use dotfiles_core::directive::Directive;
 use dotfiles_core::directive::DirectiveData;
@@ -47,7 +48,7 @@ pub fn new_brew_directive<'a>() -> BrewDirective<'a> {
 
 /// Initialize the defaults for the BrewDirective.
 pub fn init_directive_data() -> DirectiveData {
-  DirectiveData::new(
+  DirectiveData::from(
     DIRECTIVE_NAME,
     initialize_settings_object(&[(String::from(FORCE_CASKS_SETTING), Setting::Boolean(false))]),
   )
@@ -75,9 +76,15 @@ impl<'a> BrewDirective<'a> {
       phantom_data: PhantomData,
     }
   }
+}
 
-  /// Parse a brew action for the following yaml section.
-  pub fn parse_brew_action(
+impl<'a> ActionParser<'a> for BrewDirective<'a> {
+  type ActionType = BrewAction<'a>;
+
+  fn name(&'a self) -> &'static str {
+    "brew"
+  }
+  fn parse_action(
     &'a self,
     context_settings: &Settings,
     yaml: &Yaml,
@@ -113,11 +120,11 @@ impl<'a> BrewDirective<'a> {
 
   /// Parse the list of actions from yaml, in this case it's only one action so
   /// this function only wraps [BrewDirective::parse_brew_action]
-  pub fn parse_action_list(
+  fn parse_action_list(
     &'a self,
     context_settings: &Settings,
     yaml: &Yaml,
   ) -> Result<Vec<BrewAction<'a>>, DotfilesError> {
-    Ok(vec![self.parse_brew_action(context_settings, yaml)?])
+    Ok(vec![self.parse_action(context_settings, yaml)?])
   }
 }

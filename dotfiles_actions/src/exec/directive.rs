@@ -27,9 +27,9 @@ use dotfiles_core_macros::ActionListDirective;
 use yaml_rust::Yaml;
 
 use dotfiles_core::{
-  check_action_list_or_err,
+  action::ActionParser,
   directive::{initialize_settings_object, DirectiveData},
-  error::{DotfilesError, ErrorType},
+  error::DotfilesError,
   yaml_util, Action, Directive, Setting, Settings,
 };
 
@@ -51,7 +51,7 @@ pub fn new_exec_directive<'a>() -> ExecDirective<'a> {
 
 /// Initialize the defaults for the BrewDirective.
 pub fn init_directive_data() -> DirectiveData {
-  DirectiveData::new(
+  DirectiveData::from(
     DIRECTIVE_NAME,
     initialize_settings_object(&[(String::from(ECHO_SETTING), Setting::Boolean(false))]),
   )
@@ -72,9 +72,13 @@ impl<'a> ExecDirective<'a> {
       phantom_data: PhantomData,
     }
   }
-
-  /// Parses a exec action from a yaml file
-  pub fn parse_exec_action(
+}
+impl<'a> ActionParser<'a> for ExecDirective<'a> {
+  type ActionType = ExecAction<'a>;
+  fn name(&'a self) -> &'static str {
+    "exec"
+  }
+  fn parse_action(
     &'a self,
     settings: &collections::HashMap<String, Setting>,
     yaml: &Yaml,
@@ -95,27 +99,5 @@ impl<'a> ExecDirective<'a> {
         self.defaults(),
       )?,
     ))
-  }
-
-  /// Parses a list of exec actions from a yaml file
-  pub fn parse_action_list(
-    &'a self,
-    settings: &std::collections::HashMap<String, Setting>,
-    yaml: &Yaml,
-  ) -> Result<Vec<ExecAction>, DotfilesError> {
-    if let Yaml::Array(arr) = yaml {
-      check_action_list_or_err!(
-        ExecAction,
-        arr
-          .iter()
-          .map(|yaml_item| self.parse_exec_action(settings, yaml_item))
-          .collect()
-      )
-    } else {
-      Err(DotfilesError::from(
-        "Exec directive expects an array of exec actions, did not find an array.".to_string(),
-        ErrorType::UnexpectedYamlTypeError,
-      ))
-    }
   }
 }

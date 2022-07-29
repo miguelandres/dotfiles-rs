@@ -21,7 +21,12 @@
 
 //! This module contains the base trait for all [Action]s.
 
-use crate::error::DotfilesError;
+use yaml_rust::Yaml;
+
+use crate::{
+  error::{DotfilesError, ErrorType},
+  Settings,
+};
 
 /// An action to be run by a the dotfiles runtime.
 pub trait Action<'a> {
@@ -32,21 +37,60 @@ pub trait Action<'a> {
   fn execute(&self) -> Result<(), DotfilesError>;
 }
 
-/// Macro to check that all actions in a Vector of results of parsing actions from yaml
-/// does not contain a single error. If it contains at least an error it returns the first
-/// Error, otherwise it returns Ok with a list of all the actions.
-#[macro_export]
-macro_rules! check_action_list_or_err {
-  ( $action_type:ty, $actions_expr:expr) => {{
-    let mut actions_expr_list: Vec<Result<$action_type, dotfiles_core::error::DotfilesError>> =
-      $actions_expr;
-    let mut list_successes = Vec::<$action_type>::new();
-    for res in actions_expr_list.into_iter() {
-      match res {
-        Err(err) => return Err(err),
-        Ok(act) => list_successes.push(act),
+/// Trait to parse a specific action type from Yaml.
+pub trait ActionParser<'a> {
+  /// The action type this object parses
+  type ActionType: Action<'a>;
+
+  /// The name of the action this object parses
+  fn name(&'a self) -> &'static str;
+
+  /// Builds a single action of type [ActionParser::ActionType] from Yaml tree object
+  /// that represents the action's configuration and a default settings object.
+  ///
+  /// Returns an Error containing a human readable string in case there
+  /// was an issue building the action.
+  fn parse_action(
+    &'a self,
+    settings: &Settings,
+    yaml: &Yaml,
+  ) -> Result<Self::ActionType, DotfilesError>;
+
+  /// Builds a list of actions of type [ActionParser::ActionType] from Yaml tree object
+  /// that represents the actions' configurations and a default settings object.
+  ///
+  /// Returns an Error containing a human readable string in case there
+  /// was an issue building the action.
+  ///
+  /// The default implementation assumes there must be Yaml array whose items each
+  /// represent an individual action
+  fn parse_action_list(
+    &'a self,
+    settings: &Settings,
+    yaml: &Yaml,
+  ) -> Result<Vec<Self::ActionType>, DotfilesError> {
+    if let Yaml::Array(arr) = yaml {
+      let list: Vec<Result<Self::ActionType, DotfilesError>> = arr
+        .iter()
+        .map(|yaml_item| self.parse_action(settings, yaml_item))
+        .collect();
+
+      let mut list_successes = Vec::<Self::ActionType>::new();
+      for res in list.into_iter() {
+        match res {
+          Err(err) => return Err(err),
+          Ok(act) => list_successes.push(act),
+        }
       }
+      Ok(list_successes)
+    } else {
+      Err(DotfilesError::from(
+        format!(
+          "An array of {} actions was expected, did not find an array.",
+          self.name()
+        ),
+        ErrorType::UnexpectedYamlTypeError,
+      ))
     }
-    Ok(list_successes)
-  }};
+  }
 }

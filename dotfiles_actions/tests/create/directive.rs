@@ -23,9 +23,11 @@
 use crate::utils::{read_test_yaml, setup_fs};
 
 use dotfiles_actions::create::directive::CreateDirective;
+use dotfiles_core::action::ActionParser;
 use dotfiles_core::directive::Settings;
 use dotfiles_core::error::DotfilesError;
 use dotfiles_core::Action;
+
 use filesystem::FakeFileSystem;
 
 #[test]
@@ -39,7 +41,7 @@ fn create_directive_parsed_from_single_dir_name() -> Result<(), DotfilesError> {
     .pop()
     .unwrap();
 
-  let action = directive.parse_create_action(&default_settings, &yaml)?;
+  let action = directive.parse_action(&default_settings, &yaml)?;
   assert_eq!(action.directory(), "directory");
   assert_eq!(action.force(), false);
 
@@ -56,7 +58,7 @@ fn create_directive_parsed_from_full_action() -> Result<(), DotfilesError> {
     .unwrap()
     .pop()
     .unwrap();
-  let action = directive.parse_create_action(&default_settings, &yaml)?;
+  let action = directive.parse_action(&default_settings, &yaml)?;
   assert_eq!(action.directory(), "some/dir");
   assert_eq!(action.force(), true);
   action.execute()
