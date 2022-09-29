@@ -1,6 +1,7 @@
-var sourcesIndex = {};
-sourcesIndex["dotfiles"] = {"name":"","files":["flags.rs","main.rs"]};
-sourcesIndex["dotfiles_actions"] = {"name":"","dirs":[{"name":"brew","files":["action.rs","directive.rs","mod.rs"]},{"name":"create","files":["action.rs","directive.rs","mod.rs"]},{"name":"exec","files":["action.rs","directive.rs","mod.rs"]},{"name":"homebrew_install","files":["action.rs","mod.rs"]},{"name":"link","files":["action.rs","directive.rs","mod.rs"]},{"name":"ohmyzsh_install","files":["action.rs","mod.rs"]}],"files":["lib.rs"]};
-sourcesIndex["dotfiles_core"] = {"name":"","files":["action.rs","directive.rs","error.rs","exec_wrapper.rs","lib.rs","yaml_util.rs"]};
-sourcesIndex["dotfiles_core_macros"] = {"name":"","files":["action_list.rs","lib.rs"]};
+var sourcesIndex = JSON.parse('{\
+"dotfiles":["",[],["flags.rs","main.rs"]],\
+"dotfiles_actions":["",[["brew",[],["action.rs","directive.rs","mod.rs"]],["create",[],["action.rs","directive.rs","mod.rs"]],["exec",[],["action.rs","directive.rs","mod.rs"]],["homebrew_install",[],["action.rs","mod.rs"]],["link",[],["action.rs","directive.rs","mod.rs"]],["ohmyzsh_install",[],["action.rs","mod.rs"]]],["lib.rs"]],\
+"dotfiles_core":["",[],["action.rs","directive.rs","error.rs","exec_wrapper.rs","lib.rs","settings.rs","yaml_util.rs"]],\
+"dotfiles_core_macros":["",[],["action_list.rs","lib.rs"]]\
+}');
 createSourceSidebar();

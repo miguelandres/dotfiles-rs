@@ -1,10 +1,4 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `dotfiles_actions/src/brew/action.rs`."><meta name="keywords" content="rust, rustlang, rust-lang"><title>action.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../SourceSerif4-Regular.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../FiraSans-Regular.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../FiraSans-Medium.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../SourceCodePro-Regular.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../SourceSerif4-Bold.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../SourceCodePro-Semibold.ttf.woff2"><link rel="stylesheet" type="text/css" href="../../../normalize.css"><link rel="stylesheet" type="text/css" href="../../../rustdoc.css" id="mainThemeStyle"><link rel="stylesheet" type="text/css" href="../../../ayu.css" disabled><link rel="stylesheet" type="text/css" href="../../../dark.css" disabled><link rel="stylesheet" type="text/css" href="../../../light.css" id="themeStyle"><script id="default-settings" ></script><script src="../../../storage.js"></script><script defer src="../../../source-script.js"></script><script defer src="../../../source-files.js"></script><script defer src="../../../main.js"></script><noscript><link rel="stylesheet" href="../../../noscript.css"></noscript><link rel="alternate icon" type="image/png" href="../../../favicon-16x16.png"><link rel="alternate icon" type="image/png" href="../../../favicon-32x32.png"><link rel="icon" type="image/svg+xml" href="../../../favicon.svg"></head><body class="rustdoc source"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="mobile-topbar"><button class="sidebar-menu-toggle">&#9776;</button><a class="sidebar-logo" href="../../../dotfiles_actions/index.html"><div class="logo-container"><img class="rust-logo" src="../../../rust-logo.svg" alt="logo"></div>
-        </a><h2 class="location"></h2>
-    </nav>
-    <nav class="sidebar"><a class="sidebar-logo" href="../../../dotfiles_actions/index.html"><div class="logo-container"><img class="rust-logo" src="../../../rust-logo.svg" alt="logo"></div>
-        </a></nav><main><div class="width-limiter"><div class="sub-container"><a class="sub-logo-container" href="../../../dotfiles_actions/index.html"><img class="rust-logo" src="../../../rust-logo.svg" alt="logo"></a><nav class="sub"><form class="search-form"><div class="search-container"><span></span><input class="search-input" name="search" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><button type="button">?</button></div><div id="settings-menu" tabindex="-1">
-                                <a href="../../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../../wheel.svg"></a></div>
-                        </div></form></nav></div><section id="main-content" class="content"><div class="example-wrap"><pre class="line-numbers"><span id="1">1</span>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `dotfiles_actions/src/brew/action.rs`."><meta name="keywords" content="rust, rustlang, rust-lang"><title>action.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../SourceSerif4-Regular.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../FiraSans-Regular.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../FiraSans-Medium.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../SourceCodePro-Regular.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../SourceSerif4-Bold.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../SourceCodePro-Semibold.ttf.woff2"><link rel="stylesheet" href="../../../normalize.css"><link rel="stylesheet" href="../../../rustdoc.css" id="mainThemeStyle"><link rel="stylesheet" href="../../../ayu.css" disabled><link rel="stylesheet" href="../../../dark.css" disabled><link rel="stylesheet" href="../../../light.css" id="themeStyle"><script id="default-settings" ></script><script src="../../../storage.js"></script><script defer src="../../../source-script.js"></script><script defer src="../../../source-files.js"></script><script defer src="../../../main.js"></script><noscript><link rel="stylesheet" href="../../../noscript.css"></noscript><link rel="alternate icon" type="image/png" href="../../../favicon-16x16.png"><link rel="alternate icon" type="image/png" href="../../../favicon-32x32.png"><link rel="icon" type="image/svg+xml" href="../../../favicon.svg"></head><body class="rustdoc source"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="mobile-topbar"><button class="sidebar-menu-toggle">&#9776;</button><a class="sidebar-logo" href="../../../dotfiles_actions/index.html"><div class="logo-container"><img class="rust-logo" src="../../../rust-logo.svg" alt="logo"></div></a><h2 class="location"></h2></nav><nav class="sidebar"><a class="sidebar-logo" href="../../../dotfiles_actions/index.html"><div class="logo-container"><img class="rust-logo" src="../../../rust-logo.svg" alt="logo"></div></a></nav><main><div class="width-limiter"><div class="sub-container"><a class="sub-logo-container" href="../../../dotfiles_actions/index.html"><img class="rust-logo" src="../../../rust-logo.svg" alt="logo"></a><nav class="sub"><form class="search-form"><div class="search-container"><span></span><input class="search-input" name="search" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><button type="button">?</button></div><div id="settings-menu" tabindex="-1"><a href="../../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../../wheel.svg"></a></div></div></form></nav></div><section id="main-content" class="content"><div class="example-wrap"><pre class="src-line-numbers"><span id="1">1</span>
 <span id="2">2</span>
 <span id="3">3</span>
 <span id="4">4</span>
@@ -156,158 +150,157 @@
 <span id="150">150</span>
 <span id="151">151</span>
 <span id="152">152</span>
-</pre><pre class="rust"><code><span class="comment">// Copyright (c) 2021-2022 Miguel Barreto and others</span>
-<span class="comment">//</span>
-<span class="comment">// Permission is hereby granted, free of charge, to any person obtaining</span>
-<span class="comment">// a copy of this software and associated documentation files (the</span>
-<span class="comment">// &quot;Software&quot;), to deal in the Software without restriction, including</span>
-<span class="comment">// without limitation the rights to use, copy, modify, merge, publish,</span>
-<span class="comment">// distribute, sublicense, and/or sell copies of the Software, and to</span>
-<span class="comment">// permit persons to whom the Software is furnished to do so, subject to</span>
-<span class="comment">// the following conditions:</span>
-<span class="comment">//</span>
-<span class="comment">// The above copyright notice and this permission notice shall be</span>
-<span class="comment">// included in all copies or substantial portions of the Software.</span>
-<span class="comment">//</span>
-<span class="comment">// THE SOFTWARE IS PROVIDED &quot;AS IS&quot;, WITHOUT WARRANTY OF ANY KIND,</span>
-<span class="comment">// EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF</span>
-<span class="comment">// MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND</span>
-<span class="comment">// NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE</span>
-<span class="comment">// LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION</span>
-<span class="comment">// OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION</span>
-<span class="comment">// WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.</span>
+</pre><pre class="rust"><code><span class="comment">// Copyright (c) 2021-2022 Miguel Barreto and others
+//
+// Permission is hereby granted, free of charge, to any person obtaining
+// a copy of this software and associated documentation files (the
+// &quot;Software&quot;), to deal in the Software without restriction, including
+// without limitation the rights to use, copy, modify, merge, publish,
+// distribute, sublicense, and/or sell copies of the Software, and to
+// permit persons to whom the Software is furnished to do so, subject to
+// the following conditions:
+//
+// The above copyright notice and this permission notice shall be
+// included in all copies or substantial portions of the Software.
+//
+// THE SOFTWARE IS PROVIDED &quot;AS IS&quot;, WITHOUT WARRANTY OF ANY KIND,
+// EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+// MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+// NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
+// LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
+// OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
+// WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-<span class="doccomment">//! This module contains the [BrewAction] that installs</span>
-<span class="doccomment">//! a brew formula using homebrew</span>
+</span><span class="doccomment">//! This module contains the [BrewAction] that installs
+//! a brew formula using homebrew
 
-<span class="attribute">#![<span class="ident">cfg</span>(<span class="ident">unix</span>)]</span>
-<span class="kw">use</span> <span class="ident">dotfiles_core::action::Action</span>;
-<span class="kw">use</span> <span class="ident">dotfiles_core::error::DotfilesError</span>;
-<span class="kw">use</span> <span class="ident">dotfiles_core::exec_wrapper::execute_command</span>;
-<span class="kw">use</span> <span class="ident">log::info</span>;
-<span class="kw">use</span> <span class="ident">std::marker::PhantomData</span>;
-<span class="kw">use</span> <span class="ident">subprocess::Exec</span>;
+</span><span class="attribute">#![cfg(unix)]
+</span><span class="kw">use </span>dotfiles_core::action::Action;
+<span class="kw">use </span>dotfiles_core::error::DotfilesError;
+<span class="kw">use </span>dotfiles_core::exec_wrapper::execute_command;
+<span class="kw">use </span>log::info;
+<span class="kw">use </span>std::marker::PhantomData;
+<span class="kw">use </span>subprocess::Exec;
 
-<span class="kw">struct</span> <span class="ident">BrewCommand</span> {
-  <span class="ident">item</span>: <span class="ident">String</span>,
-  <span class="ident">args</span>: <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">String</span><span class="op">&gt;</span>,
-  <span class="ident">action_name</span>: <span class="ident">String</span>,
-  <span class="ident">action_description</span>: <span class="ident">String</span>,
+<span class="kw">struct </span>BrewCommand {
+  item: String,
+  args: Vec&lt;String&gt;,
+  action_name: String,
+  action_description: String,
 }
 
-<span class="kw">impl</span> <span class="ident">BrewCommand</span> {
-  <span class="kw">fn</span> <span class="ident">tap</span>(<span class="ident">item</span>: <span class="kw-2">&amp;</span><span class="ident">str</span>) -&gt; <span class="ident">BrewCommand</span> {
-    <span class="ident">BrewCommand</span> {
-      <span class="ident">item</span>: <span class="ident">item</span>.<span class="ident">into</span>(),
-      <span class="ident">args</span>: <span class="macro">vec!</span>[<span class="string">&quot;tap&quot;</span>.<span class="ident">into</span>(), <span class="ident">item</span>.<span class="ident">into</span>()],
-      <span class="ident">action_name</span>: <span class="string">&quot;tap&quot;</span>.<span class="ident">into</span>(),
-      <span class="ident">action_description</span>: <span class="string">&quot;tapping&quot;</span>.<span class="ident">into</span>(),
+<span class="kw">impl </span>BrewCommand {
+  <span class="kw">fn </span>tap(item: <span class="kw-2">&amp;</span>str) -&gt; BrewCommand {
+    BrewCommand {
+      item: item.into(),
+      args: <span class="macro">vec!</span>[<span class="string">&quot;tap&quot;</span>.into(), item.into()],
+      action_name: <span class="string">&quot;tap&quot;</span>.into(),
+      action_description: <span class="string">&quot;tapping&quot;</span>.into(),
     }
   }
 
-  <span class="kw">fn</span> <span class="ident">install_formula</span>(<span class="ident">item</span>: <span class="kw-2">&amp;</span><span class="ident">str</span>) -&gt; <span class="ident">BrewCommand</span> {
-    <span class="ident">BrewCommand</span> {
-      <span class="ident">item</span>: <span class="ident">item</span>.<span class="ident">into</span>(),
-      <span class="ident">args</span>: <span class="macro">vec!</span>[<span class="string">&quot;install&quot;</span>.<span class="ident">into</span>(), <span class="ident">item</span>.<span class="ident">into</span>()],
-      <span class="ident">action_name</span>: <span class="string">&quot;install formula&quot;</span>.<span class="ident">into</span>(),
-      <span class="ident">action_description</span>: <span class="string">&quot;installing formula&quot;</span>.<span class="ident">into</span>(),
+  <span class="kw">fn </span>install_formula(item: <span class="kw-2">&amp;</span>str) -&gt; BrewCommand {
+    BrewCommand {
+      item: item.into(),
+      args: <span class="macro">vec!</span>[<span class="string">&quot;install&quot;</span>.into(), item.into()],
+      action_name: <span class="string">&quot;install formula&quot;</span>.into(),
+      action_description: <span class="string">&quot;installing formula&quot;</span>.into(),
     }
   }
 
-  <span class="kw">fn</span> <span class="ident">install_cask</span>(<span class="ident">item</span>: <span class="kw-2">&amp;</span><span class="ident">str</span>) -&gt; <span class="ident">BrewCommand</span> {
-    <span class="ident">BrewCommand</span> {
-      <span class="ident">item</span>: <span class="ident">item</span>.<span class="ident">into</span>(),
-      <span class="ident">args</span>: <span class="macro">vec!</span>[<span class="string">&quot;install&quot;</span>.<span class="ident">into</span>(), <span class="string">&quot;--cask&quot;</span>.<span class="ident">into</span>(), <span class="ident">item</span>.<span class="ident">into</span>()],
-      <span class="ident">action_name</span>: <span class="string">&quot;install cask&quot;</span>.<span class="ident">into</span>(),
-      <span class="ident">action_description</span>: <span class="string">&quot;installing cask&quot;</span>.<span class="ident">into</span>(),
+  <span class="kw">fn </span>install_cask(item: <span class="kw-2">&amp;</span>str) -&gt; BrewCommand {
+    BrewCommand {
+      item: item.into(),
+      args: <span class="macro">vec!</span>[<span class="string">&quot;install&quot;</span>.into(), <span class="string">&quot;--cask&quot;</span>.into(), item.into()],
+      action_name: <span class="string">&quot;install cask&quot;</span>.into(),
+      action_description: <span class="string">&quot;installing cask&quot;</span>.into(),
     }
   }
 
-  <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">execute</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span>(), <span class="ident">DotfilesError</span><span class="op">&gt;</span> {
-    <span class="macro">info!</span>(<span class="string">&quot;{} {}&quot;</span>, <span class="self">self</span>.<span class="ident">action_description</span>, <span class="self">self</span>.<span class="ident">item</span>);
-    <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">cmd</span> <span class="op">=</span> <span class="ident">Exec::cmd</span>(<span class="string">&quot;brew&quot;</span>);
-    <span class="kw">for</span> <span class="ident">arg</span> <span class="kw">in</span> <span class="self">self</span>.<span class="ident">args</span>.<span class="ident">iter</span>() {
-      <span class="ident">cmd</span> <span class="op">=</span> <span class="ident">cmd</span>.<span class="ident">arg</span>(<span class="ident">arg</span>);
+  <span class="kw">pub fn </span>execute(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="prelude-ty">Result</span>&lt;(), DotfilesError&gt; {
+    <span class="macro">info!</span>(<span class="string">&quot;{} {}&quot;</span>, <span class="self">self</span>.action_description, <span class="self">self</span>.item);
+    <span class="kw">let </span><span class="kw-2">mut </span>cmd = Exec::cmd(<span class="string">&quot;brew&quot;</span>);
+    <span class="kw">for </span>arg <span class="kw">in </span><span class="self">self</span>.args.iter() {
+      cmd = cmd.arg(arg);
     }
-    <span class="ident">execute_command</span>(
-      <span class="ident">cmd</span>,
-      <span class="macro">format!</span>(<span class="string">&quot;Couldn&#39;t {} {}&quot;</span>, <span class="self">self</span>.<span class="ident">action_name</span>, <span class="self">self</span>.<span class="ident">item</span>).<span class="ident">as_str</span>(),
+    execute_command(
+      cmd,
+      <span class="macro">format!</span>(<span class="string">&quot;Couldn&#39;t {} {}&quot;</span>, <span class="self">self</span>.action_name, <span class="self">self</span>.item).as_str(),
       <span class="macro">format!</span>(
         <span class="string">&quot;Unexpected error while {} {}&quot;</span>,
-        <span class="self">self</span>.<span class="ident">action_description</span>, <span class="self">self</span>.<span class="ident">item</span>
+        <span class="self">self</span>.action_description, <span class="self">self</span>.item
       )
-      .<span class="ident">as_str</span>(),
+      .as_str(),
     )
   }
 }
 
-<span class="doccomment">/// [BrewAction] Installs software using homebrew.</span>
-<span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Debug</span>, <span class="ident">PartialEq</span>, <span class="ident">Eq</span>)]</span>
-<span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">BrewAction</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span><span class="op">&gt;</span> {
-  <span class="doccomment">/// Passes `--force` to `brew install --cask` to prevent the install failure</span>
-  <span class="doccomment">/// when the app is already installed before the cask install.</span>
-  <span class="ident">force_casks</span>: <span class="ident">bool</span>,
-  <span class="doccomment">/// List of repositories to tap into using `brew tap`.</span>
-  <span class="ident">taps</span>: <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">String</span><span class="op">&gt;</span>,
-  <span class="doccomment">/// List of brew formulae to `brew install`, usually command line tools.</span>
-  <span class="ident">formulae</span>: <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">String</span><span class="op">&gt;</span>,
+<span class="doccomment">/// [BrewAction] Installs software using homebrew.
+</span><span class="attribute">#[derive(Debug, PartialEq, Eq)]
+</span><span class="kw">pub struct </span>BrewAction&lt;<span class="lifetime">&#39;a</span>&gt; {
+  <span class="doccomment">/// Passes `--force` to `brew install --cask` to prevent the install failure
+  /// when the app is already installed before the cask install.
+  </span>force_casks: bool,
+  <span class="doccomment">/// List of repositories to tap into using `brew tap`.
+  </span>taps: Vec&lt;String&gt;,
+  <span class="doccomment">/// List of brew formulae to `brew install`, usually command line tools.
+  </span>formulae: Vec&lt;String&gt;,
 
-  <span class="doccomment">/// List of casks to install. Casks usually are macOS apps with some sort of UI or framework dependencies.</span>
-  <span class="ident">casks</span>: <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">String</span><span class="op">&gt;</span>,
-  <span class="ident">phantom_data</span>: <span class="ident">PhantomData</span><span class="op">&lt;</span><span class="kw-2">&amp;</span><span class="lifetime">&#39;a</span> <span class="ident">String</span><span class="op">&gt;</span>,
+  <span class="doccomment">/// List of casks to install. Casks usually are macOS apps with some sort of UI or framework dependencies.
+  </span>casks: Vec&lt;String&gt;,
+  phantom_data: PhantomData&lt;<span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span>String&gt;,
 }
-<span class="kw">impl</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span><span class="op">&gt;</span> <span class="ident">BrewAction</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span><span class="op">&gt;</span> {
-  <span class="doccomment">/// Constructs a new [BrewAction]</span>
-  <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">new</span>(
-    <span class="ident">force_casks</span>: <span class="ident">bool</span>,
-    <span class="ident">taps</span>: <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">String</span><span class="op">&gt;</span>,
-    <span class="ident">formulae</span>: <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">String</span><span class="op">&gt;</span>,
-    <span class="ident">casks</span>: <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">String</span><span class="op">&gt;</span>,
-  ) -&gt; <span class="self">Self</span> {
-    <span class="ident">BrewAction</span> {
-      <span class="ident">force_casks</span>,
-      <span class="ident">taps</span>,
-      <span class="ident">formulae</span>,
-      <span class="ident">casks</span>,
-      <span class="ident">phantom_data</span>: <span class="ident">PhantomData</span>,
+<span class="kw">impl</span>&lt;<span class="lifetime">&#39;a</span>&gt; BrewAction&lt;<span class="lifetime">&#39;a</span>&gt; {
+  <span class="doccomment">/// Constructs a new [BrewAction]
+  </span><span class="kw">pub fn </span>new(
+    force_casks: bool,
+    taps: Vec&lt;String&gt;,
+    formulae: Vec&lt;String&gt;,
+    casks: Vec&lt;String&gt;,
+  ) -&gt; <span class="self">Self </span>{
+    BrewAction {
+      force_casks,
+      taps,
+      formulae,
+      casks,
+      phantom_data: PhantomData,
     }
   }
 
-  <span class="doccomment">/// List of casks to install.</span>
-  <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">casks</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="kw-2">&amp;</span>[<span class="ident">String</span>] {
-    <span class="self">self</span>.<span class="ident">casks</span>.<span class="ident">as_ref</span>()
+  <span class="doccomment">/// List of casks to install.
+  </span><span class="kw">pub fn </span>casks(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="kw-2">&amp;</span>[String] {
+    <span class="self">self</span>.casks.as_ref()
   }
 
-  <span class="doccomment">/// List of formulae to install.</span>
-  <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">formulae</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="kw-2">&amp;</span>[<span class="ident">String</span>] {
-    <span class="self">self</span>.<span class="ident">formulae</span>.<span class="ident">as_ref</span>()
+  <span class="doccomment">/// List of formulae to install.
+  </span><span class="kw">pub fn </span>formulae(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="kw-2">&amp;</span>[String] {
+    <span class="self">self</span>.formulae.as_ref()
   }
 
-  <span class="doccomment">/// List of taps to tap into.</span>
-  <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">taps</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="kw-2">&amp;</span>[<span class="ident">String</span>] {
-    <span class="self">self</span>.<span class="ident">taps</span>.<span class="ident">as_ref</span>()
+  <span class="doccomment">/// List of taps to tap into.
+  </span><span class="kw">pub fn </span>taps(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="kw-2">&amp;</span>[String] {
+    <span class="self">self</span>.taps.as_ref()
   }
 
-  <span class="doccomment">/// Whether to pass `--force` to cask installation.</span>
-  <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">force_casks</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="ident">bool</span> {
-    <span class="self">self</span>.<span class="ident">force_casks</span>
+  <span class="doccomment">/// Whether to pass `--force` to cask installation.
+  </span><span class="kw">pub fn </span>force_casks(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; bool {
+    <span class="self">self</span>.force_casks
   }
 }
 
-<span class="kw">impl</span> <span class="ident">Action</span><span class="op">&lt;</span><span class="lifetime">&#39;_</span><span class="op">&gt;</span> <span class="kw">for</span> <span class="ident">BrewAction</span><span class="op">&lt;</span><span class="lifetime">&#39;_</span><span class="op">&gt;</span> {
-  <span class="kw">fn</span> <span class="ident">execute</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span>(), <span class="ident">DotfilesError</span><span class="op">&gt;</span> {
-    <span class="kw">for</span> <span class="ident">tap</span> <span class="kw">in</span> <span class="kw-2">&amp;</span><span class="self">self</span>.<span class="ident">taps</span> {
-      <span class="ident">BrewCommand::tap</span>(<span class="ident">tap</span>).<span class="ident">execute</span>()<span class="question-mark">?</span>;
+<span class="kw">impl </span>Action&lt;<span class="lifetime">&#39;_</span>&gt; <span class="kw">for </span>BrewAction&lt;<span class="lifetime">&#39;_</span>&gt; {
+  <span class="kw">fn </span>execute(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="prelude-ty">Result</span>&lt;(), DotfilesError&gt; {
+    <span class="kw">for </span>tap <span class="kw">in </span><span class="kw-2">&amp;</span><span class="self">self</span>.taps {
+      BrewCommand::tap(tap).execute()<span class="question-mark">?</span>;
     }
-    <span class="kw">for</span> <span class="ident">formula</span> <span class="kw">in</span> <span class="kw-2">&amp;</span><span class="self">self</span>.<span class="ident">formulae</span> {
-      <span class="ident">BrewCommand::install_formula</span>(<span class="ident">formula</span>).<span class="ident">execute</span>()<span class="question-mark">?</span>;
+    <span class="kw">for </span>formula <span class="kw">in </span><span class="kw-2">&amp;</span><span class="self">self</span>.formulae {
+      BrewCommand::install_formula(formula).execute()<span class="question-mark">?</span>;
     }
-    <span class="kw">for</span> <span class="ident">cask</span> <span class="kw">in</span> <span class="kw-2">&amp;</span><span class="self">self</span>.<span class="ident">casks</span> {
-      <span class="ident">BrewCommand::install_cask</span>(<span class="ident">cask</span>).<span class="ident">execute</span>()<span class="question-mark">?</span>;
+    <span class="kw">for </span>cask <span class="kw">in </span><span class="kw-2">&amp;</span><span class="self">self</span>.casks {
+      BrewCommand::install_cask(cask).execute()<span class="question-mark">?</span>;
     }
     <span class="prelude-val">Ok</span>(())
   }
 }
 </code></pre></div>
-</section></div></main><div id="rustdoc-vars" data-root-path="../../../" data-current-crate="dotfiles_actions" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.64.0-nightly (9067d5277 2022-07-28)" ></div>
-</body></html>
+</section></div></main><div id="rustdoc-vars" data-root-path="../../../" data-current-crate="dotfiles_actions" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.66.0-nightly (ce7f0f1aa 2022-09-28)" ></div></body></html>

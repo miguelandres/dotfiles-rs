@@ -1,10 +1,4 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `dotfiles_actions/src/create/action.rs`."><meta name="keywords" content="rust, rustlang, rust-lang"><title>action.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../SourceSerif4-Regular.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../FiraSans-Regular.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../FiraSans-Medium.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../SourceCodePro-Regular.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../SourceSerif4-Bold.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../SourceCodePro-Semibold.ttf.woff2"><link rel="stylesheet" type="text/css" href="../../../normalize.css"><link rel="stylesheet" type="text/css" href="../../../rustdoc.css" id="mainThemeStyle"><link rel="stylesheet" type="text/css" href="../../../ayu.css" disabled><link rel="stylesheet" type="text/css" href="../../../dark.css" disabled><link rel="stylesheet" type="text/css" href="../../../light.css" id="themeStyle"><script id="default-settings" ></script><script src="../../../storage.js"></script><script defer src="../../../source-script.js"></script><script defer src="../../../source-files.js"></script><script defer src="../../../main.js"></script><noscript><link rel="stylesheet" href="../../../noscript.css"></noscript><link rel="alternate icon" type="image/png" href="../../../favicon-16x16.png"><link rel="alternate icon" type="image/png" href="../../../favicon-32x32.png"><link rel="icon" type="image/svg+xml" href="../../../favicon.svg"></head><body class="rustdoc source"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="mobile-topbar"><button class="sidebar-menu-toggle">&#9776;</button><a class="sidebar-logo" href="../../../dotfiles_actions/index.html"><div class="logo-container"><img class="rust-logo" src="../../../rust-logo.svg" alt="logo"></div>
-        </a><h2 class="location"></h2>
-    </nav>
-    <nav class="sidebar"><a class="sidebar-logo" href="../../../dotfiles_actions/index.html"><div class="logo-container"><img class="rust-logo" src="../../../rust-logo.svg" alt="logo"></div>
-        </a></nav><main><div class="width-limiter"><div class="sub-container"><a class="sub-logo-container" href="../../../dotfiles_actions/index.html"><img class="rust-logo" src="../../../rust-logo.svg" alt="logo"></a><nav class="sub"><form class="search-form"><div class="search-container"><span></span><input class="search-input" name="search" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><button type="button">?</button></div><div id="settings-menu" tabindex="-1">
-                                <a href="../../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../../wheel.svg"></a></div>
-                        </div></form></nav></div><section id="main-content" class="content"><div class="example-wrap"><pre class="line-numbers"><span id="1">1</span>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `dotfiles_actions/src/create/action.rs`."><meta name="keywords" content="rust, rustlang, rust-lang"><title>action.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../SourceSerif4-Regular.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../FiraSans-Regular.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../FiraSans-Medium.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../SourceCodePro-Regular.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../SourceSerif4-Bold.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../SourceCodePro-Semibold.ttf.woff2"><link rel="stylesheet" href="../../../normalize.css"><link rel="stylesheet" href="../../../rustdoc.css" id="mainThemeStyle"><link rel="stylesheet" href="../../../ayu.css" disabled><link rel="stylesheet" href="../../../dark.css" disabled><link rel="stylesheet" href="../../../light.css" id="themeStyle"><script id="default-settings" ></script><script src="../../../storage.js"></script><script defer src="../../../source-script.js"></script><script defer src="../../../source-files.js"></script><script defer src="../../../main.js"></script><noscript><link rel="stylesheet" href="../../../noscript.css"></noscript><link rel="alternate icon" type="image/png" href="../../../favicon-16x16.png"><link rel="alternate icon" type="image/png" href="../../../favicon-32x32.png"><link rel="icon" type="image/svg+xml" href="../../../favicon.svg"></head><body class="rustdoc source"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="mobile-topbar"><button class="sidebar-menu-toggle">&#9776;</button><a class="sidebar-logo" href="../../../dotfiles_actions/index.html"><div class="logo-container"><img class="rust-logo" src="../../../rust-logo.svg" alt="logo"></div></a><h2 class="location"></h2></nav><nav class="sidebar"><a class="sidebar-logo" href="../../../dotfiles_actions/index.html"><div class="logo-container"><img class="rust-logo" src="../../../rust-logo.svg" alt="logo"></div></a></nav><main><div class="width-limiter"><div class="sub-container"><a class="sub-logo-container" href="../../../dotfiles_actions/index.html"><img class="rust-logo" src="../../../rust-logo.svg" alt="logo"></a><nav class="sub"><form class="search-form"><div class="search-container"><span></span><input class="search-input" name="search" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><button type="button">?</button></div><div id="settings-menu" tabindex="-1"><a href="../../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../../wheel.svg"></a></div></div></form></nav></div><section id="main-content" class="content"><div class="example-wrap"><pre class="src-line-numbers"><span id="1">1</span>
 <span id="2">2</span>
 <span id="3">3</span>
 <span id="4">4</span>
@@ -108,110 +102,109 @@
 <span id="102">102</span>
 <span id="103">103</span>
 <span id="104">104</span>
-</pre><pre class="rust"><code><span class="comment">// Copyright (c) 2021-2022 Miguel Barreto and others</span>
-<span class="comment">//</span>
-<span class="comment">// Permission is hereby granted, free of charge, to any person obtaining</span>
-<span class="comment">// a copy of this software and associated documentation files (the</span>
-<span class="comment">// &quot;Software&quot;), to deal in the Software without restriction, including</span>
-<span class="comment">// without limitation the rights to use, copy, modify, merge, publish,</span>
-<span class="comment">// distribute, sublicense, and/or sell copies of the Software, and to</span>
-<span class="comment">// permit persons to whom the Software is furnished to do so, subject to</span>
-<span class="comment">// the following conditions:</span>
-<span class="comment">//</span>
-<span class="comment">// The above copyright notice and this permission notice shall be</span>
-<span class="comment">// included in all copies or substantial portions of the Software.</span>
-<span class="comment">//</span>
-<span class="comment">// THE SOFTWARE IS PROVIDED &quot;AS IS&quot;, WITHOUT WARRANTY OF ANY KIND,</span>
-<span class="comment">// EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF</span>
-<span class="comment">// MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND</span>
-<span class="comment">// NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE</span>
-<span class="comment">// LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION</span>
-<span class="comment">// OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION</span>
-<span class="comment">// WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.</span>
+</pre><pre class="rust"><code><span class="comment">// Copyright (c) 2021-2022 Miguel Barreto and others
+//
+// Permission is hereby granted, free of charge, to any person obtaining
+// a copy of this software and associated documentation files (the
+// &quot;Software&quot;), to deal in the Software without restriction, including
+// without limitation the rights to use, copy, modify, merge, publish,
+// distribute, sublicense, and/or sell copies of the Software, and to
+// permit persons to whom the Software is furnished to do so, subject to
+// the following conditions:
+//
+// The above copyright notice and this permission notice shall be
+// included in all copies or substantial portions of the Software.
+//
+// THE SOFTWARE IS PROVIDED &quot;AS IS&quot;, WITHOUT WARRANTY OF ANY KIND,
+// EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+// MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+// NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
+// LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
+// OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
+// WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-<span class="doccomment">//! This module contains the [CreateAction] that creates a new directory</span>
-<span class="doccomment">//! when executed</span>
+</span><span class="doccomment">//! This module contains the [CreateAction] that creates a new directory
+//! when executed
 
-<span class="kw">extern</span> <span class="kw">crate</span> <span class="ident">yaml_rust</span>;
+</span><span class="kw">extern crate </span>yaml_rust;
 
-<span class="kw">use</span> <span class="ident">derivative::Derivative</span>;
-<span class="kw">use</span> <span class="ident">dotfiles_core::action::Action</span>;
-<span class="kw">use</span> <span class="ident">dotfiles_core::error::DotfilesError</span>;
-<span class="kw">use</span> <span class="ident">filesystem::FileSystem</span>;
-<span class="kw">use</span> <span class="ident">log::error</span>;
-<span class="kw">use</span> <span class="ident">log::info</span>;
-<span class="kw">use</span> <span class="ident">std::io</span>;
+<span class="kw">use </span>derivative::Derivative;
+<span class="kw">use </span>dotfiles_core::action::Action;
+<span class="kw">use </span>dotfiles_core::error::DotfilesError;
+<span class="kw">use </span>filesystem::FileSystem;
+<span class="kw">use </span>log::error;
+<span class="kw">use </span>log::info;
+<span class="kw">use </span>std::io;
 
-<span class="doccomment">/// [CreateAction] creates a new [directory](CreateAction::directory) when executed</span>
-<span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Derivative</span>)]</span>
-<span class="attribute">#[<span class="ident">derivative</span>(<span class="ident">Debug</span>, <span class="ident">PartialEq</span>)]</span>
-<span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">CreateAction</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span>, <span class="ident">F</span>: <span class="ident">FileSystem</span><span class="op">&gt;</span> {
-  <span class="doccomment">/// FileSystem to use to create the directory.</span>
-  <span class="doccomment">///</span>
-  <span class="doccomment">/// Having a filesystem instance here allows us to use fakes/mocks to use</span>
-  <span class="doccomment">/// in unit tests.</span>
-  <span class="attribute">#[<span class="ident">derivative</span>(<span class="ident">Debug</span> <span class="op">=</span> <span class="string">&quot;ignore&quot;</span>, <span class="ident">PartialEq</span> <span class="op">=</span> <span class="string">&quot;ignore&quot;</span>)]</span>
-  <span class="ident">fs</span>: <span class="kw-2">&amp;</span><span class="lifetime">&#39;a</span> <span class="ident">F</span>,
-  <span class="doccomment">/// Directory to create. Can be absolute or relative.</span>
-  <span class="ident">directory</span>: <span class="ident">String</span>,
-  <span class="doccomment">/// Force creation of the directory and all its parents if they do not</span>
-  <span class="doccomment">/// exist already.</span>
-  <span class="doccomment">///</span>
-  <span class="doccomment">/// Setting [`force`](CreateAction::force) to `true` is equivalent to using</span>
-  <span class="doccomment">/// the `-p` flag in `mkdir`.</span>
-  <span class="ident">force</span>: <span class="ident">bool</span>,
+<span class="doccomment">/// [CreateAction] creates a new [directory](CreateAction::directory) when executed
+</span><span class="attribute">#[derive(Derivative)]
+#[derivative(Debug, PartialEq)]
+</span><span class="kw">pub struct </span>CreateAction&lt;<span class="lifetime">&#39;a</span>, F: FileSystem&gt; {
+  <span class="doccomment">/// FileSystem to use to create the directory.
+  ///
+  /// Having a filesystem instance here allows us to use fakes/mocks to use
+  /// in unit tests.
+  </span><span class="attribute">#[derivative(Debug = <span class="string">&quot;ignore&quot;</span>, PartialEq = <span class="string">&quot;ignore&quot;</span>)]
+  </span>fs: <span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span>F,
+  <span class="doccomment">/// Directory to create. Can be absolute or relative.
+  </span>directory: String,
+  <span class="doccomment">/// Force creation of the directory and all its parents if they do not
+  /// exist already.
+  ///
+  /// Setting [`force`](CreateAction::force) to `true` is equivalent to using
+  /// the `-p` flag in `mkdir`.
+  </span>force: bool,
 }
 
-<span class="kw">impl</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span>, <span class="ident">F</span>: <span class="ident">FileSystem</span><span class="op">&gt;</span> <span class="ident">CreateAction</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span>, <span class="ident">F</span><span class="op">&gt;</span> {
-  <span class="doccomment">/// Constructs a new instance of CreateAction</span>
-  <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">new</span>(<span class="ident">fs</span>: <span class="kw-2">&amp;</span><span class="lifetime">&#39;a</span> <span class="ident">F</span>, <span class="ident">directory</span>: <span class="ident">String</span>, <span class="ident">force</span>: <span class="ident">bool</span>) -&gt; <span class="self">Self</span> {
-    <span class="ident">CreateAction</span> {
-      <span class="ident">fs</span>,
-      <span class="ident">directory</span>,
-      <span class="ident">force</span>,
+<span class="kw">impl</span>&lt;<span class="lifetime">&#39;a</span>, F: FileSystem&gt; CreateAction&lt;<span class="lifetime">&#39;a</span>, F&gt; {
+  <span class="doccomment">/// Constructs a new instance of CreateAction
+  </span><span class="kw">pub fn </span>new(fs: <span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span>F, directory: String, force: bool) -&gt; <span class="self">Self </span>{
+    CreateAction {
+      fs,
+      directory,
+      force,
     }
   }
-  <span class="doccomment">/// Returns the directory to create.</span>
-  <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">directory</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="kw-2">&amp;</span><span class="ident">str</span> {
-    <span class="kw-2">&amp;</span><span class="self">self</span>.<span class="ident">directory</span>
+  <span class="doccomment">/// Returns the directory to create.
+  </span><span class="kw">pub fn </span>directory(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="kw-2">&amp;</span>str {
+    <span class="kw-2">&amp;</span><span class="self">self</span>.directory
   }
-  <span class="doccomment">/// Returns true if the action will create parent directories if necessary.</span>
-  <span class="doccomment">///</span>
-  <span class="doccomment">/// [`force`](CreateAction::force) being `true` is equivalent to using the</span>
-  <span class="doccomment">/// `-p` flag in `mkdir`</span>
-  <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">force</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="ident">bool</span> {
-    <span class="self">self</span>.<span class="ident">force</span>
+  <span class="doccomment">/// Returns true if the action will create parent directories if necessary.
+  ///
+  /// [`force`](CreateAction::force) being `true` is equivalent to using the
+  /// `-p` flag in `mkdir`
+  </span><span class="kw">pub fn </span>force(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; bool {
+    <span class="self">self</span>.force
   }
 }
 
-<span class="kw">impl</span><span class="op">&lt;</span><span class="ident">F</span>: <span class="ident">FileSystem</span><span class="op">&gt;</span> <span class="ident">Action</span><span class="op">&lt;</span><span class="lifetime">&#39;_</span><span class="op">&gt;</span> <span class="kw">for</span> <span class="ident">CreateAction</span><span class="op">&lt;</span><span class="lifetime">&#39;_</span>, <span class="ident">F</span><span class="op">&gt;</span> {
-  <span class="doccomment">/// Creates the [`directory`](CreateAction::directory).</span>
-  <span class="doccomment">///</span>
-  <span class="doccomment">/// # Errors</span>
-  <span class="doccomment">/// - The parent directory does not exist and</span>
-  <span class="doccomment">///   [`force`](CreateAction::force) is false.</span>
-  <span class="doccomment">/// - There is already a directory, file or symlink with the same name.</span>
-  <span class="doccomment">/// - Permission denied.</span>
-  <span class="kw">fn</span> <span class="ident">execute</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span>(), <span class="ident">DotfilesError</span><span class="op">&gt;</span> {
-    <span class="kw">fn</span> <span class="ident">create_dir</span><span class="op">&lt;</span><span class="ident">F</span>: <span class="ident">FileSystem</span><span class="op">&gt;</span>(<span class="ident">fs</span>: <span class="kw-2">&amp;</span><span class="lifetime">&#39;_</span> <span class="ident">F</span>, <span class="ident">directory</span>: <span class="kw-2">&amp;</span><span class="ident">str</span>, <span class="ident">force</span>: <span class="ident">bool</span>) -&gt; <span class="ident">io::Result</span><span class="op">&lt;</span>()<span class="op">&gt;</span> {
-      <span class="kw">if</span> <span class="ident">force</span> {
-        <span class="prelude-val">Ok</span>(<span class="ident">fs</span>.<span class="ident">create_dir_all</span>(<span class="kw-2">&amp;</span><span class="ident">directory</span>)<span class="question-mark">?</span>)
-      } <span class="kw">else</span> {
-        <span class="prelude-val">Ok</span>(<span class="ident">fs</span>.<span class="ident">create_dir</span>(<span class="kw-2">&amp;</span><span class="ident">directory</span>)<span class="question-mark">?</span>)
+<span class="kw">impl</span>&lt;F: FileSystem&gt; Action&lt;<span class="lifetime">&#39;_</span>&gt; <span class="kw">for </span>CreateAction&lt;<span class="lifetime">&#39;_</span>, F&gt; {
+  <span class="doccomment">/// Creates the [`directory`](CreateAction::directory).
+  ///
+  /// # Errors
+  /// - The parent directory does not exist and
+  ///   [`force`](CreateAction::force) is false.
+  /// - There is already a directory, file or symlink with the same name.
+  /// - Permission denied.
+  </span><span class="kw">fn </span>execute(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="prelude-ty">Result</span>&lt;(), DotfilesError&gt; {
+    <span class="kw">fn </span>create_dir&lt;F: FileSystem&gt;(fs: <span class="kw-2">&amp;</span><span class="lifetime">&#39;_ </span>F, directory: <span class="kw-2">&amp;</span>str, force: bool) -&gt; io::Result&lt;()&gt; {
+      <span class="kw">if </span>force {
+        <span class="prelude-val">Ok</span>(fs.create_dir_all(<span class="kw-2">&amp;</span>directory)<span class="question-mark">?</span>)
+      } <span class="kw">else </span>{
+        <span class="prelude-val">Ok</span>(fs.create_dir(<span class="kw-2">&amp;</span>directory)<span class="question-mark">?</span>)
       }
     }
-    <span class="kw">match</span> <span class="ident">create_dir</span>(<span class="self">self</span>.<span class="ident">fs</span>, <span class="kw-2">&amp;</span><span class="self">self</span>.<span class="ident">directory</span>, <span class="self">self</span>.<span class="ident">force</span>) {
+    <span class="kw">match </span>create_dir(<span class="self">self</span>.fs, <span class="kw-2">&amp;</span><span class="self">self</span>.directory, <span class="self">self</span>.force) {
       <span class="prelude-val">Ok</span>(()) =&gt; {
-        <span class="macro">info!</span>(<span class="string">&quot;Created directory {}&quot;</span>, <span class="kw-2">&amp;</span><span class="self">self</span>.<span class="ident">directory</span>);
+        <span class="macro">info!</span>(<span class="string">&quot;Created directory {}&quot;</span>, <span class="kw-2">&amp;</span><span class="self">self</span>.directory);
         <span class="prelude-val">Ok</span>(())
       }
-      <span class="prelude-val">Err</span>(<span class="ident">err</span>) =&gt; {
-        <span class="macro">error!</span>(<span class="string">&quot;Couldn&#39;t create directory {}: {}&quot;</span>, <span class="kw-2">&amp;</span><span class="self">self</span>.<span class="ident">directory</span>, <span class="ident">err</span>);
-        <span class="prelude-val">Err</span>(<span class="ident">DotfilesError::from_io_error</span>(<span class="ident">err</span>))
+      <span class="prelude-val">Err</span>(err) =&gt; {
+        <span class="macro">error!</span>(<span class="string">&quot;Couldn&#39;t create directory {}: {}&quot;</span>, <span class="kw-2">&amp;</span><span class="self">self</span>.directory, err);
+        <span class="prelude-val">Err</span>(DotfilesError::from_io_error(err))
       }
     }
   }
 }
 </code></pre></div>
-</section></div></main><div id="rustdoc-vars" data-root-path="../../../" data-current-crate="dotfiles_actions" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.64.0-nightly (9067d5277 2022-07-28)" ></div>
-</body></html>
+</section></div></main><div id="rustdoc-vars" data-root-path="../../../" data-current-crate="dotfiles_actions" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.66.0-nightly (ce7f0f1aa 2022-09-28)" ></div></body></html>
