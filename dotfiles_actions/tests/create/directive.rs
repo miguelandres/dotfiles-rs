@@ -24,8 +24,8 @@ use crate::utils::{read_test_yaml, setup_fs};
 
 use dotfiles_actions::create::directive::CreateDirective;
 use dotfiles_core::action::ActionParser;
-use dotfiles_core::directive::Settings;
 use dotfiles_core::error::DotfilesError;
+use dotfiles_core::settings::Settings;
 use dotfiles_core::Action;
 
 use filesystem::FakeFileSystem;

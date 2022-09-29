@@ -39,9 +39,10 @@ pub mod action;
 pub mod directive;
 pub mod error;
 pub mod exec_wrapper;
+pub mod settings;
 pub mod yaml_util;
 
 pub use action::Action;
 pub use directive::Directive;
-pub use directive::Setting;
-pub use directive::Settings;
+pub use settings::Setting;
+pub use settings::Settings;

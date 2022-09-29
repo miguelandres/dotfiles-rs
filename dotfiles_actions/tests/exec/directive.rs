@@ -25,8 +25,8 @@ use crate::utils::read_test_yaml;
 use dotfiles_actions::exec::action::ExecAction;
 use dotfiles_actions::exec::directive::ExecDirective;
 use dotfiles_core::action::ActionParser;
-use dotfiles_core::directive::Settings;
 use dotfiles_core::error::DotfilesError;
+use dotfiles_core::settings::Settings;
 
 #[test]
 fn parse_list_of_execs() -> Result<(), DotfilesError> {

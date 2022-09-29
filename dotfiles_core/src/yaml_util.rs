@@ -23,8 +23,8 @@
 extern crate yaml_rust;
 
 use crate::{
-  directive::{Setting, Settings},
   error::{DotfilesError, ErrorType},
+  settings::{Setting, Settings},
 };
 use yaml_rust::Yaml;
 

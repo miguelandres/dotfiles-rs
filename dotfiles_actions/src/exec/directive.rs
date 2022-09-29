@@ -28,10 +28,8 @@ use dotfiles_core_macros::ActionListDirective;
 use yaml_rust::Yaml;
 
 use dotfiles_core::{
-  action::ActionParser,
-  directive::{initialize_settings_object, DirectiveData},
-  error::DotfilesError,
-  yaml_util, Action, Directive, Setting, Settings,
+  action::ActionParser, directive::DirectiveData, error::DotfilesError,
+  settings::initialize_settings_object, yaml_util, Action, Directive, Setting, Settings,
 };
 
 use crate::exec::action::ExecAction;

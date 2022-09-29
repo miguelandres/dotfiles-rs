@@ -25,9 +25,9 @@
 use crate::link::directive::*;
 use derivative::Derivative;
 use dotfiles_core::action::Action;
-use dotfiles_core::directive::Settings;
 use dotfiles_core::error::DotfilesError;
 use dotfiles_core::error::ErrorType;
+use dotfiles_core::settings::Settings;
 use dotfiles_core::yaml_util::get_boolean_setting;
 use filesystem::FileSystem;
 use filesystem::UnixFileSystem;

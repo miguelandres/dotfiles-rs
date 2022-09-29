@@ -24,8 +24,8 @@ use crate::utils::read_test_yaml;
 use crate::utils::setup_fs;
 
 use dotfiles_actions::link::directive::LinkDirective;
-use dotfiles_core::directive::Settings;
 use dotfiles_core::error::DotfilesError;
+use dotfiles_core::settings::Settings;
 use dotfiles_core::Action;
 use filesystem::FakeFileSystem;
 use filesystem::FileSystem;

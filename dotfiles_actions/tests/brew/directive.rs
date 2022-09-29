@@ -23,7 +23,7 @@
 use crate::utils::read_test_yaml;
 
 use dotfiles_actions::brew::directive::BrewDirective;
-use dotfiles_core::{action::ActionParser, directive::Settings, error::DotfilesError};
+use dotfiles_core::{action::ActionParser, error::DotfilesError, settings::Settings};
 
 #[test]
 fn brew_directive_parsed() -> Result<(), DotfilesError> {
