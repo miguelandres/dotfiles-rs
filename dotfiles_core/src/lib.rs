@@ -29,7 +29,7 @@
 //! so far).
 //!
 //! Directives are responsible for parsing configuration from the configuration
-//! source, applying default [settings](directive::Settings) if necessary, and
+//! source, applying default [settings] if necessary, and
 //! using these to build actions that can be executed.
 //!
 //! The base traits and classes for these building blocks can be found in the
