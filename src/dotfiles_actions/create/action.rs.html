@@ -101,7 +101,6 @@
 <span id="101">101</span>
 <span id="102">102</span>
 <span id="103">103</span>
-<span id="104">104</span>
 </pre><pre class="rust"><code><span class="comment">// Copyright (c) 2021-2022 Miguel Barreto and others
 //
 // Permission is hereby granted, free of charge, to any person obtaining
@@ -182,8 +181,7 @@
   <span class="doccomment">/// Creates the [`directory`](CreateAction::directory).
   ///
   /// # Errors
-  /// - The parent directory does not exist and
-  ///   [`force`](CreateAction::force) is false.
+  /// - The parent directory does not exist and [`force`](CreateAction::force) is false.
   /// - There is already a directory, file or symlink with the same name.
   /// - Permission denied.
   </span><span class="kw">fn </span>execute(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="prelude-ty">Result</span>&lt;(), DotfilesError&gt; {

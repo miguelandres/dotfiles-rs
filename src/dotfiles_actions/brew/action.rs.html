@@ -150,6 +150,7 @@
 <span id="150">150</span>
 <span id="151">151</span>
 <span id="152">152</span>
+<span id="153">153</span>
 </pre><pre class="rust"><code><span class="comment">// Copyright (c) 2021-2022 Miguel Barreto and others
 //
 // Permission is hereby granted, free of charge, to any person obtaining
@@ -246,7 +247,8 @@
   <span class="doccomment">/// List of brew formulae to `brew install`, usually command line tools.
   </span>formulae: Vec&lt;String&gt;,
 
-  <span class="doccomment">/// List of casks to install. Casks usually are macOS apps with some sort of UI or framework dependencies.
+  <span class="doccomment">/// List of casks to install. Casks usually are macOS apps with some sort of UI or framework
+  /// dependencies.
   </span>casks: Vec&lt;String&gt;,
   phantom_data: PhantomData&lt;<span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span>String&gt;,
 }

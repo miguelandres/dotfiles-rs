@@ -117,6 +117,8 @@
 <span id="117">117</span>
 <span id="118">118</span>
 <span id="119">119</span>
+<span id="120">120</span>
+<span id="121">121</span>
 </pre><pre class="rust"><code><span class="comment">// Copyright (c) 2021-2022 Miguel Barreto and others
 //
 // Permission is hereby granted, free of charge, to any person obtaining
@@ -166,9 +168,11 @@
 </span><span class="kw">pub enum </span>ErrorType {
   <span class="doccomment">/// An error occurred while running a command necessary for executing an action
   </span>ExecutionError {
-    <span class="doccomment">/// If the command could not execute for some reason the underlying Popen Error will be saved here
+    <span class="doccomment">/// If the command could not execute for some reason the underlying Popen Error will be saved
+    /// here
     </span>popen_error: <span class="prelude-ty">Option</span>&lt;PopenError&gt;,
-    <span class="doccomment">/// If the command attempted to execute but failed for some reason, the underlying ExitStatus will be saved here.
+    <span class="doccomment">/// If the command attempted to execute but failed for some reason, the underlying ExitStatus
+    /// will be saved here.
     </span>exit_status: <span class="prelude-ty">Option</span>&lt;ExitStatus&gt;,
   },
   <span class="doccomment">/// A filesystem error that was encountered while either reading configuration or
