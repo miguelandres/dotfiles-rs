@@ -88,4 +88,3 @@ jobs:
         run: |
           cargo run --target ${{ matrix.target.name }} -- --log-level-filter debug install-homebrew
           cargo run --target ${{ matrix.target.name }} -- --log-level-filter debug install-oh-my-zsh --skip-chsh
-          bash -c 'which brew'
