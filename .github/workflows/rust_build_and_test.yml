@@ -88,6 +88,10 @@ jobs:
         run: |
           cargo run --target ${{ matrix.target.name }} -- --log-level-filter debug install-homebrew
           cargo run --target ${{ matrix.target.name }} -- --log-level-filter debug install-oh-my-zsh --skip-chsh
+          echo "bash_profile"
+          cat ~/.bash_profile
+          echo "zprofile"
+          cat ~/.zprofile
           if [[ $0 == *bash ]]; then source ~/.bash_profile; elif [[ $0 == *zsh ]]; then source ~/.zprofile; fi
           echo "Re-sourced profile, PATH=$PATH"
           which brew
