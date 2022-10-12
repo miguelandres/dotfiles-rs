@@ -63,10 +63,6 @@
 <span id="63">63</span>
 <span id="64">64</span>
 <span id="65">65</span>
-<span id="66">66</span>
-<span id="67">67</span>
-<span id="68">68</span>
-<span id="69">69</span>
 </pre><pre class="rust"><code><span class="comment">// Copyright (c) 2021-2022 Miguel Barreto and others
 //
 // Permission is hereby granted, free of charge, to any person obtaining
@@ -92,8 +88,8 @@
 
 </span><span class="kw">use </span>subprocess::{Exec, ExitStatus, PopenError};
 
-<span class="kw">use </span><span class="kw">crate</span>::error::{execution_error, DotfilesError};
-<span class="kw">use </span>itertools::fold;
+<span class="kw">use </span><span class="kw">crate</span>::error::{execution_error, fold_until_first_err, DotfilesError};
+
 <span class="doccomment">/// Executes the `cmd` and waits for it to finish.
 ///
 /// If the execution returns a [subprocess::PopenError] then it uses the `popen_error_message`
@@ -106,12 +102,8 @@
   popen_error_message: <span class="kw-2">&amp;</span>str,
   error_while_running_message: <span class="kw-2">&amp;</span>str,
 ) -&gt; <span class="prelude-ty">Result</span>&lt;(), DotfilesError&gt; {
-  fold(cmds.into_iter(), <span class="prelude-val">Ok</span>(()), |res, cmd| <span class="kw">match </span>res {
-    <span class="prelude-val">Ok</span>(()) =&gt; {
-      <span class="macro">log::debug!</span>(<span class="string">&quot;Attempting to execute: {}&quot;</span>, cmd.to_cmdline_lossy());
-      handle_exec_error(cmd.join(), popen_error_message, error_while_running_message)
-    }
-    <span class="prelude-val">Err</span>(err) =&gt; <span class="prelude-val">Err</span>(err),
+  fold_until_first_err(cmds.into_iter(), |cmd| {
+    handle_exec_error(cmd.join(), popen_error_message, error_while_running_message)
   })
 }
 
