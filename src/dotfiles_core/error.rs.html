@@ -119,6 +119,7 @@
 <span id="119">119</span>
 <span id="120">120</span>
 <span id="121">121</span>
+<span id="122">122</span>
 </pre><pre class="rust"><code><span class="comment">// Copyright (c) 2021-2022 Miguel Barreto and others
 //
 // Permission is hereby granted, free of charge, to any person obtaining
@@ -150,8 +151,9 @@
 <span class="kw">use </span>subprocess::ExitStatus;
 <span class="kw">use </span>subprocess::PopenError;
 
-<span class="doccomment">/// Executes the `process_function` in each of the items in the `iterable`, and then returns `Ok(())`.
-/// It stops execution if any of the process functions returns an Error, and returns said error.
+<span class="doccomment">/// Executes the `process_function` in each of the items in the `iterable`, and then returns
+/// `Ok(())`. It stops execution if any of the process functions returns an Error, and returns said
+/// error.
 </span><span class="kw">pub fn </span>fold_until_first_err&lt;I, F, E&gt;(iterable: I, <span class="kw-2">mut </span>process_function: F) -&gt; <span class="prelude-ty">Result</span>&lt;(), E&gt;
 <span class="kw">where
   </span>I: IntoIterator,
