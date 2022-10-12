@@ -5,6 +5,8 @@ authors = ["Miguel Barreto <miguelandres@users.noreply.github.com>"]
 edition = "2018"
 
 [dependencies]
-yaml-rust = "0.4.5"
 getset = "0.1.2"
+itertools = "0.10.5"
+log = "0.4.14"
 subprocess = "0.2.8"
+yaml-rust = "0.4.5"

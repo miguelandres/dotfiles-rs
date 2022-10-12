@@ -19,26 +19,11 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-use clap::Parser;
-use dotfiles_processor::{
-  flags::{convert_to_level_filter, FlagData},
-  process,
-};
-use simplelog::*;
-fn main() {
-  let flag_data = FlagData::parse();
-  CombinedLogger::init(vec![TermLogger::new(
-    convert_to_level_filter(flag_data.log_level_filter),
-    Config::default(),
-    TerminalMode::Mixed,
-    ColorChoice::Auto,
-  )])
-  .unwrap();
-  match process::process(&flag_data) {
-    Ok(_) => log::info!("Process completed successfully"),
-    Err(error) => {
-      log::error!("Processing failed: {:?}", error);
-      std::process::exit(1);
-    }
-  }
+use dotfiles_core::{directive::DirectiveSet, error::DotfilesError};
+use dotfiles_processor::process::initialize_directive_set;
+
+#[test]
+fn initializes_directive_set_successfully() -> Result<(), DotfilesError> {
+  let mut directive_set = DirectiveSet::new();
+  initialize_directive_set(&mut directive_set)
 }

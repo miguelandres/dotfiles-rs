@@ -25,7 +25,7 @@
 #![cfg(unix)]
 use dotfiles_core::action::Action;
 use dotfiles_core::error::DotfilesError;
-use dotfiles_core::exec_wrapper::execute_command;
+use dotfiles_core::exec_wrapper::execute_commands;
 use log::info;
 use std::marker::PhantomData;
 use subprocess::Exec;
@@ -71,8 +71,8 @@ impl BrewCommand {
     for arg in self.args.iter() {
       cmd = cmd.arg(arg);
     }
-    execute_command(
-      cmd,
+    execute_commands(
+      vec![cmd],
       format!("Couldn't {} {}", self.action_name, self.item).as_str(),
       format!(
         "Unexpected error while {} {}",

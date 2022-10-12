@@ -21,10 +21,10 @@
 
 //! Wraps some logic to run external commands and handle errors
 
-use subprocess::{Exec, ExitStatus, Pipeline, PopenError};
+use subprocess::{Exec, ExitStatus, PopenError};
 
 use crate::error::{execution_error, DotfilesError};
-
+use itertools::fold;
 /// Executes the `cmd` and waits for it to finish.
 ///
 /// If the execution returns a [subprocess::PopenError] then it uses the `popen_error_message`
@@ -32,31 +32,18 @@ use crate::error::{execution_error, DotfilesError};
 ///
 /// If the execution finishes but in an error state, then it uses the
 /// `error_while_running_message` instead.
-pub fn execute_command(
-  cmd: Exec,
+pub fn execute_commands(
+  cmds: Vec<Exec>,
   popen_error_message: &str,
   error_while_running_message: &str,
 ) -> Result<(), DotfilesError> {
-  handle_exec_error(cmd.join(), popen_error_message, error_while_running_message)
-}
-
-/// Executes the `pipeline` and waits for it to finish.
-///
-/// If the execution returns a [subprocess::PopenError] then it uses the `popen_error_message`
-/// for the message in a DotfilesError.
-///
-/// If the execution finishes but in an error state, then it uses the
-/// `error_while_running_message` instead.
-pub fn execute_pipeline(
-  pipeline: Pipeline,
-  popen_error_message: &str,
-  error_while_running_message: &str,
-) -> Result<(), DotfilesError> {
-  handle_exec_error(
-    pipeline.join(),
-    popen_error_message,
-    error_while_running_message,
-  )
+  fold(cmds.into_iter(), Ok(()), |res, cmd| match res {
+    Ok(()) => {
+      log::debug!("Attempting to execute: {}", cmd.to_cmdline_lossy());
+      handle_exec_error(cmd.join(), popen_error_message, error_while_running_message)
+    }
+    Err(err) => Err(err),
+  })
 }
 
 fn handle_exec_error(

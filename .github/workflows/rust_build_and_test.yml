@@ -86,5 +86,5 @@ jobs:
       - name: Install Homebrew & ohmyzsh and check brew is installed
         if: matrix.target.name != 'aarch64-apple-darwin' # cannot run aarch64 on intel
         run: |
-          cargo run --target ${{ matrix.target.name }} -- --install-homebrew --install-ohmyzsh --skip-chsh
-          which brew
+          cargo run --target ${{ matrix.target.name }} -- --log-level-filter debug install-homebrew
+          cargo run --target ${{ matrix.target.name }} -- --log-level-filter debug install-oh-my-zsh --skip-chsh

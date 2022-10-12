@@ -97,7 +97,7 @@ pub struct DirectiveSet<'a> {
   /// Set of directives.
   ///
   /// This is a hashmap of directive name to the actual directive object, used during parsing.
-  directives: HashMap<String, Box<dyn Directive<'a>>>,
+  directives: HashMap<String, Box<dyn Directive<'a> + 'a>>,
 }
 
 impl<'a> Default for DirectiveSet<'a> {
@@ -114,10 +114,15 @@ impl<'a> DirectiveSet<'a> {
     }
   }
 
+  /// Get a directive named `name`.
+  pub fn get(&self, name: &str) -> Option<&Box<dyn Directive<'a> + 'a>> {
+    self.directives.get(name)
+  }
+
   /// Add a new directive
   ///
   /// This fails with an error if another directive with the same name already exists.
-  pub fn add(&mut self, name: &str, dir: Box<dyn Directive<'a>>) -> Result<(), DotfilesError> {
+  pub fn add(&mut self, name: &str, dir: Box<dyn Directive<'a> + 'a>) -> Result<(), DotfilesError> {
     self
       .directives
       .try_insert(String::from(name), dir)

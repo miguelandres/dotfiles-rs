@@ -25,8 +25,7 @@
 #![cfg(unix)]
 use dotfiles_core::action::Action;
 use dotfiles_core::error::DotfilesError;
-use dotfiles_core::exec_wrapper::execute_command;
-use dotfiles_core::exec_wrapper::execute_pipeline;
+use dotfiles_core::exec_wrapper::execute_commands;
 use log::info;
 use std::process::Command;
 use subprocess::Exec;
@@ -58,19 +57,39 @@ impl HomebrewInstallAction {
 impl Action<'_> for HomebrewInstallAction {
   fn execute(&self) -> Result<(), DotfilesError> {
     if !self.check_brew_is_installed() {
-      let result = execute_command(
-        Exec::shell(
-          "/bin/bash -c \"$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)\""),
+      let result = execute_commands(
+        vec!(Exec::shell(
+          "/bin/bash -c \"$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)\"")),
         "Error running homebrew installer",
         "Couldn't run homebrew installer");
-      #[cfg(not(all(target_os = "macos", target_arch = "aarch64")))]
+      #[cfg(not(any(target_os = "linux", all(target_os = "macos", target_arch = "aarch64"))))]
       return result;
       #[cfg(all(target_os = "macos", target_arch = "aarch64"))]
       {
         result?;
-        execute_pipeline(
-          Exec::shell("echo 'eval \"$(/opt/homebrew/bin/brew shellenv)\"' >> ~/.zprofile")
-            | Exec::shell("echo 'eval \"$(/opt/homebrew/bin/brew shellenv)\"' >> ~/.bash_profile"),
+        execute_commands(
+          vec![
+            Exec::shell("echo 'eval \"$(/opt/homebrew/bin/brew shellenv)\"' >> $HOME/.zprofile"),
+            Exec::shell(
+              "echo 'eval \"$(/opt/homebrew/bin/brew shellenv)\"' >> $HOME/.bash_profile",
+            ),
+          ],
+          "couldn't set .zprofile and .bash_profile to use homebrew",
+          "couldn't set .zprofile and .bash_profile to use homebrew",
+        )
+      }
+      #[cfg(all(target_os = "linux"))]
+      {
+        result?;
+        execute_commands(
+          vec![
+            Exec::shell(
+              "echo 'eval \"$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)\"' >> $HOME/.zprofile",
+            ),
+            Exec::shell(
+              "echo 'eval \"$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)\"' >> $HOME/.bash_profile",
+            ),
+          ],
           "couldn't set .zprofile and .bash_profile to use homebrew",
           "couldn't set .zprofile and .bash_profile to use homebrew",
         )
