@@ -23,8 +23,8 @@
 
 use subprocess::{Exec, ExitStatus, PopenError};
 
-use crate::error::{execution_error, DotfilesError};
-use itertools::fold;
+use crate::error::{execution_error, fold_until_first_err, DotfilesError};
+
 /// Executes the `cmd` and waits for it to finish.
 ///
 /// If the execution returns a [subprocess::PopenError] then it uses the `popen_error_message`
@@ -37,12 +37,8 @@ pub fn execute_commands(
   popen_error_message: &str,
   error_while_running_message: &str,
 ) -> Result<(), DotfilesError> {
-  fold(cmds.into_iter(), Ok(()), |res, cmd| match res {
-    Ok(()) => {
-      log::debug!("Attempting to execute: {}", cmd.to_cmdline_lossy());
-      handle_exec_error(cmd.join(), popen_error_message, error_while_running_message)
-    }
-    Err(err) => Err(err),
+  fold_until_first_err(cmds.into_iter(), |cmd| {
+    handle_exec_error(cmd.join(), popen_error_message, error_while_running_message)
   })
 }
 

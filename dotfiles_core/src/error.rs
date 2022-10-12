@@ -20,9 +20,27 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 //! Module for the error handling classes and enums.
+
+use std::fmt::Formatter;
+
 use getset::Getters;
+use itertools::fold;
+use std::fmt::Display;
 use subprocess::ExitStatus;
 use subprocess::PopenError;
+
+/// Executes the `process_function` in each of the items in the `iterable`, and then returns `Ok(())`.
+/// It stops execution if any of the process functions returns an Error, and returns said error.
+pub fn fold_until_first_err<I, F, E>(iterable: I, mut process_function: F) -> Result<(), E>
+where
+  I: IntoIterator,
+  F: FnMut(I::Item) -> Result<(), E>,
+{
+  fold(iterable, Ok(()), |prev_res, item| match prev_res {
+    Ok(()) => process_function(item),
+    Err(err) => Err(err),
+  })
+}
 
 /// A collection of types of errors that may occur while parsing or executing actions
 #[derive(Debug)]
@@ -53,6 +71,12 @@ pub enum ErrorType {
   CoreError,
   /// An error only for testing, the action that should fail actually succeeds!
   TestingErrorActionSucceedsWhenItShouldFail,
+}
+
+impl Display for ErrorType {
+  fn fmt(&self, f: &mut Formatter) -> std::fmt::Result {
+    write!(f, "{:?}", self)
+  }
 }
 
 /// Creates an [ErrorType::ExecutionError]
