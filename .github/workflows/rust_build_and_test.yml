@@ -24,21 +24,10 @@ jobs:
             gh_env: macos-11
           - name: x86_64-apple-darwin
             gh_env: macos-11
-        include:
-          - target:
-              gh_env: ubuntu-latest
-            sccache-path: /home/runner/.cache/sccache
-          - target:
-              gh_env: macos-11
-            sccache-path: /Users/runner/Library/Caches/Mozilla.sccache
 
     env:
       RUST_BACKTRACE: full
-      RUSTC_WRAPPER: sccache
       RUSTV: ${{ matrix.rust }}
-      SCCACHE_CACHE_SIZE: 2G
-      SCCACHE_DIR: ${{ matrix.sccache-path }}
-      # SCCACHE_RECACHE: 1 # Uncomment this to clear cache, then comment it back out
 
     steps:
       - uses: actions/checkout@v2
