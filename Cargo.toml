@@ -5,4 +5,5 @@ members = [
   "dotfiles_core",
   "dotfiles_actions",
   "dotfiles_core_macros",
+  "dotfiles_processor",
 ]

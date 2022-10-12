@@ -19,21 +19,5 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-use dotfiles_processor::process;
-use simplelog::*;
-fn main() {
-  CombinedLogger::init(vec![TermLogger::new(
-    LevelFilter::Info,
-    Config::default(),
-    TerminalMode::Mixed,
-    ColorChoice::Auto,
-  )])
-  .unwrap();
-  match process::process() {
-    Ok(_) => log::info!("Process completed successfully"),
-    Err(error) => {
-      log::error!("Processing failed: {:?}", error);
-      std::process::exit(1);
-    }
-  }
-}
+pub mod flags;
+pub mod process;
