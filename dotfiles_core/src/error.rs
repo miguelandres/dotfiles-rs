@@ -29,8 +29,9 @@ use std::fmt::Display;
 use subprocess::ExitStatus;
 use subprocess::PopenError;
 
-/// Executes the `process_function` in each of the items in the `iterable`, and then returns `Ok(())`.
-/// It stops execution if any of the process functions returns an Error, and returns said error.
+/// Executes the `process_function` in each of the items in the `iterable`, and then returns
+/// `Ok(())`. It stops execution if any of the process functions returns an Error, and returns said
+/// error.
 pub fn fold_until_first_err<I, F, E>(iterable: I, mut process_function: F) -> Result<(), E>
 where
   I: IntoIterator,
