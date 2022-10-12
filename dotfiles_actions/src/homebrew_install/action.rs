@@ -65,7 +65,7 @@ impl Action<'_> for HomebrewInstallAction {
           "/bin/bash -c \"$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)\""),
         "Error running homebrew installer",
         "Couldn't run homebrew installer");
-      #[cfg(not(all(target_os = "macos", target_arch = "aarch64")))]
+      #[cfg(not(any(target_os = "linux", all(target_os = "macos", target_arch = "aarch64"))))]
       return result;
       #[cfg(all(target_os = "macos", target_arch = "aarch64"))]
       {
