@@ -94,7 +94,8 @@ pub struct BrewAction<'a> {
   /// List of brew formulae to `brew install`, usually command line tools.
   formulae: Vec<String>,
 
-  /// List of casks to install. Casks usually are macOS apps with some sort of UI or framework dependencies.
+  /// List of casks to install. Casks usually are macOS apps with some sort of UI or framework
+  /// dependencies.
   casks: Vec<String>,
   phantom_data: PhantomData<&'a String>,
 }

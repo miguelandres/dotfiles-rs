@@ -248,7 +248,8 @@ pub fn get_string_content_or_keyed_value(
   }
 }
 
-/// Gets a native `Vec<String>` from a Yaml::Array. It errors out if the passed yaml is not an array or if not all the items in the array are plain Yaml Strings
+/// Gets a native `Vec<String>` from a Yaml::Array. It errors out if the passed yaml is not an array
+/// or if not all the items in the array are plain Yaml Strings
 pub fn get_string_array(yaml: &Yaml, array_name: &str) -> Result<Vec<String>, DotfilesError> {
   match yaml {
     Yaml::Array(arr) => {

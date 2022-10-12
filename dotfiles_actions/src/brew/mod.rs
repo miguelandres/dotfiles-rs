@@ -18,7 +18,8 @@
 // LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-//! This module contains the [BrewAction](action::BrewAction) and [BrewDirective](directive::BrewDirective)
+//! This module contains the [BrewAction](action::BrewAction) and
+//! [BrewDirective](directive::BrewDirective)
 #![cfg(unix)]
 pub mod action;
 pub mod directive;

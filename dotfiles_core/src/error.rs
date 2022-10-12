@@ -29,9 +29,11 @@ use subprocess::PopenError;
 pub enum ErrorType {
   /// An error occurred while running a command necessary for executing an action
   ExecutionError {
-    /// If the command could not execute for some reason the underlying Popen Error will be saved here
+    /// If the command could not execute for some reason the underlying Popen Error will be saved
+    /// here
     popen_error: Option<PopenError>,
-    /// If the command attempted to execute but failed for some reason, the underlying ExitStatus will be saved here.
+    /// If the command attempted to execute but failed for some reason, the underlying ExitStatus
+    /// will be saved here.
     exit_status: Option<ExitStatus>,
   },
   /// A filesystem error that was encountered while either reading configuration or

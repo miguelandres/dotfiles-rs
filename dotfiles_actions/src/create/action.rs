@@ -78,8 +78,7 @@ impl<F: FileSystem> Action<'_> for CreateAction<'_, F> {
   /// Creates the [`directory`](CreateAction::directory).
   ///
   /// # Errors
-  /// - The parent directory does not exist and
-  ///   [`force`](CreateAction::force) is false.
+  /// - The parent directory does not exist and [`force`](CreateAction::force) is false.
   /// - There is already a directory, file or symlink with the same name.
   /// - Permission denied.
   fn execute(&self) -> Result<(), DotfilesError> {
