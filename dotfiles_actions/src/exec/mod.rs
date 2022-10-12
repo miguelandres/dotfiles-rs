@@ -19,8 +19,8 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-//! This module contains the [ExecAction](action::ExecAction) and [ExecDirective](directive::ExecDirective)
-//! used to execute a command on the shell.
+//! This module contains the [ExecAction](action::ExecAction) and
+//! [ExecDirective](directive::ExecDirective) used to execute a command on the shell.
 #![cfg(unix)]
 pub mod action;
 pub mod directive;

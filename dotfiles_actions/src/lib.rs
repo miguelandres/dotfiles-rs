@@ -28,8 +28,7 @@
 //! and [directives](dotfiles_core::directive::Directive). They are contained in
 //! each of the modules in this crate:
 //!
-//! - [brew]: A set of actions and directive that act as wrappers around
-//!   [homebrew](http://brew.sh).
+//! - [brew]: A set of actions and directive that act as wrappers around [homebrew](http://brew.sh).
 //! - [create]: Creates a new directory
 //! - [exec]: runs a command in the shell
 //! - [homebrew_install]: installs [homebrew](http://brew.sh).
