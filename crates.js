@@ -1,1 +1,1 @@
-window.ALL_CRATES = ["dotfiles","dotfiles_actions","dotfiles_core","dotfiles_core_macros"];
+window.ALL_CRATES = ["dotfiles","dotfiles_actions","dotfiles_core","dotfiles_core_macros","dotfiles_processor"];
