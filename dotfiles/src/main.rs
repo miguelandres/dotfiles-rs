@@ -19,7 +19,8 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-use dotfiles_processor::process;
+use clap::Parser;
+use dotfiles_processor::{flags::FlagData, process};
 use simplelog::*;
 fn main() {
   CombinedLogger::init(vec![TermLogger::new(
@@ -29,7 +30,8 @@ fn main() {
     ColorChoice::Auto,
   )])
   .unwrap();
-  match process::process() {
+  let flag_data = FlagData::parse();
+  match process::process(&flag_data) {
     Ok(_) => log::info!("Process completed successfully"),
     Err(error) => {
       log::error!("Processing failed: {:?}", error);

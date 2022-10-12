@@ -5,6 +5,7 @@ authors = ["Miguel Barreto <miguelandres@users.noreply.github.com>"]
 edition = "2018"
 
 [dependencies]
+clap = {version ="4.0.13", features = ["derive"]}
 dotfiles_core = {path = "../dotfiles_core"}
 dotfiles_actions = {path = "../dotfiles_actions"}
 log = "0.4.14"

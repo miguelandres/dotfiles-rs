@@ -19,4 +19,10 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-mod process;
+use dotfiles_processor::flags::FlagData;
+
+#[test]
+fn verify_cli() {
+  use clap::CommandFactory;
+  FlagData::command().debug_assert()
+}

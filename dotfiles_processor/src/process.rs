@@ -30,23 +30,21 @@ use dotfiles_actions::ohmyzsh_install::action::OhMyZshInstallAction;
 
 use dotfiles_actions::homebrew_install::action::HomebrewInstallAction;
 
-use crate::flags::FlagParser;
+use crate::flags::{Command, FlagData};
 
 use dotfiles_core::error::DotfilesError;
 
-pub fn process() -> Result<(), DotfilesError> {
-  let flag_parser = FlagParser::new();
-  let flags_vec: Vec<String> = std::env::args().collect();
-  let flag_data = flag_parser.parse_flags(&flags_vec[1..])?;
-  if flag_data.install_homebrew {
-    HomebrewInstallAction::new().execute()?;
-  }
-  if flag_data.install_ohmyzsh {
-    OhMyZshInstallAction::new(flag_data.skip_chsh).execute()?;
-  }
+pub fn process(flag_data: &FlagData) -> Result<(), DotfilesError> {
   let mut directive_set: DirectiveSet = Default::default();
   initialize_directive_set(&mut directive_set)?;
 
+  match &flag_data.command {
+    Command::InstallHomebrew => HomebrewInstallAction::new().execute()?,
+    Command::InstallOhMyZsh { skip_chsh } => {
+      OhMyZshInstallAction::new(skip_chsh.to_owned()).execute()?
+    }
+    Command::ApplyConfig { file: _ } => todo!(),
+  };
   Ok(())
 }
 
