@@ -24,7 +24,7 @@
 #![cfg(unix)]
 use dotfiles_core::action::Action;
 use dotfiles_core::error::DotfilesError;
-use dotfiles_core::exec_wrapper::execute_command;
+use dotfiles_core::exec_wrapper::execute_commands;
 use std::process::Command;
 use subprocess::Exec;
 
@@ -59,24 +59,24 @@ impl Action<'_> for OhMyZshInstallAction {
       let cmd = Exec::shell("sudo apt install zsh");
       #[cfg(target_os = "macos")]
       let cmd = Exec::shell("brew install zsh");
-      execute_command(
-        cmd,
+      execute_commands(
+        vec![cmd],
         "Couldn't run zsh installation",
         "Unexpected error while running zsh installation",
       )?;
     }
 
     if !self.skip_chsh {
-      execute_command(
-        Exec::shell("chsh -s $(which zsh)"),
+      execute_commands(
+        vec![Exec::shell("chsh -s $(which zsh)")],
         "Couldn't run chsh to set the shell to zsh",
         "Unexpected error while running chsh to set the shell to zsh",
       )?;
     }
-    execute_command(
-      Exec::shell(
+    execute_commands(
+      vec![Exec::shell(
         "sh -c \"$(curl -fsSL https://raw.github.com/ohmyzsh/ohmyzsh/master/tools/install.sh)\"",
-      ),
+      )],
       "Couldn't install ohmyzsh",
       "Unexpected error while installing ohmyzsh",
     )
