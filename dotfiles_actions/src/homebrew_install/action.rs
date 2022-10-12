@@ -26,6 +26,8 @@
 use dotfiles_core::action::Action;
 use dotfiles_core::error::DotfilesError;
 use dotfiles_core::exec_wrapper::execute_command;
+// The import below is only necessary for a few configurations, not all.
+#[cfg(any(target_os = "linux", all(target_os = "macos", target_arch = "aarch64")))]
 use dotfiles_core::exec_wrapper::execute_pipeline;
 use log::info;
 use std::process::Command;
@@ -71,6 +73,19 @@ impl Action<'_> for HomebrewInstallAction {
         execute_pipeline(
           Exec::shell("echo 'eval \"$(/opt/homebrew/bin/brew shellenv)\"' >> ~/.zprofile")
             | Exec::shell("echo 'eval \"$(/opt/homebrew/bin/brew shellenv)\"' >> ~/.bash_profile"),
+          "couldn't set .zprofile and .bash_profile to use homebrew",
+          "couldn't set .zprofile and .bash_profile to use homebrew",
+        )
+      }
+      #[cfg(all(target_os = "linux"))]
+      {
+        result?;
+        execute_pipeline(
+          Exec::shell(
+            "echo 'eval \"$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)\"' >> ~/.zprofile",
+          ) | Exec::shell(
+            "echo 'eval \"$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)\"' >> ~/.bash_profile",
+          ),
           "couldn't set .zprofile and .bash_profile to use homebrew",
           "couldn't set .zprofile and .bash_profile to use homebrew",
         )

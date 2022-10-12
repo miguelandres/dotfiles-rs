@@ -88,4 +88,4 @@ jobs:
         run: |
           cargo run --target ${{ matrix.target.name }} -- install-homebrew
           cargo run --target ${{ matrix.target.name }} -- install-oh-my-zsh --skip-chsh
-          which brew
+          PATH=$PATH:/home/linuxbrew/.linuxbrew/bin which brew
