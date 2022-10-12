@@ -19,13 +19,43 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-use clap::{Parser, Subcommand};
+use clap::{Parser, Subcommand, ValueEnum};
+use log::LevelFilter;
 
 #[derive(Parser)]
 #[command(author, version, about, long_about=None)]
 pub struct FlagData {
   #[command(subcommand)]
   pub command: Command,
+  #[arg(value_enum, long, default_value_t = LogLevelFilter::Info)]
+  pub log_level_filter: LogLevelFilter,
+}
+
+#[derive(Copy, Clone, PartialEq, Eq, PartialOrd, Ord, ValueEnum)]
+pub enum LogLevelFilter {
+  /// A level lower than all log levels.
+  Off,
+  /// Corresponds to the `Error` log level.
+  Error,
+  /// Corresponds to the `Warn` log level.
+  Warn,
+  /// Corresponds to the `Info` log level.
+  Info,
+  /// Corresponds to the `Debug` log level.
+  Debug,
+  /// Corresponds to the `Trace` log level.
+  Trace,
+}
+
+pub fn convert_to_level_filter(log_level_filter: LogLevelFilter) -> LevelFilter {
+  match log_level_filter {
+    LogLevelFilter::Off => LevelFilter::Off,
+    LogLevelFilter::Error => LevelFilter::Error,
+    LogLevelFilter::Warn => LevelFilter::Warn,
+    LogLevelFilter::Info => LevelFilter::Info,
+    LogLevelFilter::Debug => LevelFilter::Debug,
+    LogLevelFilter::Trace => LevelFilter::Trace,
+  }
 }
 
 #[derive(Subcommand)]

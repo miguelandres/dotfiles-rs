@@ -20,17 +20,20 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 use clap::Parser;
-use dotfiles_processor::{flags::FlagData, process};
+use dotfiles_processor::{
+  flags::{convert_to_level_filter, FlagData},
+  process,
+};
 use simplelog::*;
 fn main() {
+  let flag_data = FlagData::parse();
   CombinedLogger::init(vec![TermLogger::new(
-    LevelFilter::Info,
+    convert_to_level_filter(flag_data.log_level_filter),
     Config::default(),
     TerminalMode::Mixed,
     ColorChoice::Auto,
   )])
   .unwrap();
-  let flag_data = FlagData::parse();
   match process::process(&flag_data) {
     Ok(_) => log::info!("Process completed successfully"),
     Err(error) => {

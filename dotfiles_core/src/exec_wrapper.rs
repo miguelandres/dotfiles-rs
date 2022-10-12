@@ -38,7 +38,10 @@ pub fn execute_commands(
   error_while_running_message: &str,
 ) -> Result<(), DotfilesError> {
   fold(cmds.into_iter(), Ok(()), |res, cmd| match res {
-    Ok(()) => handle_exec_error(cmd.join(), popen_error_message, error_while_running_message),
+    Ok(()) => {
+      log::debug!("Attempting to execute: {}", cmd.to_cmdline_lossy());
+      handle_exec_error(cmd.join(), popen_error_message, error_while_running_message)
+    }
     Err(err) => Err(err),
   })
 }

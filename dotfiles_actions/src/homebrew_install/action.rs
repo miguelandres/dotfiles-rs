@@ -69,8 +69,10 @@ impl Action<'_> for HomebrewInstallAction {
         result?;
         execute_commands(
           vec![
-            Exec::shell("echo 'eval \"$(/opt/homebrew/bin/brew shellenv)\"' >> ~/.zprofile"),
-            Exec::shell("echo 'eval \"$(/opt/homebrew/bin/brew shellenv)\"' >> ~/.bash_profile"),
+            Exec::shell("echo 'eval \"$(/opt/homebrew/bin/brew shellenv)\"' >> $HOME/.zprofile"),
+            Exec::shell(
+              "echo 'eval \"$(/opt/homebrew/bin/brew shellenv)\"' >> $HOME/.bash_profile",
+            ),
           ],
           "couldn't set .zprofile and .bash_profile to use homebrew",
           "couldn't set .zprofile and .bash_profile to use homebrew",
@@ -82,10 +84,10 @@ impl Action<'_> for HomebrewInstallAction {
         execute_commands(
           vec![
             Exec::shell(
-              "echo 'eval \"$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)\"' >> ~/.zprofile",
+              "echo 'eval \"$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)\"' >> $HOME/.zprofile",
             ),
             Exec::shell(
-              "echo 'eval \"$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)\"' >> ~/.bash_profile",
+              "echo 'eval \"$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)\"' >> $HOME/.bash_profile",
             ),
           ],
           "couldn't set .zprofile and .bash_profile to use homebrew",
