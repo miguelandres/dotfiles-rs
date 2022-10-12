@@ -29,6 +29,7 @@ use dotfiles_core::Action;
 use dotfiles_actions::ohmyzsh_install::action::OhMyZshInstallAction;
 
 use dotfiles_actions::homebrew_install::action::HomebrewInstallAction;
+use log::info;
 
 use crate::flags::{Command, FlagData};
 
@@ -39,8 +40,12 @@ pub fn process(flag_data: &FlagData) -> Result<(), DotfilesError> {
   initialize_directive_set(&mut directive_set)?;
 
   match &flag_data.command {
-    Command::InstallHomebrew => HomebrewInstallAction::new().execute()?,
+    Command::InstallHomebrew => {
+      info!("Installing homebrew.");
+      HomebrewInstallAction::new().execute()?
+    }
     Command::InstallOhMyZsh { skip_chsh } => {
+      info!("Installing Oh My Zsh!");
       OhMyZshInstallAction::new(skip_chsh.to_owned()).execute()?
     }
     Command::ApplyConfig { file: _ } => todo!(),
