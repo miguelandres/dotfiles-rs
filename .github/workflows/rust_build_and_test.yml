@@ -92,6 +92,6 @@ jobs:
           cat ~/.bash_profile
           echo "zprofile"
           cat ~/.zprofile
-          if [[ $0 == *bash ]]; then source ~/.bash_profile; elif [[ $0 == *zsh ]]; then source ~/.zprofile; fi
+          if [[ $0 == *bash* ]]; then echo "sourcing bash_profile"; source ~/.bash_profile; elif [[ $0 == *zsh* ]]; then echo "sourcing zprofile"; source ~/.zprofile; fi
           echo "Re-sourced profile, PATH=$PATH"
           which brew
