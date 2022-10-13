@@ -19,7 +19,9 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-use dotfiles_core::{settings::parse_setting, Setting};
+use std::mem::discriminant;
+
+use dotfiles_core::{error::ErrorType, settings::parse_setting, Setting};
 use yaml_rust::Yaml;
 
 #[test]
@@ -35,9 +37,23 @@ fn parse_boolean_setting_succeeds() {
 fn parse_boolean_setting_fails_with_wrong_type() {
   let setting_type = Setting::Boolean(false);
   let yaml = Yaml::String("true".to_owned());
-  parse_setting(&setting_type, &yaml).unwrap_err();
+  assert_eq!(
+    discriminant(&ErrorType::UnexpectedYamlTypeError),
+    discriminant(
+      parse_setting(&setting_type, &yaml)
+        .unwrap_err()
+        .error_type()
+    )
+  );
   let yaml = Yaml::Integer(14);
-  parse_setting(&setting_type, &yaml).unwrap_err();
+  assert_eq!(
+    discriminant(&ErrorType::UnexpectedYamlTypeError),
+    discriminant(
+      parse_setting(&setting_type, &yaml)
+        .unwrap_err()
+        .error_type()
+    )
+  );
 }
 
 #[test]
@@ -54,9 +70,23 @@ fn parse_string_setting_succeeds() {
 fn parse_string_setting_fails_with_wrong_type() {
   let setting_type = Setting::String(String::new());
   let yaml = Yaml::Boolean(false);
-  parse_setting(&setting_type, &yaml).unwrap_err();
+  assert_eq!(
+    discriminant(&ErrorType::UnexpectedYamlTypeError),
+    discriminant(
+      parse_setting(&setting_type, &yaml)
+        .unwrap_err()
+        .error_type()
+    )
+  );
   let yaml = Yaml::Integer(0);
-  parse_setting(&setting_type, &yaml).unwrap_err();
+  assert_eq!(
+    discriminant(&ErrorType::UnexpectedYamlTypeError),
+    discriminant(
+      parse_setting(&setting_type, &yaml)
+        .unwrap_err()
+        .error_type()
+    )
+  );
 }
 
 #[test]
@@ -73,7 +103,21 @@ fn parse_int_setting_succeeds() {
 fn parse_int_setting_fails_with_wrong_type() {
   let setting_type = Setting::Integer(0);
   let yaml = Yaml::Boolean(false);
-  parse_setting(&setting_type, &yaml).unwrap_err();
+  assert_eq!(
+    discriminant(&ErrorType::UnexpectedYamlTypeError),
+    discriminant(
+      parse_setting(&setting_type, &yaml)
+        .unwrap_err()
+        .error_type()
+    )
+  );
   let yaml = Yaml::String("".to_owned());
-  parse_setting(&setting_type, &yaml).unwrap_err();
+  assert_eq!(
+    discriminant(&ErrorType::UnexpectedYamlTypeError),
+    discriminant(
+      parse_setting(&setting_type, &yaml)
+        .unwrap_err()
+        .error_type()
+    )
+  );
 }
