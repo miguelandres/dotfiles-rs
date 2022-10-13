@@ -120,6 +120,32 @@
 <span id="120">120</span>
 <span id="121">121</span>
 <span id="122">122</span>
+<span id="123">123</span>
+<span id="124">124</span>
+<span id="125">125</span>
+<span id="126">126</span>
+<span id="127">127</span>
+<span id="128">128</span>
+<span id="129">129</span>
+<span id="130">130</span>
+<span id="131">131</span>
+<span id="132">132</span>
+<span id="133">133</span>
+<span id="134">134</span>
+<span id="135">135</span>
+<span id="136">136</span>
+<span id="137">137</span>
+<span id="138">138</span>
+<span id="139">139</span>
+<span id="140">140</span>
+<span id="141">141</span>
+<span id="142">142</span>
+<span id="143">143</span>
+<span id="144">144</span>
+<span id="145">145</span>
+<span id="146">146</span>
+<span id="147">147</span>
+<span id="148">148</span>
 </pre><pre class="rust"><code><span class="comment">// Copyright (c) 2021-2022 Miguel Barreto and others
 //
 // Permission is hereby granted, free of charge, to any person obtaining
@@ -151,16 +177,36 @@
 <span class="kw">use </span>subprocess::ExitStatus;
 <span class="kw">use </span>subprocess::PopenError;
 
-<span class="doccomment">/// Executes the `process_function` in each of the items in the `iterable`, and then returns
+<span class="doccomment">/// Executes the `process_function` on each of the items in the `iterable`, and then returns
 /// `Ok(())`. It stops execution if any of the process functions returns an Error, and returns said
 /// error.
-</span><span class="kw">pub fn </span>fold_until_first_err&lt;I, F, E&gt;(iterable: I, <span class="kw-2">mut </span>process_function: F) -&gt; <span class="prelude-ty">Result</span>&lt;(), E&gt;
+</span><span class="kw">pub fn </span>process_until_first_err&lt;I, F, E&gt;(iterable: I, <span class="kw-2">mut </span>process_function: F) -&gt; <span class="prelude-ty">Result</span>&lt;(), E&gt;
 <span class="kw">where
   </span>I: IntoIterator,
   F: FnMut(I::Item) -&gt; <span class="prelude-ty">Result</span>&lt;(), E&gt;,
 {
   fold(iterable, <span class="prelude-val">Ok</span>(()), |prev_res, item| <span class="kw">match </span>prev_res {
     <span class="prelude-val">Ok</span>(()) =&gt; process_function(item),
+    <span class="prelude-val">Err</span>(err) =&gt; <span class="prelude-val">Err</span>(err),
+  })
+}
+
+<span class="doccomment">/// Executes the `process_function` on each of the items in the `iterable`, and folds them using the
+/// `fold_function`. Returns the processed and folded items if all the processing and folding was
+/// successful, otherwise returns the first error found.
+</span><span class="kw">pub fn </span>fold_until_first_err&lt;I, Folded, Processed, F, P, E&gt;(
+  iterable: I,
+  init: <span class="prelude-ty">Result</span>&lt;Folded, E&gt;,
+  <span class="kw-2">mut </span>process_function: P,
+  <span class="kw-2">mut </span>fold_function: F,
+) -&gt; <span class="prelude-ty">Result</span>&lt;Folded, E&gt;
+<span class="kw">where
+  </span>I: IntoIterator,
+  F: FnMut(Folded, Processed) -&gt; <span class="prelude-ty">Result</span>&lt;Folded, E&gt;,
+  P: FnMut(I::Item) -&gt; <span class="prelude-ty">Result</span>&lt;Processed, E&gt;,
+{
+  fold(iterable, init, |prev_res, item| <span class="kw">match </span>prev_res {
+    <span class="prelude-val">Ok</span>(prev_folded) =&gt; fold_function(prev_folded, process_function(item)<span class="question-mark">?</span>),
     <span class="prelude-val">Err</span>(err) =&gt; <span class="prelude-val">Err</span>(err),
   })
 }
@@ -183,6 +229,8 @@
     <span class="doccomment">/// The underlying filesystem error.
     </span>fs_error: std::io::Error,
   },
+  <span class="doccomment">/// The configuration file is inconsistent with itself or with that dotfiles supports.
+  </span>InconsistentConfigurationError,
   <span class="doccomment">/// The configuration is missing a required field
   </span>IncompleteConfigurationError {
     <span class="doccomment">/// Name of the field missing in the configuration
@@ -227,6 +275,10 @@
 }
 
 <span class="kw">impl </span>DotfilesError {
+  <span class="doccomment">/// Adds a prefix to the existing message
+  </span><span class="kw">pub fn </span>add_message_prefix(<span class="kw-2">&amp;mut </span><span class="self">self</span>, prefix: String) {
+    <span class="self">self</span>.message = <span class="macro">format!</span>(<span class="string">&quot;{}: {}&quot;</span>, prefix, <span class="self">self</span>.message,)
+  }
   <span class="doccomment">/// Creates a new Dotfiles error with the given message and error type
   </span><span class="kw">pub fn </span>from(message: String, error_type: ErrorType) -&gt; <span class="self">Self </span>{
     DotfilesError {
@@ -243,4 +295,4 @@
   }
 }
 </code></pre></div>
-</section></div></main><div id="rustdoc-vars" data-root-path="../../" data-current-crate="dotfiles_core" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.66.0-nightly (db0597f56 2022-10-11)" ></div></body></html>
+</section></div></main><div id="rustdoc-vars" data-root-path="../../" data-current-crate="dotfiles_core" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.66.0-nightly (c0983a9aa 2022-10-12)" ></div></body></html>

@@ -47,6 +47,23 @@
 <span id="47">47</span>
 <span id="48">48</span>
 <span id="49">49</span>
+<span id="50">50</span>
+<span id="51">51</span>
+<span id="52">52</span>
+<span id="53">53</span>
+<span id="54">54</span>
+<span id="55">55</span>
+<span id="56">56</span>
+<span id="57">57</span>
+<span id="58">58</span>
+<span id="59">59</span>
+<span id="60">60</span>
+<span id="61">61</span>
+<span id="62">62</span>
+<span id="63">63</span>
+<span id="64">64</span>
+<span id="65">65</span>
+<span id="66">66</span>
 </pre><pre class="rust"><code><span class="comment">// Copyright (c) 2021-2022 Miguel Barreto and others
 //
 // Permission is hereby granted, free of charge, to any person obtaining
@@ -74,11 +91,15 @@
 
 <span class="kw">use </span>std::collections::HashMap;
 
+<span class="kw">use </span>yaml_rust::Yaml;
+
+<span class="kw">use </span><span class="kw">crate</span>::error::{DotfilesError, ErrorType};
+
 <span class="doccomment">/// The Settings object is a hashmap of option names to a default value
 </span><span class="kw">pub type </span>Settings = HashMap&lt;String, Setting&gt;;
 
 <span class="doccomment">/// Represents a value for a setting
-</span><span class="attribute">#[derive(Clone, Debug)]
+</span><span class="attribute">#[derive(Eq, PartialEq, Clone, Debug)]
 </span><span class="kw">pub enum </span>Setting {
   <span class="doccomment">/// A boolean value for a setting
   </span>Boolean(bool),
@@ -96,5 +117,18 @@
     .collect();
   settings_object
 }
+
+<span class="doccomment">/// Parse a setting from Yaml given a particular setting type.
+</span><span class="kw">pub fn </span>parse_setting(setting_type: <span class="kw-2">&amp;</span>Setting, yaml: <span class="kw-2">&amp;</span>Yaml) -&gt; <span class="prelude-ty">Result</span>&lt;Setting, DotfilesError&gt; {
+  <span class="kw">match </span>(setting_type, yaml) {
+    (Setting::String(<span class="kw">_</span>), Yaml::String(str)) =&gt; <span class="prelude-val">Ok</span>(Setting::String(str.to_owned())),
+    (Setting::Boolean(<span class="kw">_</span>), Yaml::Boolean(b)) =&gt; <span class="prelude-val">Ok</span>(Setting::Boolean(b.to_owned())),
+    (Setting::Integer(<span class="kw">_</span>), Yaml::Integer(i)) =&gt; <span class="prelude-val">Ok</span>(Setting::Integer(i.to_owned())),
+    (<span class="kw">_</span>, <span class="kw">_</span>) =&gt; <span class="prelude-val">Err</span>(DotfilesError::from(
+      <span class="macro">format!</span>(<span class="string">&quot;Setting is type {:?} but got yaml {:?}&quot;</span>, setting_type, yaml),
+      ErrorType::UnexpectedYamlTypeError,
+    )),
+  }
+}
 </code></pre></div>
-</section></div></main><div id="rustdoc-vars" data-root-path="../../" data-current-crate="dotfiles_core" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.66.0-nightly (db0597f56 2022-10-11)" ></div></body></html>
+</section></div></main><div id="rustdoc-vars" data-root-path="../../" data-current-crate="dotfiles_core" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.66.0-nightly (c0983a9aa 2022-10-12)" ></div></body></html>

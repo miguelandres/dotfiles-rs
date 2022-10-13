@@ -111,7 +111,6 @@
 <span id="111">111</span>
 <span id="112">112</span>
 <span id="113">113</span>
-<span id="114">114</span>
 </pre><pre class="rust"><code><span class="comment">// Copyright (c) 2021-2022 Miguel Barreto and others
 //
 // Permission is hereby granted, free of charge, to any person obtaining
@@ -157,11 +156,11 @@
 
 <span class="doccomment">/// Constant for the name of the `create` directive.
 </span><span class="kw">pub const </span>DIRECTIVE_NAME: <span class="kw-2">&amp;</span>str = <span class="string">&quot;create&quot;</span>;
-<span class="doccomment">/// Constant for the name of the [`force`](CreateAction::force) Setting
-/// which forces to create all parent directories if necessary.
+<span class="doccomment">/// Constant for the name of the [`force`](CreateAction::force) Setting which forces to create all
+/// parent directories if necessary.
 </span><span class="kw">pub const </span>FORCE_SETTING: <span class="kw-2">&amp;</span>str = <span class="string">&quot;force&quot;</span>;
-<span class="doccomment">/// Constant for the name of the [`directory`](CreateAction::directory) Setting
-/// which forces to create all parent directories if necessary.
+<span class="doccomment">/// Constant for the name of the [`directory`](CreateAction::directory) argument that contains the
+/// name of the directory to create
 </span><span class="kw">pub const </span>DIR_SETTING: <span class="kw-2">&amp;</span>str = <span class="string">&quot;dir&quot;</span>;
 
 <span class="doccomment">/// Constructs a new [CreateDirective] using the real filesystem
@@ -173,12 +172,11 @@
 </span><span class="kw">pub fn </span>init_directive_data() -&gt; DirectiveData {
   DirectiveData::from(
     DIRECTIVE_NAME.into(),
-    initialize_settings_object(<span class="kw-2">&amp;</span>[(String::from(FORCE_SETTING), Setting::Boolean(<span class="bool-val">false</span>))]),
+    initialize_settings_object(<span class="kw-2">&amp;</span>[(FORCE_SETTING.to_owned(), Setting::Boolean(<span class="bool-val">false</span>))]),
   )
 }
 
-<span class="doccomment">/// A directive that can build [CreateAction]s to create directories
-/// in the filesystem.
+<span class="doccomment">/// A directive that can build [CreateAction]s to create directories in the filesystem.
 </span><span class="attribute">#[derive(ActionListDirective)]
 </span><span class="kw">pub struct </span>CreateDirective&lt;<span class="lifetime">&#39;a</span>, F: <span class="lifetime">&#39;a </span>+ FileSystem&gt; {
   fs: Box&lt;F&gt;,
@@ -227,4 +225,4 @@
   }
 }
 </code></pre></div>
-</section></div></main><div id="rustdoc-vars" data-root-path="../../../" data-current-crate="dotfiles_actions" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.66.0-nightly (db0597f56 2022-10-11)" ></div></body></html>
+</section></div></main><div id="rustdoc-vars" data-root-path="../../../" data-current-crate="dotfiles_actions" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.66.0-nightly (c0983a9aa 2022-10-12)" ></div></body></html>
