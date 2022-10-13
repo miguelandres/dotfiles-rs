@@ -25,6 +25,10 @@ extern crate yaml_rust;
 
 use std::collections::HashMap;
 
+use yaml_rust::Yaml;
+
+use crate::error::{DotfilesError, ErrorType};
+
 /// The Settings object is a hashmap of option names to a default value
 pub type Settings = HashMap<String, Setting>;
 
@@ -46,4 +50,17 @@ pub fn initialize_settings_object(settings: &[(String, Setting)]) -> Settings {
     .map(|(name, setting)| (name.clone(), setting.clone()))
     .collect();
   settings_object
+}
+
+/// Parse a setting from Yaml given a particular setting type.
+pub fn parse_setting(setting_type: &Setting, yaml: &Yaml) -> Result<Setting, DotfilesError> {
+  match (setting_type, yaml) {
+    (Setting::String(_), Yaml::String(str)) => Ok(Setting::String(str.to_owned())),
+    (Setting::Boolean(_), Yaml::Boolean(b)) => Ok(Setting::Boolean(b.to_owned())),
+    (Setting::Integer(_), Yaml::Integer(i)) => Ok(Setting::Integer(i.to_owned())),
+    (_, _) => Err(DotfilesError::from(
+      format!("Setting is type {:?} but got yaml {:?}", setting_type, yaml),
+      ErrorType::UnexpectedYamlTypeError,
+    )),
+  }
 }
