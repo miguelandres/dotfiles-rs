@@ -33,7 +33,7 @@ use crate::error::{DotfilesError, ErrorType};
 pub type Settings = HashMap<String, Setting>;
 
 /// Represents a value for a setting
-#[derive(Clone, Debug)]
+#[derive(Eq, PartialEq, Clone, Debug)]
 pub enum Setting {
   /// A boolean value for a setting
   Boolean(bool),
