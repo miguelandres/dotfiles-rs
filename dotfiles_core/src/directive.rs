@@ -27,8 +27,9 @@ extern crate yaml_rust;
 
 use crate::{
   action::Action,
-  error::{DotfilesError, ErrorType},
-  settings::Settings,
+  error::{fold_until_first_err, DotfilesError, ErrorType},
+  settings::{parse_setting, Settings},
+  Setting,
 };
 use getset::Getters;
 use std::collections::HashMap;
@@ -50,6 +51,9 @@ pub struct DirectiveData {
   ///
   /// Any setting that is not in the defaults for a directive but is part of
   /// the corresponding Action struct is considered to be mandatory.
+  ///
+  /// Since all configurable settings have a default, this can also be used to infer the data
+  /// types.
   #[getset(get = "pub")]
   defaults: Settings,
 }
@@ -90,6 +94,64 @@ pub trait Directive<'a>: HasDirectiveData<'a> {
     settings: &Settings,
     yaml: &Yaml,
   ) -> Result<Vec<Box<dyn 'a + Action<'a>>>, DotfilesError>;
+
+  /// Parses an individual setting named `name` using the type stored in
+  /// `DirectiveData.setting_types`.
+  fn parse_setting(&'a self, name: &str, yaml: &Yaml) -> Result<Setting, DotfilesError> {
+    if let Some(setting_type) = self.directive_data().defaults().get(name) {
+      parse_setting(setting_type, yaml)
+    } else {
+      Err(DotfilesError::from(
+        format!(
+          "Directive `{}` could not parse settings, unknown setting: {}",
+          self.directive_data().name(),
+          name,
+        ),
+        ErrorType::InconsistentConfigurationError,
+      ))
+    }
+  }
+
+  /// Parses all settings for this directive from Yaml, checking the types correspond to what's
+  /// stored in `DirectiveData.setting_types`
+  fn parse_settings(&'a self, yaml_settings: &Yaml) -> Result<Settings, DotfilesError> {
+    if let Yaml::Hash(hash) = yaml_settings {
+      fold_until_first_err(
+        hash.into_iter(),
+        Ok(Settings::new()),
+        |(k, v)| {
+          if let Yaml::String(setting_name) = k {
+            Ok((
+              setting_name.to_owned(),
+              self.parse_setting(setting_name, v)?,
+            ))
+          } else {
+            Err(DotfilesError::from(
+              format!(
+                "Directive `{}` could not parse setting, expected a setting name but got: {:?}",
+                self.directive_data().name(),
+                k,
+              ),
+              ErrorType::UnexpectedYamlTypeError,
+            ))
+          }
+        },
+        |mut map: Settings, (name, value)| {
+          map.insert(name, value);
+          Ok(map)
+        },
+      )
+    } else {
+      Err(DotfilesError::from(
+        format!(
+          "Directive `{}` could not parse settings, expected a hash of settings, got: {:?}",
+          self.directive_data().name(),
+          yaml_settings,
+        ),
+        ErrorType::UnexpectedYamlTypeError,
+      ))
+    }
+  }
 }
 
 /// A struct that contains the currently registered directives.
@@ -117,6 +179,11 @@ impl<'a> DirectiveSet<'a> {
   /// Get a directive named `name`.
   pub fn get(&self, name: &str) -> Option<&Box<dyn Directive<'a> + 'a>> {
     self.directives.get(name)
+  }
+
+  /// Checks whether this directive set contains a particular directive
+  pub fn has(&self, name: &str) -> bool {
+    self.directives.contains_key(name)
   }
 
   /// Add a new directive

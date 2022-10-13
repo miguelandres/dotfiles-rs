@@ -29,16 +29,36 @@ use std::fmt::Display;
 use subprocess::ExitStatus;
 use subprocess::PopenError;
 
-/// Executes the `process_function` in each of the items in the `iterable`, and then returns
+/// Executes the `process_function` on each of the items in the `iterable`, and then returns
 /// `Ok(())`. It stops execution if any of the process functions returns an Error, and returns said
 /// error.
-pub fn fold_until_first_err<I, F, E>(iterable: I, mut process_function: F) -> Result<(), E>
+pub fn process_until_first_err<I, F, E>(iterable: I, mut process_function: F) -> Result<(), E>
 where
   I: IntoIterator,
   F: FnMut(I::Item) -> Result<(), E>,
 {
   fold(iterable, Ok(()), |prev_res, item| match prev_res {
     Ok(()) => process_function(item),
+    Err(err) => Err(err),
+  })
+}
+
+/// Executes the `process_function` on each of the items in the `iterable`, and folds them using the
+/// `fold_function`. Returns the processed and folded items if all the processing and folding was
+/// successful, otherwise returns the first error found.
+pub fn fold_until_first_err<I, Folded, Processed, F, P, E>(
+  iterable: I,
+  init: Result<Folded, E>,
+  mut process_function: P,
+  mut fold_function: F,
+) -> Result<Folded, E>
+where
+  I: IntoIterator,
+  F: FnMut(Folded, Processed) -> Result<Folded, E>,
+  P: FnMut(I::Item) -> Result<Processed, E>,
+{
+  fold(iterable, init, |prev_res, item| match prev_res {
+    Ok(prev_folded) => fold_function(prev_folded, process_function(item)?),
     Err(err) => Err(err),
   })
 }
@@ -61,6 +81,8 @@ pub enum ErrorType {
     /// The underlying filesystem error.
     fs_error: std::io::Error,
   },
+  /// The configuration file is inconsistent with itself or with that dotfiles supports.
+  InconsistentConfigurationError,
   /// The configuration is missing a required field
   IncompleteConfigurationError {
     /// Name of the field missing in the configuration
@@ -105,6 +127,10 @@ pub struct DotfilesError {
 }
 
 impl DotfilesError {
+  /// Adds a prefix to the existing message
+  pub fn add_message_prefix(&mut self, prefix: String) {
+    self.message = format!("{}: {}", prefix, self.message,)
+  }
   /// Creates a new Dotfiles error with the given message and error type
   pub fn from(message: String, error_type: ErrorType) -> Self {
     DotfilesError {
