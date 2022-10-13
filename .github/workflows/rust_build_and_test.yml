@@ -39,6 +39,8 @@ jobs:
           rustup toolchain install ${{ matrix.rust}}-${{ matrix.target.name }} --profile minimal
 
       - uses: Swatinem/rust-cache@v2
+        with:
+          shared-key: ${{ matrix.target.name }}--branch--${{ github.ref }}
       - name: Build
         run: cargo build --verbose --target ${{ matrix.target.name }}
       - name: Run tests

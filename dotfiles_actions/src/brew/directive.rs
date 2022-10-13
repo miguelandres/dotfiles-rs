@@ -51,7 +51,7 @@ pub fn new_brew_directive<'a>() -> BrewDirective<'a> {
 pub fn init_directive_data() -> DirectiveData {
   DirectiveData::from(
     DIRECTIVE_NAME.into(),
-    initialize_settings_object(&[(String::from(FORCE_CASKS_SETTING), Setting::Boolean(false))]),
+    initialize_settings_object(&[(FORCE_CASKS_SETTING.to_owned(), Setting::Boolean(false))]),
   )
 }
 

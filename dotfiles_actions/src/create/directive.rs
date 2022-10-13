@@ -43,11 +43,11 @@ use yaml_rust::Yaml;
 
 /// Constant for the name of the `create` directive.
 pub const DIRECTIVE_NAME: &str = "create";
-/// Constant for the name of the [`force`](CreateAction::force) Setting
-/// which forces to create all parent directories if necessary.
+/// Constant for the name of the [`force`](CreateAction::force) Setting which forces to create all
+/// parent directories if necessary.
 pub const FORCE_SETTING: &str = "force";
-/// Constant for the name of the [`directory`](CreateAction::directory) Setting
-/// which forces to create all parent directories if necessary.
+/// Constant for the name of the [`directory`](CreateAction::directory) argument that contains the
+/// name of the directory to create
 pub const DIR_SETTING: &str = "dir";
 
 /// Constructs a new [CreateDirective] using the real filesystem
@@ -59,12 +59,11 @@ pub fn new_native_create_directive<'a>() -> CreateDirective<'a, OsFileSystem> {
 pub fn init_directive_data() -> DirectiveData {
   DirectiveData::from(
     DIRECTIVE_NAME.into(),
-    initialize_settings_object(&[(String::from(FORCE_SETTING), Setting::Boolean(false))]),
+    initialize_settings_object(&[(FORCE_SETTING.to_owned(), Setting::Boolean(false))]),
   )
 }
 
-/// A directive that can build [CreateAction]s to create directories
-/// in the filesystem.
+/// A directive that can build [CreateAction]s to create directories in the filesystem.
 #[derive(ActionListDirective)]
 pub struct CreateDirective<'a, F: 'a + FileSystem> {
   fs: Box<F>,

@@ -52,7 +52,7 @@ pub fn new_exec_directive<'a>() -> ExecDirective<'a> {
 pub fn init_directive_data() -> DirectiveData {
   DirectiveData::from(
     DIRECTIVE_NAME.into(),
-    initialize_settings_object(&[(String::from(ECHO_SETTING), Setting::Boolean(false))]),
+    initialize_settings_object(&[(ECHO_SETTING.to_owned(), Setting::Boolean(false))]),
   )
 }
 

@@ -72,19 +72,19 @@ pub fn init_directive_data() -> DirectiveData {
   DirectiveData::from(
     DIRECTIVE_NAME.into(),
     initialize_settings_object(&[
-      (String::from(FORCE_SETTING), Setting::Boolean(false)),
-      (String::from(RELINK_SETTING), Setting::Boolean(false)),
+      (FORCE_SETTING.to_owned(), Setting::Boolean(false)),
+      (RELINK_SETTING.to_owned(), Setting::Boolean(false)),
       (
-        String::from(CREATE_PARENT_DIRS_SETTING),
+        CREATE_PARENT_DIRS_SETTING.to_owned(),
         Setting::Boolean(false),
       ),
       (
-        String::from(IGNORE_MISSING_TARGET_SETTING),
+        IGNORE_MISSING_TARGET_SETTING.to_owned(),
         Setting::Boolean(false),
       ),
-      (String::from(RELATIVE_SETTING), Setting::Boolean(false)),
+      (RELATIVE_SETTING.to_owned(), Setting::Boolean(false)),
       (
-        String::from(RESOLVE_SYMLINK_TARGET_SETTING),
+        RESOLVE_SYMLINK_TARGET_SETTING.to_owned(),
         Setting::Boolean(false),
       ),
     ]),

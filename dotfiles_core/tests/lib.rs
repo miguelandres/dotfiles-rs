@@ -20,4 +20,6 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 #![cfg(test)]
+mod directive;
+mod settings;
 mod yaml_util;
