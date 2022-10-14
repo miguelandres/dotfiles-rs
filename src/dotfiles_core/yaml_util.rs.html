@@ -471,6 +471,35 @@
 <span id="471">471</span>
 <span id="472">472</span>
 <span id="473">473</span>
+<span id="474">474</span>
+<span id="475">475</span>
+<span id="476">476</span>
+<span id="477">477</span>
+<span id="478">478</span>
+<span id="479">479</span>
+<span id="480">480</span>
+<span id="481">481</span>
+<span id="482">482</span>
+<span id="483">483</span>
+<span id="484">484</span>
+<span id="485">485</span>
+<span id="486">486</span>
+<span id="487">487</span>
+<span id="488">488</span>
+<span id="489">489</span>
+<span id="490">490</span>
+<span id="491">491</span>
+<span id="492">492</span>
+<span id="493">493</span>
+<span id="494">494</span>
+<span id="495">495</span>
+<span id="496">496</span>
+<span id="497">497</span>
+<span id="498">498</span>
+<span id="499">499</span>
+<span id="500">500</span>
+<span id="501">501</span>
+<span id="502">502</span>
 </pre><pre class="rust"><code><span class="comment">// Copyright (c) 2021-2022 Miguel Barreto and others
 //
 // Permission is hereby granted, free of charge, to any person obtaining
@@ -862,18 +891,29 @@
   map_yaml_array(yaml, |item| parse_as_string(item))
 }
 
-<span class="kw">pub fn </span>parse_as_string(yaml_to_parse: <span class="kw-2">&amp;</span>Yaml) -&gt; <span class="prelude-ty">Result</span>&lt;String, DotfilesError&gt; {
-  <span class="kw">if let </span>Yaml::String(s) = yaml_to_parse {
-    <span class="prelude-val">Ok</span>(s.to_owned())
-  } <span class="kw">else </span>{
-    <span class="prelude-val">Err</span>(DotfilesError::from_wrong_yaml(
+<span class="doccomment">/// Parse a yaml element as string, will convert booleans and integers to string if necessary.
+///
+/// # Errors
+/// * [ErrorType::UnexpectedYamlTypeError] if yaml is neither string, boolean or integer and thus
+///   cannot be parsed as string losslessly.
+</span><span class="kw">pub fn </span>parse_as_string(yaml_to_parse: <span class="kw-2">&amp;</span>Yaml) -&gt; <span class="prelude-ty">Result</span>&lt;String, DotfilesError&gt; {
+  <span class="kw">match </span>yaml_to_parse {
+    Yaml::String(s) =&gt; <span class="prelude-val">Ok</span>(s.to_owned()),
+    Yaml::Boolean(b) =&gt; <span class="prelude-val">Ok</span>(b.to_string()),
+    Yaml::Integer(i) =&gt; <span class="prelude-val">Ok</span>(i.to_string()),
+    <span class="kw">_ </span>=&gt; <span class="prelude-val">Err</span>(DotfilesError::from_wrong_yaml(
       <span class="string">&quot;Expected Yaml String and got something else&quot;</span>.into(),
       yaml_to_parse.clone(),
       Yaml::String(<span class="string">&quot;&quot;</span>.into()),
-    ))
+    )),
   }
 }
-<span class="kw">pub fn </span>parse_as_boolean(yaml: <span class="kw-2">&amp;</span>Yaml) -&gt; <span class="prelude-ty">Result</span>&lt;bool, DotfilesError&gt; {
+
+<span class="doccomment">/// Parse a yaml element as boolean.
+///
+/// # Errors
+/// * [ErrorType::UnexpectedYamlTypeError] if yaml is not of type Boolean
+</span><span class="kw">pub fn </span>parse_as_boolean(yaml: <span class="kw-2">&amp;</span>Yaml) -&gt; <span class="prelude-ty">Result</span>&lt;bool, DotfilesError&gt; {
   <span class="kw">if let </span>Yaml::Boolean(b) = yaml {
     <span class="prelude-val">Ok</span>(b.to_owned())
   } <span class="kw">else </span>{
@@ -884,7 +924,11 @@
     ))
   }
 }
-<span class="kw">pub fn </span>parse_as_integer(yaml: <span class="kw-2">&amp;</span>Yaml) -&gt; <span class="prelude-ty">Result</span>&lt;i64, DotfilesError&gt; {
+<span class="doccomment">/// Parse a yaml element as Integer.
+///
+/// # Errors
+/// * [ErrorType::UnexpectedYamlTypeError] if yaml is not of type Integer
+</span><span class="kw">pub fn </span>parse_as_integer(yaml: <span class="kw-2">&amp;</span>Yaml) -&gt; <span class="prelude-ty">Result</span>&lt;i64, DotfilesError&gt; {
   <span class="kw">if let </span>Yaml::Integer(i) = yaml {
     <span class="prelude-val">Ok</span>(i.to_owned())
   } <span class="kw">else </span>{
@@ -896,7 +940,11 @@
   }
 }
 
-<span class="kw">pub fn </span>parse_as_array(yaml: <span class="kw-2">&amp;</span>Yaml) -&gt; <span class="prelude-ty">Result</span>&lt;Vec&lt;Yaml&gt;, DotfilesError&gt; {
+<span class="doccomment">/// Parse a yaml element as an array.
+///
+/// # Errors
+/// * [ErrorType::UnexpectedYamlTypeError] if yaml is not of type array
+</span><span class="kw">pub fn </span>parse_as_array(yaml: <span class="kw-2">&amp;</span>Yaml) -&gt; <span class="prelude-ty">Result</span>&lt;Vec&lt;Yaml&gt;, DotfilesError&gt; {
   <span class="kw">if let </span>Yaml::Array(v) = yaml {
     <span class="prelude-val">Ok</span>(v.to_owned())
   } <span class="kw">else </span>{
@@ -919,7 +967,17 @@
   })
 }
 
-<span class="kw">pub fn </span>fold_hash_until_first_err&lt;T, P, Processed, F&gt;(
+<span class="doccomment">/// Process each element of the hash with the `process_function` and then fold them all using into a
+/// single result using `fold_function`, for an initial value of `init`. Returns the first error
+/// that happens in either processing or folding.
+///
+/// # Errors
+///
+/// * [ErrorType::UnexpectedYamlTypeError] if the yaml passed in is not a hash
+/// * [ErrorType::UnexpectedYamlTypeError] if the hash contains keys that cannot be parsed as
+///   strings.
+/// * Any errors from the fold_function or process function.
+</span><span class="kw">pub fn </span>fold_hash_until_first_err&lt;T, P, Processed, F&gt;(
   yaml: <span class="kw-2">&amp;</span>Yaml,
   init: <span class="prelude-ty">Result</span>&lt;T, DotfilesError&gt;,
   <span class="kw-2">mut </span>process_function: P,
