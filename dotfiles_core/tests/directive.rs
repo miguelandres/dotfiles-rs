@@ -73,7 +73,7 @@ fn directive_fails_parsing_context_defaults_when_not_hash() {
 fn directive_fails_parsing_context_defaults_hash_not_string_keyed() {
   let directive = ParseDefaultsTestDirective::new();
   let mut map: yaml_rust::yaml::Hash = Default::default();
-  map.insert(Yaml::Integer(1), Yaml::from_str("1"));
+  map.insert(Yaml::BadValue, Yaml::from_str("1"));
   let yaml = Yaml::Hash(map);
   assert!(directive
     .parse_context_defaults(&yaml)

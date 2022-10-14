@@ -57,11 +57,7 @@ fn parse_string_setting_succeeds() {
 #[test]
 fn parse_string_setting_fails_with_wrong_type() {
   let setting_type = Setting::String(String::new());
-  let yaml = Yaml::Boolean(false);
-  assert!(parse_setting(&setting_type, &yaml)
-    .unwrap_err()
-    .is_wrong_yaml());
-  let yaml = Yaml::Integer(0);
+  let yaml = Yaml::BadValue;
   assert!(parse_setting(&setting_type, &yaml)
     .unwrap_err()
     .is_wrong_yaml());

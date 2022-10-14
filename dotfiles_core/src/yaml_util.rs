@@ -389,17 +389,28 @@ pub fn parse_as_string_array(yaml: &Yaml) -> Result<Vec<String>, DotfilesError> 
   map_yaml_array(yaml, |item| parse_as_string(item))
 }
 
+/// Parse a yaml element as string, will convert booleans and integers to string if necessary.
+///
+/// # Errors
+/// * [ErrorType::UnexpectedYamlTypeError] if yaml is neither string, boolean or integer and thus
+///   cannot be parsed as string losslessly.
 pub fn parse_as_string(yaml_to_parse: &Yaml) -> Result<String, DotfilesError> {
-  if let Yaml::String(s) = yaml_to_parse {
-    Ok(s.to_owned())
-  } else {
-    Err(DotfilesError::from_wrong_yaml(
+  match yaml_to_parse {
+    Yaml::String(s) => Ok(s.to_owned()),
+    Yaml::Boolean(b) => Ok(b.to_string()),
+    Yaml::Integer(i) => Ok(i.to_string()),
+    _ => Err(DotfilesError::from_wrong_yaml(
       "Expected Yaml String and got something else".into(),
       yaml_to_parse.clone(),
       Yaml::String("".into()),
-    ))
+    )),
   }
 }
+
+/// Parse a yaml element as boolean.
+///
+/// # Errors
+/// * [ErrorType::UnexpectedYamlTypeError] if yaml is not of type Boolean
 pub fn parse_as_boolean(yaml: &Yaml) -> Result<bool, DotfilesError> {
   if let Yaml::Boolean(b) = yaml {
     Ok(b.to_owned())
@@ -411,6 +422,10 @@ pub fn parse_as_boolean(yaml: &Yaml) -> Result<bool, DotfilesError> {
     ))
   }
 }
+/// Parse a yaml element as Integer.
+///
+/// # Errors
+/// * [ErrorType::UnexpectedYamlTypeError] if yaml is not of type Integer
 pub fn parse_as_integer(yaml: &Yaml) -> Result<i64, DotfilesError> {
   if let Yaml::Integer(i) = yaml {
     Ok(i.to_owned())
@@ -423,6 +438,10 @@ pub fn parse_as_integer(yaml: &Yaml) -> Result<i64, DotfilesError> {
   }
 }
 
+/// Parse a yaml element as an array.
+///
+/// # Errors
+/// * [ErrorType::UnexpectedYamlTypeError] if yaml is not of type array
 pub fn parse_as_array(yaml: &Yaml) -> Result<Vec<Yaml>, DotfilesError> {
   if let Yaml::Array(v) = yaml {
     Ok(v.to_owned())
@@ -446,6 +465,16 @@ pub fn read_yaml_file(file: &Path) -> Result<Vec<Yaml>, DotfilesError> {
   })
 }
 
+/// Process each element of the hash with the `process_function` and then fold them all using into a
+/// single result using `fold_function`, for an initial value of `init`. Returns the first error
+/// that happens in either processing or folding.
+///
+/// # Errors
+///
+/// * [ErrorType::UnexpectedYamlTypeError] if the yaml passed in is not a hash
+/// * [ErrorType::UnexpectedYamlTypeError] if the hash contains keys that cannot be parsed as
+///   strings.
+/// * Any errors from the fold_function or process function.
 pub fn fold_hash_until_first_err<T, P, Processed, F>(
   yaml: &Yaml,
   init: Result<T, DotfilesError>,
