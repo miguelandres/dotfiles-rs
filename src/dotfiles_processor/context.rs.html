@@ -125,8 +125,6 @@
 <span id="125">125</span>
 <span id="126">126</span>
 <span id="127">127</span>
-<span id="128">128</span>
-<span id="129">129</span>
 </pre><pre class="rust"><code><span class="comment">// Copyright (c) 2021-2022 Miguel Barreto and others
 //
 // Permission is hereby granted, free of charge, to any person obtaining
@@ -152,7 +150,8 @@
 
 <span class="kw">use </span>dotfiles_core::{
   directive::DirectiveSet,
-  error::{process_until_first_err, DotfilesError, ErrorType},
+  error::{DotfilesError, ErrorType},
+  yaml_util::process_yaml_hash_until_first_err,
   Settings,
 };
 <span class="kw">use </span>yaml_rust::Yaml;
@@ -185,7 +184,23 @@
     }
   }
 
-  <span class="doccomment">/// Adds defaults to the context configuration from the passed Yaml configuration.
+  <span class="comment">// fn parse_file(&amp;mut self) -&gt; Result&lt;(), DotfilesError&gt; {
+  //   {
+  //     let path = PathBuf::from(self.file_name.clone());
+  //     let yaml = read_yaml_file(&amp;path)?;
+  //     if let Some(Yaml::Hash(hash)) = yaml.first() {
+  //       process_until_first_err(hash.into_iter(), |_| ())
+  //     } else {
+  //       Err(DotfilesError::from(
+  //         &quot;Yaml file root is expected to be a hash that contains defaults and steps&quot;.to_owned(),
+  //         ErrorType::UnexpectedYamlTypeError,
+  //       ))
+  //     }
+  //   }
+  //   .map_err(|err| err.add_message_prefix(format!(&quot;Parsing {}&quot;, self.file_name)))
+  // }
+
+  </span><span class="doccomment">/// Adds defaults to the context configuration from the passed Yaml configuration.
   ///
   /// It may fail for several reasons:
   ///
@@ -198,63 +213,44 @@
   ///   - The Yaml contains values that are not Hashes of Strings to settings
   ///   - The Yaml type for a particular setting does not match its expected data type.
   </span><span class="kw">fn </span>add_defaults(<span class="kw-2">&amp;mut </span><span class="self">self</span>, yaml: <span class="kw-2">&amp;</span>Yaml) -&gt; <span class="prelude-ty">Result</span>&lt;(), DotfilesError&gt; {
-    <span class="kw">match </span>yaml {
-      Yaml::Hash(hash) =&gt; process_until_first_err(hash.into_iter(), |(k, v)| {
-        <span class="kw">let </span>(directive_name, defaults) = <span class="self">self</span>.parse_directive_defaults_for_yaml(k, v)<span class="question-mark">?</span>;
-        <span class="self">self
-          </span>.defaults
-          .try_insert(directive_name.clone(), defaults)
-          .map_or(
-            <span class="prelude-val">Err</span>(DotfilesError::from(
-              <span class="macro">format!</span>(
-                <span class="string">&quot;Defaults contain multiple configurations for the same directive {}&quot;</span>,
-                <span class="kw-2">&amp;</span>directive_name
-              ),
-              ErrorType::InconsistentConfigurationError,
-            )),
-            |<span class="kw">_</span>| <span class="prelude-val">Ok</span>(()),
-          )
-      }),
-      something_else =&gt; <span class="prelude-val">Err</span>(DotfilesError::from(
-        <span class="macro">format!</span>(
-          <span class="string">&quot;Defaults should contain a Hash, it instead contains {:?}&quot;</span>,
-          something_else
-        ),
-        ErrorType::UnexpectedYamlTypeError,
-      )),
-    }
+    process_yaml_hash_until_first_err(yaml, |key, yaml_val| {
+      <span class="kw">let </span>(directive_name, defaults) = <span class="self">self</span>.parse_directive_defaults_for_yaml(<span class="kw-2">&amp;</span>key, yaml_val)<span class="question-mark">?</span>;
+      <span class="self">self
+        </span>.defaults
+        .try_insert(directive_name.clone(), defaults)
+        .map_or(
+          <span class="prelude-val">Err</span>(DotfilesError::from(
+            <span class="macro">format!</span>(
+              <span class="string">&quot;Defaults contain multiple configurations for the same directive {}&quot;</span>,
+              <span class="kw-2">&amp;</span>directive_name
+            ),
+            ErrorType::InconsistentConfigurationError,
+          )),
+          |<span class="kw">_</span>| <span class="prelude-val">Ok</span>(()),
+        )
+    })
   }
 
   <span class="kw">fn </span>parse_directive_defaults_for_yaml(
     <span class="kw-2">&amp;mut </span><span class="self">self</span>,
-    k: <span class="kw-2">&amp;</span>Yaml,
-    v: <span class="kw-2">&amp;</span>Yaml,
+    directive_name: <span class="kw-2">&amp;</span>str,
+    defaults: <span class="kw-2">&amp;</span>Yaml,
   ) -&gt; <span class="prelude-ty">Result</span>&lt;(String, Settings), DotfilesError&gt; {
-    <span class="kw">if let </span>(Yaml::String(directive_name), defaults) = (k, v) {
-      <span class="kw">if let </span><span class="prelude-val">Some</span>(directive) = <span class="self">self</span>.directive_set.get(<span class="kw-2">&amp;</span>directive_name) {
-        <span class="prelude-val">Ok</span>((
-          directive_name.to_owned(),
-          directive.parse_settings(<span class="kw-2">&amp;</span>defaults)<span class="question-mark">?</span>,
-        ))
-      } <span class="kw">else </span>{
-        <span class="prelude-val">Err</span>(DotfilesError::from(
-          <span class="macro">format!</span>(
-            <span class="string">&quot;Found defaults section for nonexistent Directive {}&quot;</span>,
-            <span class="kw-2">&amp;</span>directive_name
-          ),
-          ErrorType::InconsistentConfigurationError,
-        ))
-      }
+    <span class="kw">if let </span><span class="prelude-val">Some</span>(directive) = <span class="self">self</span>.directive_set.get(<span class="kw-2">&amp;</span>directive_name) {
+      <span class="prelude-val">Ok</span>((
+        directive_name.to_owned(),
+        directive.parse_context_defaults(defaults)<span class="question-mark">?</span>,
+      ))
     } <span class="kw">else </span>{
       <span class="prelude-val">Err</span>(DotfilesError::from(
         <span class="macro">format!</span>(
-          <span class="string">&quot;Unable to parse defaults section, was expecting String and Hash but got {:?} -&gt; {:?}&quot;</span>,
-          k, v
+          <span class="string">&quot;Found defaults section for nonexistent Directive {}&quot;</span>,
+          <span class="kw-2">&amp;</span>directive_name
         ),
-        ErrorType::UnexpectedYamlTypeError,
+        ErrorType::InconsistentConfigurationError,
       ))
     }
   }
 }
 </code></pre></div>
-</section></div></main><div id="rustdoc-vars" data-root-path="../../" data-current-crate="dotfiles_processor" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.66.0-nightly (c0983a9aa 2022-10-12)" ></div></body></html>
+</section></div></main><div id="rustdoc-vars" data-root-path="../../" data-current-crate="dotfiles_processor" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.66.0-nightly (6b3ede3f7 2022-10-13)" ></div></body></html>

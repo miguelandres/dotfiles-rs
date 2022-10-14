@@ -118,10 +118,6 @@
 <span id="118">118</span>
 <span id="119">119</span>
 <span id="120">120</span>
-<span id="121">121</span>
-<span id="122">122</span>
-<span id="123">123</span>
-<span id="124">124</span>
 </pre><pre class="rust"><code><span class="comment">// Copyright (c) 2021-2022 Miguel Barreto and others
 //
 // Permission is hereby granted, free of charge, to any person obtaining
@@ -152,12 +148,14 @@
 <span class="kw">use </span>dotfiles_core::directive::Directive;
 <span class="kw">use </span>dotfiles_core::directive::DirectiveData;
 <span class="kw">use </span>dotfiles_core::directive::HasDirectiveData;
+<span class="kw">use </span>dotfiles_core::error::add_directive_error_prefix;
 <span class="kw">use </span>dotfiles_core::error::DotfilesError;
 <span class="kw">use </span>dotfiles_core::settings::initialize_settings_object;
 <span class="kw">use </span>dotfiles_core::settings::Setting;
 <span class="kw">use </span>dotfiles_core::settings::Settings;
 <span class="kw">use </span>dotfiles_core::yaml_util::<span class="kw-2">*</span>;
 <span class="kw">use </span>dotfiles_core_macros::ActionListDirective;
+
 <span class="kw">use </span>std::marker::PhantomData;
 <span class="kw">use </span>yaml_rust::Yaml;
 
@@ -165,6 +163,13 @@
 </span><span class="kw">pub const </span>DIRECTIVE_NAME: <span class="kw-2">&amp;</span>str = <span class="string">&quot;brew&quot;</span>;
 <span class="doccomment">/// force casks to deal with previously installed apps
 </span><span class="kw">pub const </span>FORCE_CASKS_SETTING: <span class="kw-2">&amp;</span>str = <span class="string">&quot;force_casks&quot;</span>;
+
+<span class="doccomment">/// The string that identifies the list of taps to install
+</span><span class="kw">pub const </span>TAP_SETTING: <span class="kw-2">&amp;</span>str = <span class="string">&quot;tap&quot;</span>;
+<span class="doccomment">/// The string that identifies the list of formulae to install
+</span><span class="kw">pub const </span>FORMULA_SETTING: <span class="kw-2">&amp;</span>str = <span class="string">&quot;formula&quot;</span>;
+<span class="doccomment">/// The string that identifies the list of casks to install
+</span><span class="kw">pub const </span>CASK_SETTING: <span class="kw-2">&amp;</span>str = <span class="string">&quot;cask&quot;</span>;
 
 <span class="doccomment">/// Create a new brew directive.
 </span><span class="kw">pub fn </span>new_brew_directive&lt;<span class="lifetime">&#39;a</span>&gt;() -&gt; BrewDirective&lt;<span class="lifetime">&#39;a</span>&gt; {
@@ -207,33 +212,17 @@
     context_settings: <span class="kw-2">&amp;</span>Settings,
     yaml: <span class="kw-2">&amp;</span>Yaml,
   ) -&gt; <span class="prelude-ty">Result</span>&lt;BrewAction&lt;<span class="lifetime">&#39;a</span>&gt;, DotfilesError&gt; {
-    <span class="kw">match </span>yaml {
-      Yaml::Hash(hash) =&gt; {
-        <span class="kw">let </span>force_casks = get_boolean_setting_from_yaml_or_defaults(
-          FORCE_CASKS_SETTING,
-          yaml,
-          context_settings,
-          <span class="self">self</span>.data.defaults(),
-        )<span class="question-mark">?</span>;
-        <span class="kw">let </span>taps = hash
-          .get(<span class="kw-2">&amp;</span>Yaml::String(String::from(<span class="string">&quot;tap&quot;</span>)))
-          .map_or(<span class="prelude-val">Ok</span>(Vec::new()), |vec| get_string_array(vec, <span class="string">&quot;tap&quot;</span>))<span class="question-mark">?</span>;
-        <span class="kw">let </span>formulae = hash
-          .get(<span class="kw-2">&amp;</span>Yaml::String(String::from(<span class="string">&quot;formula&quot;</span>)))
-          .map_or(<span class="prelude-val">Ok</span>(Vec::new()), |vec| get_string_array(vec, <span class="string">&quot;formula&quot;</span>))<span class="question-mark">?</span>;
-        <span class="kw">let </span>casks = hash
-          .get(<span class="kw-2">&amp;</span>Yaml::String(String::from(<span class="string">&quot;cask&quot;</span>)))
-          .map_or(<span class="prelude-val">Ok</span>(Vec::new()), |vec| get_string_array(vec, <span class="string">&quot;cask&quot;</span>))<span class="question-mark">?</span>;
-        <span class="prelude-val">Ok</span>(BrewAction::new(force_casks, taps, formulae, casks))
-      }
-      <span class="kw">_ </span>=&gt; <span class="prelude-val">Err</span>(DotfilesError::from(
-        <span class="macro">format!</span>(
-          <span class="string">&quot;Yaml passed to configure a Brew action is not a Hash, thus cannot be parsed: {:?}&quot;</span>,
-          yaml
-        ),
-        dotfiles_core::error::ErrorType::UnexpectedYamlTypeError,
-      )),
-    }
+    <span class="kw">let </span>force_casks = get_boolean_setting_from_yaml_or_context(
+      FORCE_CASKS_SETTING,
+      yaml,
+      context_settings,
+      <span class="self">self</span>.data.defaults(),
+    )<span class="question-mark">?</span>;
+    <span class="kw">let </span>taps = get_optional_string_array_from_yaml_hash(TAP_SETTING, yaml)<span class="question-mark">?</span>;
+    <span class="kw">let </span>formulae = get_optional_string_array_from_yaml_hash(FORMULA_SETTING, yaml)<span class="question-mark">?</span>;
+    <span class="kw">let </span>casks = get_optional_string_array_from_yaml_hash(CASK_SETTING, yaml)<span class="question-mark">?</span>;
+
+    <span class="prelude-val">Ok</span>(BrewAction::new(force_casks, taps, formulae, casks))
   }
 
   <span class="doccomment">/// Parse the list of actions from yaml, in this case it&#39;s only one action so
@@ -243,8 +232,11 @@
     context_settings: <span class="kw-2">&amp;</span>Settings,
     yaml: <span class="kw-2">&amp;</span>Yaml,
   ) -&gt; <span class="prelude-ty">Result</span>&lt;Vec&lt;BrewAction&lt;<span class="lifetime">&#39;a</span>&gt;&gt;, DotfilesError&gt; {
-    <span class="prelude-val">Ok</span>(<span class="macro">vec!</span>[<span class="self">self</span>.parse_action(context_settings, yaml)<span class="question-mark">?</span>])
+    <span class="prelude-val">Ok</span>(<span class="macro">vec!</span>[add_directive_error_prefix(
+      <span class="self">self</span>,
+      <span class="self">self</span>.parse_action(context_settings, yaml),
+    )<span class="question-mark">?</span>])
   }
 }
 </code></pre></div>
-</section></div></main><div id="rustdoc-vars" data-root-path="../../../" data-current-crate="dotfiles_actions" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.66.0-nightly (c0983a9aa 2022-10-12)" ></div></body></html>
+</section></div></main><div id="rustdoc-vars" data-root-path="../../../" data-current-crate="dotfiles_actions" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.66.0-nightly (6b3ede3f7 2022-10-13)" ></div></body></html>

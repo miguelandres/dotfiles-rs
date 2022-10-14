@@ -63,7 +63,6 @@
 <span id="63">63</span>
 <span id="64">64</span>
 <span id="65">65</span>
-<span id="66">66</span>
 </pre><pre class="rust"><code><span class="comment">// Copyright (c) 2021-2022 Miguel Barreto and others
 //
 // Permission is hereby granted, free of charge, to any person obtaining
@@ -93,7 +92,10 @@
 
 <span class="kw">use </span>yaml_rust::Yaml;
 
-<span class="kw">use </span><span class="kw">crate</span>::error::{DotfilesError, ErrorType};
+<span class="kw">use crate</span>::{
+  error::DotfilesError,
+  yaml_util::{parse_as_boolean, parse_as_integer, parse_as_string},
+};
 
 <span class="doccomment">/// The Settings object is a hashmap of option names to a default value
 </span><span class="kw">pub type </span>Settings = HashMap&lt;String, Setting&gt;;
@@ -120,15 +122,11 @@
 
 <span class="doccomment">/// Parse a setting from Yaml given a particular setting type.
 </span><span class="kw">pub fn </span>parse_setting(setting_type: <span class="kw-2">&amp;</span>Setting, yaml: <span class="kw-2">&amp;</span>Yaml) -&gt; <span class="prelude-ty">Result</span>&lt;Setting, DotfilesError&gt; {
-  <span class="kw">match </span>(setting_type, yaml) {
-    (Setting::String(<span class="kw">_</span>), Yaml::String(str)) =&gt; <span class="prelude-val">Ok</span>(Setting::String(str.to_owned())),
-    (Setting::Boolean(<span class="kw">_</span>), Yaml::Boolean(b)) =&gt; <span class="prelude-val">Ok</span>(Setting::Boolean(b.to_owned())),
-    (Setting::Integer(<span class="kw">_</span>), Yaml::Integer(i)) =&gt; <span class="prelude-val">Ok</span>(Setting::Integer(i.to_owned())),
-    (<span class="kw">_</span>, <span class="kw">_</span>) =&gt; <span class="prelude-val">Err</span>(DotfilesError::from(
-      <span class="macro">format!</span>(<span class="string">&quot;Setting is type {:?} but got yaml {:?}&quot;</span>, setting_type, yaml),
-      ErrorType::UnexpectedYamlTypeError,
-    )),
+  <span class="kw">match </span>setting_type {
+    Setting::String(<span class="kw">_</span>) =&gt; <span class="prelude-val">Ok</span>(Setting::String(parse_as_string(yaml)<span class="question-mark">?</span>)),
+    Setting::Boolean(<span class="kw">_</span>) =&gt; <span class="prelude-val">Ok</span>(Setting::Boolean(parse_as_boolean(yaml)<span class="question-mark">?</span>)),
+    Setting::Integer(<span class="kw">_</span>) =&gt; <span class="prelude-val">Ok</span>(Setting::Integer(parse_as_integer(yaml)<span class="question-mark">?</span>)),
   }
 }
 </code></pre></div>
-</section></div></main><div id="rustdoc-vars" data-root-path="../../" data-current-crate="dotfiles_core" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.66.0-nightly (c0983a9aa 2022-10-12)" ></div></body></html>
+</section></div></main><div id="rustdoc-vars" data-root-path="../../" data-current-crate="dotfiles_core" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.66.0-nightly (6b3ede3f7 2022-10-13)" ></div></body></html>

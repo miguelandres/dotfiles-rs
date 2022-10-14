@@ -181,6 +181,12 @@
 <span id="181">181</span>
 <span id="182">182</span>
 <span id="183">183</span>
+<span id="184">184</span>
+<span id="185">185</span>
+<span id="186">186</span>
+<span id="187">187</span>
+<span id="188">188</span>
+<span id="189">189</span>
 </pre><pre class="rust"><code><span class="comment">// Copyright (c) 2021-2022 Miguel Barreto and others
 //
 // Permission is hereby granted, free of charge, to any person obtaining
@@ -211,7 +217,7 @@
 <span class="kw">use </span>dotfiles_core::error::DotfilesError;
 <span class="kw">use </span>dotfiles_core::error::ErrorType;
 <span class="kw">use </span>dotfiles_core::settings::Settings;
-<span class="kw">use </span>dotfiles_core::yaml_util::get_boolean_setting;
+<span class="kw">use </span>dotfiles_core::yaml_util::get_boolean_setting_from_context;
 <span class="kw">use </span>filesystem::FileSystem;
 <span class="kw">use </span>filesystem::UnixFileSystem;
 <span class="kw">use </span>getset::CopyGetters;
@@ -270,15 +276,21 @@
     context_settings: <span class="kw-2">&amp;</span><span class="lifetime">&#39;_ </span>Settings,
     defaults: <span class="kw-2">&amp;</span><span class="lifetime">&#39;_ </span>Settings,
   ) -&gt; <span class="self">Self </span>{
-    <span class="kw">let </span>relink = get_boolean_setting(RELINK_SETTING, context_settings, defaults).unwrap();
-    <span class="kw">let </span>force = get_boolean_setting(FORCE_SETTING, context_settings, defaults).unwrap();
+    <span class="kw">let </span>relink =
+      get_boolean_setting_from_context(RELINK_SETTING, context_settings, defaults).unwrap();
+    <span class="kw">let </span>force =
+      get_boolean_setting_from_context(FORCE_SETTING, context_settings, defaults).unwrap();
     <span class="kw">let </span>create_parent_dirs =
-      get_boolean_setting(CREATE_PARENT_DIRS_SETTING, context_settings, defaults).unwrap();
+      get_boolean_setting_from_context(CREATE_PARENT_DIRS_SETTING, context_settings, defaults)
+        .unwrap();
     <span class="kw">let </span>ignore_missing_target =
-      get_boolean_setting(IGNORE_MISSING_TARGET_SETTING, context_settings, defaults).unwrap();
-    <span class="kw">let </span>relative = get_boolean_setting(RELATIVE_SETTING, context_settings, defaults).unwrap();
+      get_boolean_setting_from_context(IGNORE_MISSING_TARGET_SETTING, context_settings, defaults)
+        .unwrap();
+    <span class="kw">let </span>relative =
+      get_boolean_setting_from_context(RELATIVE_SETTING, context_settings, defaults).unwrap();
     <span class="kw">let </span>resolve_symlink_target =
-      get_boolean_setting(RESOLVE_SYMLINK_TARGET_SETTING, context_settings, defaults).unwrap();
+      get_boolean_setting_from_context(RESOLVE_SYMLINK_TARGET_SETTING, context_settings, defaults)
+        .unwrap();
     LinkAction {
       fs,
       path,
@@ -365,4 +377,4 @@
   }
 }
 </code></pre></div>
-</section></div></main><div id="rustdoc-vars" data-root-path="../../../" data-current-crate="dotfiles_actions" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.66.0-nightly (c0983a9aa 2022-10-12)" ></div></body></html>
+</section></div></main><div id="rustdoc-vars" data-root-path="../../../" data-current-crate="dotfiles_actions" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.66.0-nightly (6b3ede3f7 2022-10-13)" ></div></body></html>

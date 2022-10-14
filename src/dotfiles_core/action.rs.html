@@ -94,9 +94,6 @@
 <span id="94">94</span>
 <span id="95">95</span>
 <span id="96">96</span>
-<span id="97">97</span>
-<span id="98">98</span>
-<span id="99">99</span>
 </pre><pre class="rust"><code><span class="comment">// Copyright (c) 2021-2022 Miguel Barreto and others
 //
 // Permission is hereby granted, free of charge, to any person obtaining
@@ -122,11 +119,7 @@
 
 </span><span class="kw">use </span>yaml_rust::Yaml;
 
-<span class="kw">use crate</span>::{
-  directive::HasDirectiveData,
-  error::{DotfilesError, ErrorType},
-  Settings,
-};
+<span class="kw">use crate</span>::{directive::HasDirectiveData, error::DotfilesError, Settings};
 
 <span class="doccomment">/// An action to be run by a the dotfiles runtime.
 </span><span class="kw">pub trait </span>Action&lt;<span class="lifetime">&#39;a</span>&gt; {
@@ -186,15 +179,16 @@
       }
       <span class="prelude-val">Ok</span>(list_successes)
     } <span class="kw">else </span>{
-      <span class="prelude-val">Err</span>(DotfilesError::from(
+      <span class="prelude-val">Err</span>(DotfilesError::from_wrong_yaml(
         <span class="macro">format!</span>(
           <span class="string">&quot;An array of {} actions was expected, did not find an array.&quot;</span>,
           <span class="self">self</span>.name()
         ),
-        ErrorType::UnexpectedYamlTypeError,
+        yaml.clone(),
+        Yaml::Array(<span class="macro">vec!</span>[]),
       ))
     }
   }
 }
 </code></pre></div>
-</section></div></main><div id="rustdoc-vars" data-root-path="../../" data-current-crate="dotfiles_core" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.66.0-nightly (c0983a9aa 2022-10-12)" ></div></body></html>
+</section></div></main><div id="rustdoc-vars" data-root-path="../../" data-current-crate="dotfiles_core" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.66.0-nightly (6b3ede3f7 2022-10-13)" ></div></body></html>

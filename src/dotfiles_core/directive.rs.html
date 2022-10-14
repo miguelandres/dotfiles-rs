@@ -205,6 +205,29 @@
 <span id="205">205</span>
 <span id="206">206</span>
 <span id="207">207</span>
+<span id="208">208</span>
+<span id="209">209</span>
+<span id="210">210</span>
+<span id="211">211</span>
+<span id="212">212</span>
+<span id="213">213</span>
+<span id="214">214</span>
+<span id="215">215</span>
+<span id="216">216</span>
+<span id="217">217</span>
+<span id="218">218</span>
+<span id="219">219</span>
+<span id="220">220</span>
+<span id="221">221</span>
+<span id="222">222</span>
+<span id="223">223</span>
+<span id="224">224</span>
+<span id="225">225</span>
+<span id="226">226</span>
+<span id="227">227</span>
+<span id="228">228</span>
+<span id="229">229</span>
+<span id="230">230</span>
 </pre><pre class="rust"><code><span class="comment">// Copyright (c) 2021-2022 Miguel Barreto and others
 //
 // Permission is hereby granted, free of charge, to any person obtaining
@@ -234,8 +257,9 @@
 
 <span class="kw">use crate</span>::{
   action::Action,
-  error::{fold_until_first_err, DotfilesError, ErrorType},
+  error::{DotfilesError, ErrorType},
   settings::{parse_setting, Settings},
+  yaml_util::{fold_hash_until_first_err, get_setting_from_context},
   Setting,
 };
 <span class="kw">use </span>getset::Getters;
@@ -302,9 +326,45 @@
     yaml: <span class="kw-2">&amp;</span>Yaml,
   ) -&gt; <span class="prelude-ty">Result</span>&lt;Vec&lt;Box&lt;<span class="kw">dyn </span><span class="lifetime">&#39;a </span>+ Action&lt;<span class="lifetime">&#39;a</span>&gt;&gt;&gt;, DotfilesError&gt;;
 
-  <span class="doccomment">/// Parses an individual setting named `name` using the type stored in
+  <span class="doccomment">/// Parse a particular setting with its correct type from yaml, fall back to context settings or
+  /// directive defaults if not found in yaml. Returns error if there is any kind of parsing or
+  /// typing error
+  </span><span class="kw">fn </span>get_setting_from_yaml_hash_or_from_context(
+    <span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span><span class="self">self</span>,
+    name: <span class="kw-2">&amp;</span>str,
+    yaml: <span class="kw-2">&amp;</span>Yaml,
+    context_settings: <span class="kw-2">&amp;</span>Settings,
+  ) -&gt; <span class="prelude-ty">Result</span>&lt;Setting, DotfilesError&gt; {
+    <span class="self">self
+      </span>.get_setting_from_yaml_hash(name, yaml)
+      .or_else(|<span class="kw">_</span>| get_setting_from_context(name, context_settings, <span class="self">self</span>.defaults()))
+  }
+
+  <span class="doccomment">/// Parses an individual setting named `name` from a yaml hash using the type stored in
   /// `DirectiveData.setting_types`.
-  </span><span class="kw">fn </span>parse_setting(<span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span><span class="self">self</span>, name: <span class="kw-2">&amp;</span>str, yaml: <span class="kw-2">&amp;</span>Yaml) -&gt; <span class="prelude-ty">Result</span>&lt;Setting, DotfilesError&gt; {
+  </span><span class="kw">fn </span>get_setting_from_yaml_hash(
+    <span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span><span class="self">self</span>,
+    name: <span class="kw-2">&amp;</span>str,
+    yaml: <span class="kw-2">&amp;</span>Yaml,
+  ) -&gt; <span class="prelude-ty">Result</span>&lt;Setting, DotfilesError&gt; {
+    <span class="kw">if let </span><span class="prelude-val">Some</span>(setting_type) = <span class="self">self</span>.directive_data().defaults().get(name) {
+      <span class="kw">crate</span>::yaml_util::get_setting_from_yaml_hash(name, setting_type, yaml)
+    } <span class="kw">else </span>{
+      <span class="prelude-val">Err</span>(DotfilesError::from(
+        <span class="macro">format!</span>(
+          <span class="string">&quot;Directive `{}` could not parse settings, unknown setting: {}&quot;</span>,
+          <span class="self">self</span>.directive_data().name(),
+          name,
+        ),
+        ErrorType::InconsistentConfigurationError,
+      ))
+    }
+  }
+
+  <span class="comment">// Parses an individual setting named `name`&#39;s value from a yaml containing the value, according
+  // to the type set in
+  </span><span class="doccomment">/// `DirectiveData.setting_types`.
+  </span><span class="kw">fn </span>parse_setting_value(<span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span><span class="self">self</span>, name: <span class="kw-2">&amp;</span>str, yaml: <span class="kw-2">&amp;</span>Yaml) -&gt; <span class="prelude-ty">Result</span>&lt;Setting, DotfilesError&gt; {
     <span class="kw">if let </span><span class="prelude-val">Some</span>(setting_type) = <span class="self">self</span>.directive_data().defaults().get(name) {
       parse_setting(setting_type, yaml)
     } <span class="kw">else </span>{
@@ -321,43 +381,29 @@
 
   <span class="doccomment">/// Parses all settings for this directive from Yaml, checking the types correspond to what&#39;s
   /// stored in `DirectiveData.setting_types`
-  </span><span class="kw">fn </span>parse_settings(<span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span><span class="self">self</span>, yaml_settings: <span class="kw-2">&amp;</span>Yaml) -&gt; <span class="prelude-ty">Result</span>&lt;Settings, DotfilesError&gt; {
-    <span class="kw">if let </span>Yaml::Hash(hash) = yaml_settings {
-      fold_until_first_err(
-        hash.into_iter(),
-        <span class="prelude-val">Ok</span>(Settings::new()),
-        |(k, v)| {
-          <span class="kw">if let </span>Yaml::String(setting_name) = k {
-            <span class="prelude-val">Ok</span>((
-              setting_name.to_owned(),
-              <span class="self">self</span>.parse_setting(setting_name, v)<span class="question-mark">?</span>,
-            ))
-          } <span class="kw">else </span>{
-            <span class="prelude-val">Err</span>(DotfilesError::from(
-              <span class="macro">format!</span>(
-                <span class="string">&quot;Directive `{}` could not parse setting, expected a setting name but got: {:?}&quot;</span>,
-                <span class="self">self</span>.directive_data().name(),
-                k,
-              ),
-              ErrorType::UnexpectedYamlTypeError,
-            ))
-          }
-        },
-        |<span class="kw-2">mut </span>map: Settings, (name, value)| {
-          map.insert(name, value);
-          <span class="prelude-val">Ok</span>(map)
-        },
-      )
-    } <span class="kw">else </span>{
-      <span class="prelude-val">Err</span>(DotfilesError::from(
-        <span class="macro">format!</span>(
-          <span class="string">&quot;Directive `{}` could not parse settings, expected a hash of settings, got: {:?}&quot;</span>,
-          <span class="self">self</span>.directive_data().name(),
-          yaml_settings,
-        ),
-        ErrorType::UnexpectedYamlTypeError,
-      ))
-    }
+  </span><span class="kw">fn </span>parse_context_defaults(<span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span><span class="self">self</span>, yaml_settings: <span class="kw-2">&amp;</span>Yaml) -&gt; <span class="prelude-ty">Result</span>&lt;Settings, DotfilesError&gt; {
+    fold_hash_until_first_err(
+      yaml_settings,
+      <span class="prelude-val">Ok</span>(Settings::new()),
+      |name, value_yaml| {
+        <span class="self">self
+          </span>.parse_setting_value(<span class="kw-2">&amp;</span>name, value_yaml)
+          .map(|value| (name, value))
+      },
+      |<span class="kw-2">mut </span>settings, (name, val)| {
+        settings.try_insert(name.clone(), val).map_err(|<span class="kw">_</span>| {
+          DotfilesError::from(
+            <span class="macro">format!</span>(
+              <span class="string">&quot;Directive {} configuration contains duplicated setting {}&quot;</span>,
+              <span class="self">self</span>.name(),
+              name
+            ),
+            ErrorType::InconsistentConfigurationError,
+          )
+        })<span class="question-mark">?</span>;
+        <span class="prelude-val">Ok</span>(settings)
+      },
+    )
   }
 }
 
@@ -413,4 +459,4 @@
   }
 }
 </code></pre></div>
-</section></div></main><div id="rustdoc-vars" data-root-path="../../" data-current-crate="dotfiles_core" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.66.0-nightly (c0983a9aa 2022-10-12)" ></div></body></html>
+</section></div></main><div id="rustdoc-vars" data-root-path="../../" data-current-crate="dotfiles_core" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.66.0-nightly (6b3ede3f7 2022-10-13)" ></div></body></html>
