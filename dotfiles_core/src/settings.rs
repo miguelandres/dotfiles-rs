@@ -27,7 +27,10 @@ use std::collections::HashMap;
 
 use yaml_rust::Yaml;
 
-use crate::error::{DotfilesError, ErrorType};
+use crate::{
+  error::DotfilesError,
+  yaml_util::{parse_as_boolean, parse_as_integer, parse_as_string},
+};
 
 /// The Settings object is a hashmap of option names to a default value
 pub type Settings = HashMap<String, Setting>;
@@ -54,13 +57,9 @@ pub fn initialize_settings_object(settings: &[(String, Setting)]) -> Settings {
 
 /// Parse a setting from Yaml given a particular setting type.
 pub fn parse_setting(setting_type: &Setting, yaml: &Yaml) -> Result<Setting, DotfilesError> {
-  match (setting_type, yaml) {
-    (Setting::String(_), Yaml::String(str)) => Ok(Setting::String(str.to_owned())),
-    (Setting::Boolean(_), Yaml::Boolean(b)) => Ok(Setting::Boolean(b.to_owned())),
-    (Setting::Integer(_), Yaml::Integer(i)) => Ok(Setting::Integer(i.to_owned())),
-    (_, _) => Err(DotfilesError::from(
-      format!("Setting is type {:?} but got yaml {:?}", setting_type, yaml),
-      ErrorType::UnexpectedYamlTypeError,
-    )),
+  match setting_type {
+    Setting::String(_) => Ok(Setting::String(parse_as_string(yaml)?)),
+    Setting::Boolean(_) => Ok(Setting::Boolean(parse_as_boolean(yaml)?)),
+    Setting::Integer(_) => Ok(Setting::Integer(parse_as_integer(yaml)?)),
   }
 }

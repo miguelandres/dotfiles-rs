@@ -28,12 +28,14 @@ use dotfiles_core::action::ActionParser;
 use dotfiles_core::directive::Directive;
 use dotfiles_core::directive::DirectiveData;
 use dotfiles_core::directive::HasDirectiveData;
+use dotfiles_core::error::add_directive_error_prefix;
 use dotfiles_core::error::DotfilesError;
 use dotfiles_core::settings::initialize_settings_object;
 use dotfiles_core::settings::Setting;
 use dotfiles_core::settings::Settings;
 use dotfiles_core::yaml_util::*;
 use dotfiles_core_macros::ActionListDirective;
+
 use std::marker::PhantomData;
 use yaml_rust::Yaml;
 
@@ -41,6 +43,13 @@ use yaml_rust::Yaml;
 pub const DIRECTIVE_NAME: &str = "brew";
 /// force casks to deal with previously installed apps
 pub const FORCE_CASKS_SETTING: &str = "force_casks";
+
+/// The string that identifies the list of taps to install
+pub const TAP_SETTING: &str = "tap";
+/// The string that identifies the list of formulae to install
+pub const FORMULA_SETTING: &str = "formula";
+/// The string that identifies the list of casks to install
+pub const CASK_SETTING: &str = "cask";
 
 /// Create a new brew directive.
 pub fn new_brew_directive<'a>() -> BrewDirective<'a> {
@@ -83,33 +92,17 @@ impl<'a> ActionParser<'a> for BrewDirective<'a> {
     context_settings: &Settings,
     yaml: &Yaml,
   ) -> Result<BrewAction<'a>, DotfilesError> {
-    match yaml {
-      Yaml::Hash(hash) => {
-        let force_casks = get_boolean_setting_from_yaml_or_defaults(
-          FORCE_CASKS_SETTING,
-          yaml,
-          context_settings,
-          self.data.defaults(),
-        )?;
-        let taps = hash
-          .get(&Yaml::String(String::from("tap")))
-          .map_or(Ok(Vec::new()), |vec| get_string_array(vec, "tap"))?;
-        let formulae = hash
-          .get(&Yaml::String(String::from("formula")))
-          .map_or(Ok(Vec::new()), |vec| get_string_array(vec, "formula"))?;
-        let casks = hash
-          .get(&Yaml::String(String::from("cask")))
-          .map_or(Ok(Vec::new()), |vec| get_string_array(vec, "cask"))?;
-        Ok(BrewAction::new(force_casks, taps, formulae, casks))
-      }
-      _ => Err(DotfilesError::from(
-        format!(
-          "Yaml passed to configure a Brew action is not a Hash, thus cannot be parsed: {:?}",
-          yaml
-        ),
-        dotfiles_core::error::ErrorType::UnexpectedYamlTypeError,
-      )),
-    }
+    let force_casks = get_boolean_setting_from_yaml_or_context(
+      FORCE_CASKS_SETTING,
+      yaml,
+      context_settings,
+      self.data.defaults(),
+    )?;
+    let taps = get_optional_string_array_from_yaml_hash(TAP_SETTING, yaml)?;
+    let formulae = get_optional_string_array_from_yaml_hash(FORMULA_SETTING, yaml)?;
+    let casks = get_optional_string_array_from_yaml_hash(CASK_SETTING, yaml)?;
+
+    Ok(BrewAction::new(force_casks, taps, formulae, casks))
   }
 
   /// Parse the list of actions from yaml, in this case it's only one action so
@@ -119,6 +112,9 @@ impl<'a> ActionParser<'a> for BrewDirective<'a> {
     context_settings: &Settings,
     yaml: &Yaml,
   ) -> Result<Vec<BrewAction<'a>>, DotfilesError> {
-    Ok(vec![self.parse_action(context_settings, yaml)?])
+    Ok(vec![add_directive_error_prefix(
+      self,
+      self.parse_action(context_settings, yaml),
+    )?])
   }
 }

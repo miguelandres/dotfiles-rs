@@ -27,7 +27,7 @@ use dotfiles_core::{
   settings::initialize_settings_object,
   Directive, Setting,
 };
-use yaml_rust::{yaml::Hash, Yaml};
+use yaml_rust::Yaml;
 
 const DIRECTIVE_NAME: &str = "parse_test";
 const BOOLEAN_SETTING: &str = "boolean";
@@ -42,7 +42,7 @@ fn directive_fails_unknown_setting() {
     discriminant(&ErrorType::InconsistentConfigurationError),
     discriminant(
       directive
-        .parse_setting("unknown", &yaml)
+        .parse_setting_value("unknown", &yaml)
         .unwrap_err()
         .error_type()
     )
@@ -53,43 +53,38 @@ fn directive_fails_unknown_setting() {
 fn directive_fails_parsing_setting_with_wrong_type() {
   let directive = ParseDefaultsTestDirective::new();
   let yaml = Yaml::String("some".into());
-  assert_eq!(
-    discriminant(&ErrorType::UnexpectedYamlTypeError),
-    discriminant(
-      directive
-        .parse_setting(BOOLEAN_SETTING, &yaml)
-        .unwrap_err()
-        .error_type()
-    )
-  );
+  assert!(directive
+    .parse_setting_value(BOOLEAN_SETTING, &yaml)
+    .unwrap_err()
+    .is_wrong_yaml());
 }
 
 #[test]
-fn directive_fails_parsing_settings_when_not_hash() {
+fn directive_fails_parsing_context_defaults_when_not_hash() {
   let directive = ParseDefaultsTestDirective::new();
   let yaml = Yaml::String("some".into());
-  assert_eq!(
-    discriminant(&ErrorType::UnexpectedYamlTypeError),
-    discriminant(directive.parse_settings(&yaml).unwrap_err().error_type())
-  );
+  assert!(directive
+    .parse_context_defaults(&yaml)
+    .unwrap_err()
+    .is_wrong_yaml());
 }
 
 #[test]
-fn directive_fails_parsing_settings_hash_not_string_keyed() {
+fn directive_fails_parsing_context_defaults_hash_not_string_keyed() {
   let directive = ParseDefaultsTestDirective::new();
-  let mut map: Hash = Hash::new();
+  let mut map: yaml_rust::yaml::Hash = Default::default();
   map.insert(Yaml::Integer(1), Yaml::from_str("1"));
   let yaml = Yaml::Hash(map);
-  assert_eq!(
-    discriminant(&ErrorType::UnexpectedYamlTypeError),
-    discriminant(directive.parse_settings(&yaml).unwrap_err().error_type())
-  );
+  assert!(directive
+    .parse_context_defaults(&yaml)
+    .unwrap_err()
+    .is_wrong_yaml());
 }
 
 #[test]
-fn directive_succeeds_parsing_settings() {
+fn directive_succeeds_parsing_context_defaults() {
   let directive = ParseDefaultsTestDirective::new();
-  let mut map: Hash = Hash::new();
+  let mut map: yaml_rust::yaml::Hash = Default::default();
   map.insert(
     Yaml::from_str(STRING_SETTING),
     Yaml::from_str(STRING_SETTING),
@@ -97,7 +92,7 @@ fn directive_succeeds_parsing_settings() {
   map.insert(Yaml::from_str(BOOLEAN_SETTING), Yaml::from_str("true"));
   map.insert(Yaml::from_str(INT_SETTING), Yaml::from_str("1"));
   let yaml = Yaml::Hash(map);
-  let settings = directive.parse_settings(&yaml).unwrap();
+  let settings = directive.parse_context_defaults(&yaml).unwrap();
 
   assert_eq!(
     &Setting::String(STRING_SETTING.into()),

@@ -40,6 +40,7 @@ use filesystem::FileSystem;
 use filesystem::OsFileSystem;
 use filesystem::UnixFileSystem;
 use std::marker::PhantomData;
+
 use yaml_rust::Yaml;
 
 /// Name of the link directive
@@ -120,56 +121,41 @@ impl<'a, F: 'a + FileSystem + UnixFileSystem> LinkDirective<'a, F> {
     context_settings: &Settings,
     yaml: &Yaml,
   ) -> Result<LinkAction<'a, F>, DotfilesError> {
-    match yaml {
-      Yaml::Hash(_) => {
-        let path = get_string_setting_from_yaml_or_defaults(
-          PATH_SETTING,
-          yaml,
-          context_settings,
-          self.data.defaults(),
-        )
-        .unwrap();
-        let target = get_string_setting_from_yaml_or_defaults(
-          TARGET_SETTING,
-          yaml,
-          context_settings,
-          self.data.defaults(),
-        )
-        .unwrap();
-        let action_settings: Settings = [
-          RELINK_SETTING,
-          FORCE_SETTING,
-          CREATE_PARENT_DIRS_SETTING,
-          IGNORE_MISSING_TARGET_SETTING,
-          RELATIVE_SETTING,
-          RESOLVE_SYMLINK_TARGET_SETTING,
-        ]
-        .iter()
-        .map(|&name| {
-          (
-            String::from(name),
-            Setting::Boolean(
-              get_boolean_setting(name, context_settings, self.data.defaults()).unwrap(),
-            ),
-          )
-        })
-        .collect();
-        Ok(LinkAction::<'a, F>::new(
-          self.fs.as_ref(),
-          path,
-          target,
-          &action_settings,
-          self.data.defaults(),
-        ))
-      }
-      _ => Err(DotfilesError::from(
-        format!(
-          "Yaml passed to configure a Link action is not a Hash, thus cannot be parsed: {:?}",
-          yaml
-        ),
-        ErrorType::UnexpectedYamlTypeError,
-      )),
-    }
+    let path = get_string_setting_from_yaml_or_context(
+      PATH_SETTING,
+      yaml,
+      context_settings,
+      self.data.defaults(),
+    )?;
+    let target = get_string_setting_from_yaml_or_context(
+      TARGET_SETTING,
+      yaml,
+      context_settings,
+      self.data.defaults(),
+    )?;
+    let action_settings: Result<Settings, DotfilesError> = [
+      RELINK_SETTING,
+      FORCE_SETTING,
+      CREATE_PARENT_DIRS_SETTING,
+      IGNORE_MISSING_TARGET_SETTING,
+      RELATIVE_SETTING,
+      RESOLVE_SYMLINK_TARGET_SETTING,
+    ]
+    .iter()
+    .map(|&name| {
+      self
+        .get_setting_from_yaml_hash_or_from_context(name, yaml, context_settings)
+        .map(|setting| (name.to_owned(), setting))
+    })
+    .collect();
+
+    Ok(LinkAction::<'a, F>::new(
+      self.fs.as_ref(),
+      path,
+      target,
+      &action_settings?,
+      self.data.defaults(),
+    ))
   }
 
   /// Parse a shortened action with only link name to target name
@@ -178,8 +164,8 @@ impl<'a, F: 'a + FileSystem + UnixFileSystem> LinkDirective<'a, F> {
     context_settings: &Settings,
     yaml: &Yaml,
   ) -> Result<LinkAction<'a, F>, DotfilesError> {
-    match yaml {
-      Yaml::Hash(hash) => match hash.len() {
+    if let Yaml::Hash(hash) = yaml {
+      match hash.len() {
         1 => {
           if let (Yaml::String(path), Yaml::String(target)) = hash.front().unwrap() {
             Ok(LinkAction::<'a, F>::new(
@@ -190,24 +176,30 @@ impl<'a, F: 'a + FileSystem + UnixFileSystem> LinkDirective<'a, F> {
               self.data.defaults(),
             ))
           } else {
-            Err(DotfilesError::from(format!(
-                        "Yaml passed to configure a short Link action is not a hash of string to string, cant parse: {:?}", yaml
-                    ), ErrorType::UnexpectedYamlTypeError))
+            Err(DotfilesError::from_wrong_yaml(
+                        "Yaml passed to configure a short Link action is not a hash of string to string, cant parse".into(),
+                        yaml.to_owned(), Yaml::Hash(Default::default())))
           }
         }
+
         x => Err(DotfilesError::from(
-          format!("Yaml passed to configure a short Link action is a hash with {:} values, must be just 1",x),
-          ErrorType::UnexpectedYamlTypeError,
+          format!(
+            "Yaml passed to configure a short Link action is a hash with {} values, must be just 1",
+            x
+          ),
+          ErrorType::InconsistentConfigurationError,
         )),
-      },
-      _ => Err(DotfilesError::from(format!(
-        "Yaml passed to configure a Link action is not a Hash, thus cannot be parsed: {:?}",
-        yaml
-      ),           ErrorType::UnexpectedYamlTypeError,
-    )),
+      }
+    } else {
+      Err(DotfilesError::from_wrong_yaml(
+        "Yaml passed to configure a Link action is not a Hash".into(),
+        yaml.to_owned(),
+        Yaml::Hash(Default::default()),
+      ))
     }
   }
 }
+
 impl<'a, F: FileSystem + UnixFileSystem> ActionParser<'a> for LinkDirective<'a, F> {
   type ActionType = LinkAction<'a, F>;
   fn name(&'a self) -> &'static str {
@@ -218,10 +210,8 @@ impl<'a, F: FileSystem + UnixFileSystem> ActionParser<'a> for LinkDirective<'a, 
     settings: &Settings,
     yaml: &Yaml,
   ) -> Result<LinkAction<'a, F>, DotfilesError> {
-    if let Ok(action) = self.parse_shortened_action(settings, yaml) {
-      Ok(action)
-    } else {
-      Ok(self.parse_full_action(settings, yaml)?)
-    }
+    self
+      .parse_shortened_action(settings, yaml)
+      .or_else(|_| self.parse_full_action(settings, yaml))
   }
 }

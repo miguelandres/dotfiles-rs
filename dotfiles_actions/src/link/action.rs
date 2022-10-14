@@ -28,7 +28,7 @@ use dotfiles_core::action::Action;
 use dotfiles_core::error::DotfilesError;
 use dotfiles_core::error::ErrorType;
 use dotfiles_core::settings::Settings;
-use dotfiles_core::yaml_util::get_boolean_setting;
+use dotfiles_core::yaml_util::get_boolean_setting_from_context;
 use filesystem::FileSystem;
 use filesystem::UnixFileSystem;
 use getset::CopyGetters;
@@ -87,15 +87,21 @@ impl<'a, F: FileSystem + UnixFileSystem> LinkAction<'a, F> {
     context_settings: &'_ Settings,
     defaults: &'_ Settings,
   ) -> Self {
-    let relink = get_boolean_setting(RELINK_SETTING, context_settings, defaults).unwrap();
-    let force = get_boolean_setting(FORCE_SETTING, context_settings, defaults).unwrap();
+    let relink =
+      get_boolean_setting_from_context(RELINK_SETTING, context_settings, defaults).unwrap();
+    let force =
+      get_boolean_setting_from_context(FORCE_SETTING, context_settings, defaults).unwrap();
     let create_parent_dirs =
-      get_boolean_setting(CREATE_PARENT_DIRS_SETTING, context_settings, defaults).unwrap();
+      get_boolean_setting_from_context(CREATE_PARENT_DIRS_SETTING, context_settings, defaults)
+        .unwrap();
     let ignore_missing_target =
-      get_boolean_setting(IGNORE_MISSING_TARGET_SETTING, context_settings, defaults).unwrap();
-    let relative = get_boolean_setting(RELATIVE_SETTING, context_settings, defaults).unwrap();
+      get_boolean_setting_from_context(IGNORE_MISSING_TARGET_SETTING, context_settings, defaults)
+        .unwrap();
+    let relative =
+      get_boolean_setting_from_context(RELATIVE_SETTING, context_settings, defaults).unwrap();
     let resolve_symlink_target =
-      get_boolean_setting(RESOLVE_SYMLINK_TARGET_SETTING, context_settings, defaults).unwrap();
+      get_boolean_setting_from_context(RESOLVE_SYMLINK_TARGET_SETTING, context_settings, defaults)
+        .unwrap();
     LinkAction {
       fs,
       path,

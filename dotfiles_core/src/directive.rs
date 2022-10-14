@@ -27,8 +27,9 @@ extern crate yaml_rust;
 
 use crate::{
   action::Action,
-  error::{fold_until_first_err, DotfilesError, ErrorType},
+  error::{DotfilesError, ErrorType},
   settings::{parse_setting, Settings},
+  yaml_util::{fold_hash_until_first_err, get_setting_from_context},
   Setting,
 };
 use getset::Getters;
@@ -95,9 +96,45 @@ pub trait Directive<'a>: HasDirectiveData<'a> {
     yaml: &Yaml,
   ) -> Result<Vec<Box<dyn 'a + Action<'a>>>, DotfilesError>;
 
-  /// Parses an individual setting named `name` using the type stored in
+  /// Parse a particular setting with its correct type from yaml, fall back to context settings or
+  /// directive defaults if not found in yaml. Returns error if there is any kind of parsing or
+  /// typing error
+  fn get_setting_from_yaml_hash_or_from_context(
+    &'a self,
+    name: &str,
+    yaml: &Yaml,
+    context_settings: &Settings,
+  ) -> Result<Setting, DotfilesError> {
+    self
+      .get_setting_from_yaml_hash(name, yaml)
+      .or_else(|_| get_setting_from_context(name, context_settings, self.defaults()))
+  }
+
+  /// Parses an individual setting named `name` from a yaml hash using the type stored in
   /// `DirectiveData.setting_types`.
-  fn parse_setting(&'a self, name: &str, yaml: &Yaml) -> Result<Setting, DotfilesError> {
+  fn get_setting_from_yaml_hash(
+    &'a self,
+    name: &str,
+    yaml: &Yaml,
+  ) -> Result<Setting, DotfilesError> {
+    if let Some(setting_type) = self.directive_data().defaults().get(name) {
+      crate::yaml_util::get_setting_from_yaml_hash(name, setting_type, yaml)
+    } else {
+      Err(DotfilesError::from(
+        format!(
+          "Directive `{}` could not parse settings, unknown setting: {}",
+          self.directive_data().name(),
+          name,
+        ),
+        ErrorType::InconsistentConfigurationError,
+      ))
+    }
+  }
+
+  // Parses an individual setting named `name`'s value from a yaml containing the value, according
+  // to the type set in
+  /// `DirectiveData.setting_types`.
+  fn parse_setting_value(&'a self, name: &str, yaml: &Yaml) -> Result<Setting, DotfilesError> {
     if let Some(setting_type) = self.directive_data().defaults().get(name) {
       parse_setting(setting_type, yaml)
     } else {
@@ -114,43 +151,29 @@ pub trait Directive<'a>: HasDirectiveData<'a> {
 
   /// Parses all settings for this directive from Yaml, checking the types correspond to what's
   /// stored in `DirectiveData.setting_types`
-  fn parse_settings(&'a self, yaml_settings: &Yaml) -> Result<Settings, DotfilesError> {
-    if let Yaml::Hash(hash) = yaml_settings {
-      fold_until_first_err(
-        hash.into_iter(),
-        Ok(Settings::new()),
-        |(k, v)| {
-          if let Yaml::String(setting_name) = k {
-            Ok((
-              setting_name.to_owned(),
-              self.parse_setting(setting_name, v)?,
-            ))
-          } else {
-            Err(DotfilesError::from(
-              format!(
-                "Directive `{}` could not parse setting, expected a setting name but got: {:?}",
-                self.directive_data().name(),
-                k,
-              ),
-              ErrorType::UnexpectedYamlTypeError,
-            ))
-          }
-        },
-        |mut map: Settings, (name, value)| {
-          map.insert(name, value);
-          Ok(map)
-        },
-      )
-    } else {
-      Err(DotfilesError::from(
-        format!(
-          "Directive `{}` could not parse settings, expected a hash of settings, got: {:?}",
-          self.directive_data().name(),
-          yaml_settings,
-        ),
-        ErrorType::UnexpectedYamlTypeError,
-      ))
-    }
+  fn parse_context_defaults(&'a self, yaml_settings: &Yaml) -> Result<Settings, DotfilesError> {
+    fold_hash_until_first_err(
+      yaml_settings,
+      Ok(Settings::new()),
+      |name, value_yaml| {
+        self
+          .parse_setting_value(&name, value_yaml)
+          .map(|value| (name, value))
+      },
+      |mut settings, (name, val)| {
+        settings.try_insert(name.clone(), val).map_err(|_| {
+          DotfilesError::from(
+            format!(
+              "Directive {} configuration contains duplicated setting {}",
+              self.name(),
+              name
+            ),
+            ErrorType::InconsistentConfigurationError,
+          )
+        })?;
+        Ok(settings)
+      },
+    )
   }
 }
 

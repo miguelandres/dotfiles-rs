@@ -84,14 +84,14 @@ impl<'a> ActionParser<'a> for ExecDirective<'a> {
   ) -> Result<ExecAction, DotfilesError> {
     Ok(ExecAction::new(
       yaml_util::get_string_content_or_keyed_value(yaml, Some(COMMAND_SETTING))?,
-      yaml_util::get_string_setting_from_yaml_or_defaults(
+      yaml_util::get_string_setting_from_yaml_or_context(
         DESCRIPTION_SETTING,
         yaml,
         settings,
         self.defaults(),
       )
       .ok(),
-      yaml_util::get_boolean_setting_from_yaml_or_defaults(
+      yaml_util::get_boolean_setting_from_yaml_or_context(
         ECHO_SETTING,
         yaml,
         settings,

@@ -23,7 +23,8 @@ use std::collections::HashMap;
 
 use dotfiles_core::{
   directive::DirectiveSet,
-  error::{process_until_first_err, DotfilesError, ErrorType},
+  error::{DotfilesError, ErrorType},
+  yaml_util::process_yaml_hash_until_first_err,
   Settings,
 };
 use yaml_rust::Yaml;
@@ -56,6 +57,22 @@ impl<'a> Context<'a> {
     }
   }
 
+  // fn parse_file(&mut self) -> Result<(), DotfilesError> {
+  //   {
+  //     let path = PathBuf::from(self.file_name.clone());
+  //     let yaml = read_yaml_file(&path)?;
+  //     if let Some(Yaml::Hash(hash)) = yaml.first() {
+  //       process_until_first_err(hash.into_iter(), |_| ())
+  //     } else {
+  //       Err(DotfilesError::from(
+  //         "Yaml file root is expected to be a hash that contains defaults and steps".to_owned(),
+  //         ErrorType::UnexpectedYamlTypeError,
+  //       ))
+  //     }
+  //   }
+  //   .map_err(|err| err.add_message_prefix(format!("Parsing {}", self.file_name)))
+  // }
+
   /// Adds defaults to the context configuration from the passed Yaml configuration.
   ///
   /// It may fail for several reasons:
@@ -69,60 +86,41 @@ impl<'a> Context<'a> {
   ///   - The Yaml contains values that are not Hashes of Strings to settings
   ///   - The Yaml type for a particular setting does not match its expected data type.
   fn add_defaults(&mut self, yaml: &Yaml) -> Result<(), DotfilesError> {
-    match yaml {
-      Yaml::Hash(hash) => process_until_first_err(hash.into_iter(), |(k, v)| {
-        let (directive_name, defaults) = self.parse_directive_defaults_for_yaml(k, v)?;
-        self
-          .defaults
-          .try_insert(directive_name.clone(), defaults)
-          .map_or(
-            Err(DotfilesError::from(
-              format!(
-                "Defaults contain multiple configurations for the same directive {}",
-                &directive_name
-              ),
-              ErrorType::InconsistentConfigurationError,
-            )),
-            |_| Ok(()),
-          )
-      }),
-      something_else => Err(DotfilesError::from(
-        format!(
-          "Defaults should contain a Hash, it instead contains {:?}",
-          something_else
-        ),
-        ErrorType::UnexpectedYamlTypeError,
-      )),
-    }
+    process_yaml_hash_until_first_err(yaml, |key, yaml_val| {
+      let (directive_name, defaults) = self.parse_directive_defaults_for_yaml(&key, yaml_val)?;
+      self
+        .defaults
+        .try_insert(directive_name.clone(), defaults)
+        .map_or(
+          Err(DotfilesError::from(
+            format!(
+              "Defaults contain multiple configurations for the same directive {}",
+              &directive_name
+            ),
+            ErrorType::InconsistentConfigurationError,
+          )),
+          |_| Ok(()),
+        )
+    })
   }
 
   fn parse_directive_defaults_for_yaml(
     &mut self,
-    k: &Yaml,
-    v: &Yaml,
+    directive_name: &str,
+    defaults: &Yaml,
   ) -> Result<(String, Settings), DotfilesError> {
-    if let (Yaml::String(directive_name), defaults) = (k, v) {
-      if let Some(directive) = self.directive_set.get(&directive_name) {
-        Ok((
-          directive_name.to_owned(),
-          directive.parse_settings(&defaults)?,
-        ))
-      } else {
-        Err(DotfilesError::from(
-          format!(
-            "Found defaults section for nonexistent Directive {}",
-            &directive_name
-          ),
-          ErrorType::InconsistentConfigurationError,
-        ))
-      }
+    if let Some(directive) = self.directive_set.get(&directive_name) {
+      Ok((
+        directive_name.to_owned(),
+        directive.parse_context_defaults(defaults)?,
+      ))
     } else {
       Err(DotfilesError::from(
         format!(
-          "Unable to parse defaults section, was expecting String and Hash but got {:?} -> {:?}",
-          k, v
+          "Found defaults section for nonexistent Directive {}",
+          &directive_name
         ),
-        ErrorType::UnexpectedYamlTypeError,
+        ErrorType::InconsistentConfigurationError,
       ))
     }
   }
