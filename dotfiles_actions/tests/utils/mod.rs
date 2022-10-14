@@ -23,14 +23,13 @@
 use dotfiles_core::action::Action;
 use dotfiles_core::error::DotfilesError;
 use dotfiles_core::error::ErrorType;
+use dotfiles_core::yaml_util::read_yaml_file;
 use filesystem::FakeFileSystem;
 use filesystem::FileSystem;
 use std::io;
 use std::path::PathBuf;
 use std::str::FromStr;
-use yaml_rust::ScanError;
 use yaml_rust::Yaml;
-use yaml_rust::YamlLoader;
 
 pub fn check_action_fail<'a, A: Action<'a>>(
   action: &A,
@@ -47,13 +46,12 @@ pub fn check_action_fail<'a, A: Action<'a>>(
 }
 
 /// Reads a yaml file from test resources.
-pub fn read_test_yaml(test_file_path: &str) -> Result<Vec<Yaml>, ScanError> {
+pub fn read_test_yaml(test_file_path: &str) -> Result<Vec<Yaml>, DotfilesError> {
   let base_dir = env!("CARGO_MANIFEST_DIR");
   let mut file: PathBuf = PathBuf::from_str(base_dir).unwrap();
   file.push("resources/tests");
   file.push(test_file_path);
-  let contents = std::fs::read_to_string(&file).unwrap();
-  YamlLoader::load_from_str(&contents)
+  read_yaml_file(file.as_ref())
 }
 
 fn setup_fs_internal(fs: &FakeFileSystem) -> io::Result<()> {

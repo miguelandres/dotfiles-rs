@@ -23,11 +23,7 @@
 
 use yaml_rust::Yaml;
 
-use crate::{
-  directive::HasDirectiveData,
-  error::{DotfilesError, ErrorType},
-  Settings,
-};
+use crate::{directive::HasDirectiveData, error::DotfilesError, Settings};
 
 /// An action to be run by a the dotfiles runtime.
 pub trait Action<'a> {
@@ -87,12 +83,13 @@ pub trait ActionParser<'a>: HasDirectiveData<'a> {
       }
       Ok(list_successes)
     } else {
-      Err(DotfilesError::from(
+      Err(DotfilesError::from_wrong_yaml(
         format!(
           "An array of {} actions was expected, did not find an array.",
           self.name()
         ),
-        ErrorType::UnexpectedYamlTypeError,
+        yaml.clone(),
+        Yaml::Array(vec![]),
       ))
     }
   }

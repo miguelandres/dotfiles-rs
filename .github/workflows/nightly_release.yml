@@ -46,13 +46,13 @@ jobs:
         shell: bash
 
       - name: Get current time with dashes
-        uses: 1466587594/get-current-time@v2
+        uses: josStorer/get-current-time@v2.0.2
         id: current_time_dashes
         with:
           format: YYYY-MM-DD
 
       - name: Get current time with underscores
-        uses: 1466587594/get-current-time@v2
+        uses: josStorer/get-current-time@v2.0.2
         id: current_time_underscores
         with:
           format: YYYY_MM_DD

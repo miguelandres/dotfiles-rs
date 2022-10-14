@@ -28,6 +28,10 @@ use itertools::fold;
 use std::fmt::Display;
 use subprocess::ExitStatus;
 use subprocess::PopenError;
+use yaml_rust::ScanError;
+use yaml_rust::Yaml;
+
+use crate::Directive;
 
 /// Executes the `process_function` on each of the items in the `iterable`, and then returns
 /// `Ok(())`. It stops execution if any of the process functions returns an Error, and returns said
@@ -49,7 +53,7 @@ where
 pub fn fold_until_first_err<I, Folded, Processed, F, P, E>(
   iterable: I,
   init: Result<Folded, E>,
-  mut process_function: P,
+  process_function: P,
   mut fold_function: F,
 ) -> Result<Folded, E>
 where
@@ -57,9 +61,18 @@ where
   F: FnMut(Folded, Processed) -> Result<Folded, E>,
   P: FnMut(I::Item) -> Result<Processed, E>,
 {
-  fold(iterable, init, |prev_res, item| match prev_res {
-    Ok(prev_folded) => fold_function(prev_folded, process_function(item)?),
-    Err(err) => Err(err),
+  let processed_vec_res: Result<Vec<Processed>, E> =
+    iterable.into_iter().map(process_function).collect();
+
+  processed_vec_res.and_then(|processed_vec| {
+    fold(
+      processed_vec.into_iter(),
+      init,
+      |prev_res, item| match prev_res {
+        Ok(prev_folded) => fold_function(prev_folded, item),
+        Err(err) => Err(err),
+      },
+    )
   })
 }
 
@@ -89,9 +102,17 @@ pub enum ErrorType {
     missing_field: String,
   },
   /// An error that occurred while parsing the Yaml file
-  YamlParseError,
+  YamlParseError {
+    /// The underlying scan error
+    scan_error: ScanError,
+  },
   /// Received an Yaml object of an unexpected type
-  UnexpectedYamlTypeError,
+  UnexpectedYamlTypeError {
+    /// What we got instead of the expected type.
+    encountered: Yaml,
+    /// An example of what we expected.
+    expected: Yaml,
+  },
   /// A core logic error for Dotfiles-rs
   CoreError,
   /// An error only for testing, the action that should fail actually succeeds!
@@ -129,13 +150,44 @@ pub struct DotfilesError {
 impl DotfilesError {
   /// Adds a prefix to the existing message
   pub fn add_message_prefix(&mut self, prefix: String) {
-    self.message = format!("{}: {}", prefix, self.message,)
+    self.message = format!("{}: {}", prefix, self.message,);
+  }
+  /// returns whether the underlying error is a missing configuration
+  pub fn is_missing_config(&self, config_name: &str) -> bool {
+    match &self.error_type {
+      ErrorType::IncompleteConfigurationError { missing_field } => missing_field == config_name,
+      _ => false,
+    }
+  }
+
+  /// Returns whether the error is a wrong yaml type.
+  pub fn is_wrong_yaml(&self) -> bool {
+    if let ErrorType::UnexpectedYamlTypeError {
+      encountered: _,
+      expected: _,
+    } = &self.error_type
+    {
+      true
+    } else {
+      false
+    }
   }
   /// Creates a new Dotfiles error with the given message and error type
   pub fn from(message: String, error_type: ErrorType) -> Self {
     DotfilesError {
       message,
       error_type,
+    }
+  }
+
+  /// Creates a new Dotfiles error with the given message and error type
+  pub fn from_wrong_yaml(message: String, wrong_yaml: Yaml, expected_type: Yaml) -> Self {
+    DotfilesError {
+      message,
+      error_type: ErrorType::UnexpectedYamlTypeError {
+        encountered: wrong_yaml,
+        expected: expected_type,
+      },
     }
   }
   /// Creates a new Dotfiles error with the given message and error type
@@ -145,4 +197,18 @@ impl DotfilesError {
       error_type: ErrorType::FileSystemError { fs_error: io_error },
     }
   }
+}
+
+/// Adds a prefix to an error with the name of the directive where it happened
+pub fn add_directive_error_prefix<'a, D, T>(
+  dir: &'a D,
+  res: Result<T, DotfilesError>,
+) -> Result<T, DotfilesError>
+where
+  D: Directive<'a>,
+{
+  res.map_err(|mut error| {
+    error.add_message_prefix(format!("Directive {}", dir.name()));
+    error
+  })
 }

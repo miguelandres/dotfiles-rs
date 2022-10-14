@@ -102,7 +102,7 @@ impl<'a, F: 'a + FileSystem> ActionParser<'a> for CreateDirective<'a, F> {
     Ok(CreateAction::<'a, F>::new(
       self.fs(),
       yaml_util::get_string_content_or_keyed_value(yaml, Some(DIR_SETTING))?,
-      yaml_util::get_boolean_setting_from_yaml_or_defaults(
+      yaml_util::get_boolean_setting_from_yaml_or_context(
         FORCE_SETTING,
         yaml,
         settings,
