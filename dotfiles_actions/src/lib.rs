@@ -38,6 +38,7 @@
 pub mod brew;
 pub mod create;
 pub mod exec;
+pub mod filesystem;
 #[cfg(unix)]
 pub mod homebrew_install;
 #[cfg(unix)]
