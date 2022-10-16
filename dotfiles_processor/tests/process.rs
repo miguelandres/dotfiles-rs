@@ -18,12 +18,3 @@
 // LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-
-use dotfiles_core::{directive::DirectiveSet, error::DotfilesError};
-use dotfiles_processor::process::initialize_directive_set;
-
-#[test]
-fn initializes_directive_set_successfully() -> Result<(), DotfilesError> {
-  let mut directive_set = DirectiveSet::new();
-  initialize_directive_set(&mut directive_set)
-}

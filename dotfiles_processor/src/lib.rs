@@ -20,6 +20,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 #![feature(map_try_insert)]
-mod context;
+pub mod chosen_directive;
+pub mod context;
 pub mod flags;
 pub mod process;
