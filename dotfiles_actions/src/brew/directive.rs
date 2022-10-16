@@ -51,11 +51,6 @@ pub const FORMULA_SETTING: &str = "formula";
 /// The string that identifies the list of casks to install
 pub const CASK_SETTING: &str = "cask";
 
-/// Create a new brew directive.
-pub fn new_brew_directive<'a>() -> BrewDirective<'a> {
-  BrewDirective::new()
-}
-
 /// Initialize the defaults for the BrewDirective.
 pub fn init_directive_data() -> DirectiveData {
   DirectiveData::from(
@@ -71,9 +66,8 @@ pub struct BrewDirective<'a> {
   phantom_data: PhantomData<&'a DirectiveData>,
 }
 
-impl<'a> BrewDirective<'a> {
-  /// Create a new [BrewDirective]
-  pub fn new() -> BrewDirective<'a> {
+impl<'a> Default for BrewDirective<'a> {
+  fn default() -> BrewDirective<'a> {
     BrewDirective::<'a> {
       data: init_directive_data(),
       phantom_data: PhantomData,

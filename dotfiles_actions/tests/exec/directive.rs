@@ -30,7 +30,7 @@ use dotfiles_core::settings::Settings;
 
 #[test]
 fn parse_list_of_execs() -> Result<(), DotfilesError> {
-  let directive = ExecDirective::new();
+  let directive = ExecDirective::default();
   let default_settings = Settings::new();
   let yaml = read_test_yaml("directive/exec/exec_list.yaml")
     .unwrap()

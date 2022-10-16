@@ -56,9 +56,9 @@ pub fn process(flag_data: &FlagData) -> Result<(), DotfilesError> {
 pub fn initialize_directive_set<'a>(
   directive_set: &'a mut DirectiveSet,
 ) -> Result<(), DotfilesError> {
-  directive_set.add("brew", Box::new(BrewDirective::new()))?;
+  directive_set.add("brew", Box::new(BrewDirective::default()))?;
   directive_set.add("create", Box::new(new_native_create_directive()))?;
-  directive_set.add("exec", Box::new(ExecDirective::new()))?;
+  directive_set.add("exec", Box::new(ExecDirective::default()))?;
   directive_set.add("link", Box::new(new_native_link_directive()))?;
   Ok(())
 }

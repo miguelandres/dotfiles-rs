@@ -43,11 +43,6 @@ pub const COMMAND_SETTING: &str = "cmd";
 /// Optional description for the command to run
 pub const DESCRIPTION_SETTING: &str = "description";
 
-/// Create a new brew directive.
-pub fn new_exec_directive<'a>() -> ExecDirective<'a> {
-  ExecDirective::new()
-}
-
 /// Initialize the defaults for the BrewDirective.
 pub fn init_directive_data() -> DirectiveData {
   DirectiveData::from(
@@ -63,15 +58,15 @@ pub struct ExecDirective<'a> {
   phantom_data: PhantomData<&'a DirectiveData>,
 }
 
-impl<'a> ExecDirective<'a> {
-  /// Creates a new Exec Directives
-  pub fn new() -> Self {
+impl<'a> Default for ExecDirective<'a> {
+  fn default() -> Self {
     Self {
       data: init_directive_data(),
       phantom_data: PhantomData,
     }
   }
 }
+
 impl<'a> ActionParser<'a> for ExecDirective<'a> {
   type ActionType = ExecAction<'a>;
   fn name(&'a self) -> &'static str {
