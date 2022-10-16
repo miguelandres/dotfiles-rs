@@ -120,9 +120,9 @@
 <span class="kw">pub fn </span>initialize_directive_set&lt;<span class="lifetime">&#39;a</span>&gt;(
   directive_set: <span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span><span class="kw-2">mut </span>DirectiveSet,
 ) -&gt; <span class="prelude-ty">Result</span>&lt;(), DotfilesError&gt; {
-  directive_set.add(<span class="string">&quot;brew&quot;</span>, Box::new(BrewDirective::new()))<span class="question-mark">?</span>;
+  directive_set.add(<span class="string">&quot;brew&quot;</span>, Box::new(BrewDirective::default()))<span class="question-mark">?</span>;
   directive_set.add(<span class="string">&quot;create&quot;</span>, Box::new(new_native_create_directive()))<span class="question-mark">?</span>;
-  directive_set.add(<span class="string">&quot;exec&quot;</span>, Box::new(ExecDirective::new()))<span class="question-mark">?</span>;
+  directive_set.add(<span class="string">&quot;exec&quot;</span>, Box::new(ExecDirective::default()))<span class="question-mark">?</span>;
   directive_set.add(<span class="string">&quot;link&quot;</span>, Box::new(new_native_link_directive()))<span class="question-mark">?</span>;
   <span class="prelude-val">Ok</span>(())
 }
