@@ -32,7 +32,7 @@ fn brew_directive_parsed() -> Result<(), DotfilesError> {
     .unwrap()
     .pop()
     .unwrap();
-  let directive = BrewDirective::new();
+  let directive = BrewDirective::default();
   let action = directive.parse_action(&default_settings, &yaml)?;
   assert_eq!(action.force_casks(), true);
   assert_eq!(
