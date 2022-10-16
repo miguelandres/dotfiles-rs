@@ -84,9 +84,9 @@ impl<F: FileSystem> Action<'_> for CreateAction<'_, F> {
   fn execute(&self) -> Result<(), DotfilesError> {
     fn create_dir<F: FileSystem>(fs: &'_ F, directory: &str, force: bool) -> io::Result<()> {
       if force {
-        Ok(fs.create_dir_all(&directory)?)
+        Ok(fs.create_dir_all(directory)?)
       } else {
-        Ok(fs.create_dir(&directory)?)
+        Ok(fs.create_dir(directory)?)
       }
     }
     match create_dir(self.fs, &self.directory, self.force) {

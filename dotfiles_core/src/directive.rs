@@ -61,10 +61,7 @@ pub struct DirectiveData {
 impl DirectiveData {
   /// Constructs a new directive from a name and a set of default settings.
   pub fn from(name: String, defaults: Settings) -> DirectiveData {
-    DirectiveData {
-      name: name,
-      defaults,
-    }
+    DirectiveData { name, defaults }
   }
 }
 

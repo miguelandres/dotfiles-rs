@@ -109,7 +109,7 @@ impl<'a> Context<'a> {
     directive_name: &str,
     defaults: &Yaml,
   ) -> Result<(String, Settings), DotfilesError> {
-    if let Some(directive) = self.directive_set.get(&directive_name) {
+    if let Some(directive) = self.directive_set.get(directive_name) {
       Ok((
         directive_name.to_owned(),
         directive.parse_context_defaults(defaults)?,

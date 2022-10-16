@@ -41,14 +41,11 @@ where
   F: FnMut(String, &Yaml) -> Result<(), DotfilesError>,
 {
   if let Yaml::Hash(hash) = yaml_hash {
-    hash
-      .into_iter()
-      .map(|(key, value)| {
-        parse_as_string(key)
-          .map(|key_str| (key_str, value))
-          .and_then(|(key, val)| process_function(key, val))
-      })
-      .collect()
+    hash.into_iter().try_for_each(|(key, value)| {
+      parse_as_string(key)
+        .map(|key_str| (key_str, value))
+        .and_then(|(key, val)| process_function(key, val))
+    })
   } else {
     Err(DotfilesError::from_wrong_yaml(
       "Expected a yaml hash, got something else".to_owned(),
@@ -102,12 +99,12 @@ where
 ///
 /// * Any error that happens in the processing function.
 /// * [ErrorType::UnexpectedYamlTypeError] if the yaml passed is not an array
-pub fn map_yaml_array<T, F>(yaml_array: &Yaml, mut process: F) -> Result<Vec<T>, DotfilesError>
+pub fn map_yaml_array<T, F>(yaml_array: &Yaml, process: F) -> Result<Vec<T>, DotfilesError>
 where
   F: FnMut(&Yaml) -> Result<T, DotfilesError>,
 {
   if let Yaml::Array(inner_vec) = yaml_array {
-    inner_vec.into_iter().map(|item| process(item)).collect()
+    inner_vec.iter().map(process).collect()
   } else {
     Err(DotfilesError::from_wrong_yaml(
       "map_yaml_array expects a yaml array, but got something else".into(),
@@ -167,7 +164,7 @@ pub fn get_integer_from_yaml_hash(name: &str, yaml: &Yaml) -> Result<i64, Dotfil
 /// * [ErrorType::UnexpectedYamlTypeError] if the value's type  is not string.
 /// * [ErrorType::IncompleteConfigurationError] if the hash does not contain the requested key
 pub fn get_string_from_yaml_hash(name: &str, yaml: &Yaml) -> Result<String, DotfilesError> {
-  process_value_from_yaml_hash(name, yaml, |value_for_name| parse_as_string(value_for_name))
+  process_value_from_yaml_hash(name, yaml, parse_as_string)
 }
 
 /// Gets a specific string array setting from a yaml hash
@@ -356,7 +353,7 @@ pub fn get_string_setting_from_yaml_or_context(
   context_settings: &Settings,
   directive_defaults: &Settings,
 ) -> Result<String, DotfilesError> {
-  process_value_from_yaml_hash(name, yaml, |value_for_name| parse_as_string(value_for_name))
+  process_value_from_yaml_hash(name, yaml, parse_as_string)
     .or_else(|_| get_string_setting(name, context_settings, directive_defaults))
 }
 
@@ -386,7 +383,7 @@ pub fn get_string_content_or_keyed_value(
 /// Gets a native `Vec<String>` from a Yaml::Array. It errors out if the passed yaml is not an array
 /// or if not all the items in the array are plain Yaml Strings
 pub fn parse_as_string_array(yaml: &Yaml) -> Result<Vec<String>, DotfilesError> {
-  map_yaml_array(yaml, |item| parse_as_string(item))
+  map_yaml_array(yaml, parse_as_string)
 }
 
 /// Parse a yaml element as string, will convert booleans and integers to string if necessary.
@@ -456,7 +453,7 @@ pub fn parse_as_array(yaml: &Yaml) -> Result<Vec<Yaml>, DotfilesError> {
 
 /// Reads a Yaml File. Returns Error in case of a syntax error.
 pub fn read_yaml_file(file: &Path) -> Result<Vec<Yaml>, DotfilesError> {
-  let contents = std::fs::read_to_string(file).map_err(|err| DotfilesError::from_io_error(err))?;
+  let contents = std::fs::read_to_string(file).map_err(DotfilesError::from_io_error)?;
   YamlLoader::load_from_str(&contents).map_err(|err| {
     DotfilesError::from(
       format!("yaml syntax error in file `{:?}`", file.as_os_str()),
