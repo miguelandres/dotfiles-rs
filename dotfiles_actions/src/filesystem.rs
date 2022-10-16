@@ -26,8 +26,6 @@ use filesystem::FileSystem;
 
 /// Common trait for all the directives that use a Filesystem
 pub trait FileSystemDirective<'a, F: FileSystem>: Directive<'a> {
-  /// Create a new Filesystem directive using the given Filesystem instance.
-  fn new(fs: F) -> Self;
   /// Returns the filesystem instance
   fn fs(&self) -> &F;
   /// Returns a mutable reference to the filesystem instance

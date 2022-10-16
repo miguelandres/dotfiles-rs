@@ -123,13 +123,6 @@ impl<'a, F: FileSystem + UnixFileSystem + Default> FileSystemDirective<'a, F>
   fn mut_fs(&mut self) -> &mut F {
     &mut self.fs
   }
-  fn new(fs: F) -> Self {
-    Self {
-      fs,
-      data: init_directive_data(),
-      phantom: Default::default(),
-    }
-  }
 }
 
 impl<'a, F: FileSystem + UnixFileSystem + Default> LinkDirective<'a, F> {
