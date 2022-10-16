@@ -33,7 +33,6 @@ use crate::{
   Setting,
 };
 use getset::Getters;
-use std::collections::HashMap;
 use yaml_rust::Yaml;
 
 /// A struct that contains the default settings for a Directive and the
@@ -62,6 +61,51 @@ impl DirectiveData {
   /// Constructs a new directive from a name and a set of default settings.
   pub fn from(name: String, defaults: Settings) -> DirectiveData {
     DirectiveData { name, defaults }
+  }
+
+  // Parses an individual setting named `name`'s value from a yaml containing the value, according
+  // to the type set in
+  /// `DirectiveData.setting_types`.
+  pub fn parse_setting_value(&self, name: &str, yaml: &Yaml) -> Result<Setting, DotfilesError> {
+    if let Some(setting_type) = self.defaults().get(name) {
+      parse_setting(setting_type, yaml)
+    } else {
+      Err(DotfilesError::from(
+        format!(
+          "Directive `{}` could not parse settings, unknown setting: {}",
+          self.name(),
+          name,
+        ),
+        ErrorType::InconsistentConfigurationError,
+      ))
+    }
+  }
+
+  /// Parses all settings for this directive from Yaml, checking the types correspond to what's
+  /// stored in `DirectiveData.setting_types`
+  pub fn parse_context_defaults(&self, yaml_settings: &Yaml) -> Result<Settings, DotfilesError> {
+    fold_hash_until_first_err(
+      yaml_settings,
+      Ok(Settings::new()),
+      |name, value_yaml| {
+        self
+          .parse_setting_value(&name, value_yaml)
+          .map(|value| (name, value))
+      },
+      |mut settings, (name, val)| {
+        settings.try_insert(name.clone(), val).map_err(|_| {
+          DotfilesError::from(
+            format!(
+              "Directive {} configuration contains duplicated setting {}",
+              self.name(),
+              name
+            ),
+            ErrorType::InconsistentConfigurationError,
+          )
+        })?;
+        Ok(settings)
+      },
+    )
   }
 }
 
@@ -126,102 +170,5 @@ pub trait Directive<'a>: HasDirectiveData<'a> {
         ErrorType::InconsistentConfigurationError,
       ))
     }
-  }
-
-  // Parses an individual setting named `name`'s value from a yaml containing the value, according
-  // to the type set in
-  /// `DirectiveData.setting_types`.
-  fn parse_setting_value(&'a self, name: &str, yaml: &Yaml) -> Result<Setting, DotfilesError> {
-    if let Some(setting_type) = self.directive_data().defaults().get(name) {
-      parse_setting(setting_type, yaml)
-    } else {
-      Err(DotfilesError::from(
-        format!(
-          "Directive `{}` could not parse settings, unknown setting: {}",
-          self.directive_data().name(),
-          name,
-        ),
-        ErrorType::InconsistentConfigurationError,
-      ))
-    }
-  }
-
-  /// Parses all settings for this directive from Yaml, checking the types correspond to what's
-  /// stored in `DirectiveData.setting_types`
-  fn parse_context_defaults(&'a self, yaml_settings: &Yaml) -> Result<Settings, DotfilesError> {
-    fold_hash_until_first_err(
-      yaml_settings,
-      Ok(Settings::new()),
-      |name, value_yaml| {
-        self
-          .parse_setting_value(&name, value_yaml)
-          .map(|value| (name, value))
-      },
-      |mut settings, (name, val)| {
-        settings.try_insert(name.clone(), val).map_err(|_| {
-          DotfilesError::from(
-            format!(
-              "Directive {} configuration contains duplicated setting {}",
-              self.name(),
-              name
-            ),
-            ErrorType::InconsistentConfigurationError,
-          )
-        })?;
-        Ok(settings)
-      },
-    )
-  }
-}
-
-/// A struct that contains the currently registered directives.
-pub struct DirectiveSet<'a> {
-  /// Set of directives.
-  ///
-  /// This is a hashmap of directive name to the actual directive object, used during parsing.
-  directives: HashMap<String, Box<dyn Directive<'a> + 'a>>,
-}
-
-impl<'a> Default for DirectiveSet<'a> {
-  fn default() -> Self {
-    Self::new()
-  }
-}
-
-impl<'a> DirectiveSet<'a> {
-  /// Create a new directive set
-  pub fn new() -> DirectiveSet<'a> {
-    DirectiveSet {
-      directives: HashMap::new(),
-    }
-  }
-
-  /// Get a directive named `name`.
-  pub fn get(&self, name: &str) -> Option<&Box<dyn Directive<'a> + 'a>> {
-    self.directives.get(name)
-  }
-
-  /// Checks whether this directive set contains a particular directive
-  pub fn has(&self, name: &str) -> bool {
-    self.directives.contains_key(name)
-  }
-
-  /// Add a new directive
-  ///
-  /// This fails with an error if another directive with the same name already exists.
-  pub fn add(&mut self, name: &str, dir: Box<dyn Directive<'a> + 'a>) -> Result<(), DotfilesError> {
-    self
-      .directives
-      .try_insert(String::from(name), dir)
-      .map_or_else(
-        |_err| {
-          Err(DotfilesError::from(format!(
-              "Cannot add a {} directive since there is another directive with the same name already",
-              name
-            ),
-            ErrorType::CoreError))
-        },
-        |_box| Ok(()),
-      )
   }
 }

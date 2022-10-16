@@ -19,10 +19,6 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-use dotfiles_actions::exec::directive::ExecDirective;
-use dotfiles_actions::link::directive::NativeLinkDirective;
-use dotfiles_actions::{brew::directive::BrewDirective, create::directive::NativeCreateDirective};
-use dotfiles_core::directive::DirectiveSet;
 use dotfiles_core::Action;
 
 use dotfiles_actions::ohmyzsh_install::action::OhMyZshInstallAction;
@@ -30,34 +26,26 @@ use dotfiles_actions::ohmyzsh_install::action::OhMyZshInstallAction;
 use dotfiles_actions::homebrew_install::action::HomebrewInstallAction;
 use log::info;
 
-use crate::flags::{Command, FlagData};
+use crate::{
+  context::Context,
+  flags::{Command, FlagData},
+};
 
 use dotfiles_core::error::DotfilesError;
 
 pub fn process(flag_data: &FlagData) -> Result<(), DotfilesError> {
-  let mut directive_set: DirectiveSet = Default::default();
-  initialize_directive_set(&mut directive_set)?;
-
   match &flag_data.command {
     Command::InstallHomebrew => {
       info!("Installing homebrew.");
-      HomebrewInstallAction::new().execute()?
+      HomebrewInstallAction::new().execute()
     }
     Command::InstallOhMyZsh { skip_chsh } => {
       info!("Installing Oh My Zsh!");
-      OhMyZshInstallAction::new(skip_chsh.to_owned()).execute()?
+      OhMyZshInstallAction::new(skip_chsh.to_owned()).execute()
     }
-    Command::ApplyConfig { file: _ } => todo!(),
-  };
-  Ok(())
-}
-
-pub fn initialize_directive_set<'a>(
-  directive_set: &'a mut DirectiveSet,
-) -> Result<(), DotfilesError> {
-  directive_set.add("brew", Box::new(BrewDirective::default()))?;
-  directive_set.add("create", Box::new(NativeCreateDirective::default()))?;
-  directive_set.add("exec", Box::new(ExecDirective::default()))?;
-  directive_set.add("link", Box::new(NativeLinkDirective::default()))?;
-  Ok(())
+    Command::ApplyConfig { file } => {
+      let mut ctx = Context::from(file.to_string());
+      ctx.parse_file()
+    }
+  }
 }

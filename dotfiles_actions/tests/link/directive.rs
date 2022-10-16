@@ -29,7 +29,7 @@ use dotfiles_core::error::DotfilesError;
 use dotfiles_core::settings::Settings;
 use dotfiles_core::Action;
 
-use filesystem::{FakeFileSystem, FileSystem};
+use filesystem::FileSystem;
 
 #[test]
 fn link_directive_parsed_from_plain_link() -> Result<(), DotfilesError> {

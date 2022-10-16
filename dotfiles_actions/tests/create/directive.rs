@@ -28,7 +28,6 @@ use dotfiles_core::action::ActionParser;
 use dotfiles_core::error::DotfilesError;
 use dotfiles_core::settings::Settings;
 use dotfiles_core::Action;
-use filesystem::FakeFileSystem;
 
 #[test]
 fn create_directive_parsed_from_single_dir_name() -> Result<(), DotfilesError> {

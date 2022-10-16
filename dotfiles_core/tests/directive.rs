@@ -42,6 +42,7 @@ fn directive_fails_unknown_setting() {
     discriminant(&ErrorType::InconsistentConfigurationError),
     discriminant(
       directive
+        .directive_data()
         .parse_setting_value("unknown", &yaml)
         .unwrap_err()
         .error_type()
@@ -54,6 +55,7 @@ fn directive_fails_parsing_setting_with_wrong_type() {
   let directive = ParseDefaultsTestDirective::new();
   let yaml = Yaml::String("some".into());
   assert!(directive
+    .directive_data()
     .parse_setting_value(BOOLEAN_SETTING, &yaml)
     .unwrap_err()
     .is_wrong_yaml());
@@ -64,6 +66,7 @@ fn directive_fails_parsing_context_defaults_when_not_hash() {
   let directive = ParseDefaultsTestDirective::new();
   let yaml = Yaml::String("some".into());
   assert!(directive
+    .directive_data()
     .parse_context_defaults(&yaml)
     .unwrap_err()
     .is_wrong_yaml());
@@ -76,6 +79,7 @@ fn directive_fails_parsing_context_defaults_hash_not_string_keyed() {
   map.insert(Yaml::BadValue, Yaml::from_str("1"));
   let yaml = Yaml::Hash(map);
   assert!(directive
+    .directive_data()
     .parse_context_defaults(&yaml)
     .unwrap_err()
     .is_wrong_yaml());
@@ -92,7 +96,10 @@ fn directive_succeeds_parsing_context_defaults() {
   map.insert(Yaml::from_str(BOOLEAN_SETTING), Yaml::from_str("true"));
   map.insert(Yaml::from_str(INT_SETTING), Yaml::from_str("1"));
   let yaml = Yaml::Hash(map);
-  let settings = directive.parse_context_defaults(&yaml).unwrap();
+  let settings = directive
+    .directive_data()
+    .parse_context_defaults(&yaml)
+    .unwrap();
 
   assert_eq!(
     &Setting::String(STRING_SETTING.into()),
