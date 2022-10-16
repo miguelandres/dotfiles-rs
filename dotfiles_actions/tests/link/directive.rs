@@ -20,15 +20,16 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 #![cfg(test)]
-use crate::utils::read_test_yaml;
-use crate::utils::setup_fs;
+use crate::utils::{read_test_yaml, setup_fs};
 
-use dotfiles_actions::link::directive::LinkDirective;
+use dotfiles_actions::filesystem::FileSystemDirective;
+use dotfiles_actions::link::directive::FakeLinkDirective;
+
 use dotfiles_core::error::DotfilesError;
 use dotfiles_core::settings::Settings;
 use dotfiles_core::Action;
-use filesystem::FakeFileSystem;
-use filesystem::FileSystem;
+
+use filesystem::{FakeFileSystem, FileSystem};
 
 #[test]
 fn link_directive_parsed_from_plain_link() -> Result<(), DotfilesError> {
@@ -36,7 +37,7 @@ fn link_directive_parsed_from_plain_link() -> Result<(), DotfilesError> {
   setup_fs(&fs)?;
   fs.create_file("/home/user/the_file", String::from("aaa").as_bytes())
     .unwrap();
-  let directive = LinkDirective::new(fs);
+  let directive = FakeLinkDirective::new(fs);
   let default_settings = Settings::new();
   let yaml = read_test_yaml("directive/link/plain_link.yaml")
     .unwrap()

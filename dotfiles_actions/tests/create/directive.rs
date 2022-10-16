@@ -22,19 +22,19 @@
 #![cfg(test)]
 use crate::utils::{read_test_yaml, setup_fs};
 
-use dotfiles_actions::create::directive::CreateDirective;
+use dotfiles_actions::create::directive::FakeCreateDirective;
+use dotfiles_actions::filesystem::FileSystemDirective;
 use dotfiles_core::action::ActionParser;
 use dotfiles_core::error::DotfilesError;
 use dotfiles_core::settings::Settings;
 use dotfiles_core::Action;
-
 use filesystem::FakeFileSystem;
 
 #[test]
 fn create_directive_parsed_from_single_dir_name() -> Result<(), DotfilesError> {
   let fs = FakeFileSystem::new();
   setup_fs(&fs)?;
-  let directive = CreateDirective::new(fs);
+  let directive = FakeCreateDirective::new(fs);
   let default_settings = Settings::new();
   let yaml = read_test_yaml("directive/create/plain_directory_name.yaml")
     .unwrap()
@@ -52,7 +52,7 @@ fn create_directive_parsed_from_single_dir_name() -> Result<(), DotfilesError> {
 fn create_directive_parsed_from_full_action() -> Result<(), DotfilesError> {
   let fs = FakeFileSystem::new();
   setup_fs(&fs)?;
-  let directive = CreateDirective::new(fs);
+  let directive = FakeCreateDirective::new(fs);
   let default_settings = Settings::new();
   let yaml = read_test_yaml("directive/create/full_action.yaml")
     .unwrap()

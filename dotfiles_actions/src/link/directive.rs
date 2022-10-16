@@ -23,6 +23,7 @@
 
 extern crate yaml_rust;
 
+use crate::filesystem::FileSystemDirective;
 use crate::link::action::LinkAction;
 use dotfiles_core::action::Action;
 use dotfiles_core::action::ActionParser;
@@ -36,6 +37,7 @@ use dotfiles_core::settings::Setting;
 use dotfiles_core::settings::Settings;
 use dotfiles_core::yaml_util::*;
 use dotfiles_core_macros::ActionListDirective;
+use filesystem::FakeFileSystem;
 use filesystem::FileSystem;
 use filesystem::OsFileSystem;
 use filesystem::UnixFileSystem;
@@ -62,11 +64,6 @@ pub const IGNORE_MISSING_TARGET_SETTING: &str = "ignore_missing_target";
 pub const RELATIVE_SETTING: &str = "relative";
 /// Resolves the target if it is a symlink and uses the final target file as the target.
 pub const RESOLVE_SYMLINK_TARGET_SETTING: &str = "resolve_symlink_target";
-
-/// Create a new link directive using the native filesystem
-pub fn new_native_link_directive<'a>() -> LinkDirective<'a, OsFileSystem> {
-  LinkDirective::<'a>::new(OsFileSystem::new())
-}
 
 /// Initialize the defaults for the LinkDirective.
 pub fn init_directive_data() -> DirectiveData {
@@ -95,25 +92,50 @@ pub fn init_directive_data() -> DirectiveData {
 /// A directive that can build [LinkAction]s to create directories
 /// in the filesystem.
 #[derive(ActionListDirective)]
-pub struct LinkDirective<'a, F: 'a + FileSystem + UnixFileSystem> {
-  fs: Box<F>,
+pub struct LinkDirective<'a, F: FileSystem + UnixFileSystem + Default> {
+  fs: F,
   data: DirectiveData,
   phantom: PhantomData<&'a F>,
 }
 
-impl<'a, F: 'a + FileSystem + UnixFileSystem> LinkDirective<'a, F> {
-  /// Returns the [FileSystem] instance being used.
-  pub fn fs(&self) -> &F {
-    self.fs.as_ref()
+/// [LinkDirective] that uses the native [OsFileSystem].
+pub type NativeLinkDirective<'a> = LinkDirective<'a, OsFileSystem>;
+/// [LinkDirective] that uses the native [FakeFileSystem] for testing.
+pub type FakeLinkDirective<'a> = LinkDirective<'a, FakeFileSystem>;
+
+impl<'a, F: FileSystem + UnixFileSystem + Default> Default for LinkDirective<'a, F> {
+  fn default() -> Self {
+    Self {
+      fs: Default::default(),
+      data: init_directive_data(),
+      phantom: Default::default(),
+    }
+  }
+}
+
+impl<'a, F: FileSystem + UnixFileSystem + Default> FileSystemDirective<'a, F>
+  for LinkDirective<'a, F>
+{
+  fn fs(&self) -> &F {
+    &self.fs
   }
 
-  /// Create a new [LinkDirective]
-  pub fn new(fs: F) -> Self {
-    LinkDirective::<F> {
-      fs: Box::new(fs),
+  fn mut_fs(&mut self) -> &mut F {
+    &mut self.fs
+  }
+  fn new(fs: F) -> Self {
+    Self {
+      fs,
       data: init_directive_data(),
-      phantom: PhantomData,
+      phantom: Default::default(),
     }
+  }
+}
+
+impl<'a, F: FileSystem + UnixFileSystem + Default> LinkDirective<'a, F> {
+  /// Returns the [FileSystem] instance being used.
+  pub fn fs(&self) -> &F {
+    &self.fs
   }
 
   fn parse_full_action(
@@ -150,7 +172,7 @@ impl<'a, F: 'a + FileSystem + UnixFileSystem> LinkDirective<'a, F> {
     .collect();
 
     Ok(LinkAction::<'a, F>::new(
-      self.fs.as_ref(),
+      &self.fs,
       path,
       target,
       &action_settings?,
@@ -200,11 +222,9 @@ impl<'a, F: 'a + FileSystem + UnixFileSystem> LinkDirective<'a, F> {
   }
 }
 
-impl<'a, F: FileSystem + UnixFileSystem> ActionParser<'a> for LinkDirective<'a, F> {
+impl<'a, F: FileSystem + UnixFileSystem + Default> ActionParser<'a> for LinkDirective<'a, F> {
   type ActionType = LinkAction<'a, F>;
-  fn name(&'a self) -> &'static str {
-    "link"
-  }
+
   fn parse_action(
     &'a self,
     settings: &Settings,

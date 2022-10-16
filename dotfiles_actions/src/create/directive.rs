@@ -23,6 +23,7 @@
 extern crate yaml_rust;
 
 use crate::create::action::CreateAction;
+use crate::filesystem::FileSystemDirective;
 use dotfiles_core::action::Action;
 use dotfiles_core::action::ActionParser;
 use dotfiles_core::directive::Directive;
@@ -34,6 +35,7 @@ use dotfiles_core::settings::Setting;
 use dotfiles_core::settings::Settings;
 use dotfiles_core::yaml_util;
 use dotfiles_core_macros::ActionListDirective;
+use filesystem::FakeFileSystem;
 use filesystem::FileSystem;
 use filesystem::OsFileSystem;
 
@@ -50,11 +52,6 @@ pub const FORCE_SETTING: &str = "force";
 /// name of the directory to create
 pub const DIR_SETTING: &str = "dir";
 
-/// Constructs a new [CreateDirective] using the real filesystem
-pub fn new_native_create_directive<'a>() -> CreateDirective<'a, OsFileSystem> {
-  CreateDirective::<'a, OsFileSystem>::new(OsFileSystem::new())
-}
-
 /// Initializes the default configuration for the [CreateDirective]
 pub fn init_directive_data() -> DirectiveData {
   DirectiveData::from(
@@ -65,34 +62,46 @@ pub fn init_directive_data() -> DirectiveData {
 
 /// A directive that can build [CreateAction]s to create directories in the filesystem.
 #[derive(ActionListDirective)]
-pub struct CreateDirective<'a, F: 'a + FileSystem> {
-  fs: Box<F>,
+pub struct CreateDirective<'a, F: FileSystem + Default> {
+  fs: F,
   data: DirectiveData,
   phantom: PhantomData<&'a F>,
 }
+/// [CreateDirective] that uses the native [OsFileSystem].
+pub type NativeCreateDirective<'a> = CreateDirective<'a, OsFileSystem>;
+/// [CreateDirective] that uses the native [FakeFileSystem] for testing.
+pub type FakeCreateDirective<'a> = CreateDirective<'a, FakeFileSystem>;
 
-impl<'a, F: 'a + FileSystem> CreateDirective<'a, F> {
-  /// Returns the [FileSystem] instance being used.
-  pub fn fs(&self) -> &F {
-    self.fs.as_ref()
+impl<'a, F: FileSystem + Default> FileSystemDirective<'a, F> for CreateDirective<'a, F> {
+  fn fs(&self) -> &F {
+    &self.fs
   }
 
-  /// Constructs a new instance of the create directive.
-  pub fn new(fs: F) -> Self {
-    CreateDirective::<'a, F> {
-      fs: Box::new(fs),
+  fn mut_fs(&mut self) -> &mut F {
+    &mut self.fs
+  }
+
+  fn new(fs: F) -> Self {
+    Self {
+      fs,
       data: init_directive_data(),
-      phantom: PhantomData,
+      phantom: Default::default(),
     }
   }
 }
 
-impl<'a, F: 'a + FileSystem> ActionParser<'a> for CreateDirective<'a, F> {
-  type ActionType = CreateAction<'a, F>;
-
-  fn name(&'a self) -> &'static str {
-    "create"
+impl<'a, F: FileSystem + Default> Default for CreateDirective<'a, F> {
+  fn default() -> Self {
+    Self {
+      fs: Default::default(),
+      data: init_directive_data(),
+      phantom: Default::default(),
+    }
   }
+}
+
+impl<'a, F: FileSystem + Default> ActionParser<'a> for CreateDirective<'a, F> {
+  type ActionType = CreateAction<'a, F>;
 
   fn parse_action(
     &'a self,

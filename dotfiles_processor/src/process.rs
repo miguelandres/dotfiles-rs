@@ -19,10 +19,9 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-use dotfiles_actions::brew::directive::BrewDirective;
-use dotfiles_actions::create::directive::new_native_create_directive;
 use dotfiles_actions::exec::directive::ExecDirective;
-use dotfiles_actions::link::directive::new_native_link_directive;
+use dotfiles_actions::link::directive::NativeLinkDirective;
+use dotfiles_actions::{brew::directive::BrewDirective, create::directive::NativeCreateDirective};
 use dotfiles_core::directive::DirectiveSet;
 use dotfiles_core::Action;
 
@@ -57,8 +56,8 @@ pub fn initialize_directive_set<'a>(
   directive_set: &'a mut DirectiveSet,
 ) -> Result<(), DotfilesError> {
   directive_set.add("brew", Box::new(BrewDirective::default()))?;
-  directive_set.add("create", Box::new(new_native_create_directive()))?;
+  directive_set.add("create", Box::new(NativeCreateDirective::default()))?;
   directive_set.add("exec", Box::new(ExecDirective::default()))?;
-  directive_set.add("link", Box::new(new_native_link_directive()))?;
+  directive_set.add("link", Box::new(NativeLinkDirective::default()))?;
   Ok(())
 }
