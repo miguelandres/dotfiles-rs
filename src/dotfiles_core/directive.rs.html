@@ -225,9 +225,6 @@
 <span id="225">225</span>
 <span id="226">226</span>
 <span id="227">227</span>
-<span id="228">228</span>
-<span id="229">229</span>
-<span id="230">230</span>
 </pre><pre class="rust"><code><span class="comment">// Copyright (c) 2021-2022 Miguel Barreto and others
 //
 // Permission is hereby granted, free of charge, to any person obtaining
@@ -291,10 +288,7 @@
 <span class="kw">impl </span>DirectiveData {
   <span class="doccomment">/// Constructs a new directive from a name and a set of default settings.
   </span><span class="kw">pub fn </span>from(name: String, defaults: Settings) -&gt; DirectiveData {
-    DirectiveData {
-      name: name,
-      defaults,
-    }
+    DirectiveData { name, defaults }
   }
 }
 
@@ -459,4 +453,4 @@
   }
 }
 </code></pre></div>
-</section></div></main><div id="rustdoc-vars" data-root-path="../../" data-current-crate="dotfiles_core" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.66.0-nightly (6b3ede3f7 2022-10-13)" ></div></body></html>
+</section></div></main><div id="rustdoc-vars" data-root-path="../../" data-current-crate="dotfiles_core" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.66.0-nightly (b8c35ca26 2022-10-15)" ></div></body></html>

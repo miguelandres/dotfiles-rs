@@ -497,9 +497,6 @@
 <span id="497">497</span>
 <span id="498">498</span>
 <span id="499">499</span>
-<span id="500">500</span>
-<span id="501">501</span>
-<span id="502">502</span>
 </pre><pre class="rust"><code><span class="comment">// Copyright (c) 2021-2022 Miguel Barreto and others
 //
 // Permission is hereby granted, free of charge, to any person obtaining
@@ -543,14 +540,11 @@
   </span>F: FnMut(String, <span class="kw-2">&amp;</span>Yaml) -&gt; <span class="prelude-ty">Result</span>&lt;(), DotfilesError&gt;,
 {
   <span class="kw">if let </span>Yaml::Hash(hash) = yaml_hash {
-    hash
-      .into_iter()
-      .map(|(key, value)| {
-        parse_as_string(key)
-          .map(|key_str| (key_str, value))
-          .and_then(|(key, val)| process_function(key, val))
-      })
-      .collect()
+    hash.into_iter().try_for_each(|(key, value)| {
+      parse_as_string(key)
+        .map(|key_str| (key_str, value))
+        .and_then(|(key, val)| process_function(key, val))
+    })
   } <span class="kw">else </span>{
     <span class="prelude-val">Err</span>(DotfilesError::from_wrong_yaml(
       <span class="string">&quot;Expected a yaml hash, got something else&quot;</span>.to_owned(),
@@ -604,12 +598,12 @@
 ///
 /// * Any error that happens in the processing function.
 /// * [ErrorType::UnexpectedYamlTypeError] if the yaml passed is not an array
-</span><span class="kw">pub fn </span>map_yaml_array&lt;T, F&gt;(yaml_array: <span class="kw-2">&amp;</span>Yaml, <span class="kw-2">mut </span>process: F) -&gt; <span class="prelude-ty">Result</span>&lt;Vec&lt;T&gt;, DotfilesError&gt;
+</span><span class="kw">pub fn </span>map_yaml_array&lt;T, F&gt;(yaml_array: <span class="kw-2">&amp;</span>Yaml, process: F) -&gt; <span class="prelude-ty">Result</span>&lt;Vec&lt;T&gt;, DotfilesError&gt;
 <span class="kw">where
   </span>F: FnMut(<span class="kw-2">&amp;</span>Yaml) -&gt; <span class="prelude-ty">Result</span>&lt;T, DotfilesError&gt;,
 {
   <span class="kw">if let </span>Yaml::Array(inner_vec) = yaml_array {
-    inner_vec.into_iter().map(|item| process(item)).collect()
+    inner_vec.iter().map(process).collect()
   } <span class="kw">else </span>{
     <span class="prelude-val">Err</span>(DotfilesError::from_wrong_yaml(
       <span class="string">&quot;map_yaml_array expects a yaml array, but got something else&quot;</span>.into(),
@@ -669,7 +663,7 @@
 /// * [ErrorType::UnexpectedYamlTypeError] if the value&#39;s type  is not string.
 /// * [ErrorType::IncompleteConfigurationError] if the hash does not contain the requested key
 </span><span class="kw">pub fn </span>get_string_from_yaml_hash(name: <span class="kw-2">&amp;</span>str, yaml: <span class="kw-2">&amp;</span>Yaml) -&gt; <span class="prelude-ty">Result</span>&lt;String, DotfilesError&gt; {
-  process_value_from_yaml_hash(name, yaml, |value_for_name| parse_as_string(value_for_name))
+  process_value_from_yaml_hash(name, yaml, parse_as_string)
 }
 
 <span class="doccomment">/// Gets a specific string array setting from a yaml hash
@@ -858,7 +852,7 @@
   context_settings: <span class="kw-2">&amp;</span>Settings,
   directive_defaults: <span class="kw-2">&amp;</span>Settings,
 ) -&gt; <span class="prelude-ty">Result</span>&lt;String, DotfilesError&gt; {
-  process_value_from_yaml_hash(name, yaml, |value_for_name| parse_as_string(value_for_name))
+  process_value_from_yaml_hash(name, yaml, parse_as_string)
     .or_else(|<span class="kw">_</span>| get_string_setting(name, context_settings, directive_defaults))
 }
 
@@ -888,7 +882,7 @@
 <span class="doccomment">/// Gets a native `Vec&lt;String&gt;` from a Yaml::Array. It errors out if the passed yaml is not an array
 /// or if not all the items in the array are plain Yaml Strings
 </span><span class="kw">pub fn </span>parse_as_string_array(yaml: <span class="kw-2">&amp;</span>Yaml) -&gt; <span class="prelude-ty">Result</span>&lt;Vec&lt;String&gt;, DotfilesError&gt; {
-  map_yaml_array(yaml, |item| parse_as_string(item))
+  map_yaml_array(yaml, parse_as_string)
 }
 
 <span class="doccomment">/// Parse a yaml element as string, will convert booleans and integers to string if necessary.
@@ -958,7 +952,7 @@
 
 <span class="doccomment">/// Reads a Yaml File. Returns Error in case of a syntax error.
 </span><span class="kw">pub fn </span>read_yaml_file(file: <span class="kw-2">&amp;</span>Path) -&gt; <span class="prelude-ty">Result</span>&lt;Vec&lt;Yaml&gt;, DotfilesError&gt; {
-  <span class="kw">let </span>contents = std::fs::read_to_string(file).map_err(|err| DotfilesError::from_io_error(err))<span class="question-mark">?</span>;
+  <span class="kw">let </span>contents = std::fs::read_to_string(file).map_err(DotfilesError::from_io_error)<span class="question-mark">?</span>;
   YamlLoader::load_from_str(<span class="kw-2">&amp;</span>contents).map_err(|err| {
     DotfilesError::from(
       <span class="macro">format!</span>(<span class="string">&quot;yaml syntax error in file `{:?}`&quot;</span>, file.as_os_str()),
@@ -1003,4 +997,4 @@
   }
 }
 </code></pre></div>
-</section></div></main><div id="rustdoc-vars" data-root-path="../../" data-current-crate="dotfiles_core" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.66.0-nightly (6b3ede3f7 2022-10-13)" ></div></body></html>
+</section></div></main><div id="rustdoc-vars" data-root-path="../../" data-current-crate="dotfiles_core" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.66.0-nightly (b8c35ca26 2022-10-15)" ></div></body></html>

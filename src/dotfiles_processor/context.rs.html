@@ -236,7 +236,7 @@
     directive_name: <span class="kw-2">&amp;</span>str,
     defaults: <span class="kw-2">&amp;</span>Yaml,
   ) -&gt; <span class="prelude-ty">Result</span>&lt;(String, Settings), DotfilesError&gt; {
-    <span class="kw">if let </span><span class="prelude-val">Some</span>(directive) = <span class="self">self</span>.directive_set.get(<span class="kw-2">&amp;</span>directive_name) {
+    <span class="kw">if let </span><span class="prelude-val">Some</span>(directive) = <span class="self">self</span>.directive_set.get(directive_name) {
       <span class="prelude-val">Ok</span>((
         directive_name.to_owned(),
         directive.parse_context_defaults(defaults)<span class="question-mark">?</span>,
@@ -253,4 +253,4 @@
   }
 }
 </code></pre></div>
-</section></div></main><div id="rustdoc-vars" data-root-path="../../" data-current-crate="dotfiles_processor" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.66.0-nightly (6b3ede3f7 2022-10-13)" ></div></body></html>
+</section></div></main><div id="rustdoc-vars" data-root-path="../../" data-current-crate="dotfiles_processor" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.66.0-nightly (b8c35ca26 2022-10-15)" ></div></body></html>
