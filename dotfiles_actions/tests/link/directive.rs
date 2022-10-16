@@ -33,11 +33,11 @@ use filesystem::{FakeFileSystem, FileSystem};
 
 #[test]
 fn link_directive_parsed_from_plain_link() -> Result<(), DotfilesError> {
-  let fs = FakeFileSystem::new();
-  setup_fs(&fs)?;
+  let mut directive = FakeLinkDirective::default();
+  let fs = directive.mut_fs();
+  setup_fs(fs)?;
   fs.create_file("/home/user/the_file", String::from("aaa").as_bytes())
     .unwrap();
-  let directive = FakeLinkDirective::new(fs);
   let default_settings = Settings::new();
   let yaml = read_test_yaml("directive/link/plain_link.yaml")
     .unwrap()

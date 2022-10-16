@@ -80,14 +80,6 @@ impl<'a, F: FileSystem + Default> FileSystemDirective<'a, F> for CreateDirective
   fn mut_fs(&mut self) -> &mut F {
     &mut self.fs
   }
-
-  fn new(fs: F) -> Self {
-    Self {
-      fs,
-      data: init_directive_data(),
-      phantom: Default::default(),
-    }
-  }
 }
 
 impl<'a, F: FileSystem + Default> Default for CreateDirective<'a, F> {
