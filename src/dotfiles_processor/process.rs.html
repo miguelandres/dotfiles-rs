@@ -49,18 +49,6 @@
 <span id="49">49</span>
 <span id="50">50</span>
 <span id="51">51</span>
-<span id="52">52</span>
-<span id="53">53</span>
-<span id="54">54</span>
-<span id="55">55</span>
-<span id="56">56</span>
-<span id="57">57</span>
-<span id="58">58</span>
-<span id="59">59</span>
-<span id="60">60</span>
-<span id="61">61</span>
-<span id="62">62</span>
-<span id="63">63</span>
 </pre><pre class="rust"><code><span class="comment">// Copyright (c) 2021-2022 Miguel Barreto and others
 //
 // Permission is hereby granted, free of charge, to any person obtaining
@@ -82,47 +70,35 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-</span><span class="kw">use </span>dotfiles_actions::exec::directive::ExecDirective;
-<span class="kw">use </span>dotfiles_actions::link::directive::NativeLinkDirective;
-<span class="kw">use </span>dotfiles_actions::{brew::directive::BrewDirective, create::directive::NativeCreateDirective};
-<span class="kw">use </span>dotfiles_core::directive::DirectiveSet;
-<span class="kw">use </span>dotfiles_core::Action;
+</span><span class="kw">use </span>dotfiles_core::Action;
 
 <span class="kw">use </span>dotfiles_actions::ohmyzsh_install::action::OhMyZshInstallAction;
 
 <span class="kw">use </span>dotfiles_actions::homebrew_install::action::HomebrewInstallAction;
 <span class="kw">use </span>log::info;
 
-<span class="kw">use </span><span class="kw">crate</span>::flags::{Command, FlagData};
+<span class="kw">use crate</span>::{
+  context::Context,
+  flags::{Command, FlagData},
+};
 
 <span class="kw">use </span>dotfiles_core::error::DotfilesError;
 
 <span class="kw">pub fn </span>process(flag_data: <span class="kw-2">&amp;</span>FlagData) -&gt; <span class="prelude-ty">Result</span>&lt;(), DotfilesError&gt; {
-  <span class="kw">let </span><span class="kw-2">mut </span>directive_set: DirectiveSet = Default::default();
-  initialize_directive_set(<span class="kw-2">&amp;mut </span>directive_set)<span class="question-mark">?</span>;
-
   <span class="kw">match </span><span class="kw-2">&amp;</span>flag_data.command {
     Command::InstallHomebrew =&gt; {
       <span class="macro">info!</span>(<span class="string">&quot;Installing homebrew.&quot;</span>);
-      HomebrewInstallAction::new().execute()<span class="question-mark">?
-    </span>}
+      HomebrewInstallAction::new().execute()
+    }
     Command::InstallOhMyZsh { skip_chsh } =&gt; {
       <span class="macro">info!</span>(<span class="string">&quot;Installing Oh My Zsh!&quot;</span>);
-      OhMyZshInstallAction::new(skip_chsh.to_owned()).execute()<span class="question-mark">?
-    </span>}
-    Command::ApplyConfig { file: <span class="kw">_ </span>} =&gt; <span class="macro">todo!</span>(),
-  };
-  <span class="prelude-val">Ok</span>(())
-}
-
-<span class="kw">pub fn </span>initialize_directive_set&lt;<span class="lifetime">&#39;a</span>&gt;(
-  directive_set: <span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span><span class="kw-2">mut </span>DirectiveSet,
-) -&gt; <span class="prelude-ty">Result</span>&lt;(), DotfilesError&gt; {
-  directive_set.add(<span class="string">&quot;brew&quot;</span>, Box::new(BrewDirective::default()))<span class="question-mark">?</span>;
-  directive_set.add(<span class="string">&quot;create&quot;</span>, Box::new(NativeCreateDirective::default()))<span class="question-mark">?</span>;
-  directive_set.add(<span class="string">&quot;exec&quot;</span>, Box::new(ExecDirective::default()))<span class="question-mark">?</span>;
-  directive_set.add(<span class="string">&quot;link&quot;</span>, Box::new(NativeLinkDirective::default()))<span class="question-mark">?</span>;
-  <span class="prelude-val">Ok</span>(())
+      OhMyZshInstallAction::new(skip_chsh.to_owned()).execute()
+    }
+    Command::ApplyConfig { file } =&gt; {
+      <span class="kw">let </span><span class="kw-2">mut </span>ctx = Context::from(file.to_string());
+      ctx.parse_file()
+    }
+  }
 }
 </code></pre></div>
 </section></div></main><div id="rustdoc-vars" data-root-path="../../" data-current-crate="dotfiles_processor" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.66.0-nightly (b8c35ca26 2022-10-15)" ></div></body></html>

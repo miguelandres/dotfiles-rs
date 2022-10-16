@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"fn":[["initialize_directive_set",""],["process",""]]};
+window.SIDEBAR_ITEMS = {"fn":[["process",""]]};

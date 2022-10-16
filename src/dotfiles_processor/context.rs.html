@@ -114,17 +114,6 @@
 <span id="114">114</span>
 <span id="115">115</span>
 <span id="116">116</span>
-<span id="117">117</span>
-<span id="118">118</span>
-<span id="119">119</span>
-<span id="120">120</span>
-<span id="121">121</span>
-<span id="122">122</span>
-<span id="123">123</span>
-<span id="124">124</span>
-<span id="125">125</span>
-<span id="126">126</span>
-<span id="127">127</span>
 </pre><pre class="rust"><code><span class="comment">// Copyright (c) 2021-2022 Miguel Barreto and others
 //
 // Permission is hereby granted, free of charge, to any person obtaining
@@ -146,61 +135,62 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-</span><span class="kw">use </span>std::collections::HashMap;
+</span><span class="kw">use </span>std::{collections::HashMap, path::PathBuf};
 
 <span class="kw">use </span>dotfiles_core::{
-  directive::DirectiveSet,
   error::{DotfilesError, ErrorType},
-  yaml_util::process_yaml_hash_until_first_err,
+  yaml_util::{process_value_from_yaml_hash, process_yaml_hash_until_first_err, read_yaml_file},
   Settings,
 };
 <span class="kw">use </span>yaml_rust::Yaml;
+
+<span class="kw">use </span><span class="kw">crate</span>::chosen_directive::ChosenDirective;
+
 <span class="doccomment">/// A context represents an environment in which defaults can be overriden, it can be thought of as
 /// the context of an individual configuration file to apply.
 ///
 /// Notice that contexts *can* be built on top of one another, so that defaults can be overriden
 /// multiple times, and thus have some sort of configuration inheritance.
-</span><span class="kw">pub struct </span>Context&lt;<span class="lifetime">&#39;a</span>&gt; {
-  <span class="doccomment">/// A reference to the directive set that is being used, this will be used to get the list of
-  /// existing directives and to find out how to parse configuration values.
-  </span>directive_set: <span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span>DirectiveSet&lt;<span class="lifetime">&#39;a</span>&gt;,
+</span><span class="kw">pub struct </span>Context {
   <span class="doccomment">/// The default overrides for the current context.
   </span>defaults: HashMap&lt;String, Settings&gt;,
   <span class="doccomment">/// The file name to which this context corresponds.
   </span>file_name: String,
 }
 
-<span class="kw">impl</span>&lt;<span class="lifetime">&#39;a</span>&gt; Context&lt;<span class="lifetime">&#39;a</span>&gt; {
-  <span class="doccomment">/// Creates a new [`Context`].
-  </span><span class="kw">pub fn </span>new(
-    directive_set: <span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span>DirectiveSet&lt;<span class="lifetime">&#39;a</span>&gt;,
-    defaults: HashMap&lt;String, Settings&gt;,
-    file_name: String,
-  ) -&gt; <span class="self">Self </span>{
+<span class="kw">impl</span>&lt;<span class="lifetime">&#39;a</span>&gt; From&lt;String&gt; <span class="kw">for </span>Context {
+  <span class="kw">fn </span>from(file_name: String) -&gt; <span class="self">Self </span>{
     <span class="self">Self </span>{
-      directive_set,
-      defaults,
+      defaults: Default::default(),
       file_name,
     }
   }
+}
 
-  <span class="comment">// fn parse_file(&amp;mut self) -&gt; Result&lt;(), DotfilesError&gt; {
-  //   {
-  //     let path = PathBuf::from(self.file_name.clone());
-  //     let yaml = read_yaml_file(&amp;path)?;
-  //     if let Some(Yaml::Hash(hash)) = yaml.first() {
-  //       process_until_first_err(hash.into_iter(), |_| ())
-  //     } else {
-  //       Err(DotfilesError::from(
-  //         &quot;Yaml file root is expected to be a hash that contains defaults and steps&quot;.to_owned(),
-  //         ErrorType::UnexpectedYamlTypeError,
-  //       ))
-  //     }
-  //   }
-  //   .map_err(|err| err.add_message_prefix(format!(&quot;Parsing {}&quot;, self.file_name)))
-  // }
+<span class="kw">impl</span>&lt;<span class="lifetime">&#39;a</span>&gt; Context {
+  <span class="kw">pub fn </span>parse_file(<span class="kw-2">&amp;mut </span><span class="self">self</span>) -&gt; <span class="prelude-ty">Result</span>&lt;(), DotfilesError&gt; {
+    {
+      <span class="kw">let </span>path = PathBuf::from(<span class="self">self</span>.file_name.clone());
+      <span class="kw">let </span>yaml = read_yaml_file(<span class="kw-2">&amp;</span>path)<span class="question-mark">?</span>;
+      <span class="kw">if let </span><span class="prelude-val">Some</span>(yaml_hash) = yaml.first() {
+        process_value_from_yaml_hash(<span class="string">&quot;defaults&quot;</span>, yaml_hash, |defaults_yaml| {
+          <span class="self">self</span>.add_defaults(defaults_yaml)
+        })
+      } <span class="kw">else </span>{
+        <span class="prelude-val">Err</span>(DotfilesError::from_wrong_yaml(
+          <span class="string">&quot;Yaml file root is expected to be a hash that contains defaults and steps&quot;</span>.to_owned(),
+          Yaml::Null,
+          Yaml::Hash(Default::default()),
+        ))
+      }
+    }
+    .map_err(|<span class="kw-2">mut </span>err| {
+      err.add_message_prefix(<span class="macro">format!</span>(<span class="string">&quot;Parsing {}&quot;</span>, <span class="self">self</span>.file_name));
+      err
+    })
+  }
 
-  </span><span class="doccomment">/// Adds defaults to the context configuration from the passed Yaml configuration.
+  <span class="doccomment">/// Adds defaults to the context configuration from the passed Yaml configuration.
   ///
   /// It may fail for several reasons:
   ///
@@ -212,7 +202,7 @@
   ///   - The hash contains keys that are not Strings.
   ///   - The Yaml contains values that are not Hashes of Strings to settings
   ///   - The Yaml type for a particular setting does not match its expected data type.
-  </span><span class="kw">fn </span>add_defaults(<span class="kw-2">&amp;mut </span><span class="self">self</span>, yaml: <span class="kw-2">&amp;</span>Yaml) -&gt; <span class="prelude-ty">Result</span>&lt;(), DotfilesError&gt; {
+  </span><span class="kw">fn </span>add_defaults(<span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span><span class="kw-2">mut </span><span class="self">self</span>, yaml: <span class="kw-2">&amp;</span>Yaml) -&gt; <span class="prelude-ty">Result</span>&lt;(), DotfilesError&gt; {
     process_yaml_hash_until_first_err(yaml, |key, yaml_val| {
       <span class="kw">let </span>(directive_name, defaults) = <span class="self">self</span>.parse_directive_defaults_for_yaml(<span class="kw-2">&amp;</span>key, yaml_val)<span class="question-mark">?</span>;
       <span class="self">self
@@ -232,24 +222,12 @@
   }
 
   <span class="kw">fn </span>parse_directive_defaults_for_yaml(
-    <span class="kw-2">&amp;mut </span><span class="self">self</span>,
+    <span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span><span class="kw-2">mut </span><span class="self">self</span>,
     directive_name: <span class="kw-2">&amp;</span>str,
     defaults: <span class="kw-2">&amp;</span>Yaml,
   ) -&gt; <span class="prelude-ty">Result</span>&lt;(String, Settings), DotfilesError&gt; {
-    <span class="kw">if let </span><span class="prelude-val">Some</span>(directive) = <span class="self">self</span>.directive_set.get(directive_name) {
-      <span class="prelude-val">Ok</span>((
-        directive_name.to_owned(),
-        directive.parse_context_defaults(defaults)<span class="question-mark">?</span>,
-      ))
-    } <span class="kw">else </span>{
-      <span class="prelude-val">Err</span>(DotfilesError::from(
-        <span class="macro">format!</span>(
-          <span class="string">&quot;Found defaults section for nonexistent Directive {}&quot;</span>,
-          <span class="kw-2">&amp;</span>directive_name
-        ),
-        ErrorType::InconsistentConfigurationError,
-      ))
-    }
+    <span class="kw">let </span>directive = ChosenDirective::from(directive_name);
+    directive.parse_context_defaults(defaults)
   }
 }
 </code></pre></div>
