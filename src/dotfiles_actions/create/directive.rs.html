@@ -111,6 +111,15 @@
 <span id="111">111</span>
 <span id="112">112</span>
 <span id="113">113</span>
+<span id="114">114</span>
+<span id="115">115</span>
+<span id="116">116</span>
+<span id="117">117</span>
+<span id="118">118</span>
+<span id="119">119</span>
+<span id="120">120</span>
+<span id="121">121</span>
+<span id="122">122</span>
 </pre><pre class="rust"><code><span class="comment">// Copyright (c) 2021-2022 Miguel Barreto and others
 //
 // Permission is hereby granted, free of charge, to any person obtaining
@@ -136,6 +145,7 @@
 </span><span class="kw">extern crate </span>yaml_rust;
 
 <span class="kw">use </span><span class="kw">crate</span>::create::action::CreateAction;
+<span class="kw">use </span><span class="kw">crate</span>::filesystem::FileSystemDirective;
 <span class="kw">use </span>dotfiles_core::action::Action;
 <span class="kw">use </span>dotfiles_core::action::ActionParser;
 <span class="kw">use </span>dotfiles_core::directive::Directive;
@@ -147,6 +157,7 @@
 <span class="kw">use </span>dotfiles_core::settings::Settings;
 <span class="kw">use </span>dotfiles_core::yaml_util;
 <span class="kw">use </span>dotfiles_core_macros::ActionListDirective;
+<span class="kw">use </span>filesystem::FakeFileSystem;
 <span class="kw">use </span>filesystem::FileSystem;
 <span class="kw">use </span>filesystem::OsFileSystem;
 
@@ -163,11 +174,6 @@
 /// name of the directory to create
 </span><span class="kw">pub const </span>DIR_SETTING: <span class="kw-2">&amp;</span>str = <span class="string">&quot;dir&quot;</span>;
 
-<span class="doccomment">/// Constructs a new [CreateDirective] using the real filesystem
-</span><span class="kw">pub fn </span>new_native_create_directive&lt;<span class="lifetime">&#39;a</span>&gt;() -&gt; CreateDirective&lt;<span class="lifetime">&#39;a</span>, OsFileSystem&gt; {
-  CreateDirective::&lt;<span class="lifetime">&#39;a</span>, OsFileSystem&gt;::new(OsFileSystem::new())
-}
-
 <span class="doccomment">/// Initializes the default configuration for the [CreateDirective]
 </span><span class="kw">pub fn </span>init_directive_data() -&gt; DirectiveData {
   DirectiveData::from(
@@ -178,34 +184,46 @@
 
 <span class="doccomment">/// A directive that can build [CreateAction]s to create directories in the filesystem.
 </span><span class="attribute">#[derive(ActionListDirective)]
-</span><span class="kw">pub struct </span>CreateDirective&lt;<span class="lifetime">&#39;a</span>, F: <span class="lifetime">&#39;a </span>+ FileSystem&gt; {
-  fs: Box&lt;F&gt;,
+</span><span class="kw">pub struct </span>CreateDirective&lt;<span class="lifetime">&#39;a</span>, F: FileSystem + Default&gt; {
+  fs: F,
   data: DirectiveData,
   phantom: PhantomData&lt;<span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span>F&gt;,
 }
+<span class="doccomment">/// [CreateDirective] that uses the native [OsFileSystem].
+</span><span class="kw">pub type </span>NativeCreateDirective&lt;<span class="lifetime">&#39;a</span>&gt; = CreateDirective&lt;<span class="lifetime">&#39;a</span>, OsFileSystem&gt;;
+<span class="doccomment">/// [CreateDirective] that uses the native [FakeFileSystem] for testing.
+</span><span class="kw">pub type </span>FakeCreateDirective&lt;<span class="lifetime">&#39;a</span>&gt; = CreateDirective&lt;<span class="lifetime">&#39;a</span>, FakeFileSystem&gt;;
 
-<span class="kw">impl</span>&lt;<span class="lifetime">&#39;a</span>, F: <span class="lifetime">&#39;a </span>+ FileSystem&gt; CreateDirective&lt;<span class="lifetime">&#39;a</span>, F&gt; {
-  <span class="doccomment">/// Returns the [FileSystem] instance being used.
-  </span><span class="kw">pub fn </span>fs(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="kw-2">&amp;</span>F {
-    <span class="self">self</span>.fs.as_ref()
+<span class="kw">impl</span>&lt;<span class="lifetime">&#39;a</span>, F: FileSystem + Default&gt; FileSystemDirective&lt;<span class="lifetime">&#39;a</span>, F&gt; <span class="kw">for </span>CreateDirective&lt;<span class="lifetime">&#39;a</span>, F&gt; {
+  <span class="kw">fn </span>fs(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="kw-2">&amp;</span>F {
+    <span class="kw-2">&amp;</span><span class="self">self</span>.fs
   }
 
-  <span class="doccomment">/// Constructs a new instance of the create directive.
-  </span><span class="kw">pub fn </span>new(fs: F) -&gt; <span class="self">Self </span>{
-    CreateDirective::&lt;<span class="lifetime">&#39;a</span>, F&gt; {
-      fs: Box::new(fs),
+  <span class="kw">fn </span>mut_fs(<span class="kw-2">&amp;mut </span><span class="self">self</span>) -&gt; <span class="kw-2">&amp;mut </span>F {
+    <span class="kw-2">&amp;mut </span><span class="self">self</span>.fs
+  }
+
+  <span class="kw">fn </span>new(fs: F) -&gt; <span class="self">Self </span>{
+    <span class="self">Self </span>{
+      fs,
       data: init_directive_data(),
-      phantom: PhantomData,
+      phantom: Default::default(),
     }
   }
 }
 
-<span class="kw">impl</span>&lt;<span class="lifetime">&#39;a</span>, F: <span class="lifetime">&#39;a </span>+ FileSystem&gt; ActionParser&lt;<span class="lifetime">&#39;a</span>&gt; <span class="kw">for </span>CreateDirective&lt;<span class="lifetime">&#39;a</span>, F&gt; {
-  <span class="kw">type </span>ActionType = CreateAction&lt;<span class="lifetime">&#39;a</span>, F&gt;;
+<span class="kw">impl</span>&lt;<span class="lifetime">&#39;a</span>, F: FileSystem + Default&gt; Default <span class="kw">for </span>CreateDirective&lt;<span class="lifetime">&#39;a</span>, F&gt; {
+  <span class="kw">fn </span>default() -&gt; <span class="self">Self </span>{
+    <span class="self">Self </span>{
+      fs: Default::default(),
+      data: init_directive_data(),
+      phantom: Default::default(),
+    }
+  }
+}
 
-  <span class="kw">fn </span>name(<span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span><span class="self">self</span>) -&gt; <span class="kw-2">&amp;</span><span class="lifetime">&#39;static </span>str {
-    <span class="string">&quot;create&quot;
-  </span>}
+<span class="kw">impl</span>&lt;<span class="lifetime">&#39;a</span>, F: FileSystem + Default&gt; ActionParser&lt;<span class="lifetime">&#39;a</span>&gt; <span class="kw">for </span>CreateDirective&lt;<span class="lifetime">&#39;a</span>, F&gt; {
+  <span class="kw">type </span>ActionType = CreateAction&lt;<span class="lifetime">&#39;a</span>, F&gt;;
 
   <span class="kw">fn </span>parse_action(
     <span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span><span class="self">self</span>,

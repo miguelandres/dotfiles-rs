@@ -61,7 +61,6 @@
 <span id="61">61</span>
 <span id="62">62</span>
 <span id="63">63</span>
-<span id="64">64</span>
 </pre><pre class="rust"><code><span class="comment">// Copyright (c) 2021-2022 Miguel Barreto and others
 //
 // Permission is hereby granted, free of charge, to any person obtaining
@@ -83,10 +82,9 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-</span><span class="kw">use </span>dotfiles_actions::brew::directive::BrewDirective;
-<span class="kw">use </span>dotfiles_actions::create::directive::new_native_create_directive;
-<span class="kw">use </span>dotfiles_actions::exec::directive::ExecDirective;
-<span class="kw">use </span>dotfiles_actions::link::directive::new_native_link_directive;
+</span><span class="kw">use </span>dotfiles_actions::exec::directive::ExecDirective;
+<span class="kw">use </span>dotfiles_actions::link::directive::NativeLinkDirective;
+<span class="kw">use </span>dotfiles_actions::{brew::directive::BrewDirective, create::directive::NativeCreateDirective};
 <span class="kw">use </span>dotfiles_core::directive::DirectiveSet;
 <span class="kw">use </span>dotfiles_core::Action;
 
@@ -121,9 +119,9 @@
   directive_set: <span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span><span class="kw-2">mut </span>DirectiveSet,
 ) -&gt; <span class="prelude-ty">Result</span>&lt;(), DotfilesError&gt; {
   directive_set.add(<span class="string">&quot;brew&quot;</span>, Box::new(BrewDirective::default()))<span class="question-mark">?</span>;
-  directive_set.add(<span class="string">&quot;create&quot;</span>, Box::new(new_native_create_directive()))<span class="question-mark">?</span>;
+  directive_set.add(<span class="string">&quot;create&quot;</span>, Box::new(NativeCreateDirective::default()))<span class="question-mark">?</span>;
   directive_set.add(<span class="string">&quot;exec&quot;</span>, Box::new(ExecDirective::default()))<span class="question-mark">?</span>;
-  directive_set.add(<span class="string">&quot;link&quot;</span>, Box::new(new_native_link_directive()))<span class="question-mark">?</span>;
+  directive_set.add(<span class="string">&quot;link&quot;</span>, Box::new(NativeLinkDirective::default()))<span class="question-mark">?</span>;
   <span class="prelude-val">Ok</span>(())
 }
 </code></pre></div>

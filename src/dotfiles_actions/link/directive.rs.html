@@ -215,6 +215,26 @@
 <span id="215">215</span>
 <span id="216">216</span>
 <span id="217">217</span>
+<span id="218">218</span>
+<span id="219">219</span>
+<span id="220">220</span>
+<span id="221">221</span>
+<span id="222">222</span>
+<span id="223">223</span>
+<span id="224">224</span>
+<span id="225">225</span>
+<span id="226">226</span>
+<span id="227">227</span>
+<span id="228">228</span>
+<span id="229">229</span>
+<span id="230">230</span>
+<span id="231">231</span>
+<span id="232">232</span>
+<span id="233">233</span>
+<span id="234">234</span>
+<span id="235">235</span>
+<span id="236">236</span>
+<span id="237">237</span>
 </pre><pre class="rust"><code><span class="comment">// Copyright (c) 2021-2022 Miguel Barreto and others
 //
 // Permission is hereby granted, free of charge, to any person obtaining
@@ -240,6 +260,7 @@
 
 </span><span class="kw">extern crate </span>yaml_rust;
 
+<span class="kw">use </span><span class="kw">crate</span>::filesystem::FileSystemDirective;
 <span class="kw">use </span><span class="kw">crate</span>::link::action::LinkAction;
 <span class="kw">use </span>dotfiles_core::action::Action;
 <span class="kw">use </span>dotfiles_core::action::ActionParser;
@@ -253,6 +274,7 @@
 <span class="kw">use </span>dotfiles_core::settings::Settings;
 <span class="kw">use </span>dotfiles_core::yaml_util::<span class="kw-2">*</span>;
 <span class="kw">use </span>dotfiles_core_macros::ActionListDirective;
+<span class="kw">use </span>filesystem::FakeFileSystem;
 <span class="kw">use </span>filesystem::FileSystem;
 <span class="kw">use </span>filesystem::OsFileSystem;
 <span class="kw">use </span>filesystem::UnixFileSystem;
@@ -279,11 +301,6 @@
 </span><span class="kw">pub const </span>RELATIVE_SETTING: <span class="kw-2">&amp;</span>str = <span class="string">&quot;relative&quot;</span>;
 <span class="doccomment">/// Resolves the target if it is a symlink and uses the final target file as the target.
 </span><span class="kw">pub const </span>RESOLVE_SYMLINK_TARGET_SETTING: <span class="kw-2">&amp;</span>str = <span class="string">&quot;resolve_symlink_target&quot;</span>;
-
-<span class="doccomment">/// Create a new link directive using the native filesystem
-</span><span class="kw">pub fn </span>new_native_link_directive&lt;<span class="lifetime">&#39;a</span>&gt;() -&gt; LinkDirective&lt;<span class="lifetime">&#39;a</span>, OsFileSystem&gt; {
-  LinkDirective::&lt;<span class="lifetime">&#39;a</span>&gt;::new(OsFileSystem::new())
-}
 
 <span class="doccomment">/// Initialize the defaults for the LinkDirective.
 </span><span class="kw">pub fn </span>init_directive_data() -&gt; DirectiveData {
@@ -312,25 +329,50 @@
 <span class="doccomment">/// A directive that can build [LinkAction]s to create directories
 /// in the filesystem.
 </span><span class="attribute">#[derive(ActionListDirective)]
-</span><span class="kw">pub struct </span>LinkDirective&lt;<span class="lifetime">&#39;a</span>, F: <span class="lifetime">&#39;a </span>+ FileSystem + UnixFileSystem&gt; {
-  fs: Box&lt;F&gt;,
+</span><span class="kw">pub struct </span>LinkDirective&lt;<span class="lifetime">&#39;a</span>, F: FileSystem + UnixFileSystem + Default&gt; {
+  fs: F,
   data: DirectiveData,
   phantom: PhantomData&lt;<span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span>F&gt;,
 }
 
-<span class="kw">impl</span>&lt;<span class="lifetime">&#39;a</span>, F: <span class="lifetime">&#39;a </span>+ FileSystem + UnixFileSystem&gt; LinkDirective&lt;<span class="lifetime">&#39;a</span>, F&gt; {
-  <span class="doccomment">/// Returns the [FileSystem] instance being used.
-  </span><span class="kw">pub fn </span>fs(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="kw-2">&amp;</span>F {
-    <span class="self">self</span>.fs.as_ref()
+<span class="doccomment">/// [LinkDirective] that uses the native [OsFileSystem].
+</span><span class="kw">pub type </span>NativeLinkDirective&lt;<span class="lifetime">&#39;a</span>&gt; = LinkDirective&lt;<span class="lifetime">&#39;a</span>, OsFileSystem&gt;;
+<span class="doccomment">/// [LinkDirective] that uses the native [FakeFileSystem] for testing.
+</span><span class="kw">pub type </span>FakeLinkDirective&lt;<span class="lifetime">&#39;a</span>&gt; = LinkDirective&lt;<span class="lifetime">&#39;a</span>, FakeFileSystem&gt;;
+
+<span class="kw">impl</span>&lt;<span class="lifetime">&#39;a</span>, F: FileSystem + UnixFileSystem + Default&gt; Default <span class="kw">for </span>LinkDirective&lt;<span class="lifetime">&#39;a</span>, F&gt; {
+  <span class="kw">fn </span>default() -&gt; <span class="self">Self </span>{
+    <span class="self">Self </span>{
+      fs: Default::default(),
+      data: init_directive_data(),
+      phantom: Default::default(),
+    }
+  }
+}
+
+<span class="kw">impl</span>&lt;<span class="lifetime">&#39;a</span>, F: FileSystem + UnixFileSystem + Default&gt; FileSystemDirective&lt;<span class="lifetime">&#39;a</span>, F&gt;
+  <span class="kw">for </span>LinkDirective&lt;<span class="lifetime">&#39;a</span>, F&gt;
+{
+  <span class="kw">fn </span>fs(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="kw-2">&amp;</span>F {
+    <span class="kw-2">&amp;</span><span class="self">self</span>.fs
   }
 
-  <span class="doccomment">/// Create a new [LinkDirective]
-  </span><span class="kw">pub fn </span>new(fs: F) -&gt; <span class="self">Self </span>{
-    LinkDirective::&lt;F&gt; {
-      fs: Box::new(fs),
+  <span class="kw">fn </span>mut_fs(<span class="kw-2">&amp;mut </span><span class="self">self</span>) -&gt; <span class="kw-2">&amp;mut </span>F {
+    <span class="kw-2">&amp;mut </span><span class="self">self</span>.fs
+  }
+  <span class="kw">fn </span>new(fs: F) -&gt; <span class="self">Self </span>{
+    <span class="self">Self </span>{
+      fs,
       data: init_directive_data(),
-      phantom: PhantomData,
+      phantom: Default::default(),
     }
+  }
+}
+
+<span class="kw">impl</span>&lt;<span class="lifetime">&#39;a</span>, F: FileSystem + UnixFileSystem + Default&gt; LinkDirective&lt;<span class="lifetime">&#39;a</span>, F&gt; {
+  <span class="doccomment">/// Returns the [FileSystem] instance being used.
+  </span><span class="kw">pub fn </span>fs(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="kw-2">&amp;</span>F {
+    <span class="kw-2">&amp;</span><span class="self">self</span>.fs
   }
 
   <span class="kw">fn </span>parse_full_action(
@@ -367,7 +409,7 @@
     .collect();
 
     <span class="prelude-val">Ok</span>(LinkAction::&lt;<span class="lifetime">&#39;a</span>, F&gt;::new(
-      <span class="self">self</span>.fs.as_ref(),
+      <span class="kw-2">&amp;</span><span class="self">self</span>.fs,
       path,
       target,
       <span class="kw-2">&amp;</span>action_settings<span class="question-mark">?</span>,
@@ -417,11 +459,9 @@
   }
 }
 
-<span class="kw">impl</span>&lt;<span class="lifetime">&#39;a</span>, F: FileSystem + UnixFileSystem&gt; ActionParser&lt;<span class="lifetime">&#39;a</span>&gt; <span class="kw">for </span>LinkDirective&lt;<span class="lifetime">&#39;a</span>, F&gt; {
+<span class="kw">impl</span>&lt;<span class="lifetime">&#39;a</span>, F: FileSystem + UnixFileSystem + Default&gt; ActionParser&lt;<span class="lifetime">&#39;a</span>&gt; <span class="kw">for </span>LinkDirective&lt;<span class="lifetime">&#39;a</span>, F&gt; {
   <span class="kw">type </span>ActionType = LinkAction&lt;<span class="lifetime">&#39;a</span>, F&gt;;
-  <span class="kw">fn </span>name(<span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span><span class="self">self</span>) -&gt; <span class="kw-2">&amp;</span><span class="lifetime">&#39;static </span>str {
-    <span class="string">&quot;link&quot;
-  </span>}
+
   <span class="kw">fn </span>parse_action(
     <span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span><span class="self">self</span>,
     settings: <span class="kw-2">&amp;</span>Settings,
