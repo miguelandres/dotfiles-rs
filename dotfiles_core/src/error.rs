@@ -172,6 +172,15 @@ impl DotfilesError {
       false
     }
   }
+  /// Returns whether the error is a Fs error.
+  pub fn is_io_error(&self) -> bool {
+    if let ErrorType::FileSystemError { fs_error: _ } = &self.error_type {
+      true
+    } else {
+      false
+    }
+  }
+
   /// Creates a new Dotfiles error with the given message and error type
   pub fn from(message: String, error_type: ErrorType) -> Self {
     DotfilesError {

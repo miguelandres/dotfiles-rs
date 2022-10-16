@@ -23,22 +23,27 @@
 
 use crate::utils::check_action_fail;
 use crate::utils::setup_fs;
+use dotfiles_actions::link::action::LinkAction;
+use dotfiles_actions::link::directive::init_directive_data;
+use dotfiles_actions::link::directive::CREATE_PARENT_DIRS_SETTING;
+use dotfiles_actions::link::directive::FORCE_SETTING;
+use dotfiles_actions::link::directive::IGNORE_MISSING_TARGET_SETTING;
+use dotfiles_actions::link::directive::RELINK_SETTING;
+use dotfiles_actions::link::directive::RESOLVE_SYMLINK_TARGET_SETTING;
+use dotfiles_core::error::DotfilesError;
+use dotfiles_core::settings::initialize_settings_object;
+use dotfiles_core::settings::Setting;
+use dotfiles_core::Action;
 use filesystem::FakeFileSystem;
 use filesystem::FileSystem;
 use filesystem::UnixFileSystem;
 
-use dotfiles_core::action::Action;
-use dotfiles_core::directive::initialize_settings_object;
-use dotfiles_core::directive::Setting;
-use dotfiles_core::link::action::LinkAction;
-
-use dotfiles_core::directive::Settings;
-use dotfiles_core::link::directive::*;
+use dotfiles_core::settings::Settings;
 
 use std::path::PathBuf;
 
 #[test]
-fn link_fails_on_nonexistent_path() -> Result<(), String> {
+fn link_fails_on_nonexistent_path() -> Result<(), DotfilesError> {
   let fs = FakeFileSystem::new();
   setup_fs(&fs).expect("Failure setting up FakeFileSystem");
   fs.create_dir("/home/user/target").unwrap();
@@ -61,7 +66,7 @@ fn link_fails_on_nonexistent_path() -> Result<(), String> {
 }
 
 #[test]
-fn link_succeeds_on_nonexistent_path_with_create_parent_dirs() -> Result<(), String> {
+fn link_succeeds_on_nonexistent_path_with_create_parent_dirs() -> Result<(), DotfilesError> {
   let fs = FakeFileSystem::new();
   setup_fs(&fs).expect("Failure setting up FakeFileSystem");
   fs.create_dir("/home/user/target").unwrap();
@@ -80,7 +85,7 @@ fn link_succeeds_on_nonexistent_path_with_create_parent_dirs() -> Result<(), Str
 }
 
 #[test]
-fn link_fails_on_readonly_dir() -> Result<(), String> {
+fn link_fails_on_readonly_dir() -> Result<(), DotfilesError> {
   let fs = FakeFileSystem::new();
   setup_fs(&fs).expect("Failure setting up FakeFileSystem");
   fs.create_dir("/home/user/readonly").unwrap();
@@ -103,7 +108,7 @@ fn link_fails_on_readonly_dir() -> Result<(), String> {
 }
 
 #[test]
-fn link_fails_on_nonexistent_target() -> Result<(), String> {
+fn link_fails_on_nonexistent_target() -> Result<(), DotfilesError> {
   let fs = FakeFileSystem::new();
   setup_fs(&fs).expect("Failure setting up FakeFileSystem");
   let settings = Settings::new();
@@ -125,7 +130,7 @@ fn link_fails_on_nonexistent_target() -> Result<(), String> {
 }
 
 #[test]
-fn link_succeeds_on_nonexistent_target_if_ignoring_missing_target() -> Result<(), String> {
+fn link_succeeds_on_nonexistent_target_if_ignoring_missing_target() -> Result<(), DotfilesError> {
   let fs = FakeFileSystem::new();
   setup_fs(&fs).expect("Failure setting up FakeFileSystem");
   fs.create_dir("/home/user/target").unwrap();
@@ -144,7 +149,7 @@ fn link_succeeds_on_nonexistent_target_if_ignoring_missing_target() -> Result<()
 }
 
 #[test]
-fn link_fails_on_existing_link() -> Result<(), String> {
+fn link_fails_on_existing_link() -> Result<(), DotfilesError> {
   let fs = FakeFileSystem::new();
   setup_fs(&fs).expect("Failure setting up FakeFileSystem");
   fs.create_dir("/home/user/target").unwrap();
@@ -171,7 +176,7 @@ fn link_fails_on_existing_link() -> Result<(), String> {
 }
 
 #[test]
-fn link_succeeds_on_existing_link_with_relink() -> Result<(), String> {
+fn link_succeeds_on_existing_link_with_relink() -> Result<(), DotfilesError> {
   let fs = FakeFileSystem::new();
   setup_fs(&fs).expect("Failure setting up FakeFileSystem");
   fs.create_dir("/home/user/target").unwrap();
@@ -190,7 +195,7 @@ fn link_succeeds_on_existing_link_with_relink() -> Result<(), String> {
 }
 
 #[test]
-fn link_fails_on_existing_file_with_relink() -> Result<(), String> {
+fn link_fails_on_existing_file_with_relink() -> Result<(), DotfilesError> {
   let fs = FakeFileSystem::new();
   setup_fs(&fs).expect("Failure setting up FakeFileSystem");
   fs.create_dir("/home/user/target").unwrap();
@@ -217,7 +222,7 @@ fn link_fails_on_existing_file_with_relink() -> Result<(), String> {
 }
 
 #[test]
-fn link_fails_on_existing_dir_with_relink() -> Result<(), String> {
+fn link_fails_on_existing_dir_with_relink() -> Result<(), DotfilesError> {
   let fs = FakeFileSystem::new();
   setup_fs(&fs).expect("Failure setting up FakeFileSystem");
   fs.create_dir("/home/user/target").unwrap();
@@ -244,7 +249,7 @@ fn link_fails_on_existing_dir_with_relink() -> Result<(), String> {
 }
 
 #[test]
-fn link_succeeds_on_existing_link_with_force() -> Result<(), String> {
+fn link_succeeds_on_existing_link_with_force() -> Result<(), DotfilesError> {
   let fs = FakeFileSystem::new();
   setup_fs(&fs).expect("Failure setting up FakeFileSystem");
   fs.create_dir("/home/user/target").unwrap();
@@ -263,7 +268,7 @@ fn link_succeeds_on_existing_link_with_force() -> Result<(), String> {
 }
 
 #[test]
-fn link_fails_on_existing_file_with_force() -> Result<(), String> {
+fn link_fails_on_existing_file_with_force() -> Result<(), DotfilesError> {
   let fs = FakeFileSystem::new();
   setup_fs(&fs).expect("Failure setting up FakeFileSystem");
   fs.create_dir("/home/user/target").unwrap();
@@ -282,7 +287,7 @@ fn link_fails_on_existing_file_with_force() -> Result<(), String> {
 }
 
 #[test]
-fn link_fails_on_existing_dir_with_force() -> Result<(), String> {
+fn link_fails_on_existing_dir_with_force() -> Result<(), DotfilesError> {
   let fs = FakeFileSystem::new();
   setup_fs(&fs).expect("Failure setting up FakeFileSystem");
   fs.create_dir("/home/user/target").unwrap();
