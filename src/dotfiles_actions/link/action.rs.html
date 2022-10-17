@@ -187,6 +187,14 @@
 <span id="187">187</span>
 <span id="188">188</span>
 <span id="189">189</span>
+<span id="190">190</span>
+<span id="191">191</span>
+<span id="192">192</span>
+<span id="193">193</span>
+<span id="194">194</span>
+<span id="195">195</span>
+<span id="196">196</span>
+<span id="197">197</span>
 </pre><pre class="rust"><code><span class="comment">// Copyright (c) 2021-2022 Miguel Barreto and others
 //
 // Permission is hereby granted, free of charge, to any person obtaining
@@ -208,6 +216,7 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
+</span><span class="attribute">#![cfg(unix)]
 </span><span class="doccomment">//! This module contains the [LinkAction] that creates a new symlink
 //! when executed
 
@@ -218,7 +227,9 @@
 <span class="kw">use </span>dotfiles_core::error::ErrorType;
 <span class="kw">use </span>dotfiles_core::settings::Settings;
 <span class="kw">use </span>dotfiles_core::yaml_util::get_boolean_setting_from_context;
+<span class="kw">use </span>filesystem::FakeFileSystem;
 <span class="kw">use </span>filesystem::FileSystem;
+<span class="kw">use </span>filesystem::OsFileSystem;
 <span class="kw">use </span>filesystem::UnixFileSystem;
 <span class="kw">use </span>getset::CopyGetters;
 <span class="kw">use </span>getset::Getters;
@@ -265,6 +276,11 @@
   </span><span class="attribute">#[getset(get_copy = <span class="string">&quot;pub&quot;</span>)]
   </span>resolve_symlink_target: bool,
 }
+
+<span class="doccomment">/// A native create action that works on the real filesystem.
+</span><span class="kw">pub type </span>NativeLinkAction&lt;<span class="lifetime">&#39;a</span>&gt; = LinkAction&lt;<span class="lifetime">&#39;a</span>, OsFileSystem&gt;;
+<span class="doccomment">/// A Fake create action that works on a fake test filesystem.
+</span><span class="kw">pub type </span>FakeLinkAction&lt;<span class="lifetime">&#39;a</span>&gt; = LinkAction&lt;<span class="lifetime">&#39;a</span>, FakeFileSystem&gt;;
 
 <span class="kw">impl</span>&lt;<span class="lifetime">&#39;a</span>, F: FileSystem + UnixFileSystem&gt; LinkAction&lt;<span class="lifetime">&#39;a</span>, F&gt; {
   <span class="doccomment">/// Constructs a new [LinkAction]

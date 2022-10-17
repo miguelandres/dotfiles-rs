@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"enum":[["KnownDirective",""]],"struct":[["ChosenDirective",""]]};
+window.SIDEBAR_ITEMS = {"enum":[["KnownAction",""],["KnownDirective",""]]};

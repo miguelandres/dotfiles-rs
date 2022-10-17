@@ -106,12 +106,6 @@
 <span id="106">106</span>
 <span id="107">107</span>
 <span id="108">108</span>
-<span id="109">109</span>
-<span id="110">110</span>
-<span id="111">111</span>
-<span id="112">112</span>
-<span id="113">113</span>
-<span id="114">114</span>
 </pre><pre class="rust"><code><span class="comment">// Copyright (c) 2021-2022 Miguel Barreto and others
 //
 // Permission is hereby granted, free of charge, to any person obtaining
@@ -137,18 +131,15 @@
 </span><span class="kw">extern crate </span>strict_yaml_rust;
 
 <span class="kw">use </span><span class="kw">crate</span>::brew::action::BrewAction;
-<span class="kw">use </span>dotfiles_core::action::Action;
 <span class="kw">use </span>dotfiles_core::action::ActionParser;
-<span class="kw">use </span>dotfiles_core::directive::Directive;
 <span class="kw">use </span>dotfiles_core::directive::DirectiveData;
-<span class="kw">use </span>dotfiles_core::directive::HasDirectiveData;
 <span class="kw">use </span>dotfiles_core::error::add_directive_error_prefix;
 <span class="kw">use </span>dotfiles_core::error::DotfilesError;
 <span class="kw">use </span>dotfiles_core::settings::initialize_settings_object;
 <span class="kw">use </span>dotfiles_core::settings::Setting;
 <span class="kw">use </span>dotfiles_core::settings::Settings;
 <span class="kw">use </span>dotfiles_core::yaml_util::<span class="kw-2">*</span>;
-<span class="kw">use </span>dotfiles_core_macros::ActionListDirective;
+<span class="kw">use </span>dotfiles_core_macros::Directive;
 
 <span class="kw">use </span>std::marker::PhantomData;
 <span class="kw">use </span>strict_yaml_rust::StrictYaml;
@@ -174,7 +165,7 @@
 }
 
 <span class="doccomment">/// A directive that can build [BrewAction]s to install formulae, casks
-</span><span class="attribute">#[derive(ActionListDirective)]
+</span><span class="attribute">#[derive(Directive, Clone)]
 </span><span class="kw">pub struct </span>BrewDirective&lt;<span class="lifetime">&#39;a</span>&gt; {
   data: DirectiveData,
   phantom_data: PhantomData&lt;<span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span>DirectiveData&gt;,
@@ -192,9 +183,6 @@
 <span class="kw">impl</span>&lt;<span class="lifetime">&#39;a</span>&gt; ActionParser&lt;<span class="lifetime">&#39;a</span>&gt; <span class="kw">for </span>BrewDirective&lt;<span class="lifetime">&#39;a</span>&gt; {
   <span class="kw">type </span>ActionType = BrewAction&lt;<span class="lifetime">&#39;a</span>&gt;;
 
-  <span class="kw">fn </span>name(<span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span><span class="self">self</span>) -&gt; <span class="kw-2">&amp;</span><span class="lifetime">&#39;static </span>str {
-    <span class="string">&quot;brew&quot;
-  </span>}
   <span class="kw">fn </span>parse_action(
     <span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span><span class="self">self</span>,
     context_settings: <span class="kw-2">&amp;</span>Settings,

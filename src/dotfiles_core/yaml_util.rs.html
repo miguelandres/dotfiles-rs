@@ -959,7 +959,7 @@
 /// # Errors
 /// * [ErrorType::UnexpectedYamlTypeError] if yaml is not of type array
 </span><span class="kw">pub fn </span>parse_as_array(yaml: <span class="kw-2">&amp;</span>StrictYaml) -&gt; <span class="prelude-ty">Result</span>&lt;Vec&lt;StrictYaml&gt;, DotfilesError&gt; {
-  <span class="kw">if let </span>StrictYaml::Array(v) = yaml {
+  <span class="kw">if let </span><span class="prelude-val">Some</span>(v) = yaml.as_vec() {
     <span class="prelude-val">Ok</span>(v.to_owned())
   } <span class="kw">else </span>{
     <span class="prelude-val">Err</span>(DotfilesError::from_wrong_yaml(

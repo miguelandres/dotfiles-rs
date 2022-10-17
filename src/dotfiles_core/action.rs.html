@@ -89,11 +89,6 @@
 <span id="89">89</span>
 <span id="90">90</span>
 <span id="91">91</span>
-<span id="92">92</span>
-<span id="93">93</span>
-<span id="94">94</span>
-<span id="95">95</span>
-<span id="96">96</span>
 </pre><pre class="rust"><code><span class="comment">// Copyright (c) 2021-2022 Miguel Barreto and others
 //
 // Permission is hereby granted, free of charge, to any person obtaining
@@ -134,11 +129,6 @@
 </span><span class="kw">pub trait </span>ActionParser&lt;<span class="lifetime">&#39;a</span>&gt;: HasDirectiveData&lt;<span class="lifetime">&#39;a</span>&gt; {
   <span class="doccomment">/// The action type this object parses
   </span><span class="kw">type </span>ActionType: Action&lt;<span class="lifetime">&#39;a</span>&gt;;
-
-  <span class="doccomment">/// The name of the action this object parses
-  </span><span class="kw">fn </span>name(<span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span><span class="self">self</span>) -&gt; <span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span>str {
-    <span class="self">self</span>.directive_data().name()
-  }
 
   <span class="doccomment">/// Builds a single action of type [ActionParser::ActionType] from StrictYaml tree object
   /// that represents the action&#39;s configuration and a default settings object.

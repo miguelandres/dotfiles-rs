@@ -168,16 +168,6 @@
 <span id="168">168</span>
 <span id="169">169</span>
 <span id="170">170</span>
-<span id="171">171</span>
-<span id="172">172</span>
-<span id="173">173</span>
-<span id="174">174</span>
-<span id="175">175</span>
-<span id="176">176</span>
-<span id="177">177</span>
-<span id="178">178</span>
-<span id="179">179</span>
-<span id="180">180</span>
 </pre><pre class="rust"><code><span class="comment">// Copyright (c) 2021-2022 Miguel Barreto and others
 //
 // Permission is hereby granted, free of charge, to any person obtaining
@@ -204,8 +194,8 @@
 //! defaults.
 
 </span><span class="kw">extern crate </span>strict_yaml_rust;
+
 <span class="kw">use crate</span>::{
-  action::Action,
   error::{DotfilesError, ErrorType},
   settings::{parse_setting, Settings},
   yaml_util::{fold_hash_until_first_err, get_setting_from_context},
@@ -299,10 +289,7 @@
 </span><span class="kw">pub trait </span>HasDirectiveData&lt;<span class="lifetime">&#39;a</span>&gt; {
   <span class="doccomment">/// Returns the directive data for this object
   </span><span class="kw">fn </span>directive_data(<span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span><span class="self">self</span>) -&gt; <span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span>DirectiveData;
-}
 
-<span class="doccomment">/// A parser for action steps, each directive represents a type of Action.
-</span><span class="kw">pub trait </span>Directive&lt;<span class="lifetime">&#39;a</span>&gt;: HasDirectiveData&lt;<span class="lifetime">&#39;a</span>&gt; {
   <span class="doccomment">/// Returns the name of the directive.
   </span><span class="kw">fn </span>name(<span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span><span class="self">self</span>) -&gt; <span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span>str {
     <span class="self">self</span>.directive_data().name()
@@ -312,17 +299,10 @@
   </span><span class="kw">fn </span>defaults(<span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span><span class="self">self</span>) -&gt; <span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span>Settings {
     <span class="self">self</span>.directive_data().defaults()
   }
-  <span class="doccomment">/// Builds a list of actions for this directive from a StrictYaml configuration
-  /// object and a set of default settings.
-  ///
-  /// Returns an Error containing a human readable string in case there
-  /// was an issue building the actions.
-  </span><span class="kw">fn </span>build_action_list(
-    <span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span><span class="self">self</span>,
-    settings: <span class="kw-2">&amp;</span>Settings,
-    yaml: <span class="kw-2">&amp;</span>StrictYaml,
-  ) -&gt; <span class="prelude-ty">Result</span>&lt;Vec&lt;Box&lt;<span class="kw">dyn </span><span class="lifetime">&#39;a </span>+ Action&lt;<span class="lifetime">&#39;a</span>&gt;&gt;&gt;, DotfilesError&gt;;
+}
 
+<span class="doccomment">/// A parser for action steps, each directive represents a type of Action.
+</span><span class="kw">pub trait </span>Directive&lt;<span class="lifetime">&#39;a</span>&gt;: HasDirectiveData&lt;<span class="lifetime">&#39;a</span>&gt; {
   <span class="doccomment">/// Parse a particular setting with its correct type from yaml, fall back to context settings or
   /// directive defaults if not found in yaml. Returns error if there is any kind of parsing or
   /// typing error

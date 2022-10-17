@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"struct":[["LinkAction","[LinkAction] creates a new symlink `path` that points to `target`."]]};
+window.SIDEBAR_ITEMS = {"struct":[["LinkAction","[LinkAction] creates a new symlink `path` that points to `target`."]],"type":[["FakeLinkAction","A Fake create action that works on a fake test filesystem."],["NativeLinkAction","A native create action that works on the real filesystem."]]};

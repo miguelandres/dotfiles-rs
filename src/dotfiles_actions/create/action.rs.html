@@ -101,6 +101,13 @@
 <span id="101">101</span>
 <span id="102">102</span>
 <span id="103">103</span>
+<span id="104">104</span>
+<span id="105">105</span>
+<span id="106">106</span>
+<span id="107">107</span>
+<span id="108">108</span>
+<span id="109">109</span>
+<span id="110">110</span>
 </pre><pre class="rust"><code><span class="comment">// Copyright (c) 2021-2022 Miguel Barreto and others
 //
 // Permission is hereby granted, free of charge, to any person obtaining
@@ -130,7 +137,9 @@
 <span class="kw">use </span>derivative::Derivative;
 <span class="kw">use </span>dotfiles_core::action::Action;
 <span class="kw">use </span>dotfiles_core::error::DotfilesError;
+<span class="kw">use </span>filesystem::FakeFileSystem;
 <span class="kw">use </span>filesystem::FileSystem;
+<span class="kw">use </span>filesystem::OsFileSystem;
 <span class="kw">use </span>log::error;
 <span class="kw">use </span>log::info;
 <span class="kw">use </span>std::io;
@@ -154,6 +163,11 @@
   /// the `-p` flag in `mkdir`.
   </span>force: bool,
 }
+
+<span class="doccomment">/// A native create action that works on the real filesystem.
+</span><span class="kw">pub type </span>NativeCreateAction&lt;<span class="lifetime">&#39;a</span>&gt; = CreateAction&lt;<span class="lifetime">&#39;a</span>, OsFileSystem&gt;;
+<span class="doccomment">/// A Fake create action that works on a fake test filesystem.
+</span><span class="kw">pub type </span>FakeCreateAction&lt;<span class="lifetime">&#39;a</span>&gt; = CreateAction&lt;<span class="lifetime">&#39;a</span>, FakeFileSystem&gt;;
 
 <span class="kw">impl</span>&lt;<span class="lifetime">&#39;a</span>, F: FileSystem&gt; CreateAction&lt;<span class="lifetime">&#39;a</span>, F&gt; {
   <span class="doccomment">/// Constructs a new instance of CreateAction

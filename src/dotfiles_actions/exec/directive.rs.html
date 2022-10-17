@@ -91,10 +91,6 @@
 <span id="91">91</span>
 <span id="92">92</span>
 <span id="93">93</span>
-<span id="94">94</span>
-<span id="95">95</span>
-<span id="96">96</span>
-<span id="97">97</span>
 </pre><pre class="rust"><code><span class="comment">// Copyright (c) 2021-2022 Miguel Barreto and others
 //
 // Permission is hereby granted, free of charge, to any person obtaining
@@ -118,15 +114,14 @@
 
 </span><span class="doccomment">//! This module defines [ExecDirective] which represents commands to execute in a shell.
 
-</span><span class="kw">use </span>std::{collections, marker::PhantomData};
-
-<span class="kw">use </span>dotfiles_core::directive::HasDirectiveData;
-<span class="kw">use </span>dotfiles_core_macros::ActionListDirective;
+</span><span class="kw">use </span>dotfiles_core::directive::HasDirectiveData;
+<span class="kw">use </span>dotfiles_core_macros::Directive;
+<span class="kw">use </span>std::{collections::HashMap, marker::PhantomData};
 <span class="kw">use </span>strict_yaml_rust::StrictYaml;
 
 <span class="kw">use </span>dotfiles_core::{
   action::ActionParser, directive::DirectiveData, error::DotfilesError,
-  settings::initialize_settings_object, yaml_util, Action, Directive, Setting, Settings,
+  settings::initialize_settings_object, yaml_util, Setting,
 };
 
 <span class="kw">use </span><span class="kw">crate</span>::exec::action::ExecAction;
@@ -149,7 +144,7 @@
 }
 
 <span class="doccomment">/// A directive that can build [ExecAction]s to run commands
-</span><span class="attribute">#[derive(ActionListDirective)]
+</span><span class="attribute">#[derive(Directive, Clone)]
 </span><span class="kw">pub struct </span>ExecDirective&lt;<span class="lifetime">&#39;a</span>&gt; {
   data: DirectiveData,
   phantom_data: PhantomData&lt;<span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span>DirectiveData&gt;,
@@ -166,12 +161,9 @@
 
 <span class="kw">impl</span>&lt;<span class="lifetime">&#39;a</span>&gt; ActionParser&lt;<span class="lifetime">&#39;a</span>&gt; <span class="kw">for </span>ExecDirective&lt;<span class="lifetime">&#39;a</span>&gt; {
   <span class="kw">type </span>ActionType = ExecAction&lt;<span class="lifetime">&#39;a</span>&gt;;
-  <span class="kw">fn </span>name(<span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span><span class="self">self</span>) -&gt; <span class="kw-2">&amp;</span><span class="lifetime">&#39;static </span>str {
-    <span class="string">&quot;exec&quot;
-  </span>}
   <span class="kw">fn </span>parse_action(
     <span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span><span class="self">self</span>,
-    settings: <span class="kw-2">&amp;</span>collections::HashMap&lt;String, Setting&gt;,
+    settings: <span class="kw-2">&amp;</span>HashMap&lt;String, Setting&gt;,
     yaml: <span class="kw-2">&amp;</span>StrictYaml,
   ) -&gt; <span class="prelude-ty">Result</span>&lt;ExecAction, DotfilesError&gt; {
     <span class="prelude-val">Ok</span>(ExecAction::new(
