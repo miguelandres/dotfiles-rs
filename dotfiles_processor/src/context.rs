@@ -22,7 +22,7 @@
 use std::{collections::HashMap, convert::TryFrom, path::PathBuf};
 
 use dotfiles_core::{
-  error::DotfilesError,
+  error::{process_until_first_err, DotfilesError},
   yaml_util::{fold_hash_until_first_err, map_yaml_array, read_yaml_file},
   Setting, Settings,
 };
@@ -183,5 +183,9 @@ impl Context {
     .flatten()
     .collect();
     Ok(all_actions)
+  }
+
+  pub fn run_actions(&mut self) -> Result<(), DotfilesError> {
+    process_until_first_err(self.actions.iter(), |action| action.execute())
   }
 }

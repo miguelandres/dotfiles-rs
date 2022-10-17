@@ -1,0 +1,5 @@
+steps:
+  - create:
+      - test_dir
+  - link:
+      - test_dir/README.md: README.md

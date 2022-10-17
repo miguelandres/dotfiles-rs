@@ -45,7 +45,8 @@ pub fn process(flag_data: &FlagData) -> Result<(), DotfilesError> {
     }
     Command::ApplyConfig { file } => {
       let mut ctx = Context::from(file.to_string());
-      ctx.parse_file()
+      ctx.parse_file()?;
+      ctx.run_actions()
     }
   }
 }
