@@ -20,12 +20,12 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 use dotfiles_core::{settings::parse_setting, Setting};
-use yaml_rust::Yaml;
+use strict_yaml_rust::StrictYaml;
 
 #[test]
 fn parse_boolean_setting_succeeds() {
   let setting_type = Setting::Boolean(false);
-  let yaml = Yaml::Boolean(true);
+  let yaml = StrictYaml::String("true".into());
   assert_eq!(
     Setting::Boolean(true),
     parse_setting(&setting_type, &yaml).unwrap()
@@ -34,11 +34,11 @@ fn parse_boolean_setting_succeeds() {
 #[test]
 fn parse_boolean_setting_fails_with_wrong_type() {
   let setting_type = Setting::Boolean(false);
-  let yaml = Yaml::String("true".to_owned());
+  let yaml = StrictYaml::String("asd".to_owned());
   assert!(parse_setting(&setting_type, &yaml)
     .unwrap_err()
     .is_wrong_yaml());
-  let yaml = Yaml::Integer(14);
+  let yaml = StrictYaml::String("12".to_owned());
   assert!(parse_setting(&setting_type, &yaml)
     .unwrap_err()
     .is_wrong_yaml());
@@ -48,7 +48,7 @@ fn parse_boolean_setting_fails_with_wrong_type() {
 fn parse_string_setting_succeeds() {
   let setting_type = Setting::String(String::new());
   let text = "hola";
-  let yaml = Yaml::String(text.to_owned());
+  let yaml = StrictYaml::String(text.to_owned());
   assert_eq!(
     Setting::String(text.to_owned()),
     parse_setting(&setting_type, &yaml).unwrap()
@@ -57,7 +57,7 @@ fn parse_string_setting_succeeds() {
 #[test]
 fn parse_string_setting_fails_with_wrong_type() {
   let setting_type = Setting::String(String::new());
-  let yaml = Yaml::BadValue;
+  let yaml = StrictYaml::BadValue;
   assert!(parse_setting(&setting_type, &yaml)
     .unwrap_err()
     .is_wrong_yaml());
@@ -67,7 +67,7 @@ fn parse_string_setting_fails_with_wrong_type() {
 fn parse_int_setting_succeeds() {
   let setting_type = Setting::Integer(0);
   let number = 14;
-  let yaml = Yaml::Integer(number);
+  let yaml = StrictYaml::String(number.to_string());
   assert_eq!(
     Setting::Integer(number),
     parse_setting(&setting_type, &yaml).unwrap()
@@ -76,11 +76,11 @@ fn parse_int_setting_succeeds() {
 #[test]
 fn parse_int_setting_fails_with_wrong_type() {
   let setting_type = Setting::Integer(0);
-  let yaml = Yaml::Boolean(false);
+  let yaml = StrictYaml::String("false".into());
   assert!(parse_setting(&setting_type, &yaml)
     .unwrap_err()
     .is_wrong_yaml());
-  let yaml = Yaml::String("".to_owned());
+  let yaml = StrictYaml::String("".to_owned());
   assert!(parse_setting(&setting_type, &yaml)
     .unwrap_err()
     .is_wrong_yaml());

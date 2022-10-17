@@ -21,10 +21,10 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-extern crate yaml_rust;
+extern crate strict_yaml_rust;
 
 use dotfiles_core::{error::DotfilesError, yaml_util::*};
-use yaml_rust::YamlLoader;
+use strict_yaml_rust::StrictYamlLoader;
 
 const YAML_STRING: &str = "
 - create:
@@ -39,7 +39,7 @@ const YAML_HASH_WITHOUT_EXPECTED_KEY: &str = "
 
 #[test]
 fn gets_bare_string_successfully() -> Result<(), DotfilesError> {
-  let docs = YamlLoader::load_from_str(YAML_STRING).unwrap();
+  let docs = StrictYamlLoader::load_from_str(YAML_STRING).unwrap();
   let doc = &docs[0];
   let list = &doc[0]["create"][0];
   assert_eq!(
@@ -54,7 +54,7 @@ fn gets_bare_string_successfully() -> Result<(), DotfilesError> {
 }
 #[test]
 fn gets_string_in_hash_successfully() -> Result<(), DotfilesError> {
-  let docs = YamlLoader::load_from_str(YAML_HASH).unwrap();
+  let docs = StrictYamlLoader::load_from_str(YAML_HASH).unwrap();
   let doc = &docs[0];
   let list = &doc[0]["create"][0];
   assert_eq!(
@@ -66,7 +66,7 @@ fn gets_string_in_hash_successfully() -> Result<(), DotfilesError> {
 #[test]
 #[should_panic]
 fn fails_to_get_string_in_hash_when_no_key_was_provided() {
-  let docs = YamlLoader::load_from_str(YAML_HASH).unwrap();
+  let docs = StrictYamlLoader::load_from_str(YAML_HASH).unwrap();
   let doc = &docs[0];
   let list = &doc[0]["create"][0];
   get_string_content_or_keyed_value(list, None).unwrap();
@@ -75,7 +75,7 @@ fn fails_to_get_string_in_hash_when_no_key_was_provided() {
 #[test]
 #[should_panic]
 fn fails_to_get_string_in_hash_when_without_correct_key() {
-  let docs = YamlLoader::load_from_str(YAML_HASH_WITHOUT_EXPECTED_KEY).unwrap();
+  let docs = StrictYamlLoader::load_from_str(YAML_HASH_WITHOUT_EXPECTED_KEY).unwrap();
   let doc = &docs[0];
   let list = &doc[0]["create"][0];
   get_string_content_or_keyed_value(list, None).unwrap();

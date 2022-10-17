@@ -10,4 +10,4 @@ dotfiles_core = {path = "../dotfiles_core"}
 dotfiles_actions = {path = "../dotfiles_actions"}
 log = "0.4.14"
 itertools = "0.10.1"
-yaml-rust = "0.4.5"
+strict-yaml-rust = "0.1.2"

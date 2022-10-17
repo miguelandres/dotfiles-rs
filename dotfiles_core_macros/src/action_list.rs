@@ -40,7 +40,7 @@ pub fn expand_action_list_directive(input: DeriveInput) -> TokenStream {
         fn build_action_list(
           &'a self,
           settings: &Settings,
-          yaml: &Yaml,
+          yaml: &StrictYaml,
         ) -> Result<Vec<Box<(dyn dotfiles_core::action::Action<'a> + 'a)>>, dotfiles_core::error::DotfilesError> {
           self.parse_action_list(settings, yaml).map(|vec| {
             let result: Vec<Box<(dyn Action<'a> + 'a)>> = vec

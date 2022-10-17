@@ -22,11 +22,11 @@
 use std::{collections::HashMap, path::PathBuf};
 
 use dotfiles_core::{
-  error::{DotfilesError, ErrorType},
+  error::DotfilesError,
   yaml_util::{process_value_from_yaml_hash, process_yaml_hash_until_first_err, read_yaml_file},
-  Settings,
+  Setting, Settings,
 };
-use yaml_rust::Yaml;
+use strict_yaml_rust::StrictYaml;
 
 use crate::chosen_directive::ChosenDirective;
 
@@ -42,8 +42,9 @@ pub struct Context {
   file_name: String,
 }
 
-impl<'a> From<String> for Context {
+impl From<String> for Context {
   fn from(file_name: String) -> Self {
+    log::debug!("creating context for {:?}", file_name);
     Self {
       defaults: Default::default(),
       file_name,
@@ -52,6 +53,13 @@ impl<'a> From<String> for Context {
 }
 
 impl<'a> Context {
+  pub fn get_default(&self, dir: &str, setting: &str) -> Option<&Setting> {
+    self
+      .defaults
+      .get(dir)
+      .and_then(|settings| settings.get(setting))
+  }
+
   pub fn parse_file(&mut self) -> Result<(), DotfilesError> {
     {
       let path = PathBuf::from(self.file_name.clone());
@@ -62,9 +70,10 @@ impl<'a> Context {
         })
       } else {
         Err(DotfilesError::from_wrong_yaml(
-          "Yaml file root is expected to be a hash that contains defaults and steps".to_owned(),
-          Yaml::Null,
-          Yaml::Hash(Default::default()),
+          "StrictYaml file root is expected to be a hash that contains defaults and steps"
+            .to_owned(),
+          StrictYaml::BadValue,
+          StrictYaml::Hash(Default::default()),
         ))
       }
     }
@@ -74,7 +83,7 @@ impl<'a> Context {
     })
   }
 
-  /// Adds defaults to the context configuration from the passed Yaml configuration.
+  /// Adds defaults to the context configuration from the passed StrictYaml configuration.
   ///
   /// It may fail for several reasons:
   ///
@@ -82,33 +91,22 @@ impl<'a> Context {
   ///   - In case the configuration mentions a directive that doesn't exist
   ///   - A directiveis mentioned more than once.
   /// * [ErrorType::UnexpectedYamlTypeError]:
-  ///   - The Yaml passed to this function is not a Hash.
+  ///   - The StrictYaml passed to this function is not a Hash.
   ///   - The hash contains keys that are not Strings.
-  ///   - The Yaml contains values that are not Hashes of Strings to settings
-  ///   - The Yaml type for a particular setting does not match its expected data type.
-  fn add_defaults(&'a mut self, yaml: &Yaml) -> Result<(), DotfilesError> {
+  ///   - The StrictYaml contains values that are not Hashes of Strings to settings
+  ///   - The StrictYaml type for a particular setting does not match its expected data type.
+  fn add_defaults(&'a mut self, yaml: &StrictYaml) -> Result<(), DotfilesError> {
     process_yaml_hash_until_first_err(yaml, |key, yaml_val| {
       let (directive_name, defaults) = self.parse_directive_defaults_for_yaml(&key, yaml_val)?;
-      self
-        .defaults
-        .try_insert(directive_name.clone(), defaults)
-        .map_or(
-          Err(DotfilesError::from(
-            format!(
-              "Defaults contain multiple configurations for the same directive {}",
-              &directive_name
-            ),
-            ErrorType::InconsistentConfigurationError,
-          )),
-          |_| Ok(()),
-        )
+      self.defaults.insert(directive_name, defaults);
+      Ok(())
     })
   }
 
   fn parse_directive_defaults_for_yaml(
     &'a mut self,
     directive_name: &str,
-    defaults: &Yaml,
+    defaults: &StrictYaml,
   ) -> Result<(String, Settings), DotfilesError> {
     let directive = ChosenDirective::from(directive_name);
     directive.parse_context_defaults(defaults)

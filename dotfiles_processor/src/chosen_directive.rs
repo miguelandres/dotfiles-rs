@@ -71,7 +71,7 @@ impl<'a> ChosenDirective<'a> {
 
   pub fn parse_context_defaults(
     &self,
-    defaults: &yaml_rust::Yaml,
+    defaults: &strict_yaml_rust::StrictYaml,
   ) -> Result<(String, Settings), DotfilesError> {
     if let Some(dir) = &self.chosen {
       Ok((

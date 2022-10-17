@@ -26,10 +26,10 @@ use std::fmt::Formatter;
 use getset::Getters;
 use itertools::fold;
 use std::fmt::Display;
+use strict_yaml_rust::ScanError;
+use strict_yaml_rust::StrictYaml;
 use subprocess::ExitStatus;
 use subprocess::PopenError;
-use yaml_rust::ScanError;
-use yaml_rust::Yaml;
 
 use crate::Directive;
 
@@ -101,17 +101,17 @@ pub enum ErrorType {
     /// Name of the field missing in the configuration
     missing_field: String,
   },
-  /// An error that occurred while parsing the Yaml file
+  /// An error that occurred while parsing the StrictYaml file
   YamlParseError {
     /// The underlying scan error
     scan_error: ScanError,
   },
-  /// Received an Yaml object of an unexpected type
+  /// Received an StrictYaml object of an unexpected type
   UnexpectedYamlTypeError {
     /// What we got instead of the expected type.
-    encountered: Yaml,
+    encountered: StrictYaml,
     /// An example of what we expected.
-    expected: Yaml,
+    expected: StrictYaml,
   },
   /// A core logic error for Dotfiles-rs
   CoreError,
@@ -162,23 +162,30 @@ impl DotfilesError {
 
   /// Returns whether the error is a wrong yaml type.
   pub fn is_wrong_yaml(&self) -> bool {
-    if let ErrorType::UnexpectedYamlTypeError {
-      encountered: _,
-      expected: _,
-    } = &self.error_type
-    {
-      true
-    } else {
-      false
-    }
+    matches!(
+      &self.error_type,
+      ErrorType::UnexpectedYamlTypeError {
+        encountered: _,
+        expected: _,
+      }
+    )
+  }
+
+  /// Returns whether the error is a wrong yaml type.
+  pub fn is_yaml_parse_error(&self) -> bool {
+    matches!(
+      &self.error_type,
+      ErrorType::YamlParseError { scan_error: _ }
+    )
+  }
+
+  /// Returns whether the error is an Inconsistent Config.
+  pub fn is_inconsistent_config(&self) -> bool {
+    matches!(&self.error_type, ErrorType::InconsistentConfigurationError)
   }
   /// Returns whether the error is a Fs error.
-  pub fn is_io_error(&self) -> bool {
-    if let ErrorType::FileSystemError { fs_error: _ } = &self.error_type {
-      true
-    } else {
-      false
-    }
+  pub fn is_fs_error(&self) -> bool {
+    matches!(&self.error_type, ErrorType::FileSystemError { fs_error: _ })
   }
 
   /// Creates a new Dotfiles error with the given message and error type
@@ -190,7 +197,11 @@ impl DotfilesError {
   }
 
   /// Creates a new Dotfiles error with the given message and error type
-  pub fn from_wrong_yaml(message: String, wrong_yaml: Yaml, expected_type: Yaml) -> Self {
+  pub fn from_wrong_yaml(
+    message: String,
+    wrong_yaml: StrictYaml,
+    expected_type: StrictYaml,
+  ) -> Self {
     DotfilesError {
       message,
       error_type: ErrorType::UnexpectedYamlTypeError {

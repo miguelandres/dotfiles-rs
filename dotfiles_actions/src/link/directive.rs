@@ -21,7 +21,7 @@
 
 //! This module defines [LinkDirective].
 
-extern crate yaml_rust;
+extern crate strict_yaml_rust;
 
 use crate::filesystem::FileSystemDirective;
 use crate::link::action::LinkAction;
@@ -43,7 +43,7 @@ use filesystem::OsFileSystem;
 use filesystem::UnixFileSystem;
 use std::marker::PhantomData;
 
-use yaml_rust::Yaml;
+use strict_yaml_rust::StrictYaml;
 
 /// Name of the link directive
 pub const DIRECTIVE_NAME: &str = "link";
@@ -134,7 +134,7 @@ impl<'a, F: FileSystem + UnixFileSystem + Default> LinkDirective<'a, F> {
   fn parse_full_action(
     &'a self,
     context_settings: &Settings,
-    yaml: &Yaml,
+    yaml: &StrictYaml,
   ) -> Result<LinkAction<'a, F>, DotfilesError> {
     let path = get_string_setting_from_yaml_or_context(
       PATH_SETTING,
@@ -177,12 +177,12 @@ impl<'a, F: FileSystem + UnixFileSystem + Default> LinkDirective<'a, F> {
   pub fn parse_shortened_action(
     &'a self,
     context_settings: &Settings,
-    yaml: &Yaml,
+    yaml: &StrictYaml,
   ) -> Result<LinkAction<'a, F>, DotfilesError> {
-    if let Yaml::Hash(hash) = yaml {
+    if let StrictYaml::Hash(hash) = yaml {
       match hash.len() {
         1 => {
-          if let (Yaml::String(path), Yaml::String(target)) = hash.front().unwrap() {
+          if let (StrictYaml::String(path), StrictYaml::String(target)) = hash.front().unwrap() {
             Ok(LinkAction::<'a, F>::new(
               &self.fs,
               path.clone(),
@@ -192,14 +192,14 @@ impl<'a, F: FileSystem + UnixFileSystem + Default> LinkDirective<'a, F> {
             ))
           } else {
             Err(DotfilesError::from_wrong_yaml(
-                        "Yaml passed to configure a short Link action is not a hash of string to string, cant parse".into(),
-                        yaml.to_owned(), Yaml::Hash(Default::default())))
+                        "StrictYaml passed to configure a short Link action is not a hash of string to string, cant parse".into(),
+                        yaml.to_owned(), StrictYaml::Hash(Default::default())))
           }
         }
 
         x => Err(DotfilesError::from(
           format!(
-            "Yaml passed to configure a short Link action is a hash with {} values, must be just 1",
+            "StrictYaml passed to configure a short Link action is a hash with {} values, must be just 1",
             x
           ),
           ErrorType::InconsistentConfigurationError,
@@ -207,9 +207,9 @@ impl<'a, F: FileSystem + UnixFileSystem + Default> LinkDirective<'a, F> {
       }
     } else {
       Err(DotfilesError::from_wrong_yaml(
-        "Yaml passed to configure a Link action is not a Hash".into(),
+        "StrictYaml passed to configure a Link action is not a Hash".into(),
         yaml.to_owned(),
-        Yaml::Hash(Default::default()),
+        StrictYaml::Hash(Default::default()),
       ))
     }
   }
@@ -221,7 +221,7 @@ impl<'a, F: FileSystem + UnixFileSystem + Default> ActionParser<'a> for LinkDire
   fn parse_action(
     &'a self,
     settings: &Settings,
-    yaml: &Yaml,
+    yaml: &StrictYaml,
   ) -> Result<LinkAction<'a, F>, DotfilesError> {
     self
       .parse_shortened_action(settings, yaml)

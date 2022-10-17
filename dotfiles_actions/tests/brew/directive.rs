@@ -34,7 +34,7 @@ fn brew_directive_parsed() -> Result<(), DotfilesError> {
     .unwrap();
   let directive = BrewDirective::default();
   let action = directive.parse_action(&default_settings, &yaml)?;
-  assert_eq!(action.force_casks(), true);
+  assert!(action.force_casks());
   assert_eq!(
     action.taps(),
     Vec::from([

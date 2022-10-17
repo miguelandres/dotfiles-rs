@@ -21,11 +21,11 @@
 
 //! This module contains the definition of a setting and code to parse them.
 
-extern crate yaml_rust;
+extern crate strict_yaml_rust;
 
 use std::collections::HashMap;
 
-use yaml_rust::Yaml;
+use strict_yaml_rust::StrictYaml;
 
 use crate::{
   error::DotfilesError,
@@ -55,8 +55,8 @@ pub fn initialize_settings_object(settings: &[(String, Setting)]) -> Settings {
   settings_object
 }
 
-/// Parse a setting from Yaml given a particular setting type.
-pub fn parse_setting(setting_type: &Setting, yaml: &Yaml) -> Result<Setting, DotfilesError> {
+/// Parse a setting from StrictYaml given a particular setting type.
+pub fn parse_setting(setting_type: &Setting, yaml: &StrictYaml) -> Result<Setting, DotfilesError> {
   match setting_type {
     Setting::String(_) => Ok(Setting::String(parse_as_string(yaml)?)),
     Setting::Boolean(_) => Ok(Setting::Boolean(parse_as_boolean(yaml)?)),

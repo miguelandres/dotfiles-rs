@@ -27,7 +27,7 @@ use dotfiles_core::{
   settings::initialize_settings_object,
   Directive, Setting,
 };
-use yaml_rust::Yaml;
+use strict_yaml_rust::StrictYaml;
 
 const DIRECTIVE_NAME: &str = "parse_test";
 const BOOLEAN_SETTING: &str = "boolean";
@@ -37,7 +37,7 @@ const INT_SETTING: &str = "int";
 #[test]
 fn directive_fails_unknown_setting() {
   let directive = ParseDefaultsTestDirective::new();
-  let yaml = Yaml::String("some".into());
+  let yaml = StrictYaml::String("some".into());
   assert_eq!(
     discriminant(&ErrorType::InconsistentConfigurationError),
     discriminant(
@@ -53,7 +53,7 @@ fn directive_fails_unknown_setting() {
 #[test]
 fn directive_fails_parsing_setting_with_wrong_type() {
   let directive = ParseDefaultsTestDirective::new();
-  let yaml = Yaml::String("some".into());
+  let yaml = StrictYaml::String("some".into());
   assert!(directive
     .directive_data()
     .parse_setting_value(BOOLEAN_SETTING, &yaml)
@@ -64,7 +64,7 @@ fn directive_fails_parsing_setting_with_wrong_type() {
 #[test]
 fn directive_fails_parsing_context_defaults_when_not_hash() {
   let directive = ParseDefaultsTestDirective::new();
-  let yaml = Yaml::String("some".into());
+  let yaml = StrictYaml::String("some".into());
   assert!(directive
     .directive_data()
     .parse_context_defaults(&yaml)
@@ -75,9 +75,9 @@ fn directive_fails_parsing_context_defaults_when_not_hash() {
 #[test]
 fn directive_fails_parsing_context_defaults_hash_not_string_keyed() {
   let directive = ParseDefaultsTestDirective::new();
-  let mut map: yaml_rust::yaml::Hash = Default::default();
-  map.insert(Yaml::BadValue, Yaml::from_str("1"));
-  let yaml = Yaml::Hash(map);
+  let mut map: strict_yaml_rust::strict_yaml::Hash = Default::default();
+  map.insert(StrictYaml::BadValue, StrictYaml::from_str("1"));
+  let yaml = StrictYaml::Hash(map);
   assert!(directive
     .directive_data()
     .parse_context_defaults(&yaml)
@@ -88,14 +88,17 @@ fn directive_fails_parsing_context_defaults_hash_not_string_keyed() {
 #[test]
 fn directive_succeeds_parsing_context_defaults() {
   let directive = ParseDefaultsTestDirective::new();
-  let mut map: yaml_rust::yaml::Hash = Default::default();
+  let mut map: strict_yaml_rust::strict_yaml::Hash = Default::default();
   map.insert(
-    Yaml::from_str(STRING_SETTING),
-    Yaml::from_str(STRING_SETTING),
+    StrictYaml::from_str(STRING_SETTING),
+    StrictYaml::from_str(STRING_SETTING),
   );
-  map.insert(Yaml::from_str(BOOLEAN_SETTING), Yaml::from_str("true"));
-  map.insert(Yaml::from_str(INT_SETTING), Yaml::from_str("1"));
-  let yaml = Yaml::Hash(map);
+  map.insert(
+    StrictYaml::from_str(BOOLEAN_SETTING),
+    StrictYaml::from_str("true"),
+  );
+  map.insert(StrictYaml::from_str(INT_SETTING), StrictYaml::from_str("1"));
+  let yaml = StrictYaml::Hash(map);
   let settings = directive
     .directive_data()
     .parse_context_defaults(&yaml)
@@ -143,7 +146,7 @@ impl<'a> Directive<'a> for ParseDefaultsTestDirective<'a> {
   fn build_action_list(
     &'a self,
     _settings: &dotfiles_core::Settings,
-    _yaml: &yaml_rust::Yaml,
+    _yaml: &strict_yaml_rust::StrictYaml,
   ) -> Result<Vec<Box<dyn 'a + dotfiles_core::Action<'a>>>, dotfiles_core::error::DotfilesError> {
     todo!()
   }

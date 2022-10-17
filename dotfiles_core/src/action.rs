@@ -21,7 +21,7 @@
 
 //! This module contains the base trait for all [Action]s.
 
-use yaml_rust::Yaml;
+use strict_yaml_rust::StrictYaml;
 
 use crate::{directive::HasDirectiveData, error::DotfilesError, Settings};
 
@@ -34,7 +34,7 @@ pub trait Action<'a> {
   fn execute(&self) -> Result<(), DotfilesError>;
 }
 
-/// Trait to parse a specific action type from Yaml.
+/// Trait to parse a specific action type from StrictYaml.
 pub trait ActionParser<'a>: HasDirectiveData<'a> {
   /// The action type this object parses
   type ActionType: Action<'a>;
@@ -44,7 +44,7 @@ pub trait ActionParser<'a>: HasDirectiveData<'a> {
     self.directive_data().name()
   }
 
-  /// Builds a single action of type [ActionParser::ActionType] from Yaml tree object
+  /// Builds a single action of type [ActionParser::ActionType] from StrictYaml tree object
   /// that represents the action's configuration and a default settings object.
   ///
   /// Returns an Error containing a human readable string in case there
@@ -52,23 +52,23 @@ pub trait ActionParser<'a>: HasDirectiveData<'a> {
   fn parse_action(
     &'a self,
     settings: &Settings,
-    yaml: &Yaml,
+    yaml: &StrictYaml,
   ) -> Result<Self::ActionType, DotfilesError>;
 
-  /// Builds a list of actions of type [ActionParser::ActionType] from Yaml tree object
+  /// Builds a list of actions of type [ActionParser::ActionType] from StrictYaml tree object
   /// that represents the actions' configurations and a default settings object.
   ///
   /// Returns an Error containing a human readable string in case there
   /// was an issue building the action.
   ///
-  /// The default implementation assumes there must be Yaml array whose items each
+  /// The default implementation assumes there must be StrictYaml array whose items each
   /// represent an individual action
   fn parse_action_list(
     &'a self,
     settings: &Settings,
-    yaml: &Yaml,
+    yaml: &StrictYaml,
   ) -> Result<Vec<Self::ActionType>, DotfilesError> {
-    if let Yaml::Array(arr) = yaml {
+    if let StrictYaml::Array(arr) = yaml {
       let list: Vec<Result<Self::ActionType, DotfilesError>> = arr
         .iter()
         .map(|yaml_item| self.parse_action(settings, yaml_item))
@@ -89,7 +89,7 @@ pub trait ActionParser<'a>: HasDirectiveData<'a> {
           self.name()
         ),
         yaml.clone(),
-        Yaml::Array(vec![]),
+        StrictYaml::Array(vec![]),
       ))
     }
   }
