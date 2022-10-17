@@ -39,11 +39,6 @@ pub trait ActionParser<'a>: HasDirectiveData<'a> {
   /// The action type this object parses
   type ActionType: Action<'a>;
 
-  /// The name of the action this object parses
-  fn name(&'a self) -> &'a str {
-    self.directive_data().name()
-  }
-
   /// Builds a single action of type [ActionParser::ActionType] from StrictYaml tree object
   /// that represents the action's configuration and a default settings object.
   ///

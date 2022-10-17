@@ -25,24 +25,21 @@ extern crate strict_yaml_rust;
 
 use crate::filesystem::FileSystemDirective;
 use crate::link::action::LinkAction;
-use dotfiles_core::action::Action;
 use dotfiles_core::action::ActionParser;
 use dotfiles_core::directive::Directive;
 use dotfiles_core::directive::DirectiveData;
-use dotfiles_core::directive::HasDirectiveData;
 use dotfiles_core::error::DotfilesError;
 use dotfiles_core::error::ErrorType;
 use dotfiles_core::settings::initialize_settings_object;
 use dotfiles_core::settings::Setting;
 use dotfiles_core::settings::Settings;
 use dotfiles_core::yaml_util::*;
-use dotfiles_core_macros::ActionListDirective;
+use dotfiles_core_macros::Directive;
 use filesystem::FakeFileSystem;
 use filesystem::FileSystem;
 use filesystem::OsFileSystem;
 use filesystem::UnixFileSystem;
 use std::marker::PhantomData;
-
 use strict_yaml_rust::StrictYaml;
 
 /// Name of the link directive
@@ -91,7 +88,7 @@ pub fn init_directive_data() -> DirectiveData {
 
 /// A directive that can build [LinkAction]s to create directories
 /// in the filesystem.
-#[derive(ActionListDirective)]
+#[derive(Directive, Clone)]
 pub struct LinkDirective<'a, F: FileSystem + UnixFileSystem + Default> {
   fs: F,
   data: DirectiveData,

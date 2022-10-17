@@ -27,7 +27,9 @@ extern crate strict_yaml_rust;
 use derivative::Derivative;
 use dotfiles_core::action::Action;
 use dotfiles_core::error::DotfilesError;
+use filesystem::FakeFileSystem;
 use filesystem::FileSystem;
+use filesystem::OsFileSystem;
 use log::error;
 use log::info;
 use std::io;
@@ -51,6 +53,11 @@ pub struct CreateAction<'a, F: FileSystem> {
   /// the `-p` flag in `mkdir`.
   force: bool,
 }
+
+/// A native create action that works on the real filesystem.
+pub type NativeCreateAction<'a> = CreateAction<'a, OsFileSystem>;
+/// A Fake create action that works on a fake test filesystem.
+pub type FakeCreateAction<'a> = CreateAction<'a, FakeFileSystem>;
 
 impl<'a, F: FileSystem> CreateAction<'a, F> {
   /// Constructs a new instance of CreateAction

@@ -23,7 +23,7 @@
 
 use crate::utils::check_action_fail;
 use crate::utils::setup_fs;
-use dotfiles_actions::link::action::LinkAction;
+use dotfiles_actions::link::action::FakeLinkAction;
 use dotfiles_actions::link::directive::init_directive_data;
 use dotfiles_actions::link::directive::CREATE_PARENT_DIRS_SETTING;
 use dotfiles_actions::link::directive::FORCE_SETTING;
@@ -48,7 +48,7 @@ fn link_fails_on_nonexistent_path() -> Result<(), DotfilesError> {
   setup_fs(&fs).expect("Failure setting up FakeFileSystem");
   fs.create_dir("/home/user/target").unwrap();
   let settings = Settings::new();
-  let action = LinkAction::new(
+  let action = FakeLinkAction::new(
     &fs,
     String::from("/home/user/nonexistent_path/path"),
     String::from("/home/user/target"),
@@ -74,7 +74,7 @@ fn link_succeeds_on_nonexistent_path_with_create_parent_dirs() -> Result<(), Dot
     CREATE_PARENT_DIRS_SETTING.to_string(),
     Setting::Boolean(true),
   )]);
-  let action = LinkAction::new(
+  let action = FakeLinkAction::new(
     &fs,
     String::from("/home/user/nonexistent_path/path"),
     String::from("/home/user/target"),
@@ -91,7 +91,7 @@ fn link_fails_on_readonly_dir() -> Result<(), DotfilesError> {
   fs.create_dir("/home/user/readonly").unwrap();
   fs.set_readonly("/home/user/readonly", true).unwrap();
   let settings = Settings::new();
-  let action = LinkAction::new(
+  let action = FakeLinkAction::new(
     &fs,
     String::from("/home/user/readonly/some"),
     String::from("/home/user"),
@@ -112,7 +112,7 @@ fn link_fails_on_nonexistent_target() -> Result<(), DotfilesError> {
   let fs = FakeFileSystem::new();
   setup_fs(&fs).expect("Failure setting up FakeFileSystem");
   let settings = Settings::new();
-  let action = LinkAction::new(
+  let action = FakeLinkAction::new(
     &fs,
     String::from("/home/user/path"),
     String::from("/home/user/target"),
@@ -138,7 +138,7 @@ fn link_succeeds_on_nonexistent_target_if_ignoring_missing_target() -> Result<()
     String::from(IGNORE_MISSING_TARGET_SETTING),
     Setting::Boolean(true),
   )]);
-  let action = LinkAction::new(
+  let action = FakeLinkAction::new(
     &fs,
     String::from("/home/user/path"),
     String::from("/home/user/target"),
@@ -156,7 +156,7 @@ fn link_fails_on_existing_link() -> Result<(), DotfilesError> {
   fs.create_dir("/home/user/target2").unwrap();
   fs.symlink("/home/user/target", "/home/user/path").unwrap();
   let settings = Settings::new();
-  let action = LinkAction::new(
+  let action = FakeLinkAction::new(
     &fs,
     String::from("/home/user/path"),
     String::from("/home/user/target2"),
@@ -184,7 +184,7 @@ fn link_succeeds_on_existing_link_with_relink() -> Result<(), DotfilesError> {
   fs.symlink("/home/user/target", "/home/user/path").unwrap();
   let settings =
     initialize_settings_object(&[(String::from(RELINK_SETTING), Setting::Boolean(true))]);
-  let action = LinkAction::new(
+  let action = FakeLinkAction::new(
     &fs,
     String::from("/home/user/path"),
     String::from("/home/user/target2"),
@@ -203,7 +203,7 @@ fn link_fails_on_existing_file_with_relink() -> Result<(), DotfilesError> {
   fs.create_file("/home/user/path", "").unwrap();
   let settings =
     initialize_settings_object(&[(String::from(RELINK_SETTING), Setting::Boolean(true))]);
-  let action = LinkAction::new(
+  let action = FakeLinkAction::new(
     &fs,
     String::from("/home/user/path"),
     String::from("/home/user/target2"),
@@ -230,7 +230,7 @@ fn link_fails_on_existing_dir_with_relink() -> Result<(), DotfilesError> {
   fs.create_dir("/home/user/path").unwrap();
   let settings =
     initialize_settings_object(&[(String::from(RELINK_SETTING), Setting::Boolean(true))]);
-  let action = LinkAction::new(
+  let action = FakeLinkAction::new(
     &fs,
     String::from("/home/user/path"),
     String::from("/home/user/target2"),
@@ -257,7 +257,7 @@ fn link_succeeds_on_existing_link_with_force() -> Result<(), DotfilesError> {
   fs.symlink("/home/user/target", "/home/user/path").unwrap();
   let settings =
     initialize_settings_object(&[(String::from(FORCE_SETTING), Setting::Boolean(true))]);
-  let action = LinkAction::new(
+  let action = FakeLinkAction::new(
     &fs,
     String::from("/home/user/path"),
     String::from("/home/user/target2"),
@@ -276,7 +276,7 @@ fn link_fails_on_existing_file_with_force() -> Result<(), DotfilesError> {
   fs.create_file("/home/user/path", "").unwrap();
   let settings =
     initialize_settings_object(&[(String::from(FORCE_SETTING), Setting::Boolean(true))]);
-  let action = LinkAction::new(
+  let action = FakeLinkAction::new(
     &fs,
     String::from("/home/user/path"),
     String::from("/home/user/target2"),
@@ -295,7 +295,7 @@ fn link_fails_on_existing_dir_with_force() -> Result<(), DotfilesError> {
   fs.create_dir("/home/user/path").unwrap();
   let settings =
     initialize_settings_object(&[(String::from(FORCE_SETTING), Setting::Boolean(true))]);
-  let action = LinkAction::new(
+  let action = FakeLinkAction::new(
     &fs,
     String::from("/home/user/path"),
     String::from("/home/user/target2"),
@@ -316,7 +316,7 @@ fn link_resolves_symlink_target() {
     RESOLVE_SYMLINK_TARGET_SETTING.to_string(),
     Setting::Boolean(true),
   )]);
-  let action = LinkAction::new(
+  let action = FakeLinkAction::new(
     &fs,
     String::from("/home/user/path"),
     String::from("/home/user/symlink"),

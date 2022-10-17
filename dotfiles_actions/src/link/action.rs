@@ -19,6 +19,7 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
+#![cfg(unix)]
 //! This module contains the [LinkAction] that creates a new symlink
 //! when executed
 
@@ -29,7 +30,9 @@ use dotfiles_core::error::DotfilesError;
 use dotfiles_core::error::ErrorType;
 use dotfiles_core::settings::Settings;
 use dotfiles_core::yaml_util::get_boolean_setting_from_context;
+use filesystem::FakeFileSystem;
 use filesystem::FileSystem;
+use filesystem::OsFileSystem;
 use filesystem::UnixFileSystem;
 use getset::CopyGetters;
 use getset::Getters;
@@ -76,6 +79,11 @@ pub struct LinkAction<'a, F: FileSystem + UnixFileSystem> {
   #[getset(get_copy = "pub")]
   resolve_symlink_target: bool,
 }
+
+/// A native create action that works on the real filesystem.
+pub type NativeLinkAction<'a> = LinkAction<'a, OsFileSystem>;
+/// A Fake create action that works on a fake test filesystem.
+pub type FakeLinkAction<'a> = LinkAction<'a, FakeFileSystem>;
 
 impl<'a, F: FileSystem + UnixFileSystem> LinkAction<'a, F> {
   /// Constructs a new [LinkAction]
