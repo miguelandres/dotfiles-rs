@@ -20,7 +20,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //! This module defines [BrewDirective].
 
-extern crate yaml_rust;
+extern crate strict_yaml_rust;
 
 use crate::brew::action::BrewAction;
 use dotfiles_core::action::Action;
@@ -37,7 +37,7 @@ use dotfiles_core::yaml_util::*;
 use dotfiles_core_macros::ActionListDirective;
 
 use std::marker::PhantomData;
-use yaml_rust::Yaml;
+use strict_yaml_rust::StrictYaml;
 
 /// Name of the Brew directive
 pub const DIRECTIVE_NAME: &str = "brew";
@@ -84,7 +84,7 @@ impl<'a> ActionParser<'a> for BrewDirective<'a> {
   fn parse_action(
     &'a self,
     context_settings: &Settings,
-    yaml: &Yaml,
+    yaml: &StrictYaml,
   ) -> Result<BrewAction<'a>, DotfilesError> {
     let force_casks = get_boolean_setting_from_yaml_or_context(
       FORCE_CASKS_SETTING,
@@ -104,7 +104,7 @@ impl<'a> ActionParser<'a> for BrewDirective<'a> {
   fn parse_action_list(
     &'a self,
     context_settings: &Settings,
-    yaml: &Yaml,
+    yaml: &StrictYaml,
   ) -> Result<Vec<BrewAction<'a>>, DotfilesError> {
     Ok(vec![add_directive_error_prefix(
       self,

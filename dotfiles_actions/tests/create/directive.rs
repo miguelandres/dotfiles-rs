@@ -42,7 +42,7 @@ fn create_directive_parsed_from_single_dir_name() -> Result<(), DotfilesError> {
 
   let action = directive.parse_action(&default_settings, &yaml)?;
   assert_eq!(action.directory(), "directory");
-  assert_eq!(action.force(), false);
+  assert!(!action.force());
 
   action.execute()
 }
@@ -59,6 +59,6 @@ fn create_directive_parsed_from_full_action() -> Result<(), DotfilesError> {
     .unwrap();
   let action = directive.parse_action(&default_settings, &yaml)?;
   assert_eq!(action.directory(), "some/dir");
-  assert_eq!(action.force(), true);
+  assert!(action.force());
   action.execute()
 }

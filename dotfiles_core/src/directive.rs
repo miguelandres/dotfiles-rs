@@ -23,8 +23,7 @@
 //! necessary conveniences to allow for user-configuration of directive
 //! defaults.
 
-extern crate yaml_rust;
-
+extern crate strict_yaml_rust;
 use crate::{
   action::Action,
   error::{DotfilesError, ErrorType},
@@ -33,7 +32,7 @@ use crate::{
   Setting,
 };
 use getset::Getters;
-use yaml_rust::Yaml;
+use strict_yaml_rust::StrictYaml;
 
 /// A struct that contains the default settings for a Directive and the
 /// name it takes in configuration sources. The name must be unique.
@@ -66,7 +65,11 @@ impl DirectiveData {
   // Parses an individual setting named `name`'s value from a yaml containing the value, according
   // to the type set in
   /// `DirectiveData.setting_types`.
-  pub fn parse_setting_value(&self, name: &str, yaml: &Yaml) -> Result<Setting, DotfilesError> {
+  pub fn parse_setting_value(
+    &self,
+    name: &str,
+    yaml: &StrictYaml,
+  ) -> Result<Setting, DotfilesError> {
     if let Some(setting_type) = self.defaults().get(name) {
       parse_setting(setting_type, yaml)
     } else {
@@ -81,9 +84,12 @@ impl DirectiveData {
     }
   }
 
-  /// Parses all settings for this directive from Yaml, checking the types correspond to what's
-  /// stored in `DirectiveData.setting_types`
-  pub fn parse_context_defaults(&self, yaml_settings: &Yaml) -> Result<Settings, DotfilesError> {
+  /// Parses all settings for this directive from StrictYaml, checking the types correspond to
+  /// what's stored in `DirectiveData.setting_types`
+  pub fn parse_context_defaults(
+    &self,
+    yaml_settings: &StrictYaml,
+  ) -> Result<Settings, DotfilesError> {
     fold_hash_until_first_err(
       yaml_settings,
       Ok(Settings::new()),
@@ -126,7 +132,7 @@ pub trait Directive<'a>: HasDirectiveData<'a> {
   fn defaults(&'a self) -> &'a Settings {
     self.directive_data().defaults()
   }
-  /// Builds a list of actions for this directive from a Yaml configuration
+  /// Builds a list of actions for this directive from a StrictYaml configuration
   /// object and a set of default settings.
   ///
   /// Returns an Error containing a human readable string in case there
@@ -134,7 +140,7 @@ pub trait Directive<'a>: HasDirectiveData<'a> {
   fn build_action_list(
     &'a self,
     settings: &Settings,
-    yaml: &Yaml,
+    yaml: &StrictYaml,
   ) -> Result<Vec<Box<dyn 'a + Action<'a>>>, DotfilesError>;
 
   /// Parse a particular setting with its correct type from yaml, fall back to context settings or
@@ -143,7 +149,7 @@ pub trait Directive<'a>: HasDirectiveData<'a> {
   fn get_setting_from_yaml_hash_or_from_context(
     &'a self,
     name: &str,
-    yaml: &Yaml,
+    yaml: &StrictYaml,
     context_settings: &Settings,
   ) -> Result<Setting, DotfilesError> {
     self
@@ -156,7 +162,7 @@ pub trait Directive<'a>: HasDirectiveData<'a> {
   fn get_setting_from_yaml_hash(
     &'a self,
     name: &str,
-    yaml: &Yaml,
+    yaml: &StrictYaml,
   ) -> Result<Setting, DotfilesError> {
     if let Some(setting_type) = self.directive_data().defaults().get(name) {
       crate::yaml_util::get_setting_from_yaml_hash(name, setting_type, yaml)

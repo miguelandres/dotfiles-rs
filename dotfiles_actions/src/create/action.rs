@@ -22,7 +22,7 @@
 //! This module contains the [CreateAction] that creates a new directory
 //! when executed
 
-extern crate yaml_rust;
+extern crate strict_yaml_rust;
 
 use derivative::Derivative;
 use dotfiles_core::action::Action;

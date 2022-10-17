@@ -20,7 +20,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 //! This module defines [CreateDirective].
-extern crate yaml_rust;
+extern crate strict_yaml_rust;
 
 use crate::create::action::CreateAction;
 use crate::filesystem::FileSystemDirective;
@@ -41,7 +41,7 @@ use filesystem::OsFileSystem;
 
 use std::marker::PhantomData;
 use std::vec::Vec;
-use yaml_rust::Yaml;
+use strict_yaml_rust::StrictYaml;
 
 /// Constant for the name of the `create` directive.
 pub const DIRECTIVE_NAME: &str = "create";
@@ -98,7 +98,7 @@ impl<'a, F: FileSystem + Default> ActionParser<'a> for CreateDirective<'a, F> {
   fn parse_action(
     &'a self,
     settings: &std::collections::HashMap<String, Setting>,
-    yaml: &Yaml,
+    yaml: &StrictYaml,
   ) -> Result<CreateAction<F>, DotfilesError> {
     Ok(CreateAction::<'a, F>::new(
       self.fs(),

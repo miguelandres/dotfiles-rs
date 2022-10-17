@@ -25,7 +25,7 @@ use std::{collections, marker::PhantomData};
 
 use dotfiles_core::directive::HasDirectiveData;
 use dotfiles_core_macros::ActionListDirective;
-use yaml_rust::Yaml;
+use strict_yaml_rust::StrictYaml;
 
 use dotfiles_core::{
   action::ActionParser, directive::DirectiveData, error::DotfilesError,
@@ -75,7 +75,7 @@ impl<'a> ActionParser<'a> for ExecDirective<'a> {
   fn parse_action(
     &'a self,
     settings: &collections::HashMap<String, Setting>,
-    yaml: &Yaml,
+    yaml: &StrictYaml,
   ) -> Result<ExecAction, DotfilesError> {
     Ok(ExecAction::new(
       yaml_util::get_string_content_or_keyed_value(yaml, Some(COMMAND_SETTING))?,

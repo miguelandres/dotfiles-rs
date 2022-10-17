@@ -25,7 +25,7 @@
 
 //! The core of Dotfiles-rs is basically a set of [directives](
 //! directive::Directive) that can build executable [actions](action::Action)
-//! from configuration sources (Yaml is the only supported configuration source
+//! from configuration sources (StrictYaml is the only supported configuration source
 //! so far).
 //!
 //! Directives are responsible for parsing configuration from the configuration

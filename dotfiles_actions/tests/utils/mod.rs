@@ -29,7 +29,7 @@ use filesystem::FileSystem;
 use std::io;
 use std::path::PathBuf;
 use std::str::FromStr;
-use yaml_rust::Yaml;
+use strict_yaml_rust::StrictYaml;
 
 pub fn check_action_fail<'a, A: Action<'a>>(
   action: &A,
@@ -46,7 +46,7 @@ pub fn check_action_fail<'a, A: Action<'a>>(
 }
 
 /// Reads a yaml file from test resources.
-pub fn read_test_yaml(test_file_path: &str) -> Result<Vec<Yaml>, DotfilesError> {
+pub fn read_test_yaml(test_file_path: &str) -> Result<Vec<StrictYaml>, DotfilesError> {
   let base_dir = env!("CARGO_MANIFEST_DIR");
   let mut file: PathBuf = PathBuf::from_str(base_dir).unwrap();
   file.push("resources/tests");

@@ -20,27 +20,27 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 //! Module that defines helper functions to process YAML configuration sources.
-extern crate yaml_rust;
+extern crate strict_yaml_rust;
 
-use std::path::Path;
+use std::{path::Path, str::FromStr, vec};
 
 use crate::{
   error::{fold_until_first_err, DotfilesError, ErrorType},
   settings::{parse_setting, Setting, Settings},
 };
-use yaml_rust::{Yaml, YamlLoader};
+use strict_yaml_rust::{StrictYaml, StrictYamlLoader};
 
 /// Executes the `process_function` on each of the items in the `yaml_hash`. The yaml hash is
 /// assumed to be string keyed. It stops execution if any of the process functions returns an Error,
 /// and returns said error.
 pub fn process_yaml_hash_until_first_err<F>(
-  yaml_hash: &Yaml,
+  yaml_hash: &StrictYaml,
   mut process_function: F,
 ) -> Result<(), DotfilesError>
 where
-  F: FnMut(String, &Yaml) -> Result<(), DotfilesError>,
+  F: FnMut(String, &StrictYaml) -> Result<(), DotfilesError>,
 {
-  if let Yaml::Hash(hash) = yaml_hash {
+  if let StrictYaml::Hash(hash) = yaml_hash {
     hash.into_iter().try_for_each(|(key, value)| {
       parse_as_string(key)
         .map(|key_str| (key_str, value))
@@ -50,7 +50,7 @@ where
     Err(DotfilesError::from_wrong_yaml(
       "Expected a yaml hash, got something else".to_owned(),
       yaml_hash.to_owned(),
-      Yaml::Hash(Default::default()),
+      StrictYaml::Hash(Default::default()),
     ))
   }
 }
@@ -67,14 +67,14 @@ where
 /// * Will return a [ErrorType::IncompleteConfigurationError] if the key is not found in the hash.
 pub fn process_value_from_yaml_hash<T, F>(
   key: &str,
-  yaml_hash: &Yaml,
+  yaml_hash: &StrictYaml,
   mut process: F,
 ) -> Result<T, DotfilesError>
 where
-  F: FnMut(&Yaml) -> Result<T, DotfilesError>,
+  F: FnMut(&StrictYaml) -> Result<T, DotfilesError>,
 {
-  if let Yaml::Hash(inner_hash) = yaml_hash {
-    match inner_hash.get(&Yaml::String(key.into())) {
+  if let StrictYaml::Hash(inner_hash) = yaml_hash {
+    match inner_hash.get(&StrictYaml::String(key.into())) {
       Some(yaml) => process(yaml),
       None => Err(DotfilesError::from(
         format!("Hash does not contain key {}", key.to_owned()),
@@ -87,7 +87,7 @@ where
     Err(DotfilesError::from_wrong_yaml(
       "process_value_from_yaml_hash expects a hash, but got something else".into(),
       yaml_hash.to_owned(),
-      Yaml::Hash(Default::default()),
+      StrictYaml::Hash(Default::default()),
     ))
   }
 }
@@ -99,17 +99,17 @@ where
 ///
 /// * Any error that happens in the processing function.
 /// * [ErrorType::UnexpectedYamlTypeError] if the yaml passed is not an array
-pub fn map_yaml_array<T, F>(yaml_array: &Yaml, process: F) -> Result<Vec<T>, DotfilesError>
+pub fn map_yaml_array<T, F>(yaml_array: &StrictYaml, process: F) -> Result<Vec<T>, DotfilesError>
 where
-  F: FnMut(&Yaml) -> Result<T, DotfilesError>,
+  F: FnMut(&StrictYaml) -> Result<T, DotfilesError>,
 {
-  if let Yaml::Array(inner_vec) = yaml_array {
+  if let StrictYaml::Array(inner_vec) = yaml_array {
     inner_vec.iter().map(process).collect()
   } else {
     Err(DotfilesError::from_wrong_yaml(
       "map_yaml_array expects a yaml array, but got something else".into(),
       yaml_array.to_owned(),
-      Yaml::Array(vec![]),
+      StrictYaml::Array(vec![]),
     ))
   }
 }
@@ -124,7 +124,7 @@ where
 pub fn get_setting_from_yaml_hash(
   name: &str,
   setting_type: &Setting,
-  yaml: &Yaml,
+  yaml: &StrictYaml,
 ) -> Result<Setting, DotfilesError> {
   process_value_from_yaml_hash(name, yaml, |value_for_name| {
     parse_setting(setting_type, value_for_name)
@@ -137,7 +137,7 @@ pub fn get_setting_from_yaml_hash(
 /// * [ErrorType::UnexpectedYamlTypeError] if the yaml does not have string keys.
 /// * [ErrorType::UnexpectedYamlTypeError] if the value's type  is not boolean.
 /// * [ErrorType::IncompleteConfigurationError] if the hash does not contain the requested key
-pub fn get_boolean_from_yaml_hash(name: &str, yaml: &Yaml) -> Result<bool, DotfilesError> {
+pub fn get_boolean_from_yaml_hash(name: &str, yaml: &StrictYaml) -> Result<bool, DotfilesError> {
   process_value_from_yaml_hash(name, yaml, |value_for_name| {
     parse_as_boolean(value_for_name)
   })
@@ -150,7 +150,7 @@ pub fn get_boolean_from_yaml_hash(name: &str, yaml: &Yaml) -> Result<bool, Dotfi
 /// * [ErrorType::UnexpectedYamlTypeError] if the yaml does not have string keys.
 /// * [ErrorType::UnexpectedYamlTypeError] if the value's type  is not integer.
 /// * [ErrorType::IncompleteConfigurationError] if the hash does not contain the requested key
-pub fn get_integer_from_yaml_hash(name: &str, yaml: &Yaml) -> Result<i64, DotfilesError> {
+pub fn get_integer_from_yaml_hash(name: &str, yaml: &StrictYaml) -> Result<i64, DotfilesError> {
   process_value_from_yaml_hash(name, yaml, |value_for_name| {
     parse_as_integer(value_for_name)
   })
@@ -163,7 +163,7 @@ pub fn get_integer_from_yaml_hash(name: &str, yaml: &Yaml) -> Result<i64, Dotfil
 /// * [ErrorType::UnexpectedYamlTypeError] if the yaml does not have string keys.
 /// * [ErrorType::UnexpectedYamlTypeError] if the value's type  is not string.
 /// * [ErrorType::IncompleteConfigurationError] if the hash does not contain the requested key
-pub fn get_string_from_yaml_hash(name: &str, yaml: &Yaml) -> Result<String, DotfilesError> {
+pub fn get_string_from_yaml_hash(name: &str, yaml: &StrictYaml) -> Result<String, DotfilesError> {
   process_value_from_yaml_hash(name, yaml, parse_as_string)
 }
 
@@ -177,7 +177,7 @@ pub fn get_string_from_yaml_hash(name: &str, yaml: &Yaml) -> Result<String, Dotf
 /// * [ErrorType::IncompleteConfigurationError] if the hash does not contain the requested key
 pub fn get_string_array_from_yaml_hash(
   name: &str,
-  yaml: &Yaml,
+  yaml: &StrictYaml,
 ) -> Result<Vec<String>, DotfilesError> {
   process_value_from_yaml_hash(name, yaml, |value_for_name| {
     parse_as_string_array(value_for_name)
@@ -194,7 +194,7 @@ pub fn get_string_array_from_yaml_hash(
 ///   are not string.
 pub fn get_optional_string_array_from_yaml_hash(
   name: &str,
-  yaml: &Yaml,
+  yaml: &StrictYaml,
 ) -> Result<Vec<String>, DotfilesError> {
   get_string_array_from_yaml_hash(name, yaml).or_else(|err| {
     if err.is_missing_config(name) {
@@ -313,7 +313,7 @@ pub fn get_setting_from_context(
 /// - Didn't find a setting matching this name anywhere
 pub fn get_boolean_setting_from_yaml_or_context(
   name: &str,
-  yaml: &Yaml,
+  yaml: &StrictYaml,
   context_settings: &Settings,
   directive_defaults: &Settings,
 ) -> Result<bool, DotfilesError> {
@@ -331,7 +331,7 @@ pub fn get_boolean_setting_from_yaml_or_context(
 /// - Didn't find a setting matching this name anywhere
 pub fn get_integer_setting_from_yaml_or_context(
   name: &str,
-  yaml: &Yaml,
+  yaml: &StrictYaml,
   context_settings: &Settings,
   directive_defaults: &Settings,
 ) -> Result<i64, DotfilesError> {
@@ -349,7 +349,7 @@ pub fn get_integer_setting_from_yaml_or_context(
 /// - Didn't find a setting matching this name anywhere
 pub fn get_string_setting_from_yaml_or_context(
   name: &str,
-  yaml: &Yaml,
+  yaml: &StrictYaml,
   context_settings: &Settings,
   directive_defaults: &Settings,
 ) -> Result<String, DotfilesError> {
@@ -359,8 +359,8 @@ pub fn get_string_setting_from_yaml_or_context(
 
 /// Gets the content of this YAML node or the value for a specific key in it.
 ///
-/// If the Yaml node passed is a String node then it returns its contents,
-/// if the Yaml node is a Hash then it returns the string content of the
+/// If the StrictYaml node passed is a String node then it returns its contents,
+/// if the StrictYaml node is a Hash then it returns the string content of the
 /// value corresponding to the optional Key.
 ///
 /// # Errors
@@ -368,7 +368,7 @@ pub fn get_string_setting_from_yaml_or_context(
 /// - `yaml` is a hash but it does not contain a value for `key`
 /// - `yaml` is a hash but the value for `key` is not a String.
 pub fn get_string_content_or_keyed_value(
-  yaml: &Yaml,
+  yaml: &StrictYaml,
   key: Option<&str>,
 ) -> Result<String, DotfilesError> {
   parse_as_string(yaml).or_else(|err| {
@@ -380,9 +380,9 @@ pub fn get_string_content_or_keyed_value(
   })
 }
 
-/// Gets a native `Vec<String>` from a Yaml::Array. It errors out if the passed yaml is not an array
-/// or if not all the items in the array are plain Yaml Strings
-pub fn parse_as_string_array(yaml: &Yaml) -> Result<Vec<String>, DotfilesError> {
+/// Gets a native `Vec<String>` from a StrictYaml::Array. It errors out if the passed yaml is not an
+/// array or if not all the items in the array are plain StrictYaml Strings
+pub fn parse_as_string_array(yaml: &StrictYaml) -> Result<Vec<String>, DotfilesError> {
   map_yaml_array(yaml, parse_as_string)
 }
 
@@ -391,15 +391,13 @@ pub fn parse_as_string_array(yaml: &Yaml) -> Result<Vec<String>, DotfilesError> 
 /// # Errors
 /// * [ErrorType::UnexpectedYamlTypeError] if yaml is neither string, boolean or integer and thus
 ///   cannot be parsed as string losslessly.
-pub fn parse_as_string(yaml_to_parse: &Yaml) -> Result<String, DotfilesError> {
+pub fn parse_as_string(yaml_to_parse: &StrictYaml) -> Result<String, DotfilesError> {
   match yaml_to_parse {
-    Yaml::String(s) => Ok(s.to_owned()),
-    Yaml::Boolean(b) => Ok(b.to_string()),
-    Yaml::Integer(i) => Ok(i.to_string()),
+    StrictYaml::String(s) => Ok(s.to_owned()),
     _ => Err(DotfilesError::from_wrong_yaml(
-      "Expected Yaml String and got something else".into(),
+      "Expected StrictYaml String and got something else".into(),
       yaml_to_parse.clone(),
-      Yaml::String("".into()),
+      StrictYaml::String("".into()),
     )),
   }
 }
@@ -408,14 +406,20 @@ pub fn parse_as_string(yaml_to_parse: &Yaml) -> Result<String, DotfilesError> {
 ///
 /// # Errors
 /// * [ErrorType::UnexpectedYamlTypeError] if yaml is not of type Boolean
-pub fn parse_as_boolean(yaml: &Yaml) -> Result<bool, DotfilesError> {
-  if let Yaml::Boolean(b) = yaml {
-    Ok(b.to_owned())
+pub fn parse_as_boolean(yaml: &StrictYaml) -> Result<bool, DotfilesError> {
+  if let StrictYaml::String(b) = yaml {
+    FromStr::from_str(b).map_err(|_| {
+      DotfilesError::from_wrong_yaml(
+        format!("Got a Yaml String that can't be parsed as boolean: `{}`", b),
+        yaml.to_owned(),
+        StrictYaml::String("true".into()),
+      )
+    })
   } else {
     Err(DotfilesError::from_wrong_yaml(
-      "Expected Yaml boolean and got something else".into(),
+      "Expected StrictYaml string containing a boolean and got something else".into(),
       yaml.clone(),
-      Yaml::Boolean(false),
+      StrictYaml::String("false".into()),
     ))
   }
 }
@@ -423,14 +427,20 @@ pub fn parse_as_boolean(yaml: &Yaml) -> Result<bool, DotfilesError> {
 ///
 /// # Errors
 /// * [ErrorType::UnexpectedYamlTypeError] if yaml is not of type Integer
-pub fn parse_as_integer(yaml: &Yaml) -> Result<i64, DotfilesError> {
-  if let Yaml::Integer(i) = yaml {
-    Ok(i.to_owned())
+pub fn parse_as_integer(yaml: &StrictYaml) -> Result<i64, DotfilesError> {
+  if let StrictYaml::String(i) = yaml {
+    FromStr::from_str(i).map_err(|_| {
+      DotfilesError::from_wrong_yaml(
+        format!("Got a Yaml String that can't be parsed as integer: `{}`", i),
+        yaml.to_owned(),
+        StrictYaml::String("11111".into()),
+      )
+    })
   } else {
     Err(DotfilesError::from_wrong_yaml(
-      "Expected Yaml String and got something else".into(),
+      "Expected StrictYaml String and got something else".into(),
       yaml.clone(),
-      Yaml::Integer(0),
+      StrictYaml::String("0".into()),
     ))
   }
 }
@@ -439,22 +449,22 @@ pub fn parse_as_integer(yaml: &Yaml) -> Result<i64, DotfilesError> {
 ///
 /// # Errors
 /// * [ErrorType::UnexpectedYamlTypeError] if yaml is not of type array
-pub fn parse_as_array(yaml: &Yaml) -> Result<Vec<Yaml>, DotfilesError> {
-  if let Yaml::Array(v) = yaml {
+pub fn parse_as_array(yaml: &StrictYaml) -> Result<Vec<StrictYaml>, DotfilesError> {
+  if let StrictYaml::Array(v) = yaml {
     Ok(v.to_owned())
   } else {
     Err(DotfilesError::from_wrong_yaml(
-      "Expected Yaml Array and got something else".into(),
+      "Expected StrictYaml Array and got something else".into(),
       yaml.clone(),
-      Yaml::Integer(0),
+      StrictYaml::Array(vec![]),
     ))
   }
 }
 
-/// Reads a Yaml File. Returns Error in case of a syntax error.
-pub fn read_yaml_file(file: &Path) -> Result<Vec<Yaml>, DotfilesError> {
+/// Reads a StrictYaml File. Returns Error in case of a syntax error.
+pub fn read_yaml_file(file: &Path) -> Result<Vec<StrictYaml>, DotfilesError> {
   let contents = std::fs::read_to_string(file).map_err(DotfilesError::from_io_error)?;
-  YamlLoader::load_from_str(&contents).map_err(|err| {
+  StrictYamlLoader::load_from_str(&contents).map_err(|err| {
     DotfilesError::from(
       format!("yaml syntax error in file `{:?}`", file.as_os_str()),
       ErrorType::YamlParseError { scan_error: err },
@@ -473,16 +483,16 @@ pub fn read_yaml_file(file: &Path) -> Result<Vec<Yaml>, DotfilesError> {
 ///   strings.
 /// * Any errors from the fold_function or process function.
 pub fn fold_hash_until_first_err<T, P, Processed, F>(
-  yaml: &Yaml,
+  yaml: &StrictYaml,
   init: Result<T, DotfilesError>,
   mut process_function: P,
   fold_function: F,
 ) -> Result<T, DotfilesError>
 where
-  P: FnMut(String, &Yaml) -> Result<Processed, DotfilesError>,
+  P: FnMut(String, &StrictYaml) -> Result<Processed, DotfilesError>,
   F: FnMut(T, Processed) -> Result<T, DotfilesError>,
 {
-  if let Yaml::Hash(hash) = yaml {
+  if let StrictYaml::Hash(hash) = yaml {
     fold_until_first_err(
       hash.into_iter(),
       init,
@@ -491,9 +501,9 @@ where
     )
   } else {
     Err(DotfilesError::from_wrong_yaml(
-      "Expected Yaml Hash, got wrong type".to_owned(),
+      "Expected StrictYaml Hash, got wrong type".to_owned(),
       yaml.to_owned(),
-      Yaml::Hash(Default::default()),
+      StrictYaml::Hash(Default::default()),
     ))
   }
 }
