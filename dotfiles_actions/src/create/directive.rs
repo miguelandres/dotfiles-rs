@@ -24,23 +24,19 @@ extern crate strict_yaml_rust;
 
 use crate::create::action::CreateAction;
 use crate::filesystem::FileSystemDirective;
-use dotfiles_core::action::Action;
 use dotfiles_core::action::ActionParser;
-use dotfiles_core::directive::Directive;
 use dotfiles_core::directive::DirectiveData;
 use dotfiles_core::directive::HasDirectiveData;
 use dotfiles_core::error::DotfilesError;
 use dotfiles_core::settings::initialize_settings_object;
 use dotfiles_core::settings::Setting;
-use dotfiles_core::settings::Settings;
 use dotfiles_core::yaml_util;
-use dotfiles_core_macros::ActionListDirective;
+use dotfiles_core_macros::Directive;
 use filesystem::FakeFileSystem;
 use filesystem::FileSystem;
 use filesystem::OsFileSystem;
-
 use std::marker::PhantomData;
-use std::vec::Vec;
+
 use strict_yaml_rust::StrictYaml;
 
 /// Constant for the name of the `create` directive.
@@ -61,7 +57,7 @@ pub fn init_directive_data() -> DirectiveData {
 }
 
 /// A directive that can build [CreateAction]s to create directories in the filesystem.
-#[derive(ActionListDirective)]
+#[derive(Directive, Clone)]
 pub struct CreateDirective<'a, F: FileSystem + Default> {
   fs: F,
   data: DirectiveData,

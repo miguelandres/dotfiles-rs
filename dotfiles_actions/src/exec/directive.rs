@@ -21,15 +21,14 @@
 
 //! This module defines [ExecDirective] which represents commands to execute in a shell.
 
-use std::{collections, marker::PhantomData};
-
 use dotfiles_core::directive::HasDirectiveData;
-use dotfiles_core_macros::ActionListDirective;
+use dotfiles_core_macros::Directive;
+use std::{collections::HashMap, marker::PhantomData};
 use strict_yaml_rust::StrictYaml;
 
 use dotfiles_core::{
   action::ActionParser, directive::DirectiveData, error::DotfilesError,
-  settings::initialize_settings_object, yaml_util, Action, Directive, Setting, Settings,
+  settings::initialize_settings_object, yaml_util, Setting,
 };
 
 use crate::exec::action::ExecAction;
@@ -52,7 +51,7 @@ pub fn init_directive_data() -> DirectiveData {
 }
 
 /// A directive that can build [ExecAction]s to run commands
-#[derive(ActionListDirective)]
+#[derive(Directive, Clone)]
 pub struct ExecDirective<'a> {
   data: DirectiveData,
   phantom_data: PhantomData<&'a DirectiveData>,
@@ -69,12 +68,9 @@ impl<'a> Default for ExecDirective<'a> {
 
 impl<'a> ActionParser<'a> for ExecDirective<'a> {
   type ActionType = ExecAction<'a>;
-  fn name(&'a self) -> &'static str {
-    "exec"
-  }
   fn parse_action(
     &'a self,
-    settings: &collections::HashMap<String, Setting>,
+    settings: &HashMap<String, Setting>,
     yaml: &StrictYaml,
   ) -> Result<ExecAction, DotfilesError> {
     Ok(ExecAction::new(

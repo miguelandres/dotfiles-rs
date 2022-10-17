@@ -450,7 +450,7 @@ pub fn parse_as_integer(yaml: &StrictYaml) -> Result<i64, DotfilesError> {
 /// # Errors
 /// * [ErrorType::UnexpectedYamlTypeError] if yaml is not of type array
 pub fn parse_as_array(yaml: &StrictYaml) -> Result<Vec<StrictYaml>, DotfilesError> {
-  if let StrictYaml::Array(v) = yaml {
+  if let Some(v) = yaml.as_vec() {
     Ok(v.to_owned())
   } else {
     Err(DotfilesError::from_wrong_yaml(

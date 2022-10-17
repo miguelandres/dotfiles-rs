@@ -19,13 +19,12 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-use std::{marker::PhantomData, mem::discriminant};
+use std::marker::PhantomData;
 
 use dotfiles_core::{
   directive::{DirectiveData, HasDirectiveData},
-  error::ErrorType,
   settings::initialize_settings_object,
-  Directive, Setting,
+  Setting,
 };
 use strict_yaml_rust::StrictYaml;
 
@@ -38,16 +37,11 @@ const INT_SETTING: &str = "int";
 fn directive_fails_unknown_setting() {
   let directive = ParseDefaultsTestDirective::new();
   let yaml = StrictYaml::String("some".into());
-  assert_eq!(
-    discriminant(&ErrorType::InconsistentConfigurationError),
-    discriminant(
-      directive
-        .directive_data()
-        .parse_setting_value("unknown", &yaml)
-        .unwrap_err()
-        .error_type()
-    )
-  );
+  assert!(directive
+    .directive_data()
+    .parse_setting_value("unknown", &yaml)
+    .unwrap_err()
+    .is_inconsistent_config());
 }
 
 #[test]
@@ -139,15 +133,5 @@ impl<'a> ParseDefaultsTestDirective<'a> {
 impl<'a> HasDirectiveData<'a> for ParseDefaultsTestDirective<'a> {
   fn directive_data(&'a self) -> &'a DirectiveData {
     &self.directive_data
-  }
-}
-
-impl<'a> Directive<'a> for ParseDefaultsTestDirective<'a> {
-  fn build_action_list(
-    &'a self,
-    _settings: &dotfiles_core::Settings,
-    _yaml: &strict_yaml_rust::StrictYaml,
-  ) -> Result<Vec<Box<dyn 'a + dotfiles_core::Action<'a>>>, dotfiles_core::error::DotfilesError> {
-    todo!()
   }
 }

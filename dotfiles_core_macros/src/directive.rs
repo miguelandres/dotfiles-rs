@@ -23,36 +23,22 @@ use proc_macro2::TokenStream;
 use quote::quote;
 use syn::DeriveInput;
 
-pub fn expand_action_list_directive(input: DeriveInput) -> TokenStream {
+pub fn expand_directive(input: DeriveInput) -> TokenStream {
   let (impl_generics, ty_generics, where_clause) = input.generics.split_for_impl();
 
   let st_name = input.ident;
   let lifetimes = input.generics.lifetimes().last();
 
   quote! {
-      #[automatically_derived]
-      impl #impl_generics HasDirectiveData <'a> for  #st_name #ty_generics #where_clause{
-        fn directive_data(&'a self) -> &'a DirectiveData {
-          &self.data
-        }
+    #[automatically_derived]
+    impl #impl_generics dotfiles_core::directive::HasDirectiveData <#lifetimes> for  #st_name #ty_generics #where_clause{
+      fn directive_data(&'a self) -> &'a DirectiveData {
+        &self.data
       }
-        impl #impl_generics Directive <#lifetimes> for  #st_name #ty_generics #where_clause{
-        fn build_action_list(
-          &'a self,
-          settings: &Settings,
-          yaml: &StrictYaml,
-        ) -> Result<Vec<Box<(dyn dotfiles_core::action::Action<'a> + 'a)>>, dotfiles_core::error::DotfilesError> {
-          self.parse_action_list(settings, yaml).map(|vec| {
-            let result: Vec<Box<(dyn Action<'a> + 'a)>> = vec
-              .into_iter()
-              .map(|action| {
-                let boxed: Box<(dyn Action<'a> + 'a)> = Box::new(action);
-                boxed
-              })
-              .collect();
-            result
-          })
-        }
-      }
+    }
+    #[automatically_derived]
+    impl #impl_generics dotfiles_core::directive::Directive <#lifetimes> for  #st_name #ty_generics #where_clause{
+    }
+
   }
 }

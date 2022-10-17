@@ -23,15 +23,15 @@
 #![warn(missing_docs)]
 #![deny(rustdoc::broken_intra_doc_links)]
 
-mod action_list;
-use action_list::expand_action_list_directive;
+mod directive;
+use directive::expand_directive;
 use proc_macro::TokenStream;
 use syn::{parse_macro_input, DeriveInput};
 
-#[proc_macro_derive(ActionListDirective)]
+#[proc_macro_derive(Directive)]
 /// Generates a Directive<'a> implementation for the struct that calls a member
 /// function called `parse_action_list` to generate the result of `build_action`
-pub fn action_list_directive(input: TokenStream) -> TokenStream {
+pub fn directive(input: TokenStream) -> TokenStream {
   let input = parse_macro_input!(input as DeriveInput);
-  expand_action_list_directive(input).into()
+  expand_directive(input).into()
 }

@@ -68,6 +68,13 @@ jobs:
           release_name: Nightly ${{ steps.current_time_dashes.outputs.formattedTime }}
           prerelease: true
 
+      - name: Commit CHANGELOG.md
+        uses: stefanzweifel/git-auto-commit-action@v4
+        with:
+          branch: main
+          commit_message: "docs: update CHANGELOG.md for ${{ github.ref_name }} [skip ci]"
+          file_pattern: CHANGELOG.md
+
   build:
     name: Build ${{ matrix.target.name }}
     needs: create-nightly-release

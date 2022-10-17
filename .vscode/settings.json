@@ -3,10 +3,7 @@
     "**/target": true
   },
   "rust-client.channel": "nightly",
-  "cSpell.words": [
-    "aarch",
-    "dotfiles",
-    "itertools",
-    "shellenv"
-  ]
+  "files.exclude": {
+    "**/resources/tests/**/errors/**": true,
+  }
 }

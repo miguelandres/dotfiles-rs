@@ -23,18 +23,15 @@
 extern crate strict_yaml_rust;
 
 use crate::brew::action::BrewAction;
-use dotfiles_core::action::Action;
 use dotfiles_core::action::ActionParser;
-use dotfiles_core::directive::Directive;
 use dotfiles_core::directive::DirectiveData;
-use dotfiles_core::directive::HasDirectiveData;
 use dotfiles_core::error::add_directive_error_prefix;
 use dotfiles_core::error::DotfilesError;
 use dotfiles_core::settings::initialize_settings_object;
 use dotfiles_core::settings::Setting;
 use dotfiles_core::settings::Settings;
 use dotfiles_core::yaml_util::*;
-use dotfiles_core_macros::ActionListDirective;
+use dotfiles_core_macros::Directive;
 
 use std::marker::PhantomData;
 use strict_yaml_rust::StrictYaml;
@@ -60,7 +57,7 @@ pub fn init_directive_data() -> DirectiveData {
 }
 
 /// A directive that can build [BrewAction]s to install formulae, casks
-#[derive(ActionListDirective)]
+#[derive(Directive, Clone)]
 pub struct BrewDirective<'a> {
   data: DirectiveData,
   phantom_data: PhantomData<&'a DirectiveData>,
@@ -78,9 +75,6 @@ impl<'a> Default for BrewDirective<'a> {
 impl<'a> ActionParser<'a> for BrewDirective<'a> {
   type ActionType = BrewAction<'a>;
 
-  fn name(&'a self) -> &'static str {
-    "brew"
-  }
   fn parse_action(
     &'a self,
     context_settings: &Settings,

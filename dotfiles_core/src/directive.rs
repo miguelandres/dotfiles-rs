@@ -24,8 +24,8 @@
 //! defaults.
 
 extern crate strict_yaml_rust;
+
 use crate::{
-  action::Action,
   error::{DotfilesError, ErrorType},
   settings::{parse_setting, Settings},
   yaml_util::{fold_hash_until_first_err, get_setting_from_context},
@@ -119,10 +119,7 @@ impl DirectiveData {
 pub trait HasDirectiveData<'a> {
   /// Returns the directive data for this object
   fn directive_data(&'a self) -> &'a DirectiveData;
-}
 
-/// A parser for action steps, each directive represents a type of Action.
-pub trait Directive<'a>: HasDirectiveData<'a> {
   /// Returns the name of the directive.
   fn name(&'a self) -> &'a str {
     self.directive_data().name()
@@ -132,17 +129,10 @@ pub trait Directive<'a>: HasDirectiveData<'a> {
   fn defaults(&'a self) -> &'a Settings {
     self.directive_data().defaults()
   }
-  /// Builds a list of actions for this directive from a StrictYaml configuration
-  /// object and a set of default settings.
-  ///
-  /// Returns an Error containing a human readable string in case there
-  /// was an issue building the actions.
-  fn build_action_list(
-    &'a self,
-    settings: &Settings,
-    yaml: &StrictYaml,
-  ) -> Result<Vec<Box<dyn 'a + Action<'a>>>, DotfilesError>;
+}
 
+/// A parser for action steps, each directive represents a type of Action.
+pub trait Directive<'a>: HasDirectiveData<'a> {
   /// Parse a particular setting with its correct type from yaml, fall back to context settings or
   /// directive defaults if not found in yaml. Returns error if there is any kind of parsing or
   /// typing error
