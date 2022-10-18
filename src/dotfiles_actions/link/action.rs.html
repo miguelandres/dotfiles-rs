@@ -209,6 +209,7 @@
 <span id="209">209</span>
 <span id="210">210</span>
 <span id="211">211</span>
+<span id="212">212</span>
 </pre><pre class="rust"><code><span class="comment">// Copyright (c) 2021-2022 Miguel Barreto and others
 //
 // Permission is hereby granted, free of charge, to any person obtaining
@@ -345,6 +346,7 @@
       <span class="kw-2">mut </span>target: PathBuf,
     ) -&gt; io::Result&lt;()&gt; {
       <span class="kw">let </span>path: PathBuf = PathBuf::from(action.path());
+      <span class="kw">let </span>path = process_home_dir_in_path(<span class="kw-2">&amp;</span>path);
 
       <span class="kw">let </span>target_exists = fs.is_dir(<span class="kw-2">&amp;</span>target) || fs.is_file(<span class="kw-2">&amp;</span>target);
       <span class="kw">let </span>path_exists = fs.is_dir(<span class="kw-2">&amp;</span>path) || fs.is_file(<span class="kw-2">&amp;</span>path);
