@@ -134,6 +134,7 @@ impl<F: FileSystem + UnixFileSystem> Action<'_> for LinkAction<'_, F> {
       mut target: PathBuf,
     ) -> io::Result<()> {
       let path: PathBuf = PathBuf::from(action.path());
+      let path = process_home_dir_in_path(&path);
 
       let target_exists = fs.is_dir(&target) || fs.is_file(&target);
       let path_exists = fs.is_dir(&path) || fs.is_file(&path);
