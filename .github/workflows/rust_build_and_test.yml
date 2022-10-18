@@ -22,7 +22,7 @@ jobs:
             gh_env: ubuntu-latest
           - name: aarch64-unknown-linux-gnu
             gh_env: ubuntu-latest
-          - name: arm-unknown-linux-gnu
+          - name: armv7-unknown-linux-gnueabihf
             gh_env: ubuntu-latest
           - name: aarch64-apple-darwin
             gh_env: macos-12
@@ -52,11 +52,11 @@ jobs:
         run: cargo build --target ${{ matrix.target.name }}
       - name: Run tests
         # cannot run arm or aarch64 at all on github actions :(
-        if: matrix.target.name != 'aarch64-apple-darwin' && matrix.target.name != 'aarch64-unknown-linux-gnu' && matrix.target.name != 'arm-unknown-linux-gnu'
+        if: matrix.target.name != 'aarch64-apple-darwin' && matrix.target.name != 'aarch64-unknown-linux-gnu' && matrix.target.name != 'armv7-unknown-linux-gnueabihf'
         run: cargo test --target ${{ matrix.target.name }}
       - name: Quick and dirty config test
         # cannot run arm or aarch64 at all on github actions :(
-        if: matrix.target.name != 'aarch64-apple-darwin' && matrix.target.name != 'aarch64-unknown-linux-gnu' && matrix.target.name != 'arm-unknown-linux-gnu'
+        if: matrix.target.name != 'aarch64-apple-darwin' && matrix.target.name != 'aarch64-unknown-linux-gnu' && matrix.target.name != 'armv7-unknown-linux-gnueabihf'
         run: |
           cargo run --target ${{ matrix.target.name }} -- --log-level-filter debug apply-config tests/defaults_only.yaml
           cargo run --target ${{ matrix.target.name }} -- --log-level-filter debug apply-config tests/basic_run.yaml
@@ -64,7 +64,7 @@ jobs:
           ls -la test_dir/home
       - name: Install Homebrew & ohmyzsh and check brew is installed
         # cannot run arm or aarch64 at all on github actions :(
-        if: matrix.target.name != 'aarch64-apple-darwin' && matrix.target.name != 'aarch64-unknown-linux-gnu' && matrix.target.name != 'arm-unknown-linux-gnu'
+        if: matrix.target.name != 'aarch64-apple-darwin' && matrix.target.name != 'aarch64-unknown-linux-gnu' && matrix.target.name != 'armv7-unknown-linux-gnueabihf'
         run: |
           cargo run --target ${{ matrix.target.name }} -- --log-level-filter debug install-homebrew
           cargo run --target ${{ matrix.target.name }} -- --log-level-filter debug install-oh-my-zsh --skip-chsh
