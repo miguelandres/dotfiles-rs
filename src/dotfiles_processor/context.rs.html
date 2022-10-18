@@ -185,6 +185,10 @@
 <span id="185">185</span>
 <span id="186">186</span>
 <span id="187">187</span>
+<span id="188">188</span>
+<span id="189">189</span>
+<span id="190">190</span>
+<span id="191">191</span>
 </pre><pre class="rust"><code><span class="comment">// Copyright (c) 2021-2022 Miguel Barreto and others
 //
 // Permission is hereby granted, free of charge, to any person obtaining
@@ -209,7 +213,7 @@
 </span><span class="kw">use </span>std::{collections::HashMap, convert::TryFrom, path::PathBuf};
 
 <span class="kw">use </span>dotfiles_core::{
-  error::DotfilesError,
+  error::{process_until_first_err, DotfilesError},
   yaml_util::{fold_hash_until_first_err, map_yaml_array, read_yaml_file},
   Setting, Settings,
 };
@@ -370,6 +374,10 @@
     .flatten()
     .collect();
     <span class="prelude-val">Ok</span>(all_actions)
+  }
+
+  <span class="kw">pub fn </span>run_actions(<span class="kw-2">&amp;mut </span><span class="self">self</span>) -&gt; <span class="prelude-ty">Result</span>&lt;(), DotfilesError&gt; {
+    process_until_first_err(<span class="self">self</span>.actions.iter(), |action| action.execute())
   }
 }
 </code></pre></div>

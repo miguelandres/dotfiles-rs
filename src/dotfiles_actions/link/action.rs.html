@@ -195,6 +195,17 @@
 <span id="195">195</span>
 <span id="196">196</span>
 <span id="197">197</span>
+<span id="198">198</span>
+<span id="199">199</span>
+<span id="200">200</span>
+<span id="201">201</span>
+<span id="202">202</span>
+<span id="203">203</span>
+<span id="204">204</span>
+<span id="205">205</span>
+<span id="206">206</span>
+<span id="207">207</span>
+<span id="208">208</span>
 </pre><pre class="rust"><code><span class="comment">// Copyright (c) 2021-2022 Miguel Barreto and others
 //
 // Permission is hereby granted, free of charge, to any person obtaining
@@ -268,7 +279,6 @@
   </span><span class="attribute">#[getset(get_copy = <span class="string">&quot;pub&quot;</span>)]
   </span>ignore_missing_target: bool,
   <span class="doccomment">/// Allow relative linking.
-  /// TODO: actually implement relative linking.
   </span><span class="attribute">#[getset(get_copy = <span class="string">&quot;pub&quot;</span>)]
   </span>relative: bool,
   <span class="doccomment">/// If the target is another symlink, resolve the ultimate concrete file
@@ -307,7 +317,7 @@
     <span class="kw">let </span>resolve_symlink_target =
       get_boolean_setting_from_context(RESOLVE_SYMLINK_TARGET_SETTING, context_settings, defaults)
         .unwrap();
-    LinkAction {
+    <span class="kw">let </span>action = LinkAction {
       fs,
       path,
       target,
@@ -317,7 +327,9 @@
       ignore_missing_target,
       relative,
       resolve_symlink_target,
-    }
+    };
+    <span class="macro">log::trace!</span>(<span class="string">&quot;Creating new {:?}&quot;</span>, action);
+    action
   }
 }
 
@@ -327,8 +339,18 @@
       fs: <span class="kw-2">&amp;</span><span class="lifetime">&#39;_ </span>F,
       action: <span class="kw-2">&amp;</span><span class="lifetime">&#39;_ </span>LinkAction&lt;F&gt;,
     ) -&gt; io::Result&lt;()&gt; {
-      <span class="kw">let </span><span class="kw-2">mut </span>target: PathBuf = PathBuf::from(action.target());
       <span class="kw">let </span>path: PathBuf = PathBuf::from(action.path());
+      <span class="kw">let </span><span class="kw-2">mut </span>target: PathBuf = <span class="kw">if </span>action.relative() {
+        PathBuf::from(action.target())
+      } <span class="kw">else </span>{
+        fs.current_dir()
+          .map(|path| {
+            <span class="kw">let </span><span class="kw-2">mut </span>new_path = path.clone();
+            new_path.push(action.target());
+            new_path
+          })
+          .unwrap()
+      };
       <span class="kw">let </span>target_exists = fs.is_dir(<span class="kw-2">&amp;</span>target) || fs.is_file(<span class="kw-2">&amp;</span>target);
       <span class="kw">let </span>path_exists = fs.is_dir(<span class="kw-2">&amp;</span>path) || fs.is_file(<span class="kw-2">&amp;</span>path);
       <span class="kw">let </span>path_is_symlink = fs.get_symlink_src(<span class="kw-2">&amp;</span>path).is_ok();

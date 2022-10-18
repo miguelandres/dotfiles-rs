@@ -42,6 +42,7 @@
 <span id="42">42</span>
 <span id="43">43</span>
 <span id="44">44</span>
+<span id="45">45</span>
 </pre><pre class="rust"><code><span class="comment">// Copyright (c) 2021-2022 Miguel Barreto and others
 //
 // Permission is hereby granted, free of charge, to any person obtaining
@@ -81,7 +82,8 @@
   <span class="kw">match </span>process::process(<span class="kw-2">&amp;</span>flag_data) {
     <span class="prelude-val">Ok</span>(<span class="kw">_</span>) =&gt; <span class="macro">log::info!</span>(<span class="string">&quot;Process completed successfully&quot;</span>),
     <span class="prelude-val">Err</span>(error) =&gt; {
-      <span class="macro">log::error!</span>(<span class="string">&quot;Processing failed: {:?}&quot;</span>, error);
+      <span class="macro">log::error!</span>(<span class="string">&quot;{}&quot;</span>, error);
+      <span class="macro">log::debug!</span>(<span class="string">&quot;Error Debug Info: {:?}&quot;</span>, error);
       std::process::exit(<span class="number">1</span>);
     }
   }

@@ -151,6 +151,8 @@
 <span id="151">151</span>
 <span id="152">152</span>
 <span id="153">153</span>
+<span id="154">154</span>
+<span id="155">155</span>
 </pre><pre class="rust"><code><span class="comment">// Copyright (c) 2021-2022 Miguel Barreto and others
 //
 // Permission is hereby granted, free of charge, to any person obtaining
@@ -260,13 +262,15 @@
     formulae: Vec&lt;String&gt;,
     casks: Vec&lt;String&gt;,
   ) -&gt; <span class="self">Self </span>{
-    BrewAction {
+    <span class="kw">let </span>action = BrewAction {
       force_casks,
       taps,
       formulae,
       casks,
       phantom_data: PhantomData,
-    }
+    };
+    <span class="macro">log::trace!</span>(<span class="string">&quot;Creating new {:?}&quot;</span>, action);
+    action
   }
 
   <span class="doccomment">/// List of casks to install.

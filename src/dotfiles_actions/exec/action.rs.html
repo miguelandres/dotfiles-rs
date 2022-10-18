@@ -108,6 +108,10 @@
 <span id="108">108</span>
 <span id="109">109</span>
 <span id="110">110</span>
+<span id="111">111</span>
+<span id="112">112</span>
+<span id="113">113</span>
+<span id="114">114</span>
 </pre><pre class="rust"><code><span class="comment">// Copyright (c) 2021-2022 Miguel Barreto and others
 //
 // Permission is hereby granted, free of charge, to any person obtaining
@@ -140,6 +144,8 @@
 
 <span class="kw">use </span>dotfiles_core::Action;
 
+<span class="kw">use </span><span class="kw">crate</span>::brew::action;
+
 <span class="doccomment">/// [ExecAction] Installs software using homebrew.
 </span><span class="attribute">#[derive(Eq, PartialEq, Debug)]
 </span><span class="kw">pub struct </span>ExecAction&lt;<span class="lifetime">&#39;a</span>&gt; {
@@ -155,12 +161,14 @@
 <span class="kw">impl</span>&lt;<span class="lifetime">&#39;a</span>&gt; ExecAction&lt;<span class="lifetime">&#39;a</span>&gt; {
   <span class="doccomment">/// Create a new Exec Action
   </span><span class="kw">pub fn </span>new(command: String, description: <span class="prelude-ty">Option</span>&lt;String&gt;, echo: bool) -&gt; <span class="self">Self </span>{
-    ExecAction {
+    <span class="kw">let </span>action = ExecAction {
       command,
       description,
       echo,
       phantom_data: PhantomData,
-    }
+    };
+    <span class="macro">log::trace!</span>(<span class="string">&quot;Creating new {:?}&quot;</span>, action);
+    action
   }
   <span class="doccomment">/// The command to run
   </span><span class="kw">pub fn </span>command(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="kw-2">&amp;</span>str {

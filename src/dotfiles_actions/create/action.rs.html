@@ -108,6 +108,8 @@
 <span id="108">108</span>
 <span id="109">109</span>
 <span id="110">110</span>
+<span id="111">111</span>
+<span id="112">112</span>
 </pre><pre class="rust"><code><span class="comment">// Copyright (c) 2021-2022 Miguel Barreto and others
 //
 // Permission is hereby granted, free of charge, to any person obtaining
@@ -172,11 +174,13 @@
 <span class="kw">impl</span>&lt;<span class="lifetime">&#39;a</span>, F: FileSystem&gt; CreateAction&lt;<span class="lifetime">&#39;a</span>, F&gt; {
   <span class="doccomment">/// Constructs a new instance of CreateAction
   </span><span class="kw">pub fn </span>new(fs: <span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span>F, directory: String, force: bool) -&gt; <span class="self">Self </span>{
-    CreateAction {
+    <span class="kw">let </span>action = CreateAction {
       fs,
       directory,
       force,
-    }
+    };
+    <span class="macro">log::trace!</span>(<span class="string">&quot;Creating new {:?}&quot;</span>, action);
+    action
   }
   <span class="doccomment">/// Returns the directory to create.
   </span><span class="kw">pub fn </span>directory(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="kw-2">&amp;</span>str {
