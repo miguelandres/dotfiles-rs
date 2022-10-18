@@ -41,6 +41,8 @@
 <span id="41">41</span>
 <span id="42">42</span>
 <span id="43">43</span>
+<span id="44">44</span>
+<span id="45">45</span>
 </pre><pre class="rust"><code><span class="comment">// Copyright (c) 2021-2022 Miguel Barreto and others
 //
 // Permission is hereby granted, free of charge, to any person obtaining
@@ -65,9 +67,11 @@
 </span><span class="doccomment">//! Contains helpful functions to deal with paths in the context of parsing them for dotfiles
 //! configs.
 
-</span><span class="kw">use </span>std::path::{Component, Path, PathBuf};
-
-<span class="kw">use </span>home::home_dir;
+</span><span class="attribute">#[cfg(unix)]
+</span><span class="kw">use </span>home::home_dir;
+<span class="attribute">#[cfg(unix)]
+</span><span class="kw">use </span>std::path::Component;
+<span class="kw">use </span>std::path::{Path, PathBuf};
 
 <span class="doccomment">/// Checks for ~ and replaces it with a home directory if necessary.
 </span><span class="kw">pub fn </span>process_home_dir_in_path(value: <span class="kw-2">&amp;</span>Path) -&gt; PathBuf {
