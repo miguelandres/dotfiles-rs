@@ -28,6 +28,7 @@ use derivative::Derivative;
 use dotfiles_core::action::Action;
 use dotfiles_core::error::DotfilesError;
 use dotfiles_core::error::ErrorType;
+use dotfiles_core::path::process_home_dir_in_path;
 use dotfiles_core::settings::Settings;
 use dotfiles_core::yaml_util::get_boolean_setting_from_context;
 use filesystem::FakeFileSystem;
@@ -130,19 +131,10 @@ impl<F: FileSystem + UnixFileSystem> Action<'_> for LinkAction<'_, F> {
     fn create_symlink<F: FileSystem + UnixFileSystem>(
       fs: &'_ F,
       action: &'_ LinkAction<F>,
+      mut target: PathBuf,
     ) -> io::Result<()> {
       let path: PathBuf = PathBuf::from(action.path());
-      let mut target: PathBuf = if action.relative() {
-        PathBuf::from(action.target())
-      } else {
-        fs.current_dir()
-          .map(|path| {
-            let mut new_path = path;
-            new_path.push(action.target());
-            new_path
-          })
-          .unwrap()
-      };
+
       let target_exists = fs.is_dir(&target) || fs.is_file(&target);
       let path_exists = fs.is_dir(&path) || fs.is_file(&path);
       let path_is_symlink = fs.get_symlink_src(&path).is_ok();
@@ -188,7 +180,18 @@ impl<F: FileSystem + UnixFileSystem> Action<'_> for LinkAction<'_, F> {
         ))
       }
     }
-    match create_symlink(self.fs, self) {
+    let target = PathBuf::from(self.target());
+    let target = process_home_dir_in_path(&target);
+    if target.is_relative() && !self.relative() {
+      return Err(DotfilesError::from(
+        format!(
+          "{} is a relative link target but the action is not set to allow relative targets",
+          self.target()
+        ),
+        ErrorType::InconsistentConfigurationError,
+      ));
+    };
+    match create_symlink(self.fs, self, target) {
       Ok(()) => {
         info!("Created symlink {} -> {}", &self.path, &self.target);
         Ok(())

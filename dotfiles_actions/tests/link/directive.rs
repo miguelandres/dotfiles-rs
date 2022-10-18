@@ -46,7 +46,7 @@ fn link_directive_parsed_from_plain_link() -> Result<(), DotfilesError> {
 
   let action = directive.parse_shortened_action(&default_settings, &yaml)?;
   assert_eq!(action.path(), "a_link");
-  assert_eq!(action.target(), "the_file");
+  assert_eq!(action.target(), "/home/user/the_file");
 
   action.execute()?;
   assert!(directive.fs().is_file("a_link"));

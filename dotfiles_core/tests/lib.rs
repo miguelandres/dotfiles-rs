@@ -21,5 +21,7 @@
 
 #![cfg(test)]
 mod directive;
+#[cfg(unix)]
+mod path;
 mod settings;
 mod yaml_util;

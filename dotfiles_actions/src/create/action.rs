@@ -27,12 +27,14 @@ extern crate strict_yaml_rust;
 use derivative::Derivative;
 use dotfiles_core::action::Action;
 use dotfiles_core::error::DotfilesError;
+use dotfiles_core::path::process_home_dir_in_path;
 use filesystem::FakeFileSystem;
 use filesystem::FileSystem;
 use filesystem::OsFileSystem;
 use log::error;
 use log::info;
 use std::io;
+use std::path::PathBuf;
 
 /// [CreateAction] creates a new [directory](CreateAction::directory) when executed
 #[derive(Derivative)]
@@ -92,10 +94,12 @@ impl<F: FileSystem> Action<'_> for CreateAction<'_, F> {
   /// - Permission denied.
   fn execute(&self) -> Result<(), DotfilesError> {
     fn create_dir<F: FileSystem>(fs: &'_ F, directory: &str, force: bool) -> io::Result<()> {
+      let path = PathBuf::from(directory.to_owned());
+      let path = process_home_dir_in_path(&path);
       if force {
-        Ok(fs.create_dir_all(directory)?)
+        Ok(fs.create_dir_all(path)?)
       } else {
-        Ok(fs.create_dir(directory)?)
+        Ok(fs.create_dir(path)?)
       }
     }
     match create_dir(self.fs, &self.directory, self.force) {
