@@ -345,7 +345,7 @@
       } <span class="kw">else </span>{
         fs.current_dir()
           .map(|path| {
-            <span class="kw">let </span><span class="kw-2">mut </span>new_path = path.clone();
+            <span class="kw">let </span><span class="kw-2">mut </span>new_path = path;
             new_path.push(action.target());
             new_path
           })
