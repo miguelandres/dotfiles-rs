@@ -7,11 +7,11 @@ name: Security Analyses
 
 on:
   push:
-    branches: [ "main" ]
+    branches: ["main"]
   pull_request:
-    branches: [ "main" ]
+    branches: ["main"]
   schedule:
-    - cron: '35 4 * * 4'
+    - cron: "35 4 * * 4"
 
 jobs:
   lint:
@@ -24,18 +24,24 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
-      - name: Install Rust toolchain
-        uses: actions-rs/toolchain@16499b5e05bf2e26879000db0c1d13f7e13fa3af #@v1
+      - name: "Dependency Review"
+        uses: actions/dependency-review-action@v2
+      # When rustup is updated, it tries to replace its binary, which on Windows is somehow locked.
+      # This can result in the CI failure, see: https://github.com/rust-lang/rustup/issues/3029
+      - name: Setup rust
+        uses: actions-rs/toolchain@v1
         with:
-          profile: minimal
           toolchain: nightly
-          components: clippy
           override: true
+          profile: minimal
+          components: clippy
+      - uses: Swatinem/rust-cache@v2
+        with:
+          shared-key: security-analyses--branch--${{ github.ref }}
       - name: Install required cargo
         run: cargo install clippy-sarif sarif-fmt
       - name: Run rust-clippy
-        run:
-          cargo clippy
+        run: cargo clippy
           --all-features
           --message-format=json | clippy-sarif | tee rust-clippy-results.sarif | sarif-fmt
         continue-on-error: true
@@ -46,7 +52,7 @@ jobs:
           wait-for-processing: true
       - name: Run DevSkim scanner
         uses: microsoft/DevSkim-Action@v1
-        
+
       - name: Upload DevSkim scan results to GitHub Security tab
         uses: github/codeql-action/upload-sarif@v2
         with:

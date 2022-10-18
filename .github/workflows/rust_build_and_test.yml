@@ -59,6 +59,8 @@ jobs:
 
     steps:
       - uses: actions/checkout@v2
+      - name: "Dependency Review"
+        uses: actions/dependency-review-action@v2
       # When rustup is updated, it tries to replace its binary, which on Windows is somehow locked.
       # This can result in the CI failure, see: https://github.com/rust-lang/rustup/issues/3029
       - name: Setup rust
