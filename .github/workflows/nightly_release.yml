@@ -94,6 +94,29 @@ jobs:
             gh_env: macos-12
           - name: x86_64-apple-darwin
             gh_env: macos-12
+        include:
+          - target:
+              name: x86_64-unknown-linux-gnu
+            cross: false
+            run_tests: true
+          - target:
+              name: aarch64-unknown-linux-gnu
+            linker: gcc-aarch64-linux-gnu
+            cross: true
+            run_tests: false
+          - target:
+              name: armv7-unknown-linux-gnueabihf
+            linker: gcc-arm-linux-gnueabihf
+            cross: true
+            run_tests: false
+          - target:
+              name: aarch64-apple-darwin
+            cross: false
+            run_tests: false
+          - target:
+              name: x86_64-apple-darwin
+            cross: false
+            run_tests: true
 
     env:
       PACKAGE_FILE: ${{ needs.create-nightly-release.outputs.package_prefix }}-${{ matrix.target.name }}.${{ 'tar.gz' }}
@@ -110,7 +133,11 @@ jobs:
         run: |
           rustup set auto-self-update disable
           rustup toolchain install ${{ matrix.rust}}-${{ matrix.target.name }} --profile minimal
-
+      - name: Install Linker
+        if: matrix.cross
+        run: |
+          sudo apt update
+          sudo apt install ${{ matrix.linker }}
       - uses: Swatinem/rust-cache@v2
         with:
           shared-key: ${{ matrix.target.name }}--nightly-release--branch--${{ github.ref }}
