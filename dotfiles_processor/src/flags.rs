@@ -23,7 +23,12 @@ use clap::{Parser, Subcommand, ValueEnum};
 use log::LevelFilter;
 
 #[derive(Parser)]
-#[command(author, version, about, long_about=None)]
+#[command(author)]
+#[command(name = "dotfiles")]
+#[command(bin_name = "dotfiles")]
+#[command(
+  about = "A simple dotfile manager that can be configured using yaml. See http://github.com/miguelandres/dotfiles-rs"
+)]
 pub struct FlagData {
   #[command(subcommand)]
   pub command: Command,
@@ -47,25 +52,40 @@ pub enum LogLevelFilter {
   Trace,
 }
 
-pub fn convert_to_level_filter(log_level_filter: LogLevelFilter) -> LevelFilter {
-  match log_level_filter {
-    LogLevelFilter::Off => LevelFilter::Off,
-    LogLevelFilter::Error => LevelFilter::Error,
-    LogLevelFilter::Warn => LevelFilter::Warn,
-    LogLevelFilter::Info => LevelFilter::Info,
-    LogLevelFilter::Debug => LevelFilter::Debug,
-    LogLevelFilter::Trace => LevelFilter::Trace,
+// Exception to this clippy since LogLevelFilter is in a crate I don't own.
+#[allow(clippy::from_over_into)]
+impl Into<LevelFilter> for LogLevelFilter {
+  fn into(self) -> LevelFilter {
+    match self {
+      LogLevelFilter::Off => LevelFilter::Off,
+      LogLevelFilter::Error => LevelFilter::Error,
+      LogLevelFilter::Warn => LevelFilter::Warn,
+      LogLevelFilter::Info => LevelFilter::Info,
+      LogLevelFilter::Debug => LevelFilter::Debug,
+      LogLevelFilter::Trace => LevelFilter::Trace,
+    }
   }
 }
 
 #[derive(Subcommand)]
 pub enum Command {
+  /// Installs Homebrew on Mac or Linuxbrew on Linux, see http://brew.sh
+  #[cfg(any(target_os = "linux", target_os = "macos"))]
   InstallHomebrew,
+  /// Installs Oh My Zsh! and sets `zsh` as the shell, see https://ohmyz.sh/
+  #[cfg(unix)]
   InstallOhMyZsh {
+    /// Skips running `chsh` to set `zsh` as the shell
     #[arg(long = "skip-chsh", default_value_t = false)]
     skip_chsh: bool,
   },
+  /// Applies the configuration in the file passed as argument.
+  #[command(arg_required_else_help = true)]
   ApplyConfig {
+    /// Configuration file that describes what to do.
     file: String,
+    /// Only parse the configuration, do not run it.
+    #[arg(short = 'n', long = "dry-run", default_value_t = false)]
+    dry_run: bool,
   },
 }

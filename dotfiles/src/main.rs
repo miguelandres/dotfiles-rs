@@ -20,15 +20,12 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 use clap::Parser;
-use dotfiles_processor::{
-  flags::{convert_to_level_filter, FlagData},
-  process,
-};
+use dotfiles_processor::{flags::FlagData, process};
 use simplelog::*;
 fn main() {
   let flag_data = FlagData::parse();
   CombinedLogger::init(vec![TermLogger::new(
-    convert_to_level_filter(flag_data.log_level_filter),
+    flag_data.log_level_filter.into(),
     Config::default(),
     TerminalMode::Mixed,
     ColorChoice::Auto,

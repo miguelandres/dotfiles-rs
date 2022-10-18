@@ -35,18 +35,23 @@ use dotfiles_core::error::DotfilesError;
 
 pub fn process(flag_data: &FlagData) -> Result<(), DotfilesError> {
   match &flag_data.command {
+    #[cfg(any(target_os = "linux", target_os = "macos"))]
     Command::InstallHomebrew => {
       info!("Installing homebrew.");
       HomebrewInstallAction::new().execute()
     }
+    #[cfg(unix)]
     Command::InstallOhMyZsh { skip_chsh } => {
       info!("Installing Oh My Zsh!");
       OhMyZshInstallAction::new(skip_chsh.to_owned()).execute()
     }
-    Command::ApplyConfig { file } => {
+    Command::ApplyConfig { file, dry_run } => {
       let mut ctx = Context::from(file.to_string());
       ctx.parse_file()?;
-      ctx.run_actions()
+      if !dry_run {
+        ctx.run_actions()?;
+      }
+      Ok(())
     }
   }
 }
