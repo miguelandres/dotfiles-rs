@@ -31,21 +31,26 @@ jobs:
           - name: x86_64-apple-darwin
             gh_env: macos-12
         include:
-          - name: x86_64-unknown-linux-gnu
+          - target:
+              name: x86_64-unknown-linux-gnu
             cross: false
             run_tests: true
-          - name: aarch64-unknown-linux-gnu
+          - target:
+              name: aarch64-unknown-linux-gnu
             linker: gcc-aarch64-linux-gnu
             cross: true
             run_tests: false
-          - name: armv7-unknown-linux-gnueabihf
+          - target:
+              name: armv7-unknown-linux-gnueabihf
             linker: gcc-arm-linux-gnueabihf
             cross: true
             run_tests: false
-          - name: aarch64-apple-darwin
+          - target:
+              name: aarch64-apple-darwin
             cross: false
             run_tests: false
-          - name: x86_64-apple-darwin
+          - target:
+              name: x86_64-apple-darwin
             cross: false
             run_tests: true
     env:
