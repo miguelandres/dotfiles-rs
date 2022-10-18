@@ -30,6 +30,8 @@ use subprocess::ExitStatus;
 
 use dotfiles_core::Action;
 
+use crate::brew::action;
+
 /// [ExecAction] Installs software using homebrew.
 #[derive(Eq, PartialEq, Debug)]
 pub struct ExecAction<'a> {
@@ -45,12 +47,14 @@ pub struct ExecAction<'a> {
 impl<'a> ExecAction<'a> {
   /// Create a new Exec Action
   pub fn new(command: String, description: Option<String>, echo: bool) -> Self {
-    ExecAction {
+    let action = ExecAction {
       command,
       description,
       echo,
       phantom_data: PhantomData,
-    }
+    };
+    log::trace!("Creating new {:?}", action);
+    action
   }
   /// The command to run
   pub fn command(&self) -> &str {

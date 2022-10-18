@@ -1,3 +1,9 @@
+defaults:
+  create:
+    force: true
+  link:
+    relink: true
+    force: true
 steps:
   - create:
       - test_dir

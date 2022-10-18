@@ -107,13 +107,15 @@ impl<'a> BrewAction<'a> {
     formulae: Vec<String>,
     casks: Vec<String>,
   ) -> Self {
-    BrewAction {
+    let action = BrewAction {
       force_casks,
       taps,
       formulae,
       casks,
       phantom_data: PhantomData,
-    }
+    };
+    log::trace!("Creating new {:?}", action);
+    action
   }
 
   /// List of casks to install.
