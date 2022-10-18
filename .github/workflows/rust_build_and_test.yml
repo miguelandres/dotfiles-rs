@@ -52,7 +52,6 @@ jobs:
       - name: Install Homebrew & ohmyzsh and check brew is installed
         if: matrix.target.name != 'aarch64-apple-darwin' # cannot run aarch64 on intel
         run: |
-          cargo run --target ${{ matrix.target.name }} -- --log-level-filter debug apply-config tests/empty.yaml
           cargo run --target ${{ matrix.target.name }} -- --log-level-filter debug apply-config tests/defaults_only.yaml
           cargo run --target ${{ matrix.target.name }} -- --log-level-filter debug apply-config tests/basic_run.yaml
           cat test_dir/README.md

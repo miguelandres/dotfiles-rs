@@ -37,7 +37,8 @@ fn main() {
   match process::process(&flag_data) {
     Ok(_) => log::info!("Process completed successfully"),
     Err(error) => {
-      log::error!("Processing failed: {:?}", error);
+      log::error!("{}", error);
+      log::debug!("Error Debug Info: {:?}", error);
       std::process::exit(1);
     }
   }
