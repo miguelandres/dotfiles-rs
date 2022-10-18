@@ -30,8 +30,6 @@ use subprocess::ExitStatus;
 
 use dotfiles_core::Action;
 
-use crate::brew::action;
-
 /// [ExecAction] Installs software using homebrew.
 #[derive(Eq, PartialEq, Debug)]
 pub struct ExecAction<'a> {
