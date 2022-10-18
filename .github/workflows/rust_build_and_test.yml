@@ -18,6 +18,10 @@ jobs:
       matrix:
         rust: [nightly]
         target:
+          - name: aarch64-pc-windows-msvc
+            gh_env: windows-latest
+          - name: x86_64-pc-windows-msvc
+            gh_env: windows-latest
           - name: x86_64-unknown-linux-gnu
             gh_env: ubuntu-latest
           - name: aarch64-unknown-linux-gnu
@@ -31,6 +35,10 @@ jobs:
           - name: x86_64-apple-darwin
             gh_env: macos-12
         include:
+          - target:
+              name: aarch64-unknown-linux-gnu
+            cross: false
+            run_tests: false
           - target:
               name: x86_64-unknown-linux-gnu
             cross: false
