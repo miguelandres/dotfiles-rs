@@ -49,7 +49,7 @@ jobs:
       - name: Run tests
         if: matrix.target.name != 'aarch64-apple-darwin' # cannot run aarch64 on intel
         run: cargo test --target ${{ matrix.target.name }}
-      - name: Install Homebrew & ohmyzsh and check brew is installed
+      - name: Quick and dirty config test
         if: matrix.target.name != 'aarch64-apple-darwin' # cannot run aarch64 on intel
         run: |
           cargo run --target ${{ matrix.target.name }} -- --log-level-filter debug apply-config tests/defaults_only.yaml
