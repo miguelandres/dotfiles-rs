@@ -86,17 +86,14 @@ jobs:
         target:
           - name: x86_64-unknown-linux-gnu
             gh_env: ubuntu-latest
+          - name: aarch64-unknown-linux-gnu
+            gh_env: ubuntu-latest
+          - name: armv7-unknown-linux-gnueabihf
+            gh_env: ubuntu-latest
           - name: aarch64-apple-darwin
-            gh_env: macos-11
+            gh_env: macos-12
           - name: x86_64-apple-darwin
-            gh_env: macos-11
-        include:
-          - target:
-              gh_env: ubuntu-latest
-            sccache-path: /home/runner/.cache/sccache
-          - target:
-              gh_env: macos-11
-            sccache-path: /Users/runner/Library/Caches/Mozilla.sccache
+            gh_env: macos-12
 
     env:
       PACKAGE_FILE: ${{ needs.create-nightly-release.outputs.package_prefix }}-${{ matrix.target.name }}.${{ 'tar.gz' }}
