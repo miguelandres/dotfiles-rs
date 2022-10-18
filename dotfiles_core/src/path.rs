@@ -22,9 +22,11 @@
 //! Contains helpful functions to deal with paths in the context of parsing them for dotfiles
 //! configs.
 
-use std::path::{Component, Path, PathBuf};
-
+#[cfg(unix)]
 use home::home_dir;
+#[cfg(unix)]
+use std::path::Component;
+use std::path::{Path, PathBuf};
 
 /// Checks for ~ and replaces it with a home directory if necessary.
 pub fn process_home_dir_in_path(value: &Path) -> PathBuf {
