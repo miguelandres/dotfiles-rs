@@ -206,6 +206,9 @@
 <span id="206">206</span>
 <span id="207">207</span>
 <span id="208">208</span>
+<span id="209">209</span>
+<span id="210">210</span>
+<span id="211">211</span>
 </pre><pre class="rust"><code><span class="comment">// Copyright (c) 2021-2022 Miguel Barreto and others
 //
 // Permission is hereby granted, free of charge, to any person obtaining
@@ -236,6 +239,7 @@
 <span class="kw">use </span>dotfiles_core::action::Action;
 <span class="kw">use </span>dotfiles_core::error::DotfilesError;
 <span class="kw">use </span>dotfiles_core::error::ErrorType;
+<span class="kw">use </span>dotfiles_core::path::process_home_dir_in_path;
 <span class="kw">use </span>dotfiles_core::settings::Settings;
 <span class="kw">use </span>dotfiles_core::yaml_util::get_boolean_setting_from_context;
 <span class="kw">use </span>filesystem::FakeFileSystem;
@@ -338,19 +342,10 @@
     <span class="kw">fn </span>create_symlink&lt;F: FileSystem + UnixFileSystem&gt;(
       fs: <span class="kw-2">&amp;</span><span class="lifetime">&#39;_ </span>F,
       action: <span class="kw-2">&amp;</span><span class="lifetime">&#39;_ </span>LinkAction&lt;F&gt;,
+      <span class="kw-2">mut </span>target: PathBuf,
     ) -&gt; io::Result&lt;()&gt; {
       <span class="kw">let </span>path: PathBuf = PathBuf::from(action.path());
-      <span class="kw">let </span><span class="kw-2">mut </span>target: PathBuf = <span class="kw">if </span>action.relative() {
-        PathBuf::from(action.target())
-      } <span class="kw">else </span>{
-        fs.current_dir()
-          .map(|path| {
-            <span class="kw">let </span><span class="kw-2">mut </span>new_path = path;
-            new_path.push(action.target());
-            new_path
-          })
-          .unwrap()
-      };
+
       <span class="kw">let </span>target_exists = fs.is_dir(<span class="kw-2">&amp;</span>target) || fs.is_file(<span class="kw-2">&amp;</span>target);
       <span class="kw">let </span>path_exists = fs.is_dir(<span class="kw-2">&amp;</span>path) || fs.is_file(<span class="kw-2">&amp;</span>path);
       <span class="kw">let </span>path_is_symlink = fs.get_symlink_src(<span class="kw-2">&amp;</span>path).is_ok();
@@ -396,7 +391,18 @@
         ))
       }
     }
-    <span class="kw">match </span>create_symlink(<span class="self">self</span>.fs, <span class="self">self</span>) {
+    <span class="kw">let </span>target = PathBuf::from(<span class="self">self</span>.target());
+    <span class="kw">let </span>target = process_home_dir_in_path(<span class="kw-2">&amp;</span>target);
+    <span class="kw">if </span>target.is_relative() &amp;&amp; !<span class="self">self</span>.relative() {
+      <span class="kw">return </span><span class="prelude-val">Err</span>(DotfilesError::from(
+        <span class="macro">format!</span>(
+          <span class="string">&quot;{} is a relative link target but the action is not set to allow relative targets&quot;</span>,
+          <span class="self">self</span>.target()
+        ),
+        ErrorType::InconsistentConfigurationError,
+      ));
+    };
+    <span class="kw">match </span>create_symlink(<span class="self">self</span>.fs, <span class="self">self</span>, target) {
       <span class="prelude-val">Ok</span>(()) =&gt; {
         <span class="macro">info!</span>(<span class="string">&quot;Created symlink {} -&gt; {}&quot;</span>, <span class="kw-2">&amp;</span><span class="self">self</span>.path, <span class="kw-2">&amp;</span><span class="self">self</span>.target);
         <span class="prelude-val">Ok</span>(())

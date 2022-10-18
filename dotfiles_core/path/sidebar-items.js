@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"fn":[["process_home_dir_in_path","Checks for ~ and replaces it with a home directory if necessary."]]};
