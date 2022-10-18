@@ -137,7 +137,7 @@ impl<F: FileSystem + UnixFileSystem> Action<'_> for LinkAction<'_, F> {
       } else {
         fs.current_dir()
           .map(|path| {
-            let mut new_path = path.clone();
+            let mut new_path = path;
             new_path.push(action.target());
             new_path
           })
