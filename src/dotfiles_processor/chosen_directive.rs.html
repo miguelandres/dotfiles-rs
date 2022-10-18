@@ -147,6 +147,21 @@
 <span id="147">147</span>
 <span id="148">148</span>
 <span id="149">149</span>
+<span id="150">150</span>
+<span id="151">151</span>
+<span id="152">152</span>
+<span id="153">153</span>
+<span id="154">154</span>
+<span id="155">155</span>
+<span id="156">156</span>
+<span id="157">157</span>
+<span id="158">158</span>
+<span id="159">159</span>
+<span id="160">160</span>
+<span id="161">161</span>
+<span id="162">162</span>
+<span id="163">163</span>
+<span id="164">164</span>
 </pre><pre class="rust"><code><span class="comment">// Copyright (c) 2021-2022 Miguel Barreto and others
 //
 // Permission is hereby granted, free of charge, to any person obtaining
@@ -171,12 +186,12 @@
 </span><span class="kw">use </span>std::convert::TryFrom;
 
 <span class="kw">use </span>clap::__macro_refs::once_cell::sync::Lazy;
-<span class="kw">use </span>dotfiles_actions::{
-  brew::{action::BrewAction, directive::BrewDirective},
-  create::{action::NativeCreateAction, directive::NativeCreateDirective},
-  exec::{action::ExecAction, directive::ExecDirective},
-  link::{action::NativeLinkAction, directive::NativeLinkDirective},
-};
+<span class="attribute">#[cfg(any(target_os = <span class="string">&quot;linux&quot;</span>, target_os = <span class="string">&quot;macos&quot;</span>))]
+</span><span class="kw">use </span>dotfiles_actions::brew::{action::BrewAction, directive::BrewDirective};
+<span class="kw">use </span>dotfiles_actions::create::{action::NativeCreateAction, directive::NativeCreateDirective};
+<span class="kw">use </span>dotfiles_actions::exec::{action::ExecAction, directive::ExecDirective};
+<span class="attribute">#[cfg(unix)]
+</span><span class="kw">use </span>dotfiles_actions::link::{action::NativeLinkAction, directive::NativeLinkDirective};
 <span class="kw">use </span>dotfiles_core::{
   action::ActionParser,
   directive::{DirectiveData, HasDirectiveData},
@@ -184,27 +199,34 @@
   Action, Settings,
 };
 
-<span class="kw">static </span>BREW: Lazy&lt;BrewDirective&lt;<span class="lifetime">&#39;static</span>&gt;&gt; = Lazy::new(Default::default);
+<span class="attribute">#[cfg(any(target_os = <span class="string">&quot;linux&quot;</span>, target_os = <span class="string">&quot;macos&quot;</span>))]
+</span><span class="kw">static </span>BREW: Lazy&lt;BrewDirective&lt;<span class="lifetime">&#39;static</span>&gt;&gt; = Lazy::new(Default::default);
 <span class="kw">static </span>CREATE: Lazy&lt;NativeCreateDirective&lt;<span class="lifetime">&#39;static</span>&gt;&gt; = Lazy::new(Default::default);
 <span class="kw">static </span>EXEC: Lazy&lt;ExecDirective&lt;<span class="lifetime">&#39;static</span>&gt;&gt; = Lazy::new(Default::default);
-<span class="kw">static </span>LINK: Lazy&lt;NativeLinkDirective&lt;<span class="lifetime">&#39;static</span>&gt;&gt; = Lazy::new(Default::default);
+<span class="attribute">#[cfg(unix)]
+</span><span class="kw">static </span>LINK: Lazy&lt;NativeLinkDirective&lt;<span class="lifetime">&#39;static</span>&gt;&gt; = Lazy::new(Default::default);
 
 <span class="attribute">#[derive(Clone)]
 </span><span class="kw">pub enum </span>KnownDirective {
-  Brew,
+  <span class="attribute">#[cfg(any(target_os = <span class="string">&quot;linux&quot;</span>, target_os = <span class="string">&quot;macos&quot;</span>))]
+  </span>Brew,
   Create,
   Exec,
-  Link,
+  <span class="attribute">#[cfg(unix)]
+  </span>Link,
 }
 
 <span class="kw">pub enum </span>KnownAction&lt;<span class="lifetime">&#39;a</span>&gt; {
-  Brew(BrewAction&lt;<span class="lifetime">&#39;a</span>&gt;),
+  <span class="attribute">#[cfg(any(target_os = <span class="string">&quot;linux&quot;</span>, target_os = <span class="string">&quot;macos&quot;</span>))]
+  </span>Brew(BrewAction&lt;<span class="lifetime">&#39;a</span>&gt;),
   Create(NativeCreateAction&lt;<span class="lifetime">&#39;a</span>&gt;),
   Exec(ExecAction&lt;<span class="lifetime">&#39;a</span>&gt;),
-  Link(NativeLinkAction&lt;<span class="lifetime">&#39;a</span>&gt;),
+  <span class="attribute">#[cfg(unix)]
+  </span>Link(NativeLinkAction&lt;<span class="lifetime">&#39;a</span>&gt;),
 }
 
-<span class="kw">impl</span>&lt;<span class="lifetime">&#39;a</span>&gt; From&lt;BrewAction&lt;<span class="lifetime">&#39;a</span>&gt;&gt; <span class="kw">for </span>KnownAction&lt;<span class="lifetime">&#39;a</span>&gt; {
+<span class="attribute">#[cfg(any(target_os = <span class="string">&quot;linux&quot;</span>, target_os = <span class="string">&quot;macos&quot;</span>))]
+</span><span class="kw">impl</span>&lt;<span class="lifetime">&#39;a</span>&gt; From&lt;BrewAction&lt;<span class="lifetime">&#39;a</span>&gt;&gt; <span class="kw">for </span>KnownAction&lt;<span class="lifetime">&#39;a</span>&gt; {
   <span class="kw">fn </span>from(value: BrewAction&lt;<span class="lifetime">&#39;a</span>&gt;) -&gt; <span class="self">Self </span>{
     KnownAction::Brew(value)
   }
@@ -222,7 +244,8 @@
   }
 }
 
-<span class="kw">impl</span>&lt;<span class="lifetime">&#39;a</span>&gt; From&lt;NativeLinkAction&lt;<span class="lifetime">&#39;a</span>&gt;&gt; <span class="kw">for </span>KnownAction&lt;<span class="lifetime">&#39;a</span>&gt; {
+<span class="attribute">#[cfg(unix)]
+</span><span class="kw">impl</span>&lt;<span class="lifetime">&#39;a</span>&gt; From&lt;NativeLinkAction&lt;<span class="lifetime">&#39;a</span>&gt;&gt; <span class="kw">for </span>KnownAction&lt;<span class="lifetime">&#39;a</span>&gt; {
   <span class="kw">fn </span>from(value: NativeLinkAction&lt;<span class="lifetime">&#39;a</span>&gt;) -&gt; <span class="self">Self </span>{
     KnownAction::Link(value)
   }
@@ -231,10 +254,12 @@
 <span class="kw">impl</span>&lt;<span class="lifetime">&#39;a</span>&gt; KnownAction&lt;<span class="lifetime">&#39;a</span>&gt; {
   <span class="kw">pub fn </span>execute(<span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span><span class="self">self</span>) -&gt; <span class="prelude-ty">Result</span>&lt;(), DotfilesError&gt; {
     <span class="kw">match </span><span class="self">self </span>{
-      KnownAction::Brew(action) =&gt; action.execute(),
+      <span class="attribute">#[cfg(any(target_os = <span class="string">&quot;linux&quot;</span>, target_os = <span class="string">&quot;macos&quot;</span>))]
+      </span>KnownAction::Brew(action) =&gt; action.execute(),
       KnownAction::Create(action) =&gt; action.execute(),
       KnownAction::Exec(action) =&gt; action.execute(),
-      KnownAction::Link(action) =&gt; action.execute(),
+      <span class="attribute">#[cfg(unix)]
+      </span>KnownAction::Link(action) =&gt; action.execute(),
     }
   }
 }
@@ -242,10 +267,12 @@
 <span class="kw">impl </span>KnownDirective {
   <span class="kw">pub fn </span>data(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="kw-2">&amp;</span>DirectiveData {
     <span class="kw">match </span><span class="self">self </span>{
-      KnownDirective::Brew =&gt; BREW.directive_data(),
+      <span class="attribute">#[cfg(any(target_os = <span class="string">&quot;linux&quot;</span>, target_os = <span class="string">&quot;macos&quot;</span>))]
+      </span>KnownDirective::Brew =&gt; BREW.directive_data(),
       KnownDirective::Create =&gt; CREATE.directive_data(),
       KnownDirective::Exec =&gt; EXEC.directive_data(),
-      KnownDirective::Link =&gt; LINK.directive_data(),
+      <span class="attribute">#[cfg(unix)]
+      </span>KnownDirective::Link =&gt; LINK.directive_data(),
     }
   }
   <span class="kw">pub fn </span>parse_context_defaults(
@@ -264,7 +291,8 @@
     actions: <span class="kw-2">&amp;</span>strict_yaml_rust::StrictYaml,
   ) -&gt; <span class="prelude-ty">Result</span>&lt;Vec&lt;KnownAction&lt;<span class="lifetime">&#39;a</span>&gt;&gt;, DotfilesError&gt; {
     <span class="kw">match </span>directive {
-      KnownDirective::Brew =&gt; BREW
+      <span class="attribute">#[cfg(any(target_os = <span class="string">&quot;linux&quot;</span>, target_os = <span class="string">&quot;macos&quot;</span>))]
+      </span>KnownDirective::Brew =&gt; BREW
         .parse_action_list(context_settings, actions)
         .map(|list| list.into_iter().map(KnownAction::from).collect()),
       KnownDirective::Create =&gt; CREATE
@@ -273,7 +301,8 @@
       KnownDirective::Exec =&gt; EXEC
         .parse_action_list(context_settings, actions)
         .map(|list| list.into_iter().map(KnownAction::from).collect()),
-      KnownDirective::Link =&gt; LINK
+      <span class="attribute">#[cfg(unix)]
+      </span>KnownDirective::Link =&gt; LINK
         .parse_action_list(context_settings, actions)
         .map(|list| list.into_iter().map(KnownAction::from).collect()),
     }
@@ -285,7 +314,8 @@
 
   <span class="kw">fn </span>try_from(value: <span class="kw-2">&amp;</span>str) -&gt; <span class="prelude-ty">Result</span>&lt;<span class="self">Self</span>, <span class="self">Self</span>::Error&gt; {
     <span class="kw">match </span>value {
-      <span class="string">&quot;brew&quot; </span>=&gt; <span class="prelude-val">Ok</span>(KnownDirective::Brew),
+      <span class="attribute">#[cfg(any(target_os = <span class="string">&quot;linux&quot;</span>, target_os = <span class="string">&quot;macos&quot;</span>))]
+      </span><span class="string">&quot;brew&quot; </span>=&gt; <span class="prelude-val">Ok</span>(KnownDirective::Brew),
       <span class="string">&quot;create&quot; </span>=&gt; <span class="prelude-val">Ok</span>(KnownDirective::Create),
       <span class="string">&quot;exec&quot; </span>=&gt; <span class="prelude-val">Ok</span>(KnownDirective::Exec),
       <span class="string">&quot;link&quot; </span>=&gt; <span class="prelude-val">Ok</span>(KnownDirective::Link),
@@ -297,4 +327,4 @@
   }
 }
 </code></pre></div>
-</section></div></main><div id="rustdoc-vars" data-root-path="../../" data-current-crate="dotfiles_processor" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.66.0-nightly (b8b5caee0 2022-10-16)" ></div></body></html>
+</section></div></main><div id="rustdoc-vars" data-root-path="../../" data-current-crate="dotfiles_processor" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.66.0-nightly (06f049a35 2022-10-17)" ></div></body></html>

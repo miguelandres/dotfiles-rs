@@ -40,9 +40,6 @@
 <span id="40">40</span>
 <span id="41">41</span>
 <span id="42">42</span>
-<span id="43">43</span>
-<span id="44">44</span>
-<span id="45">45</span>
 </pre><pre class="rust"><code><span class="comment">// Copyright (c) 2021-2022 Miguel Barreto and others
 //
 // Permission is hereby granted, free of charge, to any person obtaining
@@ -65,15 +62,12 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 </span><span class="kw">use </span>clap::Parser;
-<span class="kw">use </span>dotfiles_processor::{
-  flags::{convert_to_level_filter, FlagData},
-  process,
-};
+<span class="kw">use </span>dotfiles_processor::{flags::FlagData, process};
 <span class="kw">use </span>simplelog::<span class="kw-2">*</span>;
 <span class="kw">fn </span>main() {
   <span class="kw">let </span>flag_data = FlagData::parse();
   CombinedLogger::init(<span class="macro">vec!</span>[TermLogger::new(
-    convert_to_level_filter(flag_data.log_level_filter),
+    flag_data.log_level_filter.into(),
     Config::default(),
     TerminalMode::Mixed,
     ColorChoice::Auto,
@@ -89,4 +83,4 @@
   }
 }
 </code></pre></div>
-</section></div></main><div id="rustdoc-vars" data-root-path="../../" data-current-crate="dotfiles" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.66.0-nightly (b8b5caee0 2022-10-16)" ></div></body></html>
+</section></div></main><div id="rustdoc-vars" data-root-path="../../" data-current-crate="dotfiles" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.66.0-nightly (06f049a35 2022-10-17)" ></div></body></html>

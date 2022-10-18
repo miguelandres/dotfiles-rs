@@ -50,6 +50,11 @@
 <span id="50">50</span>
 <span id="51">51</span>
 <span id="52">52</span>
+<span id="53">53</span>
+<span id="54">54</span>
+<span id="55">55</span>
+<span id="56">56</span>
+<span id="57">57</span>
 </pre><pre class="rust"><code><span class="comment">// Copyright (c) 2021-2022 Miguel Barreto and others
 //
 // Permission is hereby granted, free of charge, to any person obtaining
@@ -87,20 +92,25 @@
 
 <span class="kw">pub fn </span>process(flag_data: <span class="kw-2">&amp;</span>FlagData) -&gt; <span class="prelude-ty">Result</span>&lt;(), DotfilesError&gt; {
   <span class="kw">match </span><span class="kw-2">&amp;</span>flag_data.command {
-    Command::InstallHomebrew =&gt; {
+    <span class="attribute">#[cfg(any(target_os = <span class="string">&quot;linux&quot;</span>, target_os = <span class="string">&quot;macos&quot;</span>))]
+    </span>Command::InstallHomebrew =&gt; {
       <span class="macro">info!</span>(<span class="string">&quot;Installing homebrew.&quot;</span>);
       HomebrewInstallAction::new().execute()
     }
-    Command::InstallOhMyZsh { skip_chsh } =&gt; {
+    <span class="attribute">#[cfg(unix)]
+    </span>Command::InstallOhMyZsh { skip_chsh } =&gt; {
       <span class="macro">info!</span>(<span class="string">&quot;Installing Oh My Zsh!&quot;</span>);
       OhMyZshInstallAction::new(skip_chsh.to_owned()).execute()
     }
-    Command::ApplyConfig { file } =&gt; {
+    Command::ApplyConfig { file, dry_run } =&gt; {
       <span class="kw">let </span><span class="kw-2">mut </span>ctx = Context::from(file.to_string());
       ctx.parse_file()<span class="question-mark">?</span>;
-      ctx.run_actions()
+      <span class="kw">if </span>!dry_run {
+        ctx.run_actions()<span class="question-mark">?</span>;
+      }
+      <span class="prelude-val">Ok</span>(())
     }
   }
 }
 </code></pre></div>
-</section></div></main><div id="rustdoc-vars" data-root-path="../../" data-current-crate="dotfiles_processor" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.66.0-nightly (b8b5caee0 2022-10-16)" ></div></body></html>
+</section></div></main><div id="rustdoc-vars" data-root-path="../../" data-current-crate="dotfiles_processor" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.66.0-nightly (06f049a35 2022-10-17)" ></div></body></html>
