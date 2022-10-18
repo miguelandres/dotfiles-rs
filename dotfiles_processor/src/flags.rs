@@ -27,7 +27,7 @@ use log::LevelFilter;
 #[command(name = "dotfiles")]
 #[command(bin_name = "dotfiles")]
 #[command(
-  about = "A simple dotfile manager that can be configured using yaml. See http://github.com/miguelandres/dotfiles-rs"
+  about = "A simple dotfile manager that can be configured using yaml. See https://github.com/miguelandres/dotfiles-rs"
 )]
 pub struct FlagData {
   #[command(subcommand)]
