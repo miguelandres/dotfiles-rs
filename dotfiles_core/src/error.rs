@@ -121,7 +121,28 @@ pub enum ErrorType {
 
 impl Display for ErrorType {
   fn fmt(&self, f: &mut Formatter) -> std::fmt::Result {
-    write!(f, "{:?}", self)
+    write!(
+      f,
+      "{}",
+      match self {
+        ErrorType::ExecutionError {
+          popen_error: _,
+          exit_status: _,
+        } => "ExecutionError",
+        ErrorType::FileSystemError { fs_error: _ } => "FileSystemError",
+        ErrorType::InconsistentConfigurationError => "InconsistentConfigurationError",
+        ErrorType::IncompleteConfigurationError { missing_field: _ } =>
+          "IncompleteConfigurationError",
+        ErrorType::YamlParseError { scan_error: _ } => "YamlParseError",
+        ErrorType::UnexpectedYamlTypeError {
+          encountered: _,
+          expected: _,
+        } => "UnexpectedYamlTypeError",
+        ErrorType::CoreError => "CoreError",
+        ErrorType::TestingErrorActionSucceedsWhenItShouldFail =>
+          "TestingErrorActionSucceedsWhenItShouldFail",
+      }
+    )
   }
 }
 
@@ -137,7 +158,7 @@ pub fn execution_error(
 }
 
 /// Struct that represents an error that happened while parsing or executing actions.
-#[derive(Debug, Getters)]
+#[derive(Getters, Debug)]
 pub struct DotfilesError {
   /// Human-readable error message
   #[getset(get = "pub")]
@@ -145,6 +166,12 @@ pub struct DotfilesError {
   /// [Error type](ErrorType)
   #[getset(get = "pub")]
   error_type: ErrorType,
+}
+
+impl Display for DotfilesError {
+  fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
+    write!(f, "{}: {}", self.error_type(), self.message())
+  }
 }
 
 impl DotfilesError {

@@ -1,0 +1,6 @@
+defaults:
+  create:
+    force: true
+  link:
+    relink: true
+    force: false

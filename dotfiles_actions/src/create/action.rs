@@ -62,11 +62,13 @@ pub type FakeCreateAction<'a> = CreateAction<'a, FakeFileSystem>;
 impl<'a, F: FileSystem> CreateAction<'a, F> {
   /// Constructs a new instance of CreateAction
   pub fn new(fs: &'a F, directory: String, force: bool) -> Self {
-    CreateAction {
+    let action = CreateAction {
       fs,
       directory,
       force,
-    }
+    };
+    log::trace!("Creating new {:?}", action);
+    action
   }
   /// Returns the directory to create.
   pub fn directory(&self) -> &str {

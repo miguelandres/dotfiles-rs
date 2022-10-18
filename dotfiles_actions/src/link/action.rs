@@ -71,7 +71,6 @@ pub struct LinkAction<'a, F: FileSystem + UnixFileSystem> {
   #[getset(get_copy = "pub")]
   ignore_missing_target: bool,
   /// Allow relative linking.
-  /// TODO: actually implement relative linking.
   #[getset(get_copy = "pub")]
   relative: bool,
   /// If the target is another symlink, resolve the ultimate concrete file
@@ -110,7 +109,7 @@ impl<'a, F: FileSystem + UnixFileSystem> LinkAction<'a, F> {
     let resolve_symlink_target =
       get_boolean_setting_from_context(RESOLVE_SYMLINK_TARGET_SETTING, context_settings, defaults)
         .unwrap();
-    LinkAction {
+    let action = LinkAction {
       fs,
       path,
       target,
@@ -120,7 +119,9 @@ impl<'a, F: FileSystem + UnixFileSystem> LinkAction<'a, F> {
       ignore_missing_target,
       relative,
       resolve_symlink_target,
-    }
+    };
+    log::trace!("Creating new {:?}", action);
+    action
   }
 }
 
@@ -130,8 +131,18 @@ impl<F: FileSystem + UnixFileSystem> Action<'_> for LinkAction<'_, F> {
       fs: &'_ F,
       action: &'_ LinkAction<F>,
     ) -> io::Result<()> {
-      let mut target: PathBuf = PathBuf::from(action.target());
       let path: PathBuf = PathBuf::from(action.path());
+      let mut target: PathBuf = if action.relative() {
+        PathBuf::from(action.target())
+      } else {
+        fs.current_dir()
+          .map(|path| {
+            let mut new_path = path.clone();
+            new_path.push(action.target());
+            new_path
+          })
+          .unwrap()
+      };
       let target_exists = fs.is_dir(&target) || fs.is_file(&target);
       let path_exists = fs.is_dir(&path) || fs.is_file(&path);
       let path_is_symlink = fs.get_symlink_src(&path).is_ok();
