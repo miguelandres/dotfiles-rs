@@ -22,12 +22,12 @@
 use std::convert::TryFrom;
 
 use clap::__macro_refs::once_cell::sync::Lazy;
-use dotfiles_actions::{
-  brew::{action::BrewAction, directive::BrewDirective},
-  create::{action::NativeCreateAction, directive::NativeCreateDirective},
-  exec::{action::ExecAction, directive::ExecDirective},
-  link::{action::NativeLinkAction, directive::NativeLinkDirective},
-};
+#[cfg(any(target_os = "linux", target_os = "macos"))]
+use dotfiles_actions::brew::{action::BrewAction, directive::BrewDirective};
+use dotfiles_actions::create::{action::NativeCreateAction, directive::NativeCreateDirective};
+use dotfiles_actions::exec::{action::ExecAction, directive::ExecDirective};
+#[cfg(unix)]
+use dotfiles_actions::link::{action::NativeLinkAction, directive::NativeLinkDirective};
 use dotfiles_core::{
   action::ActionParser,
   directive::{DirectiveData, HasDirectiveData},
@@ -35,26 +35,33 @@ use dotfiles_core::{
   Action, Settings,
 };
 
+#[cfg(any(target_os = "linux", target_os = "macos"))]
 static BREW: Lazy<BrewDirective<'static>> = Lazy::new(Default::default);
 static CREATE: Lazy<NativeCreateDirective<'static>> = Lazy::new(Default::default);
 static EXEC: Lazy<ExecDirective<'static>> = Lazy::new(Default::default);
+#[cfg(unix)]
 static LINK: Lazy<NativeLinkDirective<'static>> = Lazy::new(Default::default);
 
 #[derive(Clone)]
 pub enum KnownDirective {
+  #[cfg(any(target_os = "linux", target_os = "macos"))]
   Brew,
   Create,
   Exec,
+  #[cfg(unix)]
   Link,
 }
 
 pub enum KnownAction<'a> {
+  #[cfg(any(target_os = "linux", target_os = "macos"))]
   Brew(BrewAction<'a>),
   Create(NativeCreateAction<'a>),
   Exec(ExecAction<'a>),
+  #[cfg(unix)]
   Link(NativeLinkAction<'a>),
 }
 
+#[cfg(any(target_os = "linux", target_os = "macos"))]
 impl<'a> From<BrewAction<'a>> for KnownAction<'a> {
   fn from(value: BrewAction<'a>) -> Self {
     KnownAction::Brew(value)
@@ -73,6 +80,7 @@ impl<'a> From<ExecAction<'a>> for KnownAction<'a> {
   }
 }
 
+#[cfg(unix)]
 impl<'a> From<NativeLinkAction<'a>> for KnownAction<'a> {
   fn from(value: NativeLinkAction<'a>) -> Self {
     KnownAction::Link(value)
@@ -82,9 +90,11 @@ impl<'a> From<NativeLinkAction<'a>> for KnownAction<'a> {
 impl<'a> KnownAction<'a> {
   pub fn execute(&'a self) -> Result<(), DotfilesError> {
     match self {
+      #[cfg(any(target_os = "linux", target_os = "macos"))]
       KnownAction::Brew(action) => action.execute(),
       KnownAction::Create(action) => action.execute(),
       KnownAction::Exec(action) => action.execute(),
+      #[cfg(unix)]
       KnownAction::Link(action) => action.execute(),
     }
   }
@@ -93,9 +103,11 @@ impl<'a> KnownAction<'a> {
 impl KnownDirective {
   pub fn data(&self) -> &DirectiveData {
     match self {
+      #[cfg(any(target_os = "linux", target_os = "macos"))]
       KnownDirective::Brew => BREW.directive_data(),
       KnownDirective::Create => CREATE.directive_data(),
       KnownDirective::Exec => EXEC.directive_data(),
+      #[cfg(unix)]
       KnownDirective::Link => LINK.directive_data(),
     }
   }
@@ -115,6 +127,7 @@ impl KnownDirective {
     actions: &strict_yaml_rust::StrictYaml,
   ) -> Result<Vec<KnownAction<'a>>, DotfilesError> {
     match directive {
+      #[cfg(any(target_os = "linux", target_os = "macos"))]
       KnownDirective::Brew => BREW
         .parse_action_list(context_settings, actions)
         .map(|list| list.into_iter().map(KnownAction::from).collect()),
@@ -124,6 +137,7 @@ impl KnownDirective {
       KnownDirective::Exec => EXEC
         .parse_action_list(context_settings, actions)
         .map(|list| list.into_iter().map(KnownAction::from).collect()),
+      #[cfg(unix)]
       KnownDirective::Link => LINK
         .parse_action_list(context_settings, actions)
         .map(|list| list.into_iter().map(KnownAction::from).collect()),
@@ -136,6 +150,7 @@ impl TryFrom<&str> for KnownDirective {
 
   fn try_from(value: &str) -> Result<Self, Self::Error> {
     match value {
+      #[cfg(any(target_os = "linux", target_os = "macos"))]
       "brew" => Ok(KnownDirective::Brew),
       "create" => Ok(KnownDirective::Create),
       "exec" => Ok(KnownDirective::Exec),
