@@ -28,6 +28,7 @@ use derivative::Derivative;
 use dotfiles_core::action::Action;
 use dotfiles_core::error::DotfilesError;
 use dotfiles_core::path::process_home_dir_in_path;
+use dotfiles_core_macros::ConditionalAction;
 use filesystem::FakeFileSystem;
 use filesystem::FileSystem;
 use filesystem::OsFileSystem;
@@ -37,9 +38,11 @@ use std::io;
 use std::path::PathBuf;
 
 /// [CreateAction] creates a new [directory](CreateAction::directory) when executed
-#[derive(Derivative)]
+#[derive(Derivative, ConditionalAction)]
 #[derivative(Debug, PartialEq)]
 pub struct CreateAction<'a, F: FileSystem> {
+  /// Skips this action if it is running in a CI environment.
+  skip_in_ci: bool,
   /// FileSystem to use to create the directory.
   ///
   /// Having a filesystem instance here allows us to use fakes/mocks to use
@@ -63,8 +66,9 @@ pub type FakeCreateAction<'a> = CreateAction<'a, FakeFileSystem>;
 
 impl<'a, F: FileSystem> CreateAction<'a, F> {
   /// Constructs a new instance of CreateAction
-  pub fn new(fs: &'a F, directory: String, force: bool) -> Self {
+  pub fn new(fs: &'a F, skip_in_ci: bool, directory: String, force: bool) -> Self {
     let action = CreateAction {
+      skip_in_ci,
       fs,
       directory,
       force,

@@ -26,11 +26,13 @@
 use crate::link::directive::*;
 use derivative::Derivative;
 use dotfiles_core::action::Action;
+use dotfiles_core::action::SKIP_IN_CI_SETTING;
 use dotfiles_core::error::DotfilesError;
 use dotfiles_core::error::ErrorType;
 use dotfiles_core::path::process_home_dir_in_path;
 use dotfiles_core::settings::Settings;
 use dotfiles_core::yaml_util::get_boolean_setting_from_context;
+use dotfiles_core_macros::ConditionalAction;
 use filesystem::FakeFileSystem;
 use filesystem::FileSystem;
 use filesystem::OsFileSystem;
@@ -48,9 +50,15 @@ use std::path::PathBuf;
 /// [LinkAction] creates a new symlink `path` that points to `target`.
 ///
 /// It is equivalent to running `ln -s <target> <path>`
-#[derive(Derivative, Getters, CopyGetters)]
+#[derive(Derivative, Getters, CopyGetters, ConditionalAction)]
 #[derivative(Debug, PartialEq)]
 pub struct LinkAction<'a, F: FileSystem + UnixFileSystem> {
+  /// Skips this action if it is running in a CI environment.
+  skip_in_ci: bool,
+  /// FileSystem to use to create the directory.
+  ///
+  /// Having a filesystem instance here allows us to use fakes/mocks to use
+  /// in unit tests.
   #[derivative(Debug = "ignore", PartialEq = "ignore")]
   fs: &'a F,
   /// Path of the new symlink
@@ -110,7 +118,10 @@ impl<'a, F: FileSystem + UnixFileSystem> LinkAction<'a, F> {
     let resolve_symlink_target =
       get_boolean_setting_from_context(RESOLVE_SYMLINK_TARGET_SETTING, context_settings, defaults)
         .unwrap();
+    let skip_in_ci =
+      get_boolean_setting_from_context(SKIP_IN_CI_SETTING, context_settings, defaults).unwrap();
     let action = LinkAction {
+      skip_in_ci,
       fs,
       path,
       target,

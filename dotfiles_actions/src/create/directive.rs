@@ -25,6 +25,7 @@ extern crate strict_yaml_rust;
 use crate::create::action::CreateAction;
 use crate::filesystem::FileSystemDirective;
 use dotfiles_core::action::ActionParser;
+use dotfiles_core::action::SKIP_IN_CI_SETTING;
 use dotfiles_core::directive::DirectiveData;
 use dotfiles_core::directive::HasDirectiveData;
 use dotfiles_core::error::DotfilesError;
@@ -52,7 +53,10 @@ pub const DIR_SETTING: &str = "dir";
 pub fn init_directive_data() -> DirectiveData {
   DirectiveData::from(
     DIRECTIVE_NAME.into(),
-    initialize_settings_object(&[(FORCE_SETTING.to_owned(), Setting::Boolean(false))]),
+    initialize_settings_object(&[
+      (FORCE_SETTING.to_owned(), Setting::Boolean(false)),
+      (SKIP_IN_CI_SETTING.to_owned(), Setting::Boolean(false)),
+    ]),
   )
 }
 
@@ -98,6 +102,12 @@ impl<'a, F: FileSystem + Default> ActionParser<'a> for CreateDirective<'a, F> {
   ) -> Result<CreateAction<F>, DotfilesError> {
     Ok(CreateAction::<'a, F>::new(
       self.fs(),
+      yaml_util::get_boolean_setting_from_yaml_or_context(
+        SKIP_IN_CI_SETTING,
+        yaml,
+        settings,
+        self.defaults(),
+      )?,
       yaml_util::get_string_content_or_keyed_value(yaml, Some(DIR_SETTING))?,
       yaml_util::get_boolean_setting_from_yaml_or_context(
         FORCE_SETTING,

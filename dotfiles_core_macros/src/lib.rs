@@ -24,14 +24,24 @@
 #![deny(rustdoc::broken_intra_doc_links)]
 
 mod directive;
+
+mod action;
+use action::expand_conditional_action;
 use directive::expand_directive;
 use proc_macro::TokenStream;
 use syn::{parse_macro_input, DeriveInput};
 
 #[proc_macro_derive(Directive)]
-/// Generates a Directive<'a> implementation for the struct that calls a member
-/// function called `parse_action_list` to generate the result of `build_action`
+/// Generates a Directive<'a> and a HasDirectiveData<'a> implementation for the struct.
 pub fn directive(input: TokenStream) -> TokenStream {
   let input = parse_macro_input!(input as DeriveInput);
   expand_directive(input).into()
+}
+
+#[proc_macro_derive(ConditionalAction)]
+/// Generates an implementation of ConditionalAction<'a> that returns self.skip_in_ci for the
+/// [ConditionalAction::skip_in_ci(&self)] method.
+pub fn conditional_action(input: TokenStream) -> TokenStream {
+  let input = parse_macro_input!(input as DeriveInput);
+  expand_conditional_action(input).into()
 }

@@ -19,8 +19,22 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-#![feature(map_try_insert)]
-pub mod context;
-pub mod flags;
-pub mod known_directive;
-pub mod process;
+use proc_macro2::TokenStream;
+use quote::quote;
+use syn::DeriveInput;
+
+pub fn expand_conditional_action(input: DeriveInput) -> TokenStream {
+  let (impl_generics, ty_generics, where_clause) = input.generics.split_for_impl();
+
+  let st_name = input.ident;
+  let lifetimes = input.generics.lifetimes().last();
+
+  quote! {
+    #[automatically_derived]
+    impl #impl_generics dotfiles_core::action::ConditionalAction <#lifetimes> for  #st_name #ty_generics #where_clause{
+      fn skip_in_ci(&self) -> bool {
+        self.skip_in_ci
+      }
+    }
+  }
+}

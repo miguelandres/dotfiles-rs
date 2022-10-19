@@ -28,7 +28,7 @@ use dotfiles_core::{
 };
 use strict_yaml_rust::StrictYaml;
 
-use crate::chosen_directive::{KnownAction, KnownDirective};
+use crate::known_directive::{KnownAction, KnownDirective};
 
 /// A context represents an environment in which defaults can be overriden, it can be thought of as
 /// the context of an individual configuration file to apply.

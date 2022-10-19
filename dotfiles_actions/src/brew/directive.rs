@@ -24,6 +24,7 @@ extern crate strict_yaml_rust;
 
 use crate::brew::action::BrewAction;
 use dotfiles_core::action::ActionParser;
+use dotfiles_core::action::SKIP_IN_CI_SETTING;
 use dotfiles_core::directive::DirectiveData;
 use dotfiles_core::error::add_directive_error_prefix;
 use dotfiles_core::error::DotfilesError;
@@ -52,7 +53,10 @@ pub const CASK_SETTING: &str = "cask";
 pub fn init_directive_data() -> DirectiveData {
   DirectiveData::from(
     DIRECTIVE_NAME.into(),
-    initialize_settings_object(&[(FORCE_CASKS_SETTING.to_owned(), Setting::Boolean(false))]),
+    initialize_settings_object(&[
+      (FORCE_CASKS_SETTING.to_owned(), Setting::Boolean(false)),
+      (SKIP_IN_CI_SETTING.to_owned(), Setting::Boolean(false)),
+    ]),
   )
 }
 
@@ -86,11 +90,23 @@ impl<'a> ActionParser<'a> for BrewDirective<'a> {
       context_settings,
       self.data.defaults(),
     )?;
+    let skip_in_ci = get_boolean_setting_from_yaml_or_context(
+      SKIP_IN_CI_SETTING,
+      yaml,
+      context_settings,
+      self.data.defaults(),
+    )?;
     let taps = get_optional_string_array_from_yaml_hash(TAP_SETTING, yaml)?;
     let formulae = get_optional_string_array_from_yaml_hash(FORMULA_SETTING, yaml)?;
     let casks = get_optional_string_array_from_yaml_hash(CASK_SETTING, yaml)?;
 
-    Ok(BrewAction::new(force_casks, taps, formulae, casks))
+    Ok(BrewAction::new(
+      skip_in_ci,
+      force_casks,
+      taps,
+      formulae,
+      casks,
+    ))
   }
 
   /// Parse the list of actions from yaml, in this case it's only one action so
