@@ -62,7 +62,7 @@ pub const IGNORE_MISSING_TARGET_SETTING: &str = "ignore_missing_target";
 /// Allow relative symlinks, if false any relative symlinks cause a failure.
 pub const RELATIVE_SETTING: &str = "relative";
 /// If a relative target is found, convert it to absolute.
-pub const CONVERT_TO_ABSOLUTE_SETTING: &str = "convert_to_absolue";
+pub const CONVERT_TO_ABSOLUTE_SETTING: &str = "convert_to_absolute";
 /// Resolves the target if it is a symlink and uses the final target file as the target.
 pub const RESOLVE_SYMLINK_TARGET_SETTING: &str = "resolve_symlink_target";
 
