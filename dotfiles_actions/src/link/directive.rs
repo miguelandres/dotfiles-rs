@@ -26,6 +26,7 @@ extern crate strict_yaml_rust;
 use crate::filesystem::FileSystemDirective;
 use crate::link::action::LinkAction;
 use dotfiles_core::action::ActionParser;
+use dotfiles_core::action::SKIP_IN_CI_SETTING;
 use dotfiles_core::directive::Directive;
 use dotfiles_core::directive::DirectiveData;
 use dotfiles_core::error::DotfilesError;
@@ -82,6 +83,7 @@ pub fn init_directive_data() -> DirectiveData {
         RESOLVE_SYMLINK_TARGET_SETTING.to_owned(),
         Setting::Boolean(false),
       ),
+      (SKIP_IN_CI_SETTING.to_owned(), Setting::Boolean(false)),
     ]),
   )
 }
@@ -146,6 +148,7 @@ impl<'a, F: FileSystem + UnixFileSystem + Default> LinkDirective<'a, F> {
       self.data.defaults(),
     )?;
     let action_settings: Result<Settings, DotfilesError> = [
+      SKIP_IN_CI_SETTING,
       RELINK_SETTING,
       FORCE_SETTING,
       CREATE_PARENT_DIRS_SETTING,

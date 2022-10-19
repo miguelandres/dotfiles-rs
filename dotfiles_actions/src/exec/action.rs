@@ -25,14 +25,17 @@ use std::marker::PhantomData;
 
 use dotfiles_core::error::execution_error;
 use dotfiles_core::error::DotfilesError;
+use dotfiles_core_macros::ConditionalAction;
 use subprocess::Exec;
 use subprocess::ExitStatus;
 
 use dotfiles_core::Action;
 
 /// [ExecAction] Installs software using homebrew.
-#[derive(Eq, PartialEq, Debug)]
+#[derive(Eq, PartialEq, Debug, ConditionalAction)]
 pub struct ExecAction<'a> {
+  /// Skips this action if it is running in a CI environment.
+  skip_in_ci: bool,
   /// Command to run
   command: String,
   /// Description
@@ -44,8 +47,9 @@ pub struct ExecAction<'a> {
 
 impl<'a> ExecAction<'a> {
   /// Create a new Exec Action
-  pub fn new(command: String, description: Option<String>, echo: bool) -> Self {
+  pub fn new(skip_in_ci: bool, command: String, description: Option<String>, echo: bool) -> Self {
     let action = ExecAction {
+      skip_in_ci,
       command,
       description,
       echo,

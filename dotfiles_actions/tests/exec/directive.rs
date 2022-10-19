@@ -41,16 +41,20 @@ fn parse_list_of_execs() -> Result<(), DotfilesError> {
   assert_eq!(actions.len(), 3);
   assert_eq!(
     actions[0],
-    ExecAction::new(r#"echo "hello world""#.into(), None, false)
+    ExecAction::new(false, r#"echo "hello world""#.into(), None, false)
   );
   assert_eq!(
     actions[1],
     ExecAction::new(
+      false,
       r#"sleep 5"#.into(),
       Some(String::from("waste some time")),
       true
     )
   );
-  assert_eq!(actions[2], ExecAction::new(r#"ls"#.into(), None, false));
+  assert_eq!(
+    actions[2],
+    ExecAction::new(false, r#"ls"#.into(), None, false)
+  );
   Ok(())
 }

@@ -28,12 +28,11 @@ use dotfiles_actions::create::{action::NativeCreateAction, directive::NativeCrea
 use dotfiles_actions::exec::{action::ExecAction, directive::ExecDirective};
 #[cfg(unix)]
 use dotfiles_actions::link::{action::NativeLinkAction, directive::NativeLinkDirective};
-use dotfiles_core::{
-  action::ActionParser,
-  directive::{DirectiveData, HasDirectiveData},
-  error::{DotfilesError, ErrorType},
-  Action, Settings,
-};
+use dotfiles_core::action::ActionParser;
+use dotfiles_core::action::ConditionalAction;
+use dotfiles_core::directive::{DirectiveData, HasDirectiveData};
+use dotfiles_core::error::{DotfilesError, ErrorType};
+use dotfiles_core::Settings;
 
 #[cfg(any(target_os = "linux", target_os = "macos"))]
 static BREW: Lazy<BrewDirective<'static>> = Lazy::new(Default::default);
@@ -91,11 +90,11 @@ impl<'a> KnownAction<'a> {
   pub fn execute(&'a self) -> Result<(), DotfilesError> {
     match self {
       #[cfg(any(target_os = "linux", target_os = "macos"))]
-      KnownAction::Brew(action) => action.execute(),
-      KnownAction::Create(action) => action.execute(),
-      KnownAction::Exec(action) => action.execute(),
+      KnownAction::Brew(action) => action.check_conditions_and_execute(),
+      KnownAction::Create(action) => action.check_conditions_and_execute(),
+      KnownAction::Exec(action) => action.check_conditions_and_execute(),
       #[cfg(unix)]
-      KnownAction::Link(action) => action.execute(),
+      KnownAction::Link(action) => action.check_conditions_and_execute(),
     }
   }
 }

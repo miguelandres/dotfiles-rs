@@ -26,6 +26,7 @@
 use dotfiles_core::action::Action;
 use dotfiles_core::error::DotfilesError;
 use dotfiles_core::exec_wrapper::execute_commands;
+use dotfiles_core_macros::ConditionalAction;
 use log::info;
 use std::marker::PhantomData;
 use subprocess::Exec;
@@ -84,8 +85,10 @@ impl BrewCommand {
 }
 
 /// [BrewAction] Installs software using homebrew.
-#[derive(Debug, PartialEq, Eq)]
+#[derive(Eq, PartialEq, Debug, ConditionalAction)]
 pub struct BrewAction<'a> {
+  /// Skips this action if it is running in a CI environment.
+  skip_in_ci: bool,
   /// Passes `--force` to `brew install --cask` to prevent the install failure
   /// when the app is already installed before the cask install.
   force_casks: bool,
@@ -102,12 +105,14 @@ pub struct BrewAction<'a> {
 impl<'a> BrewAction<'a> {
   /// Constructs a new [BrewAction]
   pub fn new(
+    skip_in_ci: bool,
     force_casks: bool,
     taps: Vec<String>,
     formulae: Vec<String>,
     casks: Vec<String>,
   ) -> Self {
     let action = BrewAction {
+      skip_in_ci,
       force_casks,
       taps,
       formulae,
