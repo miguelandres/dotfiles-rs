@@ -228,6 +228,10 @@
 <span id="228">228</span>
 <span id="229">229</span>
 <span id="230">230</span>
+<span id="231">231</span>
+<span id="232">232</span>
+<span id="233">233</span>
+<span id="234">234</span>
 </pre><pre class="rust"><code><span class="comment">// Copyright (c) 2021-2022 Miguel Barreto and others
 //
 // Permission is hereby granted, free of charge, to any person obtaining
@@ -259,6 +263,7 @@
 <span class="kw">use </span>dotfiles_core::action::SKIP_IN_CI_SETTING;
 <span class="kw">use </span>dotfiles_core::directive::Directive;
 <span class="kw">use </span>dotfiles_core::directive::DirectiveData;
+<span class="kw">use </span>dotfiles_core::directive::HasDirectiveData;
 <span class="kw">use </span>dotfiles_core::error::DotfilesError;
 <span class="kw">use </span>dotfiles_core::error::ErrorType;
 <span class="kw">use </span>dotfiles_core::settings::initialize_settings_object;
@@ -290,6 +295,8 @@
 </span><span class="kw">pub const </span>IGNORE_MISSING_TARGET_SETTING: <span class="kw-2">&amp;</span>str = <span class="string">&quot;ignore_missing_target&quot;</span>;
 <span class="doccomment">/// Allow relative symlinks, if false any relative symlinks cause a failure.
 </span><span class="kw">pub const </span>RELATIVE_SETTING: <span class="kw-2">&amp;</span>str = <span class="string">&quot;relative&quot;</span>;
+<span class="doccomment">/// If a relative target is found, convert it to absolute.
+</span><span class="kw">pub const </span>CONVERT_TO_ABSOLUTE_SETTING: <span class="kw-2">&amp;</span>str = <span class="string">&quot;convert_to_absolue&quot;</span>;
 <span class="doccomment">/// Resolves the target if it is a symlink and uses the final target file as the target.
 </span><span class="kw">pub const </span>RESOLVE_SYMLINK_TARGET_SETTING: <span class="kw-2">&amp;</span>str = <span class="string">&quot;resolve_symlink_target&quot;</span>;
 
@@ -309,6 +316,10 @@
         Setting::Boolean(<span class="bool-val">false</span>),
       ),
       (RELATIVE_SETTING.to_owned(), Setting::Boolean(<span class="bool-val">false</span>)),
+      (
+        CONVERT_TO_ABSOLUTE_SETTING.to_owned(),
+        Setting::Boolean(<span class="bool-val">false</span>),
+      ),
       (
         RESOLVE_SYMLINK_TARGET_SETTING.to_owned(),
         Setting::Boolean(<span class="bool-val">false</span>),
@@ -354,7 +365,10 @@
   }
 }
 
-<span class="kw">impl</span>&lt;<span class="lifetime">&#39;a</span>, F: FileSystem + UnixFileSystem + Default&gt; LinkDirective&lt;<span class="lifetime">&#39;a</span>, F&gt; {
+<span class="kw">impl</span>&lt;<span class="lifetime">&#39;a</span>, F: FileSystem + UnixFileSystem + Default&gt; LinkDirective&lt;<span class="lifetime">&#39;a</span>, F&gt;
+<span class="kw">where
+  </span>LinkDirective&lt;<span class="lifetime">&#39;a</span>, F&gt;: HasDirectiveData&lt;<span class="lifetime">&#39;a</span>&gt; + Directive&lt;<span class="lifetime">&#39;a</span>&gt;,
+{
   <span class="doccomment">/// Returns the [FileSystem] instance being used.
   </span><span class="kw">pub fn </span>fs(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="kw-2">&amp;</span>F {
     <span class="kw-2">&amp;</span><span class="self">self</span>.fs
@@ -377,22 +391,16 @@
       context_settings,
       <span class="self">self</span>.data.defaults(),
     )<span class="question-mark">?</span>;
-    <span class="kw">let </span>action_settings: <span class="prelude-ty">Result</span>&lt;Settings, DotfilesError&gt; = [
-      SKIP_IN_CI_SETTING,
-      RELINK_SETTING,
-      FORCE_SETTING,
-      CREATE_PARENT_DIRS_SETTING,
-      IGNORE_MISSING_TARGET_SETTING,
-      RELATIVE_SETTING,
-      RESOLVE_SYMLINK_TARGET_SETTING,
-    ]
-    .iter()
-    .map(|<span class="kw-2">&amp;</span>name| {
-      <span class="self">self
-        </span>.get_setting_from_yaml_hash_or_from_context(name, yaml, context_settings)
-        .map(|setting| (name.to_owned(), setting))
-    })
-    .collect();
+    <span class="kw">let </span>action_settings: <span class="prelude-ty">Result</span>&lt;Settings, DotfilesError&gt; = <span class="self">self
+      </span>.directive_data()
+      .defaults()
+      .iter()
+      .map(|(name, <span class="kw">_</span>)| {
+        <span class="self">self
+          </span>.get_setting_from_yaml_hash_or_from_context(name, yaml, context_settings)
+          .map(|setting| (name.to_owned(), setting))
+      })
+      .collect();
 
     <span class="prelude-val">Ok</span>(LinkAction::&lt;<span class="lifetime">&#39;a</span>, F&gt;::new(
       <span class="kw-2">&amp;</span><span class="self">self</span>.fs,

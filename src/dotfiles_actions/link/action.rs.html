@@ -221,6 +221,22 @@
 <span id="221">221</span>
 <span id="222">222</span>
 <span id="223">223</span>
+<span id="224">224</span>
+<span id="225">225</span>
+<span id="226">226</span>
+<span id="227">227</span>
+<span id="228">228</span>
+<span id="229">229</span>
+<span id="230">230</span>
+<span id="231">231</span>
+<span id="232">232</span>
+<span id="233">233</span>
+<span id="234">234</span>
+<span id="235">235</span>
+<span id="236">236</span>
+<span id="237">237</span>
+<span id="238">238</span>
+<span id="239">239</span>
 </pre><pre class="rust"><code><span class="comment">// Copyright (c) 2021-2022 Miguel Barreto and others
 //
 // Permission is hereby granted, free of charge, to any person obtaining
@@ -296,6 +312,9 @@
   <span class="doccomment">/// Force to replace an existing file or directory when executed.
   </span><span class="attribute">#[getset(get_copy = <span class="string">&quot;pub&quot;</span>)]
   </span>force: bool,
+  <span class="doccomment">/// If a relative link is found, convert it to absolute.
+  </span><span class="attribute">#[getset(get_copy = <span class="string">&quot;pub&quot;</span>)]
+  </span>convert_to_absolute: bool,
   <span class="doccomment">/// Create all parent directories if they do not exist already
   </span><span class="attribute">#[getset(get_copy = <span class="string">&quot;pub&quot;</span>)]
   </span>create_parent_dirs: bool,
@@ -343,6 +362,9 @@
         .unwrap();
     <span class="kw">let </span>skip_in_ci =
       get_boolean_setting_from_context(SKIP_IN_CI_SETTING, context_settings, defaults).unwrap();
+    <span class="kw">let </span>convert_to_absolute =
+      get_boolean_setting_from_context(CONVERT_TO_ABSOLUTE_SETTING, context_settings, defaults)
+        .unwrap();
     <span class="kw">let </span>action = LinkAction {
       skip_in_ci,
       fs,
@@ -350,6 +372,7 @@
       target,
       relink,
       force,
+      convert_to_absolute,
       create_parent_dirs,
       ignore_missing_target,
       relative,
@@ -416,7 +439,16 @@
       }
     }
     <span class="kw">let </span>target = PathBuf::from(<span class="self">self</span>.target());
-    <span class="kw">let </span>target = process_home_dir_in_path(<span class="kw-2">&amp;</span>target);
+    <span class="kw">let </span><span class="kw-2">mut </span>target = process_home_dir_in_path(<span class="kw-2">&amp;</span>target);
+    <span class="kw">if </span>target.is_relative() &amp;&amp; <span class="self">self</span>.convert_to_absolute() {
+      target = <span class="self">self</span>.fs.current_dir().map_or_else(
+        |err| <span class="prelude-val">Err</span>(DotfilesError::from_io_error(err)),
+        |<span class="kw-2">mut </span>path| {
+          path.push(<span class="kw-2">&amp;</span>target);
+          <span class="prelude-val">Ok</span>(path)
+        },
+      )<span class="question-mark">?</span>;
+    }
     <span class="kw">if </span>target.is_relative() &amp;&amp; !<span class="self">self</span>.relative() {
       <span class="kw">return </span><span class="prelude-val">Err</span>(DotfilesError::from(
         <span class="macro">format!</span>(
