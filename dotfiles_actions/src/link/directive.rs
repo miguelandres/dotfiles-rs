@@ -29,6 +29,7 @@ use dotfiles_core::action::ActionParser;
 use dotfiles_core::action::SKIP_IN_CI_SETTING;
 use dotfiles_core::directive::Directive;
 use dotfiles_core::directive::DirectiveData;
+use dotfiles_core::directive::HasDirectiveData;
 use dotfiles_core::error::DotfilesError;
 use dotfiles_core::error::ErrorType;
 use dotfiles_core::settings::initialize_settings_object;
@@ -60,6 +61,8 @@ pub const CREATE_PARENT_DIRS_SETTING: &str = "create_parent_dirs";
 pub const IGNORE_MISSING_TARGET_SETTING: &str = "ignore_missing_target";
 /// Allow relative symlinks, if false any relative symlinks cause a failure.
 pub const RELATIVE_SETTING: &str = "relative";
+/// If a relative target is found, convert it to absolute.
+pub const CONVERT_TO_ABSOLUTE_SETTING: &str = "convert_to_absolue";
 /// Resolves the target if it is a symlink and uses the final target file as the target.
 pub const RESOLVE_SYMLINK_TARGET_SETTING: &str = "resolve_symlink_target";
 
@@ -79,6 +82,10 @@ pub fn init_directive_data() -> DirectiveData {
         Setting::Boolean(false),
       ),
       (RELATIVE_SETTING.to_owned(), Setting::Boolean(false)),
+      (
+        CONVERT_TO_ABSOLUTE_SETTING.to_owned(),
+        Setting::Boolean(false),
+      ),
       (
         RESOLVE_SYMLINK_TARGET_SETTING.to_owned(),
         Setting::Boolean(false),
@@ -124,7 +131,10 @@ impl<'a, F: FileSystem + UnixFileSystem + Default> FileSystemDirective<'a, F>
   }
 }
 
-impl<'a, F: FileSystem + UnixFileSystem + Default> LinkDirective<'a, F> {
+impl<'a, F: FileSystem + UnixFileSystem + Default> LinkDirective<'a, F>
+where
+  LinkDirective<'a, F>: HasDirectiveData<'a> + Directive<'a>,
+{
   /// Returns the [FileSystem] instance being used.
   pub fn fs(&self) -> &F {
     &self.fs
@@ -147,22 +157,16 @@ impl<'a, F: FileSystem + UnixFileSystem + Default> LinkDirective<'a, F> {
       context_settings,
       self.data.defaults(),
     )?;
-    let action_settings: Result<Settings, DotfilesError> = [
-      SKIP_IN_CI_SETTING,
-      RELINK_SETTING,
-      FORCE_SETTING,
-      CREATE_PARENT_DIRS_SETTING,
-      IGNORE_MISSING_TARGET_SETTING,
-      RELATIVE_SETTING,
-      RESOLVE_SYMLINK_TARGET_SETTING,
-    ]
-    .iter()
-    .map(|&name| {
-      self
-        .get_setting_from_yaml_hash_or_from_context(name, yaml, context_settings)
-        .map(|setting| (name.to_owned(), setting))
-    })
-    .collect();
+    let action_settings: Result<Settings, DotfilesError> = self
+      .directive_data()
+      .defaults()
+      .iter()
+      .map(|(name, _)| {
+        self
+          .get_setting_from_yaml_hash_or_from_context(name, yaml, context_settings)
+          .map(|setting| (name.to_owned(), setting))
+      })
+      .collect();
 
     Ok(LinkAction::<'a, F>::new(
       &self.fs,

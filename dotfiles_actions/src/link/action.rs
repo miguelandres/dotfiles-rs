@@ -73,6 +73,9 @@ pub struct LinkAction<'a, F: FileSystem + UnixFileSystem> {
   /// Force to replace an existing file or directory when executed.
   #[getset(get_copy = "pub")]
   force: bool,
+  /// If a relative link is found, convert it to absolute.
+  #[getset(get_copy = "pub")]
+  convert_to_absolute: bool,
   /// Create all parent directories if they do not exist already
   #[getset(get_copy = "pub")]
   create_parent_dirs: bool,
@@ -120,6 +123,9 @@ impl<'a, F: FileSystem + UnixFileSystem> LinkAction<'a, F> {
         .unwrap();
     let skip_in_ci =
       get_boolean_setting_from_context(SKIP_IN_CI_SETTING, context_settings, defaults).unwrap();
+    let convert_to_absolute =
+      get_boolean_setting_from_context(CONVERT_TO_ABSOLUTE_SETTING, context_settings, defaults)
+        .unwrap();
     let action = LinkAction {
       skip_in_ci,
       fs,
@@ -127,6 +133,7 @@ impl<'a, F: FileSystem + UnixFileSystem> LinkAction<'a, F> {
       target,
       relink,
       force,
+      convert_to_absolute,
       create_parent_dirs,
       ignore_missing_target,
       relative,
@@ -193,7 +200,16 @@ impl<F: FileSystem + UnixFileSystem> Action<'_> for LinkAction<'_, F> {
       }
     }
     let target = PathBuf::from(self.target());
-    let target = process_home_dir_in_path(&target);
+    let mut target = process_home_dir_in_path(&target);
+    if target.is_relative() && self.convert_to_absolute() {
+      target = self.fs.current_dir().map_or_else(
+        |err| Err(DotfilesError::from_io_error(err)),
+        |mut path| {
+          path.push(&target);
+          Ok(path)
+        },
+      )?;
+    }
     if target.is_relative() && !self.relative() {
       return Err(DotfilesError::from(
         format!(

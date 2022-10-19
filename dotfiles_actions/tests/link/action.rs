@@ -25,6 +25,7 @@ use crate::utils::check_action_fail;
 use crate::utils::setup_fs;
 use dotfiles_actions::link::action::FakeLinkAction;
 use dotfiles_actions::link::directive::init_directive_data;
+use dotfiles_actions::link::directive::CONVERT_TO_ABSOLUTE_SETTING;
 use dotfiles_actions::link::directive::CREATE_PARENT_DIRS_SETTING;
 use dotfiles_actions::link::directive::FORCE_SETTING;
 use dotfiles_actions::link::directive::IGNORE_MISSING_TARGET_SETTING;
@@ -71,6 +72,33 @@ fn skip_in_ci_is_respected() -> Result<(), DotfilesError> {
     fs.get_symlink_src("/home/user/path").unwrap()
   );
   env::remove_var("DOTFILES_TESTING_ENV_VAR");
+  Ok(())
+}
+
+#[test]
+fn convert_to_absolue() -> Result<(), DotfilesError> {
+  let fs = FakeFileSystem::new();
+  setup_fs(&fs)?;
+  fs.create_dir("/home/user/target").unwrap();
+  let mut settings = Settings::new();
+  settings.insert(
+    CONVERT_TO_ABSOLUTE_SETTING.to_owned(),
+    Setting::Boolean(true),
+  );
+  fs.set_current_dir(PathBuf::from("/home/user")).unwrap();
+
+  let action = FakeLinkAction::new(
+    &fs,
+    String::from("/home/user/path"),
+    String::from("target"),
+    &settings,
+    init_directive_data().defaults(),
+  );
+  action.check_conditions_and_execute()?;
+  assert_eq!(
+    PathBuf::from("/home/user/target"),
+    fs.get_symlink_src("/home/user/path").unwrap()
+  );
   Ok(())
 }
 
