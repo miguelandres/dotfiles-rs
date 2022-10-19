@@ -91,6 +91,15 @@
 <span id="91">91</span>
 <span id="92">92</span>
 <span id="93">93</span>
+<span id="94">94</span>
+<span id="95">95</span>
+<span id="96">96</span>
+<span id="97">97</span>
+<span id="98">98</span>
+<span id="99">99</span>
+<span id="100">100</span>
+<span id="101">101</span>
+<span id="102">102</span>
 </pre><pre class="rust"><code><span class="comment">// Copyright (c) 2021-2022 Miguel Barreto and others
 //
 // Permission is hereby granted, free of charge, to any person obtaining
@@ -114,7 +123,7 @@
 
 </span><span class="doccomment">//! This module defines [ExecDirective] which represents commands to execute in a shell.
 
-</span><span class="kw">use </span>dotfiles_core::directive::HasDirectiveData;
+</span><span class="kw">use </span>dotfiles_core::{action::SKIP_IN_CI_SETTING, directive::HasDirectiveData};
 <span class="kw">use </span>dotfiles_core_macros::Directive;
 <span class="kw">use </span>std::{collections::HashMap, marker::PhantomData};
 <span class="kw">use </span>strict_yaml_rust::StrictYaml;
@@ -139,7 +148,10 @@
 </span><span class="kw">pub fn </span>init_directive_data() -&gt; DirectiveData {
   DirectiveData::from(
     DIRECTIVE_NAME.into(),
-    initialize_settings_object(<span class="kw-2">&amp;</span>[(ECHO_SETTING.to_owned(), Setting::Boolean(<span class="bool-val">false</span>))]),
+    initialize_settings_object(<span class="kw-2">&amp;</span>[
+      (ECHO_SETTING.to_owned(), Setting::Boolean(<span class="bool-val">false</span>)),
+      (SKIP_IN_CI_SETTING.to_owned(), Setting::Boolean(<span class="bool-val">false</span>)),
+    ]),
   )
 }
 
@@ -167,6 +179,12 @@
     yaml: <span class="kw-2">&amp;</span>StrictYaml,
   ) -&gt; <span class="prelude-ty">Result</span>&lt;ExecAction, DotfilesError&gt; {
     <span class="prelude-val">Ok</span>(ExecAction::new(
+      yaml_util::get_boolean_setting_from_yaml_or_context(
+        SKIP_IN_CI_SETTING,
+        yaml,
+        settings,
+        <span class="self">self</span>.defaults(),
+      )<span class="question-mark">?</span>,
       yaml_util::get_string_content_or_keyed_value(yaml, <span class="prelude-val">Some</span>(COMMAND_SETTING))<span class="question-mark">?</span>,
       yaml_util::get_string_setting_from_yaml_or_context(
         DESCRIPTION_SETTING,
@@ -185,4 +203,4 @@
   }
 }
 </code></pre></div>
-</section></div></main><div id="rustdoc-vars" data-root-path="../../../" data-current-crate="dotfiles_actions" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.66.0-nightly (06f049a35 2022-10-17)" ></div></body></html>
+</section></div></main><div id="rustdoc-vars" data-root-path="../../../" data-current-crate="dotfiles_actions" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.66.0-nightly (a24a020e6 2022-10-18)" ></div></body></html>

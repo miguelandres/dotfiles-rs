@@ -153,6 +153,11 @@
 <span id="153">153</span>
 <span id="154">154</span>
 <span id="155">155</span>
+<span id="156">156</span>
+<span id="157">157</span>
+<span id="158">158</span>
+<span id="159">159</span>
+<span id="160">160</span>
 </pre><pre class="rust"><code><span class="comment">// Copyright (c) 2021-2022 Miguel Barreto and others
 //
 // Permission is hereby granted, free of charge, to any person obtaining
@@ -181,6 +186,7 @@
 </span><span class="kw">use </span>dotfiles_core::action::Action;
 <span class="kw">use </span>dotfiles_core::error::DotfilesError;
 <span class="kw">use </span>dotfiles_core::exec_wrapper::execute_commands;
+<span class="kw">use </span>dotfiles_core_macros::ConditionalAction;
 <span class="kw">use </span>log::info;
 <span class="kw">use </span>std::marker::PhantomData;
 <span class="kw">use </span>subprocess::Exec;
@@ -239,8 +245,10 @@
 }
 
 <span class="doccomment">/// [BrewAction] Installs software using homebrew.
-</span><span class="attribute">#[derive(Debug, PartialEq, Eq)]
+</span><span class="attribute">#[derive(Eq, PartialEq, Debug, ConditionalAction)]
 </span><span class="kw">pub struct </span>BrewAction&lt;<span class="lifetime">&#39;a</span>&gt; {
+  <span class="doccomment">/// Skips this action if it is running in a CI environment.
+  </span>skip_in_ci: bool,
   <span class="doccomment">/// Passes `--force` to `brew install --cask` to prevent the install failure
   /// when the app is already installed before the cask install.
   </span>force_casks: bool,
@@ -257,12 +265,14 @@
 <span class="kw">impl</span>&lt;<span class="lifetime">&#39;a</span>&gt; BrewAction&lt;<span class="lifetime">&#39;a</span>&gt; {
   <span class="doccomment">/// Constructs a new [BrewAction]
   </span><span class="kw">pub fn </span>new(
+    skip_in_ci: bool,
     force_casks: bool,
     taps: Vec&lt;String&gt;,
     formulae: Vec&lt;String&gt;,
     casks: Vec&lt;String&gt;,
   ) -&gt; <span class="self">Self </span>{
     <span class="kw">let </span>action = BrewAction {
+      skip_in_ci,
       force_casks,
       taps,
       formulae,
@@ -309,4 +319,4 @@
   }
 }
 </code></pre></div>
-</section></div></main><div id="rustdoc-vars" data-root-path="../../../" data-current-crate="dotfiles_actions" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.66.0-nightly (06f049a35 2022-10-17)" ></div></body></html>
+</section></div></main><div id="rustdoc-vars" data-root-path="../../../" data-current-crate="dotfiles_actions" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.66.0-nightly (a24a020e6 2022-10-18)" ></div></body></html>

@@ -225,6 +225,9 @@
 <span id="225">225</span>
 <span id="226">226</span>
 <span id="227">227</span>
+<span id="228">228</span>
+<span id="229">229</span>
+<span id="230">230</span>
 </pre><pre class="rust"><code><span class="comment">// Copyright (c) 2021-2022 Miguel Barreto and others
 //
 // Permission is hereby granted, free of charge, to any person obtaining
@@ -253,6 +256,7 @@
 <span class="kw">use </span><span class="kw">crate</span>::filesystem::FileSystemDirective;
 <span class="kw">use </span><span class="kw">crate</span>::link::action::LinkAction;
 <span class="kw">use </span>dotfiles_core::action::ActionParser;
+<span class="kw">use </span>dotfiles_core::action::SKIP_IN_CI_SETTING;
 <span class="kw">use </span>dotfiles_core::directive::Directive;
 <span class="kw">use </span>dotfiles_core::directive::DirectiveData;
 <span class="kw">use </span>dotfiles_core::error::DotfilesError;
@@ -309,6 +313,7 @@
         RESOLVE_SYMLINK_TARGET_SETTING.to_owned(),
         Setting::Boolean(<span class="bool-val">false</span>),
       ),
+      (SKIP_IN_CI_SETTING.to_owned(), Setting::Boolean(<span class="bool-val">false</span>)),
     ]),
   )
 }
@@ -373,6 +378,7 @@
       <span class="self">self</span>.data.defaults(),
     )<span class="question-mark">?</span>;
     <span class="kw">let </span>action_settings: <span class="prelude-ty">Result</span>&lt;Settings, DotfilesError&gt; = [
+      SKIP_IN_CI_SETTING,
       RELINK_SETTING,
       FORCE_SETTING,
       CREATE_PARENT_DIRS_SETTING,
@@ -453,4 +459,4 @@
   }
 }
 </code></pre></div>
-</section></div></main><div id="rustdoc-vars" data-root-path="../../../" data-current-crate="dotfiles_actions" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.66.0-nightly (06f049a35 2022-10-17)" ></div></body></html>
+</section></div></main><div id="rustdoc-vars" data-root-path="../../../" data-current-crate="dotfiles_actions" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.66.0-nightly (a24a020e6 2022-10-18)" ></div></body></html>

@@ -89,6 +89,75 @@
 <span id="89">89</span>
 <span id="90">90</span>
 <span id="91">91</span>
+<span id="92">92</span>
+<span id="93">93</span>
+<span id="94">94</span>
+<span id="95">95</span>
+<span id="96">96</span>
+<span id="97">97</span>
+<span id="98">98</span>
+<span id="99">99</span>
+<span id="100">100</span>
+<span id="101">101</span>
+<span id="102">102</span>
+<span id="103">103</span>
+<span id="104">104</span>
+<span id="105">105</span>
+<span id="106">106</span>
+<span id="107">107</span>
+<span id="108">108</span>
+<span id="109">109</span>
+<span id="110">110</span>
+<span id="111">111</span>
+<span id="112">112</span>
+<span id="113">113</span>
+<span id="114">114</span>
+<span id="115">115</span>
+<span id="116">116</span>
+<span id="117">117</span>
+<span id="118">118</span>
+<span id="119">119</span>
+<span id="120">120</span>
+<span id="121">121</span>
+<span id="122">122</span>
+<span id="123">123</span>
+<span id="124">124</span>
+<span id="125">125</span>
+<span id="126">126</span>
+<span id="127">127</span>
+<span id="128">128</span>
+<span id="129">129</span>
+<span id="130">130</span>
+<span id="131">131</span>
+<span id="132">132</span>
+<span id="133">133</span>
+<span id="134">134</span>
+<span id="135">135</span>
+<span id="136">136</span>
+<span id="137">137</span>
+<span id="138">138</span>
+<span id="139">139</span>
+<span id="140">140</span>
+<span id="141">141</span>
+<span id="142">142</span>
+<span id="143">143</span>
+<span id="144">144</span>
+<span id="145">145</span>
+<span id="146">146</span>
+<span id="147">147</span>
+<span id="148">148</span>
+<span id="149">149</span>
+<span id="150">150</span>
+<span id="151">151</span>
+<span id="152">152</span>
+<span id="153">153</span>
+<span id="154">154</span>
+<span id="155">155</span>
+<span id="156">156</span>
+<span id="157">157</span>
+<span id="158">158</span>
+<span id="159">159</span>
+<span id="160">160</span>
 </pre><pre class="rust"><code><span class="comment">// Copyright (c) 2021-2022 Miguel Barreto and others
 //
 // Permission is hereby granted, free of charge, to any person obtaining
@@ -116,6 +185,8 @@
 
 <span class="kw">use crate</span>::{directive::HasDirectiveData, error::DotfilesError, Settings};
 
+<span class="doccomment">/// Skip this whole action in CI environments.
+</span><span class="kw">pub const </span>SKIP_IN_CI_SETTING: <span class="kw-2">&amp;</span>str = <span class="string">&quot;skip_in_ci&quot;</span>;
 <span class="doccomment">/// An action to be run by a the dotfiles runtime.
 </span><span class="kw">pub trait </span>Action&lt;<span class="lifetime">&#39;a</span>&gt; {
   <span class="doccomment">/// Executes the action.
@@ -123,6 +194,73 @@
   /// Returns an error String describing the issue, this string can be used
   /// to log or display to the user.
   </span><span class="kw">fn </span>execute(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="prelude-ty">Result</span>&lt;(), DotfilesError&gt;;
+}
+
+<span class="doccomment">/// Whether the execution environment is presumed to be CI
+///
+/// The presence of any of the following Environment Variables is assumed to
+/// mean that this action is running in a CI Environment:
+///
+/// * `TF_BUILD`
+/// * `BUILDKITE`
+/// * `BUILD_ID`
+/// * `CI`
+/// * `CIRCLECI`
+/// * `CIRRUS_CI`
+/// * `CODEBUILD_BUILD_ID`
+/// * `GITLAB_CI`
+/// * `GITHUB_ACTIONS`
+/// * `HEROKU_TEST_RUN_ID`
+/// * `TEAMCITY_VERSION`
+/// * `TRAVIS`
+</span><span class="kw">pub fn </span>is_running_in_ci() -&gt; bool {
+  <span class="kw">if </span>std::env::var(<span class="string">&quot;DOTFILES_TESTING_ENV_VAR&quot;</span>).is_ok() {
+    <span class="kw">return </span>std::env::var(<span class="string">&quot;TESTING_ONLY_FAKE_CI&quot;</span>).is_ok();
+  }
+  <span class="kw">let </span>env_vars = <span class="macro">vec!</span>[
+    <span class="string">&quot;TF_BUILD&quot;</span>,
+    <span class="string">&quot;BUILDKITE&quot;</span>,
+    <span class="string">&quot;BUILD_ID&quot;</span>,
+    <span class="string">&quot;CI&quot;</span>,
+    <span class="string">&quot;CIRCLECI&quot;</span>,
+    <span class="string">&quot;CIRRUS_CI&quot;</span>,
+    <span class="string">&quot;CODEBUILD_BUILD_ID&quot;</span>,
+    <span class="string">&quot;GITHUB_ACTIONS&quot;</span>,
+    <span class="string">&quot;GITLAB_CI&quot;</span>,
+    <span class="string">&quot;HEROKU_TEST_RUN_ID&quot;</span>,
+    <span class="string">&quot;TEAMCITY_VERSION&quot;</span>,
+    <span class="string">&quot;TRAVIS&quot;</span>,
+  ];
+  <span class="kw">for </span>var <span class="kw">in </span>env_vars.iter() {
+    <span class="kw">if </span>std::env::var(var).is_ok() {
+      <span class="kw">return </span><span class="bool-val">true</span>;
+    }
+  }
+  <span class="bool-val">false
+</span>}
+<span class="doccomment">/// Trait for actions to be skippable under certain conditions.
+///
+/// For now the only supported condition is whether to skip on CI environments.
+</span><span class="kw">pub trait </span>ConditionalAction&lt;<span class="lifetime">&#39;a</span>&gt;: Action&lt;<span class="lifetime">&#39;a</span>&gt; {
+  <span class="doccomment">/// Whether to skip this action in Continuous Integration environments.
+  ///
+  /// See [is_running_in_ci()]
+  </span><span class="kw">fn </span>skip_in_ci(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; bool;
+
+  <span class="doccomment">/// Checks that the conditions allow for executing this action, and if so executes it according to
+  /// [execute(&amp;self)].
+  ///
+  /// If conditions don&#39;t pass it simply skips and returns `Ok(())`
+  ///
+  /// At this moment the only condition that is supported is whether the action should be skipped in
+  /// CI, see [skip_in_ci(&amp;self)].
+  </span><span class="kw">fn </span>check_conditions_and_execute(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="prelude-ty">Result</span>&lt;(), DotfilesError&gt; {
+    <span class="kw">if </span>ConditionalAction::skip_in_ci(<span class="self">self</span>) &amp;&amp; is_running_in_ci() {
+      <span class="prelude-val">Ok</span>(())
+    } <span class="kw">else </span>{
+      <span class="self">self</span>.execute()
+    }
+  }
 }
 
 <span class="doccomment">/// Trait to parse a specific action type from StrictYaml.
@@ -181,4 +319,4 @@
   }
 }
 </code></pre></div>
-</section></div></main><div id="rustdoc-vars" data-root-path="../../" data-current-crate="dotfiles_core" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.66.0-nightly (06f049a35 2022-10-17)" ></div></body></html>
+</section></div></main><div id="rustdoc-vars" data-root-path="../../" data-current-crate="dotfiles_core" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.66.0-nightly (a24a020e6 2022-10-18)" ></div></body></html>

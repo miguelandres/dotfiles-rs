@@ -210,6 +210,17 @@
 <span id="210">210</span>
 <span id="211">211</span>
 <span id="212">212</span>
+<span id="213">213</span>
+<span id="214">214</span>
+<span id="215">215</span>
+<span id="216">216</span>
+<span id="217">217</span>
+<span id="218">218</span>
+<span id="219">219</span>
+<span id="220">220</span>
+<span id="221">221</span>
+<span id="222">222</span>
+<span id="223">223</span>
 </pre><pre class="rust"><code><span class="comment">// Copyright (c) 2021-2022 Miguel Barreto and others
 //
 // Permission is hereby granted, free of charge, to any person obtaining
@@ -238,11 +249,13 @@
 </span><span class="kw">use </span><span class="kw">crate</span>::link::directive::<span class="kw-2">*</span>;
 <span class="kw">use </span>derivative::Derivative;
 <span class="kw">use </span>dotfiles_core::action::Action;
+<span class="kw">use </span>dotfiles_core::action::SKIP_IN_CI_SETTING;
 <span class="kw">use </span>dotfiles_core::error::DotfilesError;
 <span class="kw">use </span>dotfiles_core::error::ErrorType;
 <span class="kw">use </span>dotfiles_core::path::process_home_dir_in_path;
 <span class="kw">use </span>dotfiles_core::settings::Settings;
 <span class="kw">use </span>dotfiles_core::yaml_util::get_boolean_setting_from_context;
+<span class="kw">use </span>dotfiles_core_macros::ConditionalAction;
 <span class="kw">use </span>filesystem::FakeFileSystem;
 <span class="kw">use </span>filesystem::FileSystem;
 <span class="kw">use </span>filesystem::OsFileSystem;
@@ -260,10 +273,16 @@
 <span class="doccomment">/// [LinkAction] creates a new symlink `path` that points to `target`.
 ///
 /// It is equivalent to running `ln -s &lt;target&gt; &lt;path&gt;`
-</span><span class="attribute">#[derive(Derivative, Getters, CopyGetters)]
+</span><span class="attribute">#[derive(Derivative, Getters, CopyGetters, ConditionalAction)]
 #[derivative(Debug, PartialEq)]
 </span><span class="kw">pub struct </span>LinkAction&lt;<span class="lifetime">&#39;a</span>, F: FileSystem + UnixFileSystem&gt; {
-  <span class="attribute">#[derivative(Debug = <span class="string">&quot;ignore&quot;</span>, PartialEq = <span class="string">&quot;ignore&quot;</span>)]
+  <span class="doccomment">/// Skips this action if it is running in a CI environment.
+  </span>skip_in_ci: bool,
+  <span class="doccomment">/// FileSystem to use to create the directory.
+  ///
+  /// Having a filesystem instance here allows us to use fakes/mocks to use
+  /// in unit tests.
+  </span><span class="attribute">#[derivative(Debug = <span class="string">&quot;ignore&quot;</span>, PartialEq = <span class="string">&quot;ignore&quot;</span>)]
   </span>fs: <span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span>F,
   <span class="doccomment">/// Path of the new symlink
   </span><span class="attribute">#[getset(get = <span class="string">&quot;pub&quot;</span>)]
@@ -322,7 +341,10 @@
     <span class="kw">let </span>resolve_symlink_target =
       get_boolean_setting_from_context(RESOLVE_SYMLINK_TARGET_SETTING, context_settings, defaults)
         .unwrap();
+    <span class="kw">let </span>skip_in_ci =
+      get_boolean_setting_from_context(SKIP_IN_CI_SETTING, context_settings, defaults).unwrap();
     <span class="kw">let </span>action = LinkAction {
+      skip_in_ci,
       fs,
       path,
       target,
@@ -423,4 +445,4 @@
   }
 }
 </code></pre></div>
-</section></div></main><div id="rustdoc-vars" data-root-path="../../../" data-current-crate="dotfiles_actions" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.66.0-nightly (06f049a35 2022-10-17)" ></div></body></html>
+</section></div></main><div id="rustdoc-vars" data-root-path="../../../" data-current-crate="dotfiles_actions" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.66.0-nightly (a24a020e6 2022-10-18)" ></div></body></html>

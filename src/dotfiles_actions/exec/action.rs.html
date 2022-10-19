@@ -110,6 +110,10 @@
 <span id="110">110</span>
 <span id="111">111</span>
 <span id="112">112</span>
+<span id="113">113</span>
+<span id="114">114</span>
+<span id="115">115</span>
+<span id="116">116</span>
 </pre><pre class="rust"><code><span class="comment">// Copyright (c) 2021-2022 Miguel Barreto and others
 //
 // Permission is hereby granted, free of charge, to any person obtaining
@@ -137,14 +141,17 @@
 
 <span class="kw">use </span>dotfiles_core::error::execution_error;
 <span class="kw">use </span>dotfiles_core::error::DotfilesError;
+<span class="kw">use </span>dotfiles_core_macros::ConditionalAction;
 <span class="kw">use </span>subprocess::Exec;
 <span class="kw">use </span>subprocess::ExitStatus;
 
 <span class="kw">use </span>dotfiles_core::Action;
 
 <span class="doccomment">/// [ExecAction] Installs software using homebrew.
-</span><span class="attribute">#[derive(Eq, PartialEq, Debug)]
+</span><span class="attribute">#[derive(Eq, PartialEq, Debug, ConditionalAction)]
 </span><span class="kw">pub struct </span>ExecAction&lt;<span class="lifetime">&#39;a</span>&gt; {
+  <span class="doccomment">/// Skips this action if it is running in a CI environment.
+  </span>skip_in_ci: bool,
   <span class="doccomment">/// Command to run
   </span>command: String,
   <span class="doccomment">/// Description
@@ -156,8 +163,9 @@
 
 <span class="kw">impl</span>&lt;<span class="lifetime">&#39;a</span>&gt; ExecAction&lt;<span class="lifetime">&#39;a</span>&gt; {
   <span class="doccomment">/// Create a new Exec Action
-  </span><span class="kw">pub fn </span>new(command: String, description: <span class="prelude-ty">Option</span>&lt;String&gt;, echo: bool) -&gt; <span class="self">Self </span>{
+  </span><span class="kw">pub fn </span>new(skip_in_ci: bool, command: String, description: <span class="prelude-ty">Option</span>&lt;String&gt;, echo: bool) -&gt; <span class="self">Self </span>{
     <span class="kw">let </span>action = ExecAction {
+      skip_in_ci,
       command,
       description,
       echo,
@@ -223,4 +231,4 @@
   }
 }
 </code></pre></div>
-</section></div></main><div id="rustdoc-vars" data-root-path="../../../" data-current-crate="dotfiles_actions" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.66.0-nightly (06f049a35 2022-10-17)" ></div></body></html>
+</section></div></main><div id="rustdoc-vars" data-root-path="../../../" data-current-crate="dotfiles_actions" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.66.0-nightly (a24a020e6 2022-10-18)" ></div></body></html>

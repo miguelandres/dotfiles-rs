@@ -106,6 +106,22 @@
 <span id="106">106</span>
 <span id="107">107</span>
 <span id="108">108</span>
+<span id="109">109</span>
+<span id="110">110</span>
+<span id="111">111</span>
+<span id="112">112</span>
+<span id="113">113</span>
+<span id="114">114</span>
+<span id="115">115</span>
+<span id="116">116</span>
+<span id="117">117</span>
+<span id="118">118</span>
+<span id="119">119</span>
+<span id="120">120</span>
+<span id="121">121</span>
+<span id="122">122</span>
+<span id="123">123</span>
+<span id="124">124</span>
 </pre><pre class="rust"><code><span class="comment">// Copyright (c) 2021-2022 Miguel Barreto and others
 //
 // Permission is hereby granted, free of charge, to any person obtaining
@@ -132,6 +148,7 @@
 
 <span class="kw">use </span><span class="kw">crate</span>::brew::action::BrewAction;
 <span class="kw">use </span>dotfiles_core::action::ActionParser;
+<span class="kw">use </span>dotfiles_core::action::SKIP_IN_CI_SETTING;
 <span class="kw">use </span>dotfiles_core::directive::DirectiveData;
 <span class="kw">use </span>dotfiles_core::error::add_directive_error_prefix;
 <span class="kw">use </span>dotfiles_core::error::DotfilesError;
@@ -160,7 +177,10 @@
 </span><span class="kw">pub fn </span>init_directive_data() -&gt; DirectiveData {
   DirectiveData::from(
     DIRECTIVE_NAME.into(),
-    initialize_settings_object(<span class="kw-2">&amp;</span>[(FORCE_CASKS_SETTING.to_owned(), Setting::Boolean(<span class="bool-val">false</span>))]),
+    initialize_settings_object(<span class="kw-2">&amp;</span>[
+      (FORCE_CASKS_SETTING.to_owned(), Setting::Boolean(<span class="bool-val">false</span>)),
+      (SKIP_IN_CI_SETTING.to_owned(), Setting::Boolean(<span class="bool-val">false</span>)),
+    ]),
   )
 }
 
@@ -194,11 +214,23 @@
       context_settings,
       <span class="self">self</span>.data.defaults(),
     )<span class="question-mark">?</span>;
+    <span class="kw">let </span>skip_in_ci = get_boolean_setting_from_yaml_or_context(
+      SKIP_IN_CI_SETTING,
+      yaml,
+      context_settings,
+      <span class="self">self</span>.data.defaults(),
+    )<span class="question-mark">?</span>;
     <span class="kw">let </span>taps = get_optional_string_array_from_yaml_hash(TAP_SETTING, yaml)<span class="question-mark">?</span>;
     <span class="kw">let </span>formulae = get_optional_string_array_from_yaml_hash(FORMULA_SETTING, yaml)<span class="question-mark">?</span>;
     <span class="kw">let </span>casks = get_optional_string_array_from_yaml_hash(CASK_SETTING, yaml)<span class="question-mark">?</span>;
 
-    <span class="prelude-val">Ok</span>(BrewAction::new(force_casks, taps, formulae, casks))
+    <span class="prelude-val">Ok</span>(BrewAction::new(
+      skip_in_ci,
+      force_casks,
+      taps,
+      formulae,
+      casks,
+    ))
   }
 
   <span class="doccomment">/// Parse the list of actions from yaml, in this case it&#39;s only one action so
@@ -215,4 +247,4 @@
   }
 }
 </code></pre></div>
-</section></div></main><div id="rustdoc-vars" data-root-path="../../../" data-current-crate="dotfiles_actions" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.66.0-nightly (06f049a35 2022-10-17)" ></div></body></html>
+</section></div></main><div id="rustdoc-vars" data-root-path="../../../" data-current-crate="dotfiles_actions" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.66.0-nightly (a24a020e6 2022-10-18)" ></div></body></html>

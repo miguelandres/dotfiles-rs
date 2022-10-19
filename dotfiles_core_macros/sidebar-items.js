@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"derive":[["Directive","Generates a Directive<’a> implementation for the struct that calls a member function called `parse_action_list` to generate the result of `build_action`"]]};
+window.SIDEBAR_ITEMS = {"derive":[["ConditionalAction","Generates an implementation of ConditionalAction<’a> that returns self.skip_in_ci for the [ConditionalAction::skip_in_ci(&self)] method."],["Directive","Generates a Directive<’a> and a HasDirectiveData<’a> implementation for the struct."]]};

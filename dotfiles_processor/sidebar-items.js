@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"mod":[["chosen_directive",""],["context",""],["flags",""],["process",""]]};
+window.SIDEBAR_ITEMS = {"mod":[["context",""],["flags",""],["known_directive",""],["process",""]]};
