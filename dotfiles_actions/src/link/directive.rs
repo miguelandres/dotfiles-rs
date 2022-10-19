@@ -84,7 +84,7 @@ pub fn init_directive_data() -> DirectiveData {
       (RELATIVE_SETTING.to_owned(), Setting::Boolean(false)),
       (
         CONVERT_TO_ABSOLUTE_SETTING.to_owned(),
-        Setting::Boolean(false),
+        Setting::Boolean(true),
       ),
       (
         RESOLVE_SYMLINK_TARGET_SETTING.to_owned(),
