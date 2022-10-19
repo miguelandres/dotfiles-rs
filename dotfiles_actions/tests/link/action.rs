@@ -61,11 +61,14 @@ fn skip_in_ci_is_respected() -> Result<(), DotfilesError> {
     init_directive_data().defaults(),
   );
   action.check_conditions_and_execute()?;
-  assert!(!fs.is_dir("/home/user/path"));
+  assert!(fs.get_symlink_src("/home/user/path").is_err());
 
   env::remove_var("GITHUB_ACTIONS");
   action.check_conditions_and_execute()?;
-  assert!(fs.is_dir("/home/user/path"));
+  assert_eq!(
+    PathBuf::from("/home/user/target"),
+    fs.get_symlink_src("/home/user/path").unwrap()
+  );
   Ok(())
 }
 
