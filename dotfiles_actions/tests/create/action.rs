@@ -21,11 +21,31 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
+use std::env;
+
 use dotfiles_actions::create::action::FakeCreateAction;
-use dotfiles_core::{action::Action, error::DotfilesError};
-use filesystem::FakeFileSystem;
+use dotfiles_core::{
+  action::{Action, ConditionalAction},
+  error::DotfilesError,
+};
+use filesystem::{FakeFileSystem, FileSystem};
 
 use crate::utils::{check_action_fail, setup_fs};
+
+#[test]
+fn skip_in_ci_is_respected() -> Result<(), DotfilesError> {
+  let fs = FakeFileSystem::new();
+  setup_fs(&fs)?;
+  env::set_var("GITHUB_ACTIONS", "true");
+  let action = FakeCreateAction::new(&fs, true, String::from("/home/user/target"), true);
+  action.check_conditions_and_execute()?;
+  assert!(!fs.is_dir("/home/user/target"));
+
+  env::remove_var("GITHUB_ACTIONS");
+  action.check_conditions_and_execute()?;
+  assert!(fs.is_dir("/home/user/target"));
+  Ok(())
+}
 
 #[test]
 fn create_dir_fails_on_nonexistent_path() -> Result<(), DotfilesError> {
@@ -33,6 +53,7 @@ fn create_dir_fails_on_nonexistent_path() -> Result<(), DotfilesError> {
   setup_fs(&fs).expect("Failure setting up FakeFileSystem");
   let action = FakeCreateAction::new(
     &fs,
+    false,
     String::from("/home/user/nonexistent_path/target"),
     false,
   );
@@ -49,7 +70,7 @@ fn create_dir_fails_on_nonexistent_path() -> Result<(), DotfilesError> {
 fn create_dir_succeeds() -> Result<(), DotfilesError> {
   let fs = FakeFileSystem::new();
   setup_fs(&fs)?;
-  let action = FakeCreateAction::new(&fs, String::from("/home/user/target"), false);
+  let action = FakeCreateAction::new(&fs, false, String::from("/home/user/target"), false);
   action.execute()
 }
 
@@ -57,7 +78,7 @@ fn create_dir_succeeds() -> Result<(), DotfilesError> {
 fn create_dir_fails_on_readonly_dir() -> Result<(), DotfilesError> {
   let fs = FakeFileSystem::new();
   setup_fs(&fs)?;
-  let action = FakeCreateAction::new(&fs, String::from("/system/target"), false);
+  let action = FakeCreateAction::new(&fs, false, String::from("/system/target"), false);
   check_action_fail(
     &action,
     format!(
@@ -73,6 +94,7 @@ fn force_create_dir_succeeds_on_nonexistent_path() -> Result<(), DotfilesError> 
   setup_fs(&fs)?;
   let action = FakeCreateAction::new(
     &fs,
+    false,
     String::from("/home/user/nonexistent_path/target"),
     true,
   );
@@ -83,7 +105,7 @@ fn force_create_dir_succeeds_on_nonexistent_path() -> Result<(), DotfilesError> 
 fn force_create_dir_succeeds() -> Result<(), DotfilesError> {
   let fs = FakeFileSystem::new();
   setup_fs(&fs)?;
-  let action = FakeCreateAction::new(&fs, String::from("/home/user/target"), true);
+  let action = FakeCreateAction::new(&fs, false, String::from("/home/user/target"), true);
   action.execute()
 }
 
@@ -91,7 +113,7 @@ fn force_create_dir_succeeds() -> Result<(), DotfilesError> {
 fn force_create_dir_fails_on_readonly_dir() -> Result<(), DotfilesError> {
   let fs = FakeFileSystem::new();
   setup_fs(&fs)?;
-  let action = FakeCreateAction::new(&fs, String::from("/system/target"), true);
+  let action = FakeCreateAction::new(&fs, false, String::from("/system/target"), true);
   check_action_fail(
     &action,
     format!(

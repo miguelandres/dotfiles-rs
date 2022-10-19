@@ -30,6 +30,8 @@ use dotfiles_actions::link::directive::FORCE_SETTING;
 use dotfiles_actions::link::directive::IGNORE_MISSING_TARGET_SETTING;
 use dotfiles_actions::link::directive::RELINK_SETTING;
 use dotfiles_actions::link::directive::RESOLVE_SYMLINK_TARGET_SETTING;
+use dotfiles_core::action::ConditionalAction;
+use dotfiles_core::action::SKIP_IN_CI_SETTING;
 use dotfiles_core::error::DotfilesError;
 use dotfiles_core::settings::initialize_settings_object;
 use dotfiles_core::settings::Setting;
@@ -40,7 +42,32 @@ use filesystem::UnixFileSystem;
 
 use dotfiles_core::settings::Settings;
 
+use std::env;
 use std::path::PathBuf;
+
+#[test]
+fn skip_in_ci_is_respected() -> Result<(), DotfilesError> {
+  let fs = FakeFileSystem::new();
+  setup_fs(&fs)?;
+  fs.create_dir("/home/user/target").unwrap();
+  let mut settings = Settings::new();
+  settings.insert(SKIP_IN_CI_SETTING.to_owned(), Setting::Boolean(true));
+  env::set_var("GITHUB_ACTIONS", "true");
+  let action = FakeLinkAction::new(
+    &fs,
+    String::from("/home/user/path"),
+    String::from("/home/user/target"),
+    &settings,
+    init_directive_data().defaults(),
+  );
+  action.check_conditions_and_execute()?;
+  assert!(!fs.is_dir("/home/user/path"));
+
+  env::remove_var("GITHUB_ACTIONS");
+  action.check_conditions_and_execute()?;
+  assert!(fs.is_dir("/home/user/path"));
+  Ok(())
+}
 
 #[test]
 fn link_fails_on_nonexistent_path() -> Result<(), DotfilesError> {

@@ -21,14 +21,43 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
+use std::env;
+
 use dotfiles_actions::exec::action::ExecAction;
-use dotfiles_core::{action::Action, error::DotfilesError};
+use dotfiles_core::{
+  action::{Action, ConditionalAction},
+  error::DotfilesError,
+};
 
 use crate::utils::check_action_fail;
 
 #[test]
+fn skip_in_ci_is_respected() -> Result<(), DotfilesError> {
+  env::set_var("GITHUB_ACTIONS", "true");
+  let action = ExecAction::new(
+    true,
+    "mkdir /tmp/check_conditions_and_execute".into(),
+    None,
+    false,
+  );
+  action.check_conditions_and_execute()?;
+
+  env::remove_var("GITHUB_ACTIONS");
+  let action = ExecAction::new(
+    true,
+    "ls -la /tmp/check_conditions_and_execute".into(),
+    None,
+    false,
+  );
+  check_action_fail(
+    &action,
+    "Action must fail since that dir should not exist, since the previous run should have skipped creation.".to_owned(),
+  )
+}
+
+#[test]
 fn failed_command_returns_error() -> Result<(), DotfilesError> {
-  let action = ExecAction::new("exit 1".into(), None, false);
+  let action = ExecAction::new(false, "exit 1".into(), None, false);
   check_action_fail(
     &action,
     "An error was expected when exit 1 was called but no error was returned".to_string(),
@@ -37,6 +66,6 @@ fn failed_command_returns_error() -> Result<(), DotfilesError> {
 
 #[test]
 fn exec_succeeds() -> Result<(), DotfilesError> {
-  let action = ExecAction::new("exit 0".into(), None, false);
+  let action = ExecAction::new(false, "exit 0".into(), None, false);
   action.execute()
 }

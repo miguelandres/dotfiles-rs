@@ -21,7 +21,7 @@
 
 //! This module defines [ExecDirective] which represents commands to execute in a shell.
 
-use dotfiles_core::directive::HasDirectiveData;
+use dotfiles_core::{action::SKIP_IN_CI_SETTING, directive::HasDirectiveData};
 use dotfiles_core_macros::Directive;
 use std::{collections::HashMap, marker::PhantomData};
 use strict_yaml_rust::StrictYaml;
@@ -46,7 +46,10 @@ pub const DESCRIPTION_SETTING: &str = "description";
 pub fn init_directive_data() -> DirectiveData {
   DirectiveData::from(
     DIRECTIVE_NAME.into(),
-    initialize_settings_object(&[(ECHO_SETTING.to_owned(), Setting::Boolean(false))]),
+    initialize_settings_object(&[
+      (ECHO_SETTING.to_owned(), Setting::Boolean(false)),
+      (SKIP_IN_CI_SETTING.to_owned(), Setting::Boolean(false)),
+    ]),
   )
 }
 
@@ -74,6 +77,12 @@ impl<'a> ActionParser<'a> for ExecDirective<'a> {
     yaml: &StrictYaml,
   ) -> Result<ExecAction, DotfilesError> {
     Ok(ExecAction::new(
+      yaml_util::get_boolean_setting_from_yaml_or_context(
+        SKIP_IN_CI_SETTING,
+        yaml,
+        settings,
+        self.defaults(),
+      )?,
       yaml_util::get_string_content_or_keyed_value(yaml, Some(COMMAND_SETTING))?,
       yaml_util::get_string_setting_from_yaml_or_context(
         DESCRIPTION_SETTING,

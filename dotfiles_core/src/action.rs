@@ -25,6 +25,8 @@ use strict_yaml_rust::StrictYaml;
 
 use crate::{directive::HasDirectiveData, error::DotfilesError, Settings};
 
+/// Skip this whole action in CI environments.
+pub const SKIP_IN_CI_SETTING: &str = "skip_in_ci";
 /// An action to be run by a the dotfiles runtime.
 pub trait Action<'a> {
   /// Executes the action.
@@ -32,6 +34,70 @@ pub trait Action<'a> {
   /// Returns an error String describing the issue, this string can be used
   /// to log or display to the user.
   fn execute(&self) -> Result<(), DotfilesError>;
+}
+
+/// Whether the execution environment is presumed to be CI
+///
+/// The presence of any of the following Environment Variables is assumed to
+/// mean that this action is running in a CI Environment:
+///
+/// * `TF_BUILD`
+/// * `BUILDKITE`
+/// * `BUILD_ID`
+/// * `CI`
+/// * `CIRCLECI`
+/// * `CIRRUS_CI`
+/// * `CODEBUILD_BUILD_ID`
+/// * `GITLAB_CI`
+/// * `GITHUB_ACTIONS`
+/// * `HEROKU_TEST_RUN_ID`
+/// * `TEAMCITY_VERSION`
+/// * `TRAVIS`
+pub fn is_running_in_ci() -> bool {
+  let env_vars = vec![
+    "TF_BUILD",
+    "BUILDKITE",
+    "BUILD_ID",
+    "CI",
+    "CIRCLECI",
+    "CIRRUS_CI",
+    "CODEBUILD_BUILD_ID",
+    "GITHUB_ACTIONS",
+    "GITLAB_CI",
+    "HEROKU_TEST_RUN_ID",
+    "TEAMCITY_VERSION",
+    "TRAVIS",
+  ];
+  for var in env_vars.iter() {
+    if std::env::var(var).is_ok() {
+      return true;
+    }
+  }
+  false
+}
+/// Trait for actions to be skippable under certain conditions.
+///
+/// For now the only supported condition is whether to skip on CI environments.
+pub trait ConditionalAction<'a>: Action<'a> {
+  /// Whether to skip this action in Continuous Integration environments.
+  ///
+  /// See [is_running_in_ci()]
+  fn skip_in_ci(&self) -> bool;
+
+  /// Checks that the conditions allow for executing this action, and if so executes it according to
+  /// [execute(&self)].
+  ///
+  /// If conditions don't pass it simply skips and returns `Ok(())`
+  ///
+  /// At this moment the only condition that is supported is whether the action should be skipped in
+  /// CI, see [skip_in_ci(&self)].
+  fn check_conditions_and_execute(&self) -> Result<(), DotfilesError> {
+    if ConditionalAction::skip_in_ci(self) && is_running_in_ci() {
+      Ok(())
+    } else {
+      self.execute()
+    }
+  }
 }
 
 /// Trait to parse a specific action type from StrictYaml.
