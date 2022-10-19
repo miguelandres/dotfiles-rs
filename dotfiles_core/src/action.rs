@@ -54,6 +54,9 @@ pub trait Action<'a> {
 /// * `TEAMCITY_VERSION`
 /// * `TRAVIS`
 pub fn is_running_in_ci() -> bool {
+  if std::env::var("DOTFILES_TESTING_ENV_VAR").is_ok() {
+    return std::env::var("TESTING_ONLY_FAKE_CI").is_ok();
+  }
   let env_vars = vec![
     "TF_BUILD",
     "BUILDKITE",

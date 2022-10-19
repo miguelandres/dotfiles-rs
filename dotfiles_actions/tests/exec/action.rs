@@ -33,7 +33,8 @@ use crate::utils::check_action_fail;
 
 #[test]
 fn skip_in_ci_is_respected() -> Result<(), DotfilesError> {
-  env::set_var("GITHUB_ACTIONS", "true");
+  env::set_var("DOTFILES_TESTING_ENV_VAR", "true");
+  env::set_var("TESTING_ONLY_FAKE_CI", "true");
   let action = ExecAction::new(
     true,
     "mkdir /tmp/check_conditions_and_execute".into(),
@@ -42,7 +43,7 @@ fn skip_in_ci_is_respected() -> Result<(), DotfilesError> {
   );
   action.check_conditions_and_execute()?;
 
-  env::remove_var("GITHUB_ACTIONS");
+  env::remove_var("TESTING_ONLY_FAKE_CI");
   let action = ExecAction::new(
     true,
     "ls -la /tmp/check_conditions_and_execute".into(),
@@ -52,7 +53,9 @@ fn skip_in_ci_is_respected() -> Result<(), DotfilesError> {
   check_action_fail(
     &action,
     "Action must fail since that dir should not exist, since the previous run should have skipped creation.".to_owned(),
-  )
+  )?;
+  env::remove_var("DOTFILES_TESTING_ENV_VAR");
+  Ok(())
 }
 
 #[test]

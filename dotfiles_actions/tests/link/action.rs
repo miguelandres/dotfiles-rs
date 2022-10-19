@@ -52,7 +52,8 @@ fn skip_in_ci_is_respected() -> Result<(), DotfilesError> {
   fs.create_dir("/home/user/target").unwrap();
   let mut settings = Settings::new();
   settings.insert(SKIP_IN_CI_SETTING.to_owned(), Setting::Boolean(true));
-  env::set_var("GITHUB_ACTIONS", "true");
+  env::set_var("DOTFILES_TESTING_ENV_VAR", "true");
+  env::set_var("TESTING_ONLY_FAKE_CI", "true");
   let action = FakeLinkAction::new(
     &fs,
     String::from("/home/user/path"),
@@ -63,12 +64,13 @@ fn skip_in_ci_is_respected() -> Result<(), DotfilesError> {
   action.check_conditions_and_execute()?;
   assert!(fs.get_symlink_src("/home/user/path").is_err());
 
-  env::remove_var("GITHUB_ACTIONS");
+  env::remove_var("TESTING_ONLY_FAKE_CI");
   action.check_conditions_and_execute()?;
   assert_eq!(
     PathBuf::from("/home/user/target"),
     fs.get_symlink_src("/home/user/path").unwrap()
   );
+  env::remove_var("DOTFILES_TESTING_ENV_VAR");
   Ok(())
 }
 

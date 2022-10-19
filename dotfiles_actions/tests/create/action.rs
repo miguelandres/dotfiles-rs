@@ -36,14 +36,16 @@ use crate::utils::{check_action_fail, setup_fs};
 fn skip_in_ci_is_respected() -> Result<(), DotfilesError> {
   let fs = FakeFileSystem::new();
   setup_fs(&fs)?;
-  env::set_var("GITHUB_ACTIONS", "true");
+  env::set_var("DOTFILES_TESTING_ENV_VAR", "true");
+  env::set_var("TESTING_ONLY_FAKE_CI", "true");
   let action = FakeCreateAction::new(&fs, true, String::from("/home/user/target"), true);
   action.check_conditions_and_execute()?;
   assert!(!fs.is_dir("/home/user/target"));
 
-  env::remove_var("GITHUB_ACTIONS");
+  env::remove_var("TESTING_ONLY_FAKE_CI");
   action.check_conditions_and_execute()?;
   assert!(fs.is_dir("/home/user/target"));
+  env::remove_var("DOTFILES_TESTING_ENV_VAR");
   Ok(())
 }
 
