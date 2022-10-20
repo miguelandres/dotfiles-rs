@@ -229,9 +229,6 @@
 <span id="229">229</span>
 <span id="230">230</span>
 <span id="231">231</span>
-<span id="232">232</span>
-<span id="233">233</span>
-<span id="234">234</span>
 </pre><pre class="rust"><code><span class="comment">// Copyright (c) 2021-2022 Miguel Barreto and others
 //
 // Permission is hereby granted, free of charge, to any person obtaining
@@ -276,6 +273,7 @@
 <span class="kw">use </span>filesystem::OsFileSystem;
 <span class="kw">use </span>filesystem::UnixFileSystem;
 <span class="kw">use </span>std::marker::PhantomData;
+<span class="kw">use </span>std::path::Path;
 <span class="kw">use </span>strict_yaml_rust::StrictYaml;
 
 <span class="doccomment">/// Name of the link directive
@@ -293,10 +291,6 @@
 </span><span class="kw">pub const </span>CREATE_PARENT_DIRS_SETTING: <span class="kw-2">&amp;</span>str = <span class="string">&quot;create_parent_dirs&quot;</span>;
 <span class="doccomment">/// Create the symlink even if the target file does not exist
 </span><span class="kw">pub const </span>IGNORE_MISSING_TARGET_SETTING: <span class="kw-2">&amp;</span>str = <span class="string">&quot;ignore_missing_target&quot;</span>;
-<span class="doccomment">/// Allow relative symlinks, if false any relative symlinks cause a failure.
-</span><span class="kw">pub const </span>RELATIVE_SETTING: <span class="kw-2">&amp;</span>str = <span class="string">&quot;relative&quot;</span>;
-<span class="doccomment">/// If a relative target is found, convert it to absolute.
-</span><span class="kw">pub const </span>CONVERT_TO_ABSOLUTE_SETTING: <span class="kw-2">&amp;</span>str = <span class="string">&quot;convert_to_absolute&quot;</span>;
 <span class="doccomment">/// Resolves the target if it is a symlink and uses the final target file as the target.
 </span><span class="kw">pub const </span>RESOLVE_SYMLINK_TARGET_SETTING: <span class="kw-2">&amp;</span>str = <span class="string">&quot;resolve_symlink_target&quot;</span>;
 
@@ -314,11 +308,6 @@
       (
         IGNORE_MISSING_TARGET_SETTING.to_owned(),
         Setting::Boolean(<span class="bool-val">false</span>),
-      ),
-      (RELATIVE_SETTING.to_owned(), Setting::Boolean(<span class="bool-val">false</span>)),
-      (
-        CONVERT_TO_ABSOLUTE_SETTING.to_owned(),
-        Setting::Boolean(<span class="bool-val">true</span>),
       ),
       (
         RESOLVE_SYMLINK_TARGET_SETTING.to_owned(),
@@ -378,6 +367,7 @@
     <span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span><span class="self">self</span>,
     context_settings: <span class="kw-2">&amp;</span>Settings,
     yaml: <span class="kw-2">&amp;</span>StrictYaml,
+    current_dir: <span class="kw-2">&amp;</span>Path,
   ) -&gt; <span class="prelude-ty">Result</span>&lt;LinkAction&lt;<span class="lifetime">&#39;a</span>, F&gt;, DotfilesError&gt; {
     <span class="kw">let </span>path = get_string_setting_from_yaml_or_context(
       PATH_SETTING,
@@ -402,13 +392,14 @@
       })
       .collect();
 
-    <span class="prelude-val">Ok</span>(LinkAction::&lt;<span class="lifetime">&#39;a</span>, F&gt;::new(
+    LinkAction::&lt;<span class="lifetime">&#39;a</span>, F&gt;::new(
       <span class="kw-2">&amp;</span><span class="self">self</span>.fs,
       path,
       target,
       <span class="kw-2">&amp;</span>action_settings<span class="question-mark">?</span>,
       <span class="self">self</span>.data.defaults(),
-    ))
+      current_dir.to_owned(),
+    )
   }
 
   <span class="doccomment">/// Parse a shortened action with only link name to target name
@@ -416,18 +407,20 @@
     <span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span><span class="self">self</span>,
     context_settings: <span class="kw-2">&amp;</span>Settings,
     yaml: <span class="kw-2">&amp;</span>StrictYaml,
+    current_dir: <span class="kw-2">&amp;</span>Path,
   ) -&gt; <span class="prelude-ty">Result</span>&lt;LinkAction&lt;<span class="lifetime">&#39;a</span>, F&gt;, DotfilesError&gt; {
     <span class="kw">if let </span>StrictYaml::Hash(hash) = yaml {
       <span class="kw">match </span>hash.len() {
         <span class="number">1 </span>=&gt; {
           <span class="kw">if let </span>(StrictYaml::String(path), StrictYaml::String(target)) = hash.front().unwrap() {
-            <span class="prelude-val">Ok</span>(LinkAction::&lt;<span class="lifetime">&#39;a</span>, F&gt;::new(
+            LinkAction::&lt;<span class="lifetime">&#39;a</span>, F&gt;::new(
               <span class="kw-2">&amp;</span><span class="self">self</span>.fs,
               path.clone(),
               target.clone(),
               context_settings,
               <span class="self">self</span>.data.defaults(),
-            ))
+              current_dir.to_owned()
+            )
           } <span class="kw">else </span>{
             <span class="prelude-val">Err</span>(DotfilesError::from_wrong_yaml(
                         <span class="string">&quot;StrictYaml passed to configure a short Link action is not a hash of string to string, cant parse&quot;</span>.into(),
@@ -460,11 +453,12 @@
     <span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span><span class="self">self</span>,
     settings: <span class="kw-2">&amp;</span>Settings,
     yaml: <span class="kw-2">&amp;</span>StrictYaml,
+    current_directory: <span class="kw-2">&amp;</span>Path,
   ) -&gt; <span class="prelude-ty">Result</span>&lt;LinkAction&lt;<span class="lifetime">&#39;a</span>, F&gt;, DotfilesError&gt; {
     <span class="self">self
-      </span>.parse_shortened_action(settings, yaml)
-      .or_else(|<span class="kw">_</span>| <span class="self">self</span>.parse_full_action(settings, yaml))
+      </span>.parse_shortened_action(settings, yaml, current_directory)
+      .or_else(|<span class="kw">_</span>| <span class="self">self</span>.parse_full_action(settings, yaml, current_directory))
   }
 }
 </code></pre></div>
-</section></div></main><div id="rustdoc-vars" data-root-path="../../../" data-current-crate="dotfiles_actions" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.66.0-nightly (a24a020e6 2022-10-18)" ></div></body></html>
+</section></div></main><div id="rustdoc-vars" data-root-path="../../../" data-current-crate="dotfiles_actions" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.66.0-nightly (4b8f43199 2022-10-19)" ></div></body></html>

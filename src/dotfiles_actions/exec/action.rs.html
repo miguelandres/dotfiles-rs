@@ -114,6 +114,17 @@
 <span id="114">114</span>
 <span id="115">115</span>
 <span id="116">116</span>
+<span id="117">117</span>
+<span id="118">118</span>
+<span id="119">119</span>
+<span id="120">120</span>
+<span id="121">121</span>
+<span id="122">122</span>
+<span id="123">123</span>
+<span id="124">124</span>
+<span id="125">125</span>
+<span id="126">126</span>
+<span id="127">127</span>
 </pre><pre class="rust"><code><span class="comment">// Copyright (c) 2021-2022 Miguel Barreto and others
 //
 // Permission is hereby granted, free of charge, to any person obtaining
@@ -138,6 +149,7 @@
 </span><span class="doccomment">//! This module contains the [ExecAction] that executes a command in the shell
 
 </span><span class="kw">use </span>std::marker::PhantomData;
+<span class="kw">use </span>std::path::Path;
 
 <span class="kw">use </span>dotfiles_core::error::execution_error;
 <span class="kw">use </span>dotfiles_core::error::DotfilesError;
@@ -162,17 +174,27 @@
 }
 
 <span class="kw">impl</span>&lt;<span class="lifetime">&#39;a</span>&gt; ExecAction&lt;<span class="lifetime">&#39;a</span>&gt; {
-  <span class="doccomment">/// Create a new Exec Action
-  </span><span class="kw">pub fn </span>new(skip_in_ci: bool, command: String, description: <span class="prelude-ty">Option</span>&lt;String&gt;, echo: bool) -&gt; <span class="self">Self </span>{
+  <span class="doccomment">/// Create a new Exec Action that will run from the parent directory of the config file
+  </span><span class="kw">pub fn </span>new(
+    skip_in_ci: bool,
+    command: String,
+    description: <span class="prelude-ty">Option</span>&lt;String&gt;,
+    echo: bool,
+    current_dir: <span class="kw-2">&amp;</span>Path,
+  ) -&gt; <span class="prelude-ty">Result</span>&lt;<span class="self">Self</span>, DotfilesError&gt; {
     <span class="kw">let </span>action = ExecAction {
       skip_in_ci,
-      command,
+      command: <span class="macro">format!</span>(
+        <span class="string">&quot;cd \&quot;{}\&quot; &amp;&amp; {}&quot;</span>,
+        current_dir.as_os_str().to_str().unwrap(),
+        command
+      ),
       description,
       echo,
       phantom_data: PhantomData,
     };
     <span class="macro">log::trace!</span>(<span class="string">&quot;Creating new {:?}&quot;</span>, action);
-    action
+    <span class="prelude-val">Ok</span>(action)
   }
   <span class="doccomment">/// The command to run
   </span><span class="kw">pub fn </span>command(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="kw-2">&amp;</span>str {
@@ -231,4 +253,4 @@
   }
 }
 </code></pre></div>
-</section></div></main><div id="rustdoc-vars" data-root-path="../../../" data-current-crate="dotfiles_actions" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.66.0-nightly (a24a020e6 2022-10-18)" ></div></body></html>
+</section></div></main><div id="rustdoc-vars" data-root-path="../../../" data-current-crate="dotfiles_actions" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.66.0-nightly (4b8f43199 2022-10-19)" ></div></body></html>

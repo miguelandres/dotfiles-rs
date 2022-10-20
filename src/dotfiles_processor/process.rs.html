@@ -55,6 +55,8 @@
 <span id="55">55</span>
 <span id="56">56</span>
 <span id="57">57</span>
+<span id="58">58</span>
+<span id="59">59</span>
 </pre><pre class="rust"><code><span class="comment">// Copyright (c) 2021-2022 Miguel Barreto and others
 //
 // Permission is hereby granted, free of charge, to any person obtaining
@@ -76,7 +78,9 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-</span><span class="kw">use </span>dotfiles_core::Action;
+</span><span class="kw">use </span>std::convert::TryFrom;
+
+<span class="kw">use </span>dotfiles_core::Action;
 
 <span class="kw">use </span>dotfiles_actions::ohmyzsh_install::action::OhMyZshInstallAction;
 
@@ -103,7 +107,7 @@
       OhMyZshInstallAction::new(skip_chsh.to_owned()).execute()
     }
     Command::ApplyConfig { file, dry_run } =&gt; {
-      <span class="kw">let </span><span class="kw-2">mut </span>ctx = Context::from(file.to_string());
+      <span class="kw">let </span><span class="kw-2">mut </span>ctx = Context::try_from(file.as_str())<span class="question-mark">?</span>;
       ctx.parse_file()<span class="question-mark">?</span>;
       <span class="kw">if </span>!dry_run {
         ctx.run_actions()<span class="question-mark">?</span>;
@@ -113,4 +117,4 @@
   }
 }
 </code></pre></div>
-</section></div></main><div id="rustdoc-vars" data-root-path="../../" data-current-crate="dotfiles_processor" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.66.0-nightly (a24a020e6 2022-10-18)" ></div></body></html>
+</section></div></main><div id="rustdoc-vars" data-root-path="../../" data-current-crate="dotfiles_processor" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.66.0-nightly (4b8f43199 2022-10-19)" ></div></body></html>

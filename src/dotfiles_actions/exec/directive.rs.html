@@ -100,6 +100,8 @@
 <span id="100">100</span>
 <span id="101">101</span>
 <span id="102">102</span>
+<span id="103">103</span>
+<span id="104">104</span>
 </pre><pre class="rust"><code><span class="comment">// Copyright (c) 2021-2022 Miguel Barreto and others
 //
 // Permission is hereby granted, free of charge, to any person obtaining
@@ -125,7 +127,7 @@
 
 </span><span class="kw">use </span>dotfiles_core::{action::SKIP_IN_CI_SETTING, directive::HasDirectiveData};
 <span class="kw">use </span>dotfiles_core_macros::Directive;
-<span class="kw">use </span>std::{collections::HashMap, marker::PhantomData};
+<span class="kw">use </span>std::{collections::HashMap, marker::PhantomData, path::Path};
 <span class="kw">use </span>strict_yaml_rust::StrictYaml;
 
 <span class="kw">use </span>dotfiles_core::{
@@ -177,8 +179,9 @@
     <span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span><span class="self">self</span>,
     settings: <span class="kw-2">&amp;</span>HashMap&lt;String, Setting&gt;,
     yaml: <span class="kw-2">&amp;</span>StrictYaml,
+    current_dir: <span class="kw-2">&amp;</span>Path,
   ) -&gt; <span class="prelude-ty">Result</span>&lt;ExecAction, DotfilesError&gt; {
-    <span class="prelude-val">Ok</span>(ExecAction::new(
+    ExecAction::new(
       yaml_util::get_boolean_setting_from_yaml_or_context(
         SKIP_IN_CI_SETTING,
         yaml,
@@ -199,8 +202,9 @@
         settings,
         <span class="self">self</span>.defaults(),
       )<span class="question-mark">?</span>,
-    ))
+      current_dir,
+    )
   }
 }
 </code></pre></div>
-</section></div></main><div id="rustdoc-vars" data-root-path="../../../" data-current-crate="dotfiles_actions" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.66.0-nightly (a24a020e6 2022-10-18)" ></div></body></html>
+</section></div></main><div id="rustdoc-vars" data-root-path="../../../" data-current-crate="dotfiles_actions" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.66.0-nightly (4b8f43199 2022-10-19)" ></div></body></html>

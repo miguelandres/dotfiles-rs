@@ -122,6 +122,9 @@
 <span id="122">122</span>
 <span id="123">123</span>
 <span id="124">124</span>
+<span id="125">125</span>
+<span id="126">126</span>
+<span id="127">127</span>
 </pre><pre class="rust"><code><span class="comment">// Copyright (c) 2021-2022 Miguel Barreto and others
 //
 // Permission is hereby granted, free of charge, to any person obtaining
@@ -159,6 +162,7 @@
 <span class="kw">use </span>dotfiles_core_macros::Directive;
 
 <span class="kw">use </span>std::marker::PhantomData;
+<span class="kw">use </span>std::path::Path;
 <span class="kw">use </span>strict_yaml_rust::StrictYaml;
 
 <span class="doccomment">/// Name of the Brew directive
@@ -207,6 +211,7 @@
     <span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span><span class="self">self</span>,
     context_settings: <span class="kw-2">&amp;</span>Settings,
     yaml: <span class="kw-2">&amp;</span>StrictYaml,
+    <span class="kw">_</span>: <span class="kw-2">&amp;</span>Path,
   ) -&gt; <span class="prelude-ty">Result</span>&lt;BrewAction&lt;<span class="lifetime">&#39;a</span>&gt;, DotfilesError&gt; {
     <span class="kw">let </span>force_casks = get_boolean_setting_from_yaml_or_context(
       FORCE_CASKS_SETTING,
@@ -239,12 +244,13 @@
     <span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span><span class="self">self</span>,
     context_settings: <span class="kw-2">&amp;</span>Settings,
     yaml: <span class="kw-2">&amp;</span>StrictYaml,
+    current_dir: <span class="kw-2">&amp;</span>Path,
   ) -&gt; <span class="prelude-ty">Result</span>&lt;Vec&lt;BrewAction&lt;<span class="lifetime">&#39;a</span>&gt;&gt;, DotfilesError&gt; {
     <span class="prelude-val">Ok</span>(<span class="macro">vec!</span>[add_directive_error_prefix(
       <span class="self">self</span>,
-      <span class="self">self</span>.parse_action(context_settings, yaml),
+      <span class="self">self</span>.parse_action(context_settings, yaml, current_dir),
     )<span class="question-mark">?</span>])
   }
 }
 </code></pre></div>
-</section></div></main><div id="rustdoc-vars" data-root-path="../../../" data-current-crate="dotfiles_actions" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.66.0-nightly (a24a020e6 2022-10-18)" ></div></body></html>
+</section></div></main><div id="rustdoc-vars" data-root-path="../../../" data-current-crate="dotfiles_actions" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.66.0-nightly (4b8f43199 2022-10-19)" ></div></body></html>

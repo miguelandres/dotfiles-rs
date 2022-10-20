@@ -143,21 +143,6 @@
 <span id="143">143</span>
 <span id="144">144</span>
 <span id="145">145</span>
-<span id="146">146</span>
-<span id="147">147</span>
-<span id="148">148</span>
-<span id="149">149</span>
-<span id="150">150</span>
-<span id="151">151</span>
-<span id="152">152</span>
-<span id="153">153</span>
-<span id="154">154</span>
-<span id="155">155</span>
-<span id="156">156</span>
-<span id="157">157</span>
-<span id="158">158</span>
-<span id="159">159</span>
-<span id="160">160</span>
 </pre><pre class="rust"><code><span class="comment">// Copyright (c) 2021-2022 Miguel Barreto and others
 //
 // Permission is hereby granted, free of charge, to any person obtaining
@@ -181,9 +166,13 @@
 
 </span><span class="doccomment">//! This module contains the base trait for all [Action]s.
 
-</span><span class="kw">use </span>strict_yaml_rust::StrictYaml;
+</span><span class="kw">use </span>std::path::Path;
 
-<span class="kw">use crate</span>::{directive::HasDirectiveData, error::DotfilesError, Settings};
+<span class="kw">use </span>strict_yaml_rust::StrictYaml;
+
+<span class="kw">use crate</span>::{
+  directive::HasDirectiveData, error::DotfilesError, yaml_util::map_yaml_array, Settings,
+};
 
 <span class="doccomment">/// Skip this whole action in CI environments.
 </span><span class="kw">pub const </span>SKIP_IN_CI_SETTING: <span class="kw-2">&amp;</span>str = <span class="string">&quot;skip_in_ci&quot;</span>;
@@ -277,6 +266,7 @@
     <span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span><span class="self">self</span>,
     settings: <span class="kw-2">&amp;</span>Settings,
     yaml: <span class="kw-2">&amp;</span>StrictYaml,
+    current_dir: <span class="kw-2">&amp;</span>Path,
   ) -&gt; <span class="prelude-ty">Result</span>&lt;<span class="self">Self</span>::ActionType, DotfilesError&gt;;
 
   <span class="doccomment">/// Builds a list of actions of type [ActionParser::ActionType] from StrictYaml tree object
@@ -291,32 +281,12 @@
     <span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span><span class="self">self</span>,
     settings: <span class="kw-2">&amp;</span>Settings,
     yaml: <span class="kw-2">&amp;</span>StrictYaml,
+    current_dir: <span class="kw-2">&amp;</span>Path,
   ) -&gt; <span class="prelude-ty">Result</span>&lt;Vec&lt;<span class="self">Self</span>::ActionType&gt;, DotfilesError&gt; {
-    <span class="kw">if let </span>StrictYaml::Array(arr) = yaml {
-      <span class="kw">let </span>list: Vec&lt;<span class="prelude-ty">Result</span>&lt;<span class="self">Self</span>::ActionType, DotfilesError&gt;&gt; = arr
-        .iter()
-        .map(|yaml_item| <span class="self">self</span>.parse_action(settings, yaml_item))
-        .collect();
-
-      <span class="kw">let </span><span class="kw-2">mut </span>list_successes = Vec::&lt;<span class="self">Self</span>::ActionType&gt;::new();
-      <span class="kw">for </span>res <span class="kw">in </span>list.into_iter() {
-        <span class="kw">match </span>res {
-          <span class="prelude-val">Err</span>(err) =&gt; <span class="kw">return </span><span class="prelude-val">Err</span>(err),
-          <span class="prelude-val">Ok</span>(act) =&gt; list_successes.push(act),
-        }
-      }
-      <span class="prelude-val">Ok</span>(list_successes)
-    } <span class="kw">else </span>{
-      <span class="prelude-val">Err</span>(DotfilesError::from_wrong_yaml(
-        <span class="macro">format!</span>(
-          <span class="string">&quot;An array of {} actions was expected, did not find an array.&quot;</span>,
-          <span class="self">self</span>.name()
-        ),
-        yaml.clone(),
-        StrictYaml::Array(<span class="macro">vec!</span>[]),
-      ))
-    }
+    map_yaml_array(yaml, |yaml_item| {
+      <span class="self">self</span>.parse_action(settings, yaml_item, current_dir)
+    })
   }
 }
 </code></pre></div>
-</section></div></main><div id="rustdoc-vars" data-root-path="../../" data-current-crate="dotfiles_core" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.66.0-nightly (a24a020e6 2022-10-18)" ></div></body></html>
+</section></div></main><div id="rustdoc-vars" data-root-path="../../" data-current-crate="dotfiles_core" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.66.0-nightly (4b8f43199 2022-10-19)" ></div></body></html>

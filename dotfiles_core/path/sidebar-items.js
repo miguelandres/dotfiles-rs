@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"fn":[["process_home_dir_in_path","Checks for ~ and replaces it with a home directory if necessary."]]};
+window.SIDEBAR_ITEMS = {"fn":[["convert_path_to_absolute","Converts a file path to absolute if it is relative. If `current_dir` is provided it uses it for the base dir, otherwise it relies on [std::env::current_dir()]"],["process_home_dir_in_path","Checks for ~ and replaces it with a home directory if necessary."]]};

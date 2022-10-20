@@ -118,6 +118,21 @@
 <span id="118">118</span>
 <span id="119">119</span>
 <span id="120">120</span>
+<span id="121">121</span>
+<span id="122">122</span>
+<span id="123">123</span>
+<span id="124">124</span>
+<span id="125">125</span>
+<span id="126">126</span>
+<span id="127">127</span>
+<span id="128">128</span>
+<span id="129">129</span>
+<span id="130">130</span>
+<span id="131">131</span>
+<span id="132">132</span>
+<span id="133">133</span>
+<span id="134">134</span>
+<span id="135">135</span>
 </pre><pre class="rust"><code><span class="comment">// Copyright (c) 2021-2022 Miguel Barreto and others
 //
 // Permission is hereby granted, free of charge, to any person obtaining
@@ -147,14 +162,16 @@
 <span class="kw">use </span>derivative::Derivative;
 <span class="kw">use </span>dotfiles_core::action::Action;
 <span class="kw">use </span>dotfiles_core::error::DotfilesError;
+<span class="kw">use </span>dotfiles_core::path::convert_path_to_absolute;
 <span class="kw">use </span>dotfiles_core::path::process_home_dir_in_path;
 <span class="kw">use </span>dotfiles_core_macros::ConditionalAction;
 <span class="kw">use </span>filesystem::FakeFileSystem;
 <span class="kw">use </span>filesystem::FileSystem;
 <span class="kw">use </span>filesystem::OsFileSystem;
-<span class="kw">use </span>log::error;
+
 <span class="kw">use </span>log::info;
-<span class="kw">use </span>std::io;
+
+<span class="kw">use </span>std::path::Path;
 <span class="kw">use </span>std::path::PathBuf;
 
 <span class="doccomment">/// [CreateAction] creates a new [directory](CreateAction::directory) when executed
@@ -177,6 +194,9 @@
   /// Setting [`force`](CreateAction::force) to `true` is equivalent to using
   /// the `-p` flag in `mkdir`.
   </span>force: bool,
+  <span class="doccomment">/// Current directory that will be used to determine relative file locations if necessary. It
+  /// must match the parent directory of the configuration file that declared this action.
+  </span>current_dir: PathBuf,
 }
 
 <span class="doccomment">/// A native create action that works on the real filesystem.
@@ -186,15 +206,22 @@
 
 <span class="kw">impl</span>&lt;<span class="lifetime">&#39;a</span>, F: FileSystem&gt; CreateAction&lt;<span class="lifetime">&#39;a</span>, F&gt; {
   <span class="doccomment">/// Constructs a new instance of CreateAction
-  </span><span class="kw">pub fn </span>new(fs: <span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span>F, skip_in_ci: bool, directory: String, force: bool) -&gt; <span class="self">Self </span>{
+  </span><span class="kw">pub fn </span>new(
+    fs: <span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span>F,
+    skip_in_ci: bool,
+    directory: String,
+    force: bool,
+    current_dir: PathBuf,
+  ) -&gt; <span class="prelude-ty">Result</span>&lt;<span class="self">Self</span>, DotfilesError&gt; {
     <span class="kw">let </span>action = CreateAction {
       skip_in_ci,
       fs,
       directory,
       force,
+      current_dir,
     };
     <span class="macro">log::trace!</span>(<span class="string">&quot;Creating new {:?}&quot;</span>, action);
-    action
+    <span class="prelude-val">Ok</span>(action)
   }
   <span class="doccomment">/// Returns the directory to create.
   </span><span class="kw">pub fn </span>directory(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="kw-2">&amp;</span>str {
@@ -217,26 +244,29 @@
   /// - There is already a directory, file or symlink with the same name.
   /// - Permission denied.
   </span><span class="kw">fn </span>execute(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="prelude-ty">Result</span>&lt;(), DotfilesError&gt; {
-    <span class="kw">fn </span>create_dir&lt;F: FileSystem&gt;(fs: <span class="kw-2">&amp;</span><span class="lifetime">&#39;_ </span>F, directory: <span class="kw-2">&amp;</span>str, force: bool) -&gt; io::Result&lt;()&gt; {
+    <span class="kw">fn </span>create_dir&lt;F: FileSystem&gt;(
+      fs: <span class="kw-2">&amp;</span><span class="lifetime">&#39;_ </span>F,
+      directory: <span class="kw-2">&amp;</span>str,
+      force: bool,
+      current_dir: <span class="kw-2">&amp;</span>Path,
+    ) -&gt; <span class="prelude-ty">Result</span>&lt;(), DotfilesError&gt; {
       <span class="kw">let </span>path = PathBuf::from(directory.to_owned());
       <span class="kw">let </span>path = process_home_dir_in_path(<span class="kw-2">&amp;</span>path);
+      <span class="kw">let </span>path = convert_path_to_absolute(<span class="kw-2">&amp;</span>path, <span class="prelude-val">Some</span>(current_dir))<span class="question-mark">?</span>;
+
       <span class="kw">if </span>force {
-        <span class="prelude-val">Ok</span>(fs.create_dir_all(path)<span class="question-mark">?</span>)
+        <span class="prelude-val">Ok</span>(
+          fs.create_dir_all(path)
+            .map_err(DotfilesError::from_io_error)<span class="question-mark">?</span>,
+        )
       } <span class="kw">else </span>{
-        <span class="prelude-val">Ok</span>(fs.create_dir(path)<span class="question-mark">?</span>)
+        <span class="prelude-val">Ok</span>(fs.create_dir(path).map_err(DotfilesError::from_io_error)<span class="question-mark">?</span>)
       }
     }
-    <span class="kw">match </span>create_dir(<span class="self">self</span>.fs, <span class="kw-2">&amp;</span><span class="self">self</span>.directory, <span class="self">self</span>.force) {
-      <span class="prelude-val">Ok</span>(()) =&gt; {
-        <span class="macro">info!</span>(<span class="string">&quot;Created directory {}&quot;</span>, <span class="kw-2">&amp;</span><span class="self">self</span>.directory);
-        <span class="prelude-val">Ok</span>(())
-      }
-      <span class="prelude-val">Err</span>(err) =&gt; {
-        <span class="macro">error!</span>(<span class="string">&quot;Couldn&#39;t create directory {}: {}&quot;</span>, <span class="kw-2">&amp;</span><span class="self">self</span>.directory, err);
-        <span class="prelude-val">Err</span>(DotfilesError::from_io_error(err))
-      }
-    }
+    create_dir(<span class="self">self</span>.fs, <span class="kw-2">&amp;</span><span class="self">self</span>.directory, <span class="self">self</span>.force, <span class="kw-2">&amp;</span><span class="self">self</span>.current_dir).map(|<span class="kw">_</span>| {
+      <span class="macro">info!</span>(<span class="string">&quot;Created directory {}&quot;</span>, <span class="kw-2">&amp;</span><span class="self">self</span>.directory);
+    })
   }
 }
 </code></pre></div>
-</section></div></main><div id="rustdoc-vars" data-root-path="../../../" data-current-crate="dotfiles_actions" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.66.0-nightly (a24a020e6 2022-10-18)" ></div></body></html>
+</section></div></main><div id="rustdoc-vars" data-root-path="../../../" data-current-crate="dotfiles_actions" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.66.0-nightly (4b8f43199 2022-10-19)" ></div></body></html>
