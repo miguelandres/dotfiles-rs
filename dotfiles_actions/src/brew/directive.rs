@@ -35,6 +35,7 @@ use dotfiles_core::yaml_util::*;
 use dotfiles_core_macros::Directive;
 
 use std::marker::PhantomData;
+use std::path::Path;
 use strict_yaml_rust::StrictYaml;
 
 /// Name of the Brew directive
@@ -83,6 +84,7 @@ impl<'a> ActionParser<'a> for BrewDirective<'a> {
     &'a self,
     context_settings: &Settings,
     yaml: &StrictYaml,
+    _: &Path,
   ) -> Result<BrewAction<'a>, DotfilesError> {
     let force_casks = get_boolean_setting_from_yaml_or_context(
       FORCE_CASKS_SETTING,
@@ -115,10 +117,11 @@ impl<'a> ActionParser<'a> for BrewDirective<'a> {
     &'a self,
     context_settings: &Settings,
     yaml: &StrictYaml,
+    current_dir: &Path,
   ) -> Result<Vec<BrewAction<'a>>, DotfilesError> {
     Ok(vec![add_directive_error_prefix(
       self,
-      self.parse_action(context_settings, yaml),
+      self.parse_action(context_settings, yaml, current_dir),
     )?])
   }
 }

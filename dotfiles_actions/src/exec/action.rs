@@ -22,6 +22,7 @@
 //! This module contains the [ExecAction] that executes a command in the shell
 
 use std::marker::PhantomData;
+use std::path::Path;
 
 use dotfiles_core::error::execution_error;
 use dotfiles_core::error::DotfilesError;
@@ -46,17 +47,27 @@ pub struct ExecAction<'a> {
 }
 
 impl<'a> ExecAction<'a> {
-  /// Create a new Exec Action
-  pub fn new(skip_in_ci: bool, command: String, description: Option<String>, echo: bool) -> Self {
+  /// Create a new Exec Action that will run from the parent directory of the config file
+  pub fn new(
+    skip_in_ci: bool,
+    command: String,
+    description: Option<String>,
+    echo: bool,
+    current_dir: &Path,
+  ) -> Result<Self, DotfilesError> {
     let action = ExecAction {
       skip_in_ci,
-      command,
+      command: format!(
+        "cd \"{}\" && {}",
+        current_dir.as_os_str().to_str().unwrap(),
+        command
+      ),
       description,
       echo,
       phantom_data: PhantomData,
     };
     log::trace!("Creating new {:?}", action);
-    action
+    Ok(action)
   }
   /// The command to run
   pub fn command(&self) -> &str {

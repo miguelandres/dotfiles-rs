@@ -29,6 +29,7 @@ use dotfiles_core::action::Action;
 use dotfiles_core::action::SKIP_IN_CI_SETTING;
 use dotfiles_core::error::DotfilesError;
 use dotfiles_core::error::ErrorType;
+use dotfiles_core::path::convert_path_to_absolute;
 use dotfiles_core::path::process_home_dir_in_path;
 use dotfiles_core::settings::Settings;
 use dotfiles_core::yaml_util::get_boolean_setting_from_context;
@@ -73,22 +74,19 @@ pub struct LinkAction<'a, F: FileSystem + UnixFileSystem> {
   /// Force to replace an existing file or directory when executed.
   #[getset(get_copy = "pub")]
   force: bool,
-  /// If a relative link is found, convert it to absolute.
-  #[getset(get_copy = "pub")]
-  convert_to_absolute: bool,
   /// Create all parent directories if they do not exist already
   #[getset(get_copy = "pub")]
   create_parent_dirs: bool,
   /// Succeed even if `target` doesn't point to an existing file or dir.
   #[getset(get_copy = "pub")]
   ignore_missing_target: bool,
-  /// Allow relative linking.
-  #[getset(get_copy = "pub")]
-  relative: bool,
   /// If the target is another symlink, resolve the ultimate concrete file
   /// or directory that it points to and make it the target
   #[getset(get_copy = "pub")]
   resolve_symlink_target: bool,
+  /// Current directory that will be used to determine relative file locations if necessary. It
+  /// must match the parent directory of the configuration file that declared this action.
+  current_dir: PathBuf,
 }
 
 /// A native create action that works on the real filesystem.
@@ -105,7 +103,8 @@ impl<'a, F: FileSystem + UnixFileSystem> LinkAction<'a, F> {
     target: String,
     context_settings: &'_ Settings,
     defaults: &'_ Settings,
-  ) -> Self {
+    current_dir: PathBuf,
+  ) -> Result<Self, DotfilesError> {
     let relink =
       get_boolean_setting_from_context(RELINK_SETTING, context_settings, defaults).unwrap();
     let force =
@@ -116,31 +115,25 @@ impl<'a, F: FileSystem + UnixFileSystem> LinkAction<'a, F> {
     let ignore_missing_target =
       get_boolean_setting_from_context(IGNORE_MISSING_TARGET_SETTING, context_settings, defaults)
         .unwrap();
-    let relative =
-      get_boolean_setting_from_context(RELATIVE_SETTING, context_settings, defaults).unwrap();
     let resolve_symlink_target =
       get_boolean_setting_from_context(RESOLVE_SYMLINK_TARGET_SETTING, context_settings, defaults)
         .unwrap();
     let skip_in_ci =
       get_boolean_setting_from_context(SKIP_IN_CI_SETTING, context_settings, defaults).unwrap();
-    let convert_to_absolute =
-      get_boolean_setting_from_context(CONVERT_TO_ABSOLUTE_SETTING, context_settings, defaults)
-        .unwrap();
-    let action = LinkAction {
+    let action = Self {
       skip_in_ci,
       fs,
       path,
       target,
       relink,
       force,
-      convert_to_absolute,
       create_parent_dirs,
       ignore_missing_target,
-      relative,
       resolve_symlink_target,
+      current_dir,
     };
     log::trace!("Creating new {:?}", action);
-    action
+    Ok(action)
   }
 }
 
@@ -149,11 +142,9 @@ impl<F: FileSystem + UnixFileSystem> Action<'_> for LinkAction<'_, F> {
     fn create_symlink<F: FileSystem + UnixFileSystem>(
       fs: &'_ F,
       action: &'_ LinkAction<F>,
+      path: PathBuf,
       mut target: PathBuf,
     ) -> io::Result<()> {
-      let path: PathBuf = PathBuf::from(action.path());
-      let path = process_home_dir_in_path(&path);
-
       let target_exists = fs.is_dir(&target) || fs.is_file(&target);
       let path_exists = fs.is_dir(&path) || fs.is_file(&path);
       let path_is_symlink = fs.get_symlink_src(&path).is_ok();
@@ -199,27 +190,13 @@ impl<F: FileSystem + UnixFileSystem> Action<'_> for LinkAction<'_, F> {
         ))
       }
     }
+    let path: PathBuf = PathBuf::from(self.path());
+    let mut path = process_home_dir_in_path(&path);
+    path = convert_path_to_absolute(&path, Some(&self.current_dir))?;
     let target = PathBuf::from(self.target());
     let mut target = process_home_dir_in_path(&target);
-    if target.is_relative() && self.convert_to_absolute() {
-      target = self.fs.current_dir().map_or_else(
-        |err| Err(DotfilesError::from_io_error(err)),
-        |mut path| {
-          path.push(&target);
-          Ok(path)
-        },
-      )?;
-    }
-    if target.is_relative() && !self.relative() {
-      return Err(DotfilesError::from(
-        format!(
-          "{} is a relative link target but the action is not set to allow relative targets",
-          self.target()
-        ),
-        ErrorType::InconsistentConfigurationError,
-      ));
-    };
-    match create_symlink(self.fs, self, target) {
+    target = convert_path_to_absolute(&target, Some(&self.current_dir))?;
+    match create_symlink(self.fs, self, path, target) {
       Ok(()) => {
         info!("Created symlink {} -> {}", &self.path, &self.target);
         Ok(())

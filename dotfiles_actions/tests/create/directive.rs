@@ -20,6 +20,8 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 #![cfg(test)]
+use std::path::PathBuf;
+
 use crate::utils::{read_test_yaml, setup_fs};
 
 use dotfiles_actions::create::directive::FakeCreateDirective;
@@ -40,7 +42,7 @@ fn create_directive_parsed_from_single_dir_name() -> Result<(), DotfilesError> {
     .pop()
     .unwrap();
 
-  let action = directive.parse_action(&default_settings, &yaml)?;
+  let action = directive.parse_action(&default_settings, &yaml, &PathBuf::from("/home/user"))?;
   assert_eq!(action.directory(), "directory");
   assert!(!action.force());
 
@@ -57,7 +59,7 @@ fn create_directive_parsed_from_full_action() -> Result<(), DotfilesError> {
     .unwrap()
     .pop()
     .unwrap();
-  let action = directive.parse_action(&default_settings, &yaml)?;
+  let action = directive.parse_action(&default_settings, &yaml, &PathBuf::from("/home/user"))?;
   assert_eq!(action.directory(), "some/dir");
   assert!(action.force());
   action.execute()

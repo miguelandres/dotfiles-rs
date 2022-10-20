@@ -6,6 +6,9 @@ defaults:
     force: true
 steps:
   - create:
-      - test_dir
+      - scratch_dir/test_dir
   - link:
-      - test_dir/home: ~
+      - scratch_dir/test_dir/home: ~
+  - exec:
+      - ls -la scratch_dir/test_dir
+      - ls -la scratch_dir/test_dir/home

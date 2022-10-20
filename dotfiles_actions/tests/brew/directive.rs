@@ -20,6 +20,8 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 #![cfg(test)]
+use std::path::PathBuf;
+
 use crate::utils::read_test_yaml;
 
 use dotfiles_actions::brew::directive::BrewDirective;
@@ -33,7 +35,7 @@ fn brew_directive_parsed() -> Result<(), DotfilesError> {
     .pop()
     .unwrap();
   let directive = BrewDirective::default();
-  let action = directive.parse_action(&default_settings, &yaml)?;
+  let action = directive.parse_action(&default_settings, &yaml, &PathBuf::from("/home/user"))?;
   assert!(action.force_casks());
   assert_eq!(
     action.taps(),
