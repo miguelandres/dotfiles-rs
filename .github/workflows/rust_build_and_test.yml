@@ -88,8 +88,6 @@ jobs:
         run: |
           cargo run --target ${{ matrix.target.name }} -- --log-level-filter debug apply-config tests/defaults_only.yaml
           cargo run --target ${{ matrix.target.name }} -- --log-level-filter debug apply-config tests/basic_run.yaml
-          ls -la test_dir
-          ls -la test_dir/home
       - name: Install Homebrew & ohmyzsh and check brew is installed
         # cannot run arm or aarch64 at all on github actions :(
         if: matrix.run_tests
