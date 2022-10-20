@@ -40,7 +40,7 @@ fn skip_in_ci_is_respected() -> Result<(), DotfilesError> {
     "mkdir /tmp/check_conditions_and_execute".into(),
     None,
     false,
-    &PathBuf::from("/").as_path(),
+    PathBuf::from("/").as_path(),
   )?;
   action.check_conditions_and_execute()?;
 
@@ -50,7 +50,7 @@ fn skip_in_ci_is_respected() -> Result<(), DotfilesError> {
     "ls -la /tmp/check_conditions_and_execute".into(),
     None,
     false,
-    &PathBuf::from("/").as_path(),
+    PathBuf::from("/").as_path(),
   )?;
   check_action_fail(
     &action,
@@ -67,7 +67,7 @@ fn failed_command_returns_error() -> Result<(), DotfilesError> {
     "exit 1".into(),
     None,
     false,
-    &PathBuf::from("/").as_path(),
+    PathBuf::from("/").as_path(),
   )?;
   check_action_fail(
     &action,

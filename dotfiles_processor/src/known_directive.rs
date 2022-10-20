@@ -127,7 +127,7 @@ impl KnownDirective {
     actions: &strict_yaml_rust::StrictYaml,
     file: &Path,
   ) -> Result<Vec<KnownAction<'a>>, DotfilesError> {
-    let current_dir = file.parent().ok_or(
+    let current_dir = file.parent().ok_or_else(||
       DotfilesError::from(
         format!(
           "{} doesn't seem to have a parent dir to use as a current directory to parse actions, this makes no sense and should never happen",

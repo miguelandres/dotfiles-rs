@@ -60,10 +60,6 @@ pub const RELINK_SETTING: &str = "relink";
 pub const CREATE_PARENT_DIRS_SETTING: &str = "create_parent_dirs";
 /// Create the symlink even if the target file does not exist
 pub const IGNORE_MISSING_TARGET_SETTING: &str = "ignore_missing_target";
-/// Allow relative symlinks, if false any relative symlinks cause a failure.
-pub const RELATIVE_SETTING: &str = "relative";
-/// If a relative target is found, convert it to absolute.
-pub const CONVERT_TO_ABSOLUTE_SETTING: &str = "convert_to_absolute";
 /// Resolves the target if it is a symlink and uses the final target file as the target.
 pub const RESOLVE_SYMLINK_TARGET_SETTING: &str = "resolve_symlink_target";
 
@@ -81,11 +77,6 @@ pub fn init_directive_data() -> DirectiveData {
       (
         IGNORE_MISSING_TARGET_SETTING.to_owned(),
         Setting::Boolean(false),
-      ),
-      (RELATIVE_SETTING.to_owned(), Setting::Boolean(false)),
-      (
-        CONVERT_TO_ABSOLUTE_SETTING.to_owned(),
-        Setting::Boolean(true),
       ),
       (
         RESOLVE_SYMLINK_TARGET_SETTING.to_owned(),
