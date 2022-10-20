@@ -20,6 +20,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 use std::convert::TryFrom;
+use std::path::Path;
 
 use clap::__macro_refs::once_cell::sync::Lazy;
 #[cfg(any(target_os = "linux", target_os = "macos"))]
@@ -124,21 +125,28 @@ impl KnownDirective {
     directive: KnownDirective,
     context_settings: &Settings,
     actions: &strict_yaml_rust::StrictYaml,
+    file: &Path,
   ) -> Result<Vec<KnownAction<'a>>, DotfilesError> {
+    let current_dir = file.parent().ok_or(
+      DotfilesError::from(
+        format!(
+          "{} doesn't seem to have a parent dir to use as a current directory to parse actions, this makes no sense and should never happen",
+          file.to_str().unwrap()) ,
+      ErrorType::CoreError))?;
     match directive {
       #[cfg(any(target_os = "linux", target_os = "macos"))]
       KnownDirective::Brew => BREW
-        .parse_action_list(context_settings, actions)
+        .parse_action_list(context_settings, actions, current_dir)
         .map(|list| list.into_iter().map(KnownAction::from).collect()),
       KnownDirective::Create => CREATE
-        .parse_action_list(context_settings, actions)
+        .parse_action_list(context_settings, actions, current_dir)
         .map(|list| list.into_iter().map(KnownAction::from).collect()),
       KnownDirective::Exec => EXEC
-        .parse_action_list(context_settings, actions)
+        .parse_action_list(context_settings, actions, current_dir)
         .map(|list| list.into_iter().map(KnownAction::from).collect()),
       #[cfg(unix)]
       KnownDirective::Link => LINK
-        .parse_action_list(context_settings, actions)
+        .parse_action_list(context_settings, actions, current_dir)
         .map(|list| list.into_iter().map(KnownAction::from).collect()),
     }
   }

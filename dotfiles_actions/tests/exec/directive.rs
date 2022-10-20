@@ -20,6 +20,8 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 #![cfg(test)]
+use std::path::PathBuf;
+
 use crate::utils::read_test_yaml;
 
 use dotfiles_actions::exec::action::ExecAction;
@@ -37,11 +39,18 @@ fn parse_list_of_execs() -> Result<(), DotfilesError> {
     .pop()
     .unwrap();
 
-  let actions = directive.parse_action_list(&default_settings, &yaml)?;
+  let actions =
+    directive.parse_action_list(&default_settings, &yaml, &PathBuf::from("/home/user"))?;
   assert_eq!(actions.len(), 3);
   assert_eq!(
     actions[0],
-    ExecAction::new(false, r#"echo "hello world""#.into(), None, false)
+    ExecAction::new(
+      false,
+      r#"echo "hello world""#.into(),
+      None,
+      false,
+      &PathBuf::from("/home/user"),
+    )?
   );
   assert_eq!(
     actions[1],
@@ -49,12 +58,19 @@ fn parse_list_of_execs() -> Result<(), DotfilesError> {
       false,
       r#"sleep 5"#.into(),
       Some(String::from("waste some time")),
-      true
-    )
+      true,
+      &PathBuf::from("/home/user"),
+    )?
   );
   assert_eq!(
     actions[2],
-    ExecAction::new(false, r#"ls"#.into(), None, false)
+    ExecAction::new(
+      false,
+      r#"ls"#.into(),
+      None,
+      false,
+      &PathBuf::from("/home/user"),
+    )?
   );
   Ok(())
 }

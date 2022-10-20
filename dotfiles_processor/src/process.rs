@@ -19,6 +19,8 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
+use std::convert::TryFrom;
+
 use dotfiles_core::Action;
 
 use dotfiles_actions::ohmyzsh_install::action::OhMyZshInstallAction;
@@ -46,7 +48,7 @@ pub fn process(flag_data: &FlagData) -> Result<(), DotfilesError> {
       OhMyZshInstallAction::new(skip_chsh.to_owned()).execute()
     }
     Command::ApplyConfig { file, dry_run } => {
-      let mut ctx = Context::from(file.to_string());
+      let mut ctx = Context::try_from(file.as_str())?;
       ctx.parse_file()?;
       if !dry_run {
         ctx.run_actions()?;

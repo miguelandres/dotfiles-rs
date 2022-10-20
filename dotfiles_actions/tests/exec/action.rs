@@ -21,7 +21,7 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-use std::env;
+use std::{env, path::PathBuf};
 
 use dotfiles_actions::exec::action::ExecAction;
 use dotfiles_core::{
@@ -40,7 +40,8 @@ fn skip_in_ci_is_respected() -> Result<(), DotfilesError> {
     "mkdir /tmp/check_conditions_and_execute".into(),
     None,
     false,
-  );
+    &PathBuf::from("/").as_path(),
+  )?;
   action.check_conditions_and_execute()?;
 
   env::remove_var("TESTING_ONLY_FAKE_CI");
@@ -49,7 +50,8 @@ fn skip_in_ci_is_respected() -> Result<(), DotfilesError> {
     "ls -la /tmp/check_conditions_and_execute".into(),
     None,
     false,
-  );
+    &PathBuf::from("/").as_path(),
+  )?;
   check_action_fail(
     &action,
     "Action must fail since that dir should not exist, since the previous run should have skipped creation.".to_owned(),
@@ -60,7 +62,13 @@ fn skip_in_ci_is_respected() -> Result<(), DotfilesError> {
 
 #[test]
 fn failed_command_returns_error() -> Result<(), DotfilesError> {
-  let action = ExecAction::new(false, "exit 1".into(), None, false);
+  let action = ExecAction::new(
+    false,
+    "exit 1".into(),
+    None,
+    false,
+    &PathBuf::from("/").as_path(),
+  )?;
   check_action_fail(
     &action,
     "An error was expected when exit 1 was called but no error was returned".to_string(),
@@ -69,6 +77,12 @@ fn failed_command_returns_error() -> Result<(), DotfilesError> {
 
 #[test]
 fn exec_succeeds() -> Result<(), DotfilesError> {
-  let action = ExecAction::new(false, "exit 0".into(), None, false);
+  let action = ExecAction::new(
+    false,
+    "exit 0".into(),
+    None,
+    false,
+    PathBuf::from("/").as_path(),
+  )?;
   action.execute()
 }

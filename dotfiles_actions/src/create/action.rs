@@ -27,14 +27,16 @@ extern crate strict_yaml_rust;
 use derivative::Derivative;
 use dotfiles_core::action::Action;
 use dotfiles_core::error::DotfilesError;
+use dotfiles_core::path::convert_path_to_absolute;
 use dotfiles_core::path::process_home_dir_in_path;
 use dotfiles_core_macros::ConditionalAction;
 use filesystem::FakeFileSystem;
 use filesystem::FileSystem;
 use filesystem::OsFileSystem;
-use log::error;
+
 use log::info;
-use std::io;
+
+use std::path::Path;
 use std::path::PathBuf;
 
 /// [CreateAction] creates a new [directory](CreateAction::directory) when executed
@@ -57,6 +59,9 @@ pub struct CreateAction<'a, F: FileSystem> {
   /// Setting [`force`](CreateAction::force) to `true` is equivalent to using
   /// the `-p` flag in `mkdir`.
   force: bool,
+  /// Current directory that will be used to determine relative file locations if necessary. It
+  /// must match the parent directory of the configuration file that declared this action.
+  current_dir: PathBuf,
 }
 
 /// A native create action that works on the real filesystem.
@@ -66,15 +71,22 @@ pub type FakeCreateAction<'a> = CreateAction<'a, FakeFileSystem>;
 
 impl<'a, F: FileSystem> CreateAction<'a, F> {
   /// Constructs a new instance of CreateAction
-  pub fn new(fs: &'a F, skip_in_ci: bool, directory: String, force: bool) -> Self {
+  pub fn new(
+    fs: &'a F,
+    skip_in_ci: bool,
+    directory: String,
+    force: bool,
+    current_dir: PathBuf,
+  ) -> Result<Self, DotfilesError> {
     let action = CreateAction {
       skip_in_ci,
       fs,
       directory,
       force,
+      current_dir,
     };
     log::trace!("Creating new {:?}", action);
-    action
+    Ok(action)
   }
   /// Returns the directory to create.
   pub fn directory(&self) -> &str {
@@ -97,24 +109,27 @@ impl<F: FileSystem> Action<'_> for CreateAction<'_, F> {
   /// - There is already a directory, file or symlink with the same name.
   /// - Permission denied.
   fn execute(&self) -> Result<(), DotfilesError> {
-    fn create_dir<F: FileSystem>(fs: &'_ F, directory: &str, force: bool) -> io::Result<()> {
+    fn create_dir<F: FileSystem>(
+      fs: &'_ F,
+      directory: &str,
+      force: bool,
+      current_dir: &Path,
+    ) -> Result<(), DotfilesError> {
       let path = PathBuf::from(directory.to_owned());
       let path = process_home_dir_in_path(&path);
+      let path = convert_path_to_absolute(&path, Some(current_dir))?;
+
       if force {
-        Ok(fs.create_dir_all(path)?)
+        Ok(
+          fs.create_dir_all(path)
+            .map_err(DotfilesError::from_io_error)?,
+        )
       } else {
-        Ok(fs.create_dir(path)?)
+        Ok(fs.create_dir(path).map_err(DotfilesError::from_io_error)?)
       }
     }
-    match create_dir(self.fs, &self.directory, self.force) {
-      Ok(()) => {
-        info!("Created directory {}", &self.directory);
-        Ok(())
-      }
-      Err(err) => {
-        error!("Couldn't create directory {}: {}", &self.directory, err);
-        Err(DotfilesError::from_io_error(err))
-      }
-    }
+    create_dir(self.fs, &self.directory, self.force, &self.current_dir).map(|_| {
+      info!("Created directory {}", &self.directory);
+    })
   }
 }

@@ -1,4 +1,4 @@
-use std::{path::PathBuf, str::FromStr};
+use std::{convert::TryFrom, path::PathBuf, str::FromStr};
 
 // Copyright (c) 2021-2022 Miguel Barreto and others
 //
@@ -25,39 +25,38 @@ use dotfiles_processor::context::Context;
 
 #[test]
 fn context_fails_to_parse_nonexistent_file() -> Result<(), DotfilesError> {
-  let mut ctx = Context::from(get_test_file("i/dont/exist.yaml"));
+  let mut ctx = Context::try_from(get_test_file("i/dont/exist.yaml").as_path())?;
   assert!(ctx.parse_file().unwrap_err().is_fs_error());
   Ok(())
 }
 
 #[test]
 fn context_fails_to_parse_file_with_no_root_hash() -> Result<(), DotfilesError> {
-  let mut ctx = Context::from(get_test_file("context/errors/no_root_hash.yaml"));
+  let mut ctx = Context::try_from(get_test_file("context/errors/no_root_hash.yaml").as_path())?;
   assert!(ctx.parse_file().unwrap_err().is_wrong_yaml());
   Ok(())
 }
 
 #[test]
 fn context_fails_multiple_defaults_same_directive() -> Result<(), DotfilesError> {
-  let mut ctx = Context::from(get_test_file(
-    "context/errors/multiple_defaults_same_directive.yaml",
-  ));
+  let mut ctx = Context::try_from(
+    get_test_file("context/errors/multiple_defaults_same_directive.yaml").as_path(),
+  )?;
   assert!(ctx.parse_file().unwrap_err().is_yaml_parse_error());
   Ok(())
 }
 
 #[test]
 fn context_fails_multiple_defaults_same_key() -> Result<(), DotfilesError> {
-  let mut ctx = Context::from(get_test_file(
-    "context/errors/multiple_defaults_same_key.yaml",
-  ));
+  let mut ctx =
+    Context::try_from(get_test_file("context/errors/multiple_defaults_same_key.yaml").as_path())?;
   assert!(ctx.parse_file().unwrap_err().is_yaml_parse_error());
   Ok(())
 }
 
 #[test]
 fn context_parses_correct_defaults() -> Result<(), DotfilesError> {
-  let mut ctx = Context::from(get_test_file("context/correct_defaults.yaml"));
+  let mut ctx = Context::try_from(get_test_file("context/correct_defaults.yaml").as_path())?;
   ctx.parse_file()?;
   assert_eq!(
     Setting::Boolean(true),
@@ -74,10 +73,10 @@ fn context_parses_correct_defaults() -> Result<(), DotfilesError> {
   Ok(())
 }
 
-fn get_test_file(file_name: &str) -> String {
+fn get_test_file(file_name: &str) -> PathBuf {
   let base_dir = env!("CARGO_MANIFEST_DIR");
   let mut file: PathBuf = PathBuf::from_str(base_dir).unwrap();
   file.push("resources/tests");
   file.push(file_name);
-  file.to_str().unwrap().to_string()
+  file
 }

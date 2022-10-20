@@ -37,6 +37,7 @@ use filesystem::FakeFileSystem;
 use filesystem::FileSystem;
 use filesystem::OsFileSystem;
 use std::marker::PhantomData;
+use std::path::Path;
 
 use strict_yaml_rust::StrictYaml;
 
@@ -99,8 +100,9 @@ impl<'a, F: FileSystem + Default> ActionParser<'a> for CreateDirective<'a, F> {
     &'a self,
     settings: &std::collections::HashMap<String, Setting>,
     yaml: &StrictYaml,
+    current_dir: &Path,
   ) -> Result<CreateAction<F>, DotfilesError> {
-    Ok(CreateAction::<'a, F>::new(
+    CreateAction::<'a, F>::new(
       self.fs(),
       yaml_util::get_boolean_setting_from_yaml_or_context(
         SKIP_IN_CI_SETTING,
@@ -115,6 +117,7 @@ impl<'a, F: FileSystem + Default> ActionParser<'a> for CreateDirective<'a, F> {
         settings,
         self.defaults(),
       )?,
-    ))
+      current_dir.to_owned(),
+    )
   }
 }

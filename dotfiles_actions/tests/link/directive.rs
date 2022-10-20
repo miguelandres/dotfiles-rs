@@ -20,6 +20,8 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 #![cfg(test)]
+use std::path::PathBuf;
+
 use crate::utils::{read_test_yaml, setup_fs};
 
 use dotfiles_actions::filesystem::FileSystemDirective;
@@ -44,7 +46,8 @@ fn link_directive_parsed_from_plain_link() -> Result<(), DotfilesError> {
     .pop()
     .unwrap();
 
-  let action = directive.parse_shortened_action(&default_settings, &yaml)?;
+  let action =
+    directive.parse_shortened_action(&default_settings, &yaml, &PathBuf::from("/home/user"))?;
   assert_eq!(action.path(), "a_link");
   assert_eq!(action.target(), "/home/user/the_file");
 

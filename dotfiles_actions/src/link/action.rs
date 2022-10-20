@@ -29,6 +29,7 @@ use dotfiles_core::action::Action;
 use dotfiles_core::action::SKIP_IN_CI_SETTING;
 use dotfiles_core::error::DotfilesError;
 use dotfiles_core::error::ErrorType;
+use dotfiles_core::path::convert_path_to_absolute;
 use dotfiles_core::path::process_home_dir_in_path;
 use dotfiles_core::settings::Settings;
 use dotfiles_core::yaml_util::get_boolean_setting_from_context;
@@ -89,6 +90,9 @@ pub struct LinkAction<'a, F: FileSystem + UnixFileSystem> {
   /// or directory that it points to and make it the target
   #[getset(get_copy = "pub")]
   resolve_symlink_target: bool,
+  /// Current directory that will be used to determine relative file locations if necessary. It
+  /// must match the parent directory of the configuration file that declared this action.
+  current_dir: PathBuf,
 }
 
 /// A native create action that works on the real filesystem.
@@ -105,7 +109,8 @@ impl<'a, F: FileSystem + UnixFileSystem> LinkAction<'a, F> {
     target: String,
     context_settings: &'_ Settings,
     defaults: &'_ Settings,
-  ) -> Self {
+    current_dir: PathBuf,
+  ) -> Result<Self, DotfilesError> {
     let relink =
       get_boolean_setting_from_context(RELINK_SETTING, context_settings, defaults).unwrap();
     let force =
@@ -126,7 +131,7 @@ impl<'a, F: FileSystem + UnixFileSystem> LinkAction<'a, F> {
     let convert_to_absolute =
       get_boolean_setting_from_context(CONVERT_TO_ABSOLUTE_SETTING, context_settings, defaults)
         .unwrap();
-    let action = LinkAction {
+    let action = Self {
       skip_in_ci,
       fs,
       path,
@@ -138,9 +143,10 @@ impl<'a, F: FileSystem + UnixFileSystem> LinkAction<'a, F> {
       ignore_missing_target,
       relative,
       resolve_symlink_target,
+      current_dir,
     };
     log::trace!("Creating new {:?}", action);
-    action
+    Ok(action)
   }
 }
 
@@ -201,14 +207,8 @@ impl<F: FileSystem + UnixFileSystem> Action<'_> for LinkAction<'_, F> {
     }
     let target = PathBuf::from(self.target());
     let mut target = process_home_dir_in_path(&target);
-    if target.is_relative() && self.convert_to_absolute() {
-      target = self.fs.current_dir().map_or_else(
-        |err| Err(DotfilesError::from_io_error(err)),
-        |mut path| {
-          path.push(&target);
-          Ok(path)
-        },
-      )?;
+    if self.convert_to_absolute() {
+      target = convert_path_to_absolute(&target, Some(&self.current_dir))?;
     }
     if target.is_relative() && !self.relative() {
       return Err(DotfilesError::from(

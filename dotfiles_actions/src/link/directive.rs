@@ -42,6 +42,7 @@ use filesystem::FileSystem;
 use filesystem::OsFileSystem;
 use filesystem::UnixFileSystem;
 use std::marker::PhantomData;
+use std::path::Path;
 use strict_yaml_rust::StrictYaml;
 
 /// Name of the link directive
@@ -144,6 +145,7 @@ where
     &'a self,
     context_settings: &Settings,
     yaml: &StrictYaml,
+    current_dir: &Path,
   ) -> Result<LinkAction<'a, F>, DotfilesError> {
     let path = get_string_setting_from_yaml_or_context(
       PATH_SETTING,
@@ -168,13 +170,14 @@ where
       })
       .collect();
 
-    Ok(LinkAction::<'a, F>::new(
+    LinkAction::<'a, F>::new(
       &self.fs,
       path,
       target,
       &action_settings?,
       self.data.defaults(),
-    ))
+      current_dir.to_owned(),
+    )
   }
 
   /// Parse a shortened action with only link name to target name
@@ -182,18 +185,20 @@ where
     &'a self,
     context_settings: &Settings,
     yaml: &StrictYaml,
+    current_dir: &Path,
   ) -> Result<LinkAction<'a, F>, DotfilesError> {
     if let StrictYaml::Hash(hash) = yaml {
       match hash.len() {
         1 => {
           if let (StrictYaml::String(path), StrictYaml::String(target)) = hash.front().unwrap() {
-            Ok(LinkAction::<'a, F>::new(
+            LinkAction::<'a, F>::new(
               &self.fs,
               path.clone(),
               target.clone(),
               context_settings,
               self.data.defaults(),
-            ))
+              current_dir.to_owned()
+            )
           } else {
             Err(DotfilesError::from_wrong_yaml(
                         "StrictYaml passed to configure a short Link action is not a hash of string to string, cant parse".into(),
@@ -226,9 +231,10 @@ impl<'a, F: FileSystem + UnixFileSystem + Default> ActionParser<'a> for LinkDire
     &'a self,
     settings: &Settings,
     yaml: &StrictYaml,
+    current_directory: &Path,
   ) -> Result<LinkAction<'a, F>, DotfilesError> {
     self
-      .parse_shortened_action(settings, yaml)
-      .or_else(|_| self.parse_full_action(settings, yaml))
+      .parse_shortened_action(settings, yaml, current_directory)
+      .or_else(|_| self.parse_full_action(settings, yaml, current_directory))
   }
 }
