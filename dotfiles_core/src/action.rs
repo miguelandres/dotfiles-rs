@@ -21,9 +21,13 @@
 
 //! This module contains the base trait for all [Action]s.
 
+use std::path::Path;
+
 use strict_yaml_rust::StrictYaml;
 
-use crate::{directive::HasDirectiveData, error::DotfilesError, Settings};
+use crate::{
+  directive::HasDirectiveData, error::DotfilesError, yaml_util::map_yaml_array, Settings,
+};
 
 /// Skip this whole action in CI environments.
 pub const SKIP_IN_CI_SETTING: &str = "skip_in_ci";
@@ -117,6 +121,7 @@ pub trait ActionParser<'a>: HasDirectiveData<'a> {
     &'a self,
     settings: &Settings,
     yaml: &StrictYaml,
+    current_dir: &Path,
   ) -> Result<Self::ActionType, DotfilesError>;
 
   /// Builds a list of actions of type [ActionParser::ActionType] from StrictYaml tree object
@@ -131,30 +136,10 @@ pub trait ActionParser<'a>: HasDirectiveData<'a> {
     &'a self,
     settings: &Settings,
     yaml: &StrictYaml,
+    current_dir: &Path,
   ) -> Result<Vec<Self::ActionType>, DotfilesError> {
-    if let StrictYaml::Array(arr) = yaml {
-      let list: Vec<Result<Self::ActionType, DotfilesError>> = arr
-        .iter()
-        .map(|yaml_item| self.parse_action(settings, yaml_item))
-        .collect();
-
-      let mut list_successes = Vec::<Self::ActionType>::new();
-      for res in list.into_iter() {
-        match res {
-          Err(err) => return Err(err),
-          Ok(act) => list_successes.push(act),
-        }
-      }
-      Ok(list_successes)
-    } else {
-      Err(DotfilesError::from_wrong_yaml(
-        format!(
-          "An array of {} actions was expected, did not find an array.",
-          self.name()
-        ),
-        yaml.clone(),
-        StrictYaml::Array(vec![]),
-      ))
-    }
+    map_yaml_array(yaml, |yaml_item| {
+      self.parse_action(settings, yaml_item, current_dir)
+    })
   }
 }

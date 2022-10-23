@@ -25,7 +25,6 @@ use crate::utils::check_action_fail;
 use crate::utils::setup_fs;
 use dotfiles_actions::link::action::FakeLinkAction;
 use dotfiles_actions::link::directive::init_directive_data;
-use dotfiles_actions::link::directive::CONVERT_TO_ABSOLUTE_SETTING;
 use dotfiles_actions::link::directive::CREATE_PARENT_DIRS_SETTING;
 use dotfiles_actions::link::directive::FORCE_SETTING;
 use dotfiles_actions::link::directive::IGNORE_MISSING_TARGET_SETTING;
@@ -61,7 +60,8 @@ fn skip_in_ci_is_respected() -> Result<(), DotfilesError> {
     String::from("/home/user/target"),
     &settings,
     init_directive_data().defaults(),
-  );
+    PathBuf::from("/home/user"),
+  )?;
   action.check_conditions_and_execute()?;
   assert!(fs.get_symlink_src("/home/user/path").is_err());
 
@@ -76,16 +76,11 @@ fn skip_in_ci_is_respected() -> Result<(), DotfilesError> {
 }
 
 #[test]
-fn convert_to_absolue() -> Result<(), DotfilesError> {
+fn convert_to_absolute() -> Result<(), DotfilesError> {
   let fs = FakeFileSystem::new();
   setup_fs(&fs)?;
   fs.create_dir("/home/user/target").unwrap();
-  let mut settings = Settings::new();
-  settings.insert(
-    CONVERT_TO_ABSOLUTE_SETTING.to_owned(),
-    Setting::Boolean(true),
-  );
-  fs.set_current_dir(PathBuf::from("/home/user")).unwrap();
+  let settings = Settings::new();
 
   let action = FakeLinkAction::new(
     &fs,
@@ -93,7 +88,8 @@ fn convert_to_absolue() -> Result<(), DotfilesError> {
     String::from("target"),
     &settings,
     init_directive_data().defaults(),
-  );
+    PathBuf::from("/home/user"),
+  )?;
   action.check_conditions_and_execute()?;
   assert_eq!(
     PathBuf::from("/home/user/target"),
@@ -114,7 +110,8 @@ fn link_fails_on_nonexistent_path() -> Result<(), DotfilesError> {
     String::from("/home/user/target"),
     &settings,
     init_directive_data().defaults(),
-  );
+    PathBuf::from("/home/user"),
+  )?;
   check_action_fail(
     &action,
     format!(
@@ -140,7 +137,8 @@ fn link_succeeds_on_nonexistent_path_with_create_parent_dirs() -> Result<(), Dot
     String::from("/home/user/target"),
     &settings,
     init_directive_data().defaults(),
-  );
+    PathBuf::from("/home/user"),
+  )?;
   action.execute()
 }
 
@@ -157,11 +155,12 @@ fn link_fails_on_readonly_dir() -> Result<(), DotfilesError> {
     String::from("/home/user"),
     &settings,
     init_directive_data().defaults(),
-  );
+    PathBuf::from("/home/user"),
+  )?;
   check_action_fail(
     &action,
     format!(
-      "Could create {}, this shouldn't happen since it's in a readonly dor",
+      "Could create {}, this shouldn't happen since it's in a readonly dir",
       action.path(),
     ),
   )
@@ -178,7 +177,8 @@ fn link_fails_on_nonexistent_target() -> Result<(), DotfilesError> {
     String::from("/home/user/target"),
     &settings,
     init_directive_data().defaults(),
-  );
+    PathBuf::from("/home/user"),
+  )?;
   check_action_fail(
     &action,
     format!(
@@ -204,7 +204,8 @@ fn link_succeeds_on_nonexistent_target_if_ignoring_missing_target() -> Result<()
     String::from("/home/user/target"),
     &settings,
     init_directive_data().defaults(),
-  );
+    PathBuf::from("/home/user"),
+  )?;
   action.execute()
 }
 
@@ -222,7 +223,8 @@ fn link_fails_on_existing_link() -> Result<(), DotfilesError> {
     String::from("/home/user/target2"),
     &settings,
     init_directive_data().defaults(),
-  );
+    PathBuf::from("/home/user"),
+  )?;
   check_action_fail(
         &action,
         format!(
@@ -250,7 +252,8 @@ fn link_succeeds_on_existing_link_with_relink() -> Result<(), DotfilesError> {
     String::from("/home/user/target2"),
     &settings,
     init_directive_data().defaults(),
-  );
+    PathBuf::from("/home/user"),
+  )?;
   action.execute()
 }
 
@@ -269,7 +272,8 @@ fn link_fails_on_existing_file_with_relink() -> Result<(), DotfilesError> {
     String::from("/home/user/target2"),
     &settings,
     init_directive_data().defaults(),
-  );
+    PathBuf::from("/home/user"),
+  )?;
   check_action_fail(
     &action,
     format!(
@@ -296,7 +300,8 @@ fn link_fails_on_existing_dir_with_relink() -> Result<(), DotfilesError> {
     String::from("/home/user/target2"),
     &settings,
     init_directive_data().defaults(),
-  );
+    PathBuf::from("/home/user"),
+  )?;
   check_action_fail(
     &action,
     format!(
@@ -323,7 +328,8 @@ fn link_succeeds_on_existing_link_with_force() -> Result<(), DotfilesError> {
     String::from("/home/user/target2"),
     &settings,
     init_directive_data().defaults(),
-  );
+    PathBuf::from("/home/user"),
+  )?;
   action.execute()
 }
 
@@ -342,7 +348,8 @@ fn link_fails_on_existing_file_with_force() -> Result<(), DotfilesError> {
     String::from("/home/user/target2"),
     &settings,
     init_directive_data().defaults(),
-  );
+    PathBuf::from("/home/user"),
+  )?;
   action.execute()
 }
 
@@ -361,12 +368,13 @@ fn link_fails_on_existing_dir_with_force() -> Result<(), DotfilesError> {
     String::from("/home/user/target2"),
     &settings,
     init_directive_data().defaults(),
-  );
+    PathBuf::from("/home/user"),
+  )?;
   action.execute()
 }
 
 #[test]
-fn link_resolves_symlink_target() {
+fn link_resolves_symlink_target() -> Result<(), DotfilesError> {
   let fs = FakeFileSystem::new();
   setup_fs(&fs).expect("Failure setting up FakeFileSystem");
   fs.create_dir("/home/user/target").unwrap();
@@ -382,8 +390,10 @@ fn link_resolves_symlink_target() {
     String::from("/home/user/symlink"),
     &settings,
     init_directive_data().defaults(),
-  );
+    PathBuf::from("/home/user"),
+  )?;
   action.execute().unwrap();
   let source = fs.get_symlink_src("/home/user/path").unwrap();
   assert!(source == PathBuf::from("/home/user/target"));
+  Ok(())
 }

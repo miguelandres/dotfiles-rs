@@ -23,7 +23,7 @@
 
 use dotfiles_core::{action::SKIP_IN_CI_SETTING, directive::HasDirectiveData};
 use dotfiles_core_macros::Directive;
-use std::{collections::HashMap, marker::PhantomData};
+use std::{collections::HashMap, marker::PhantomData, path::Path};
 use strict_yaml_rust::StrictYaml;
 
 use dotfiles_core::{
@@ -75,8 +75,9 @@ impl<'a> ActionParser<'a> for ExecDirective<'a> {
     &'a self,
     settings: &HashMap<String, Setting>,
     yaml: &StrictYaml,
+    current_dir: &Path,
   ) -> Result<ExecAction, DotfilesError> {
-    Ok(ExecAction::new(
+    ExecAction::new(
       yaml_util::get_boolean_setting_from_yaml_or_context(
         SKIP_IN_CI_SETTING,
         yaml,
@@ -97,6 +98,7 @@ impl<'a> ActionParser<'a> for ExecDirective<'a> {
         settings,
         self.defaults(),
       )?,
-    ))
+      current_dir,
+    )
   }
 }

@@ -28,6 +28,36 @@ use home::home_dir;
 use std::path::Component;
 use std::path::{Path, PathBuf};
 
+use crate::error::{DotfilesError, ErrorType};
+
+/// Converts a file path to absolute if it is relative. If `current_dir` is provided it uses it for
+/// the base dir, otherwise it relies on [std::env::current_dir()]
+pub fn convert_path_to_absolute(
+  file_name: &Path,
+  current_dir: Option<&Path>,
+) -> Result<PathBuf, DotfilesError> {
+  let path = process_home_dir_in_path(&PathBuf::from(file_name));
+  Ok(if path.is_absolute() {
+    path
+  } else {
+    let mut new_path = current_dir.map_or_else(
+      || std::env::current_dir().map_err(DotfilesError::from_io_error),
+      |dir| Ok(dir.to_owned()),
+    )?;
+    if new_path.is_relative() {
+      return Err(DotfilesError::from(
+        format!(
+          "convert_path_to_absolute got a base dir of {} which is not absolute",
+          new_path.to_str().unwrap()
+        ),
+        ErrorType::CoreError,
+      ));
+    }
+    new_path.push(path);
+    new_path
+  })
+}
+
 /// Checks for ~ and replaces it with a home directory if necessary.
 pub fn process_home_dir_in_path(value: &Path) -> PathBuf {
   #[cfg(unix)]
