@@ -1,0 +1,14 @@
+force_casks: true
+tap:
+  - homebrew/cask
+  - homebrew/cask-fonts
+  - miguelandres/homebrew-tap
+  - spotify/public
+formula:
+  - fzf
+  - zsh
+cask:
+  - firefox
+mas:
+  "Excel": 123
+  "Microsoft Word": 155

@@ -27,9 +27,98 @@ use dotfiles_core::action::Action;
 use dotfiles_core::error::DotfilesError;
 use dotfiles_core::exec_wrapper::execute_commands;
 use dotfiles_core_macros::ConditionalAction;
+use getset::Getters;
 use log::info;
+use std::fmt::Display;
 use std::marker::PhantomData;
 use subprocess::Exec;
+
+trait InstallCommand<F: Display> {
+  fn base_command(&self) -> Exec;
+  fn args(&self) -> &Vec<String>;
+  fn action_description(&self) -> &str;
+  fn action_name(&self) -> &str;
+
+  fn item(&self) -> &F;
+
+  fn execute(&self) -> Result<(), DotfilesError> {
+    info!("{} {}", self.action_description(), self.item());
+    let mut cmd = self.base_command();
+    for arg in self.args().iter() {
+      cmd = cmd.arg(arg);
+    }
+    execute_commands(
+      vec![cmd],
+      format!("Couldn't {} {}", self.action_name(), self.item()).as_str(),
+      format!(
+        "Unexpected error while {} {}",
+        self.action_description(),
+        self.item()
+      )
+      .as_str(),
+    )
+  }
+}
+#[cfg(target_os = "macos")]
+#[derive(Getters, Eq, PartialEq, Debug, Clone)]
+/// An item to download from the app store
+pub struct MacAppStoreItem {
+  #[getset(get)]
+  /// Numeric ID from the app store
+  id: i64,
+  #[getset(get)]
+  /// Human readable name.
+  name: String,
+}
+#[cfg(target_os = "macos")]
+
+impl Display for MacAppStoreItem {
+  fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+    write!(f, "id: {}, name: {}", self.id, self.name)
+  }
+}
+#[cfg(target_os = "macos")]
+#[derive(Eq, PartialEq, Debug, Clone)]
+/// Command to download something from the mac app store
+pub struct MacAppStoreCommand {
+  item: MacAppStoreItem,
+  args: Vec<String>,
+}
+#[cfg(target_os = "macos")]
+impl From<(i64, String)> for MacAppStoreCommand {
+  fn from(value: (i64, String)) -> Self {
+    match value {
+      (id, name) => {
+        let item = MacAppStoreItem { id, name };
+        let args = vec!["install".to_string(), item.id().to_string()];
+        MacAppStoreCommand { item, args }
+      }
+    }
+  }
+}
+
+#[cfg(target_os = "macos")]
+impl InstallCommand<MacAppStoreItem> for MacAppStoreCommand {
+  fn base_command(&self) -> Exec {
+    Exec::cmd("mas")
+  }
+
+  fn args(&self) -> &Vec<String> {
+    &self.args
+  }
+
+  fn action_description(&self) -> &str {
+    "Installing from Mac App Store"
+  }
+
+  fn item(&self) -> &MacAppStoreItem {
+    &self.item
+  }
+
+  fn action_name(&self) -> &str {
+    "mas"
+  }
+}
 
 struct BrewCommand {
   item: String,
@@ -38,6 +127,27 @@ struct BrewCommand {
   action_description: String,
 }
 
+impl InstallCommand<String> for BrewCommand {
+  fn base_command(&self) -> Exec {
+    Exec::cmd("brew")
+  }
+
+  fn args(&self) -> &Vec<String> {
+    &self.args
+  }
+
+  fn action_description(&self) -> &str {
+    &self.action_description
+  }
+
+  fn item(&self) -> &String {
+    &self.item
+  }
+
+  fn action_name(&self) -> &str {
+    &self.action_name
+  }
+}
 impl BrewCommand {
   fn tap(item: &str) -> BrewCommand {
     BrewCommand {
@@ -65,41 +175,34 @@ impl BrewCommand {
       action_description: "installing cask".into(),
     }
   }
-
-  pub fn execute(&self) -> Result<(), DotfilesError> {
-    info!("{} {}", self.action_description, self.item);
-    let mut cmd = Exec::cmd("brew");
-    for arg in self.args.iter() {
-      cmd = cmd.arg(arg);
-    }
-    execute_commands(
-      vec![cmd],
-      format!("Couldn't {} {}", self.action_name, self.item).as_str(),
-      format!(
-        "Unexpected error while {} {}",
-        self.action_description, self.item
-      )
-      .as_str(),
-    )
-  }
 }
 
 /// [BrewAction] Installs software using homebrew.
-#[derive(Eq, PartialEq, Debug, ConditionalAction)]
+#[derive(Eq, PartialEq, Debug, ConditionalAction, Getters)]
 pub struct BrewAction<'a> {
   /// Skips this action if it is running in a CI environment.
+  #[get = "pub"]
   skip_in_ci: bool,
   /// Passes `--force` to `brew install --cask` to prevent the install failure
   /// when the app is already installed before the cask install.
+  #[get = "pub"]
   force_casks: bool,
   /// List of repositories to tap into using `brew tap`.
+  #[get = "pub"]
   taps: Vec<String>,
   /// List of brew formulae to `brew install`, usually command line tools.
+  #[get = "pub"]
   formulae: Vec<String>,
 
   /// List of casks to install. Casks usually are macOS apps with some sort of UI or framework
   /// dependencies.
+  #[get = "pub"]
   casks: Vec<String>,
+
+  #[cfg(target_os = "macos")]
+  /// List of Mac OS apps to install from the App Store
+  #[get = "pub"]
+  mas_apps: Vec<MacAppStoreCommand>,
   phantom_data: PhantomData<&'a String>,
 }
 impl<'a> BrewAction<'a> {
@@ -110,6 +213,7 @@ impl<'a> BrewAction<'a> {
     taps: Vec<String>,
     formulae: Vec<String>,
     casks: Vec<String>,
+    #[cfg(target_os = "macos")] mas_apps: Vec<MacAppStoreCommand>,
   ) -> Self {
     let action = BrewAction {
       skip_in_ci,
@@ -117,30 +221,12 @@ impl<'a> BrewAction<'a> {
       taps,
       formulae,
       casks,
+      #[cfg(target_os = "macos")]
+      mas_apps,
       phantom_data: PhantomData,
     };
     log::trace!("Creating new {:?}", action);
     action
-  }
-
-  /// List of casks to install.
-  pub fn casks(&self) -> &[String] {
-    self.casks.as_ref()
-  }
-
-  /// List of formulae to install.
-  pub fn formulae(&self) -> &[String] {
-    self.formulae.as_ref()
-  }
-
-  /// List of taps to tap into.
-  pub fn taps(&self) -> &[String] {
-    self.taps.as_ref()
-  }
-
-  /// Whether to pass `--force` to cask installation.
-  pub fn force_casks(&self) -> bool {
-    self.force_casks
   }
 }
 
