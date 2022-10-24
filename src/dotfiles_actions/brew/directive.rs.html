@@ -125,6 +125,54 @@
 <span id="125">125</span>
 <span id="126">126</span>
 <span id="127">127</span>
+<span id="128">128</span>
+<span id="129">129</span>
+<span id="130">130</span>
+<span id="131">131</span>
+<span id="132">132</span>
+<span id="133">133</span>
+<span id="134">134</span>
+<span id="135">135</span>
+<span id="136">136</span>
+<span id="137">137</span>
+<span id="138">138</span>
+<span id="139">139</span>
+<span id="140">140</span>
+<span id="141">141</span>
+<span id="142">142</span>
+<span id="143">143</span>
+<span id="144">144</span>
+<span id="145">145</span>
+<span id="146">146</span>
+<span id="147">147</span>
+<span id="148">148</span>
+<span id="149">149</span>
+<span id="150">150</span>
+<span id="151">151</span>
+<span id="152">152</span>
+<span id="153">153</span>
+<span id="154">154</span>
+<span id="155">155</span>
+<span id="156">156</span>
+<span id="157">157</span>
+<span id="158">158</span>
+<span id="159">159</span>
+<span id="160">160</span>
+<span id="161">161</span>
+<span id="162">162</span>
+<span id="163">163</span>
+<span id="164">164</span>
+<span id="165">165</span>
+<span id="166">166</span>
+<span id="167">167</span>
+<span id="168">168</span>
+<span id="169">169</span>
+<span id="170">170</span>
+<span id="171">171</span>
+<span id="172">172</span>
+<span id="173">173</span>
+<span id="174">174</span>
+<span id="175">175</span>
 </pre><pre class="rust"><code><span class="comment">// Copyright (c) 2021-2022 Miguel Barreto and others
 //
 // Permission is hereby granted, free of charge, to any person obtaining
@@ -155,11 +203,15 @@
 <span class="kw">use </span>dotfiles_core::directive::DirectiveData;
 <span class="kw">use </span>dotfiles_core::error::add_directive_error_prefix;
 <span class="kw">use </span>dotfiles_core::error::DotfilesError;
+<span class="kw">use </span>dotfiles_core::error::ErrorType;
 <span class="kw">use </span>dotfiles_core::settings::initialize_settings_object;
 <span class="kw">use </span>dotfiles_core::settings::Setting;
 <span class="kw">use </span>dotfiles_core::settings::Settings;
 <span class="kw">use </span>dotfiles_core::yaml_util::<span class="kw-2">*</span>;
 <span class="kw">use </span>dotfiles_core_macros::Directive;
+
+<span class="attribute">#[cfg(target_os = <span class="string">&quot;macos&quot;</span>)]
+</span><span class="kw">use </span><span class="kw">crate</span>::brew::action::MacAppStoreCommand;
 
 <span class="kw">use </span>std::marker::PhantomData;
 <span class="kw">use </span>std::path::Path;
@@ -228,6 +280,48 @@
     <span class="kw">let </span>taps = get_optional_string_array_from_yaml_hash(TAP_SETTING, yaml)<span class="question-mark">?</span>;
     <span class="kw">let </span>formulae = get_optional_string_array_from_yaml_hash(FORMULA_SETTING, yaml)<span class="question-mark">?</span>;
     <span class="kw">let </span>casks = get_optional_string_array_from_yaml_hash(CASK_SETTING, yaml)<span class="question-mark">?</span>;
+    <span class="attribute">#[cfg(target_os = <span class="string">&quot;macos&quot;</span>)]
+    </span><span class="kw">let </span>mas_apps = process_value_from_yaml_hash(<span class="string">&quot;mas&quot;</span>, yaml, |mas_yaml| {
+      fold_hash_until_first_err(
+        mas_yaml,
+        <span class="prelude-val">Ok</span>(Vec::&lt;MacAppStoreCommand&gt;::new()),
+        |key, val| {
+          <span class="prelude-val">Ok</span>((
+            val
+              .to_owned()
+              .into_string()
+              .ok_or(DotfilesError::from_wrong_yaml(
+                <span class="string">&quot;Mac App Store app ID is not a string as expected&quot;</span>.into(),
+                val.to_owned(),
+                StrictYaml::String(<span class="string">&quot;&quot;</span>.into()),
+              ))
+              .and_then(|id| {
+                i64::from_str_radix(<span class="kw-2">&amp;</span>id, <span class="number">10</span>).map_err(|<span class="kw">_</span>| {
+                  DotfilesError::from(
+                    <span class="macro">format!</span>(<span class="string">&quot;{} is not a valid Mac App Store app id&quot;</span>, id),
+                    ErrorType::InconsistentConfigurationError,
+                  )
+                })
+              })<span class="question-mark">?</span>,
+            key,
+          ))
+        },
+        |<span class="kw-2">mut </span>list, item| {
+          list.push(MacAppStoreCommand::from(item));
+          <span class="prelude-val">Ok</span>(list)
+        },
+      )
+    })
+    .map_or_else(
+      |err| {
+        <span class="kw">if </span>err.is_missing_config(<span class="string">&quot;mas&quot;</span>) {
+          <span class="prelude-val">Ok</span>(Vec::new())
+        } <span class="kw">else </span>{
+          <span class="prelude-val">Err</span>(err)
+        }
+      },
+      |res| <span class="prelude-val">Ok</span>(res),
+    )<span class="question-mark">?</span>;
 
     <span class="prelude-val">Ok</span>(BrewAction::new(
       skip_in_ci,
@@ -235,6 +329,8 @@
       taps,
       formulae,
       casks,
+      <span class="attribute">#[cfg(target_os = <span class="string">&quot;macos&quot;</span>)]
+      </span>mas_apps,
     ))
   }
 
@@ -253,4 +349,4 @@
   }
 }
 </code></pre></div>
-</section></div></main><div id="rustdoc-vars" data-root-path="../../../" data-current-crate="dotfiles_actions" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.66.0-nightly (6e95b6da8 2022-10-22)" ></div></body></html>
+</section></div></main><div id="rustdoc-vars" data-root-path="../../../" data-current-crate="dotfiles_actions" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.66.0-nightly (7fcf850d7 2022-10-23)" ></div></body></html>
