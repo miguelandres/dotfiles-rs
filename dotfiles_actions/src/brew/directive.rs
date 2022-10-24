@@ -28,11 +28,15 @@ use dotfiles_core::action::SKIP_IN_CI_SETTING;
 use dotfiles_core::directive::DirectiveData;
 use dotfiles_core::error::add_directive_error_prefix;
 use dotfiles_core::error::DotfilesError;
+use dotfiles_core::error::ErrorType;
 use dotfiles_core::settings::initialize_settings_object;
 use dotfiles_core::settings::Setting;
 use dotfiles_core::settings::Settings;
 use dotfiles_core::yaml_util::*;
 use dotfiles_core_macros::Directive;
+
+#[cfg(target_os = "macos")]
+use crate::brew::action::MacAppStoreCommand;
 
 use std::marker::PhantomData;
 use std::path::Path;
@@ -101,6 +105,48 @@ impl<'a> ActionParser<'a> for BrewDirective<'a> {
     let taps = get_optional_string_array_from_yaml_hash(TAP_SETTING, yaml)?;
     let formulae = get_optional_string_array_from_yaml_hash(FORMULA_SETTING, yaml)?;
     let casks = get_optional_string_array_from_yaml_hash(CASK_SETTING, yaml)?;
+    #[cfg(target_os = "macos")]
+    let mas_apps = process_value_from_yaml_hash("mas", yaml, |mas_yaml| {
+      fold_hash_until_first_err(
+        mas_yaml,
+        Ok(Vec::<MacAppStoreCommand>::new()),
+        |key, val| {
+          Ok((
+            val
+              .to_owned()
+              .into_string()
+              .ok_or(DotfilesError::from_wrong_yaml(
+                "Mac App Store app ID is not a string as expected".into(),
+                val.to_owned(),
+                StrictYaml::String("".into()),
+              ))
+              .and_then(|id| {
+                i64::from_str_radix(&id, 10).map_err(|_| {
+                  DotfilesError::from(
+                    format!("{} is not a valid Mac App Store app id", id),
+                    ErrorType::InconsistentConfigurationError,
+                  )
+                })
+              })?,
+            key,
+          ))
+        },
+        |mut list, item| {
+          list.push(MacAppStoreCommand::from(item));
+          Ok(list)
+        },
+      )
+    })
+    .map_or_else(
+      |err| {
+        if err.is_missing_config("mas") {
+          Ok(Vec::new())
+        } else {
+          Err(err)
+        }
+      },
+      |res| Ok(res),
+    )?;
 
     Ok(BrewAction::new(
       skip_in_ci,
@@ -108,6 +154,8 @@ impl<'a> ActionParser<'a> for BrewDirective<'a> {
       taps,
       formulae,
       casks,
+      #[cfg(target_os = "macos")]
+      mas_apps,
     ))
   }
 

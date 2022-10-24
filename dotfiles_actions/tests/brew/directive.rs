@@ -38,7 +38,7 @@ fn brew_directive_parsed() -> Result<(), DotfilesError> {
   let action = directive.parse_action(&default_settings, &yaml, &PathBuf::from("/home/user"))?;
   assert!(action.force_casks());
   assert_eq!(
-    action.taps(),
+    action.taps().to_owned(),
     Vec::from([
       "homebrew/cask",
       "homebrew/cask-fonts",
@@ -46,7 +46,45 @@ fn brew_directive_parsed() -> Result<(), DotfilesError> {
       "spotify/public"
     ])
   );
-  assert_eq!(action.casks(), Vec::from(["firefox"]));
-  assert_eq!(action.formulae(), Vec::from(["fzf", "zsh"]));
+  assert_eq!(action.casks().to_owned(), Vec::from(["firefox"]));
+  assert_eq!(action.formulae().to_owned(), Vec::from(["fzf", "zsh"]));
+  Ok(())
+}
+
+#[cfg(target_os = "macos")]
+#[test]
+fn brew_directive_with_mas_parsed() -> Result<(), DotfilesError> {
+  use dotfiles_actions::brew::action::MacAppStoreCommand;
+
+  let default_settings = Settings::new();
+  let yaml = read_test_yaml("directive/brew/with_mas.yaml")
+    .unwrap()
+    .pop()
+    .unwrap();
+  let directive = BrewDirective::default();
+  let action = directive.parse_action(&default_settings, &yaml, &PathBuf::from("/home/user"))?;
+  assert!(action.force_casks());
+  assert_eq!(
+    action.taps().to_owned(),
+    Vec::from([
+      "homebrew/cask",
+      "homebrew/cask-fonts",
+      "miguelandres/homebrew-tap",
+      "spotify/public"
+    ])
+  );
+  assert_eq!(action.casks().to_owned(), vec!["firefox"]);
+  assert_eq!(action.formulae().to_owned(), vec!["fzf", "zsh"]);
+
+  assert_eq!(
+    action.mas_apps().clone(),
+    vec![
+      (i64::from(123), "Excel".to_owned()),
+      (i64::from(155), "Microsoft Word".to_owned())
+    ]
+    .into_iter()
+    .map(MacAppStoreCommand::from)
+    .collect::<Vec<MacAppStoreCommand>>(),
+  );
   Ok(())
 }
