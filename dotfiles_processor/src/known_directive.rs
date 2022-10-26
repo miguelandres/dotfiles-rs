@@ -91,11 +91,23 @@ impl<'a> KnownAction<'a> {
   pub fn execute(&'a self) -> Result<(), DotfilesError> {
     match self {
       #[cfg(any(target_os = "linux", target_os = "macos"))]
-      KnownAction::Brew(action) => action.check_conditions_and_execute(),
-      KnownAction::Create(action) => action.check_conditions_and_execute(),
-      KnownAction::Exec(action) => action.check_conditions_and_execute(),
+      KnownAction::Brew(action) => action.check_conditions_and_execute().map_err(|mut err| {
+        err.add_message_prefix("Executing brew action".into());
+        err
+      }),
+      KnownAction::Create(action) => action.check_conditions_and_execute().map_err(|mut err| {
+        err.add_message_prefix("Executing create action".into());
+        err
+      }),
+      KnownAction::Exec(action) => action.check_conditions_and_execute().map_err(|mut err| {
+        err.add_message_prefix("Executing exec action".into());
+        err
+      }),
       #[cfg(unix)]
-      KnownAction::Link(action) => action.check_conditions_and_execute(),
+      KnownAction::Link(action) => action.check_conditions_and_execute().map_err(|mut err| {
+        err.add_message_prefix("Executing link action".into());
+        err
+      }),
     }
   }
 }
