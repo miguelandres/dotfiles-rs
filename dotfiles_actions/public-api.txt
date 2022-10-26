@@ -1,0 +1,206 @@
+impl RefUnwindSafe for dotfiles_actions::brew::action::MacAppStoreCommand
+impl RefUnwindSafe for dotfiles_actions::brew::action::MacAppStoreItem
+impl RefUnwindSafe for dotfiles_actions::homebrew_install::action::HomebrewInstallAction
+impl RefUnwindSafe for dotfiles_actions::ohmyzsh_install::action::OhMyZshInstallAction
+impl Send for dotfiles_actions::brew::action::MacAppStoreCommand
+impl Send for dotfiles_actions::brew::action::MacAppStoreItem
+impl Send for dotfiles_actions::homebrew_install::action::HomebrewInstallAction
+impl Send for dotfiles_actions::ohmyzsh_install::action::OhMyZshInstallAction
+impl Sync for dotfiles_actions::brew::action::MacAppStoreCommand
+impl Sync for dotfiles_actions::brew::action::MacAppStoreItem
+impl Sync for dotfiles_actions::homebrew_install::action::HomebrewInstallAction
+impl Sync for dotfiles_actions::ohmyzsh_install::action::OhMyZshInstallAction
+impl Unpin for dotfiles_actions::brew::action::MacAppStoreCommand
+impl Unpin for dotfiles_actions::brew::action::MacAppStoreItem
+impl Unpin for dotfiles_actions::homebrew_install::action::HomebrewInstallAction
+impl Unpin for dotfiles_actions::ohmyzsh_install::action::OhMyZshInstallAction
+impl UnwindSafe for dotfiles_actions::brew::action::MacAppStoreCommand
+impl UnwindSafe for dotfiles_actions::brew::action::MacAppStoreItem
+impl UnwindSafe for dotfiles_actions::homebrew_install::action::HomebrewInstallAction
+impl UnwindSafe for dotfiles_actions::ohmyzsh_install::action::OhMyZshInstallAction
+impl<'a, F> RefUnwindSafe for dotfiles_actions::create::action::CreateAction<'a, F> where F: RefUnwindSafe
+impl<'a, F> RefUnwindSafe for dotfiles_actions::create::directive::CreateDirective<'a, F> where F: RefUnwindSafe
+impl<'a, F> RefUnwindSafe for dotfiles_actions::link::action::LinkAction<'a, F> where F: RefUnwindSafe
+impl<'a, F> RefUnwindSafe for dotfiles_actions::link::directive::LinkDirective<'a, F> where F: RefUnwindSafe
+impl<'a, F> Send for dotfiles_actions::create::action::CreateAction<'a, F> where F: Sync
+impl<'a, F> Send for dotfiles_actions::create::directive::CreateDirective<'a, F> where F: Send + Sync
+impl<'a, F> Send for dotfiles_actions::link::action::LinkAction<'a, F> where F: Sync
+impl<'a, F> Send for dotfiles_actions::link::directive::LinkDirective<'a, F> where F: Send + Sync
+impl<'a, F> Sync for dotfiles_actions::create::action::CreateAction<'a, F> where F: Sync
+impl<'a, F> Sync for dotfiles_actions::create::directive::CreateDirective<'a, F> where F: Sync
+impl<'a, F> Sync for dotfiles_actions::link::action::LinkAction<'a, F> where F: Sync
+impl<'a, F> Sync for dotfiles_actions::link::directive::LinkDirective<'a, F> where F: Sync
+impl<'a, F> Unpin for dotfiles_actions::create::action::CreateAction<'a, F>
+impl<'a, F> Unpin for dotfiles_actions::create::directive::CreateDirective<'a, F> where F: Unpin
+impl<'a, F> Unpin for dotfiles_actions::link::action::LinkAction<'a, F>
+impl<'a, F> Unpin for dotfiles_actions::link::directive::LinkDirective<'a, F> where F: Unpin
+impl<'a, F> UnwindSafe for dotfiles_actions::create::action::CreateAction<'a, F> where F: RefUnwindSafe
+impl<'a, F> UnwindSafe for dotfiles_actions::create::directive::CreateDirective<'a, F> where F: UnwindSafe + RefUnwindSafe
+impl<'a, F> UnwindSafe for dotfiles_actions::link::action::LinkAction<'a, F> where F: RefUnwindSafe
+impl<'a, F> UnwindSafe for dotfiles_actions::link::directive::LinkDirective<'a, F> where F: UnwindSafe + RefUnwindSafe
+impl<'a> RefUnwindSafe for dotfiles_actions::brew::action::BrewAction<'a>
+impl<'a> RefUnwindSafe for dotfiles_actions::brew::directive::BrewDirective<'a>
+impl<'a> RefUnwindSafe for dotfiles_actions::exec::action::ExecAction<'a>
+impl<'a> RefUnwindSafe for dotfiles_actions::exec::directive::ExecDirective<'a>
+impl<'a> Send for dotfiles_actions::brew::action::BrewAction<'a>
+impl<'a> Send for dotfiles_actions::brew::directive::BrewDirective<'a>
+impl<'a> Send for dotfiles_actions::exec::action::ExecAction<'a>
+impl<'a> Send for dotfiles_actions::exec::directive::ExecDirective<'a>
+impl<'a> Sync for dotfiles_actions::brew::action::BrewAction<'a>
+impl<'a> Sync for dotfiles_actions::brew::directive::BrewDirective<'a>
+impl<'a> Sync for dotfiles_actions::exec::action::ExecAction<'a>
+impl<'a> Sync for dotfiles_actions::exec::directive::ExecDirective<'a>
+impl<'a> Unpin for dotfiles_actions::brew::action::BrewAction<'a>
+impl<'a> Unpin for dotfiles_actions::brew::directive::BrewDirective<'a>
+impl<'a> Unpin for dotfiles_actions::exec::action::ExecAction<'a>
+impl<'a> Unpin for dotfiles_actions::exec::directive::ExecDirective<'a>
+impl<'a> UnwindSafe for dotfiles_actions::brew::action::BrewAction<'a>
+impl<'a> UnwindSafe for dotfiles_actions::brew::directive::BrewDirective<'a>
+impl<'a> UnwindSafe for dotfiles_actions::exec::action::ExecAction<'a>
+impl<'a> UnwindSafe for dotfiles_actions::exec::directive::ExecDirective<'a>
+pub const dotfiles_actions::brew::directive::CASK_SETTING: &'static str
+pub const dotfiles_actions::brew::directive::DIRECTIVE_NAME: &'static str
+pub const dotfiles_actions::brew::directive::FORCE_CASKS_SETTING: &'static str
+pub const dotfiles_actions::brew::directive::FORMULA_SETTING: &'static str
+pub const dotfiles_actions::brew::directive::TAP_SETTING: &'static str
+pub const dotfiles_actions::create::directive::DIRECTIVE_NAME: &'static str
+pub const dotfiles_actions::create::directive::DIR_SETTING: &'static str
+pub const dotfiles_actions::create::directive::FORCE_SETTING: &'static str
+pub const dotfiles_actions::exec::directive::COMMAND_SETTING: &'static str
+pub const dotfiles_actions::exec::directive::DESCRIPTION_SETTING: &'static str
+pub const dotfiles_actions::exec::directive::DIRECTIVE_NAME: &'static str
+pub const dotfiles_actions::exec::directive::ECHO_SETTING: &'static str
+pub const dotfiles_actions::link::directive::CREATE_PARENT_DIRS_SETTING: &'static str
+pub const dotfiles_actions::link::directive::DIRECTIVE_NAME: &'static str
+pub const dotfiles_actions::link::directive::FORCE_SETTING: &'static str
+pub const dotfiles_actions::link::directive::IGNORE_MISSING_TARGET_SETTING: &'static str
+pub const dotfiles_actions::link::directive::PATH_SETTING: &'static str
+pub const dotfiles_actions::link::directive::RELINK_SETTING: &'static str
+pub const dotfiles_actions::link::directive::RESOLVE_SYMLINK_TARGET_SETTING: &'static str
+pub const dotfiles_actions::link::directive::TARGET_SETTING: &'static str
+pub fn dotfiles_actions::brew::action::BrewAction::casks(&self) -> &Vec<String>
+pub fn dotfiles_actions::brew::action::BrewAction::eq(&self, other: &dotfiles_actions::brew::action::BrewAction<'a>) -> bool
+pub fn dotfiles_actions::brew::action::BrewAction::execute(&self) -> Result<(), DotfilesError>
+pub fn dotfiles_actions::brew::action::BrewAction::fmt(&self, f: &mut $crate::fmt::Formatter<'_>) -> $crate::fmt::Result
+pub fn dotfiles_actions::brew::action::BrewAction::force_casks(&self) -> &bool
+pub fn dotfiles_actions::brew::action::BrewAction::formulae(&self) -> &Vec<String>
+pub fn dotfiles_actions::brew::action::BrewAction::mas_apps(&self) -> &Vec<dotfiles_actions::brew::action::MacAppStoreCommand>
+pub fn dotfiles_actions::brew::action::BrewAction::new(skip_in_ci: bool, force_casks: bool, taps: Vec<String>, formulae: Vec<String>, casks: Vec<String>, mas_apps: Vec<dotfiles_actions::brew::action::MacAppStoreCommand>) -> Self
+pub fn dotfiles_actions::brew::action::BrewAction::skip_in_ci(&self) -> &bool
+pub fn dotfiles_actions::brew::action::BrewAction::skip_in_ci(&self) -> bool
+pub fn dotfiles_actions::brew::action::BrewAction::taps(&self) -> &Vec<String>
+pub fn dotfiles_actions::brew::action::MacAppStoreCommand::clone(&self) -> dotfiles_actions::brew::action::MacAppStoreCommand
+pub fn dotfiles_actions::brew::action::MacAppStoreCommand::eq(&self, other: &dotfiles_actions::brew::action::MacAppStoreCommand) -> bool
+pub fn dotfiles_actions::brew::action::MacAppStoreCommand::fmt(&self, f: &mut $crate::fmt::Formatter<'_>) -> $crate::fmt::Result
+pub fn dotfiles_actions::brew::action::MacAppStoreCommand::from(value: (i64, String)) -> Self
+pub fn dotfiles_actions::brew::action::MacAppStoreItem::clone(&self) -> dotfiles_actions::brew::action::MacAppStoreItem
+pub fn dotfiles_actions::brew::action::MacAppStoreItem::eq(&self, other: &dotfiles_actions::brew::action::MacAppStoreItem) -> bool
+pub fn dotfiles_actions::brew::action::MacAppStoreItem::fmt(&self, f: &mut $crate::fmt::Formatter<'_>) -> $crate::fmt::Result
+pub fn dotfiles_actions::brew::action::MacAppStoreItem::fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result
+pub fn dotfiles_actions::brew::directive::BrewDirective::clone(&self) -> dotfiles_actions::brew::directive::BrewDirective<'a>
+pub fn dotfiles_actions::brew::directive::BrewDirective::default() -> dotfiles_actions::brew::directive::BrewDirective<'a>
+pub fn dotfiles_actions::brew::directive::BrewDirective::directive_data(&'a self) -> &'a DirectiveData
+pub fn dotfiles_actions::brew::directive::BrewDirective::parse_action(&'a self, context_settings: &Settings, yaml: &StrictYaml, &Path) -> Result<dotfiles_actions::brew::action::BrewAction<'a>, DotfilesError>
+pub fn dotfiles_actions::brew::directive::BrewDirective::parse_action_list(&'a self, context_settings: &Settings, yaml: &StrictYaml, current_dir: &Path) -> Result<Vec<dotfiles_actions::brew::action::BrewAction<'a>>, DotfilesError>
+pub fn dotfiles_actions::brew::directive::init_directive_data() -> DirectiveData
+pub fn dotfiles_actions::create::action::CreateAction::directory(&self) -> &str
+pub fn dotfiles_actions::create::action::CreateAction::eq(&self, other: &Self) -> bool
+pub fn dotfiles_actions::create::action::CreateAction::execute(&self) -> Result<(), DotfilesError>
+pub fn dotfiles_actions::create::action::CreateAction::fmt(&self, __f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result
+pub fn dotfiles_actions::create::action::CreateAction::force(&self) -> bool
+pub fn dotfiles_actions::create::action::CreateAction::new(fs: &'a F, skip_in_ci: bool, directory: String, force: bool, current_dir: PathBuf) -> Result<Self, DotfilesError>
+pub fn dotfiles_actions::create::action::CreateAction::skip_in_ci(&self) -> bool
+pub fn dotfiles_actions::create::directive::CreateDirective::clone(&self) -> dotfiles_actions::create::directive::CreateDirective<'a, F>
+pub fn dotfiles_actions::create::directive::CreateDirective::default() -> Self
+pub fn dotfiles_actions::create::directive::CreateDirective::directive_data(&'a self) -> &'a DirectiveData
+pub fn dotfiles_actions::create::directive::CreateDirective::fs(&self) -> &F
+pub fn dotfiles_actions::create::directive::CreateDirective::mut_fs(&mut self) -> &mut F
+pub fn dotfiles_actions::create::directive::CreateDirective::parse_action(&'a self, settings: &std::collections::HashMap<String, Setting>, yaml: &StrictYaml, current_dir: &Path) -> Result<dotfiles_actions::create::action::CreateAction<'_, F>, DotfilesError>
+pub fn dotfiles_actions::create::directive::init_directive_data() -> DirectiveData
+pub fn dotfiles_actions::exec::action::ExecAction::command(&self) -> &str
+pub fn dotfiles_actions::exec::action::ExecAction::description(&self) -> Option<&String>
+pub fn dotfiles_actions::exec::action::ExecAction::echo(&self) -> bool
+pub fn dotfiles_actions::exec::action::ExecAction::eq(&self, other: &dotfiles_actions::exec::action::ExecAction<'a>) -> bool
+pub fn dotfiles_actions::exec::action::ExecAction::execute(&self) -> Result<(), DotfilesError>
+pub fn dotfiles_actions::exec::action::ExecAction::fmt(&self, f: &mut $crate::fmt::Formatter<'_>) -> $crate::fmt::Result
+pub fn dotfiles_actions::exec::action::ExecAction::new(skip_in_ci: bool, command: String, description: Option<String>, echo: bool, current_dir: &Path) -> Result<Self, DotfilesError>
+pub fn dotfiles_actions::exec::action::ExecAction::skip_in_ci(&self) -> bool
+pub fn dotfiles_actions::exec::directive::ExecDirective::clone(&self) -> dotfiles_actions::exec::directive::ExecDirective<'a>
+pub fn dotfiles_actions::exec::directive::ExecDirective::default() -> Self
+pub fn dotfiles_actions::exec::directive::ExecDirective::directive_data(&'a self) -> &'a DirectiveData
+pub fn dotfiles_actions::exec::directive::ExecDirective::parse_action(&'a self, settings: &HashMap<String, Setting>, yaml: &StrictYaml, current_dir: &Path) -> Result<dotfiles_actions::exec::action::ExecAction<'_>, DotfilesError>
+pub fn dotfiles_actions::exec::directive::init_directive_data() -> DirectiveData
+pub fn dotfiles_actions::filesystem::FileSystemDirective::fs(&self) -> &F
+pub fn dotfiles_actions::filesystem::FileSystemDirective::mut_fs(&mut self) -> &mut F
+pub fn dotfiles_actions::homebrew_install::action::HomebrewInstallAction::check_brew_is_installed(&self) -> bool
+pub fn dotfiles_actions::homebrew_install::action::HomebrewInstallAction::default() -> Self
+pub fn dotfiles_actions::homebrew_install::action::HomebrewInstallAction::execute(&self) -> Result<(), DotfilesError>
+pub fn dotfiles_actions::homebrew_install::action::HomebrewInstallAction::new() -> Self
+pub fn dotfiles_actions::link::action::LinkAction::create_parent_dirs(&self) -> bool
+pub fn dotfiles_actions::link::action::LinkAction::eq(&self, other: &Self) -> bool
+pub fn dotfiles_actions::link::action::LinkAction::execute(&self) -> Result<(), DotfilesError>
+pub fn dotfiles_actions::link::action::LinkAction::fmt(&self, __f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result
+pub fn dotfiles_actions::link::action::LinkAction::force(&self) -> bool
+pub fn dotfiles_actions::link::action::LinkAction::ignore_missing_target(&self) -> bool
+pub fn dotfiles_actions::link::action::LinkAction::new(fs: &'a F, path: String, target: String, context_settings: &Settings, defaults: &Settings, current_dir: PathBuf) -> Result<Self, DotfilesError>
+pub fn dotfiles_actions::link::action::LinkAction::path(&self) -> &String
+pub fn dotfiles_actions::link::action::LinkAction::relink(&self) -> bool
+pub fn dotfiles_actions::link::action::LinkAction::resolve_symlink_target(&self) -> bool
+pub fn dotfiles_actions::link::action::LinkAction::skip_in_ci(&self) -> bool
+pub fn dotfiles_actions::link::action::LinkAction::target(&self) -> &String
+pub fn dotfiles_actions::link::directive::LinkDirective::clone(&self) -> dotfiles_actions::link::directive::LinkDirective<'a, F>
+pub fn dotfiles_actions::link::directive::LinkDirective::default() -> Self
+pub fn dotfiles_actions::link::directive::LinkDirective::directive_data(&'a self) -> &'a DirectiveData
+pub fn dotfiles_actions::link::directive::LinkDirective::fs(&self) -> &F
+pub fn dotfiles_actions::link::directive::LinkDirective::fs(&self) -> &F
+pub fn dotfiles_actions::link::directive::LinkDirective::mut_fs(&mut self) -> &mut F
+pub fn dotfiles_actions::link::directive::LinkDirective::parse_action(&'a self, settings: &Settings, yaml: &StrictYaml, current_directory: &Path) -> Result<dotfiles_actions::link::action::LinkAction<'a, F>, DotfilesError>
+pub fn dotfiles_actions::link::directive::LinkDirective::parse_shortened_action(&'a self, context_settings: &Settings, yaml: &StrictYaml, current_dir: &Path) -> Result<dotfiles_actions::link::action::LinkAction<'a, F>, DotfilesError>
+pub fn dotfiles_actions::link::directive::init_directive_data() -> DirectiveData
+pub fn dotfiles_actions::ohmyzsh_install::action::OhMyZshInstallAction::check_oh_my_zsh_is_installed(&self) -> bool
+pub fn dotfiles_actions::ohmyzsh_install::action::OhMyZshInstallAction::check_zsh_is_installed(&self) -> bool
+pub fn dotfiles_actions::ohmyzsh_install::action::OhMyZshInstallAction::execute(&self) -> Result<(), DotfilesError>
+pub fn dotfiles_actions::ohmyzsh_install::action::OhMyZshInstallAction::new(skip_chsh: bool) -> Self
+pub mod dotfiles_actions
+pub mod dotfiles_actions::brew
+pub mod dotfiles_actions::brew::action
+pub mod dotfiles_actions::brew::directive
+pub mod dotfiles_actions::create
+pub mod dotfiles_actions::create::action
+pub mod dotfiles_actions::create::directive
+pub mod dotfiles_actions::exec
+pub mod dotfiles_actions::exec::action
+pub mod dotfiles_actions::exec::directive
+pub mod dotfiles_actions::filesystem
+pub mod dotfiles_actions::homebrew_install
+pub mod dotfiles_actions::homebrew_install::action
+pub mod dotfiles_actions::link
+pub mod dotfiles_actions::link::action
+pub mod dotfiles_actions::link::directive
+pub mod dotfiles_actions::ohmyzsh_install
+pub mod dotfiles_actions::ohmyzsh_install::action
+pub struct dotfiles_actions::brew::action::BrewAction<'a>
+pub struct dotfiles_actions::brew::action::MacAppStoreCommand
+pub struct dotfiles_actions::brew::action::MacAppStoreItem
+pub struct dotfiles_actions::brew::directive::BrewDirective<'a>
+pub struct dotfiles_actions::create::action::CreateAction<'a, F: FileSystem>
+pub struct dotfiles_actions::create::directive::CreateDirective<'a, F: FileSystem + Default>
+pub struct dotfiles_actions::exec::action::ExecAction<'a>
+pub struct dotfiles_actions::exec::directive::ExecDirective<'a>
+pub struct dotfiles_actions::homebrew_install::action::HomebrewInstallAction
+pub struct dotfiles_actions::link::action::LinkAction<'a, F: FileSystem + UnixFileSystem>
+pub struct dotfiles_actions::link::directive::LinkDirective<'a, F: FileSystem + UnixFileSystem + Default>
+pub struct dotfiles_actions::ohmyzsh_install::action::OhMyZshInstallAction
+pub trait dotfiles_actions::filesystem::FileSystemDirective<'a, F: FileSystem>: Directive<'a>
+pub type dotfiles_actions::brew::directive::BrewDirective::ActionType = dotfiles_actions::brew::action::BrewAction<'a>
+pub type dotfiles_actions::create::action::FakeCreateAction<'a> = dotfiles_actions::create::action::CreateAction<'a, FakeFileSystem>
+pub type dotfiles_actions::create::action::NativeCreateAction<'a> = dotfiles_actions::create::action::CreateAction<'a, OsFileSystem>
+pub type dotfiles_actions::create::directive::CreateDirective::ActionType = dotfiles_actions::create::action::CreateAction<'a, F>
+pub type dotfiles_actions::create::directive::FakeCreateDirective<'a> = dotfiles_actions::create::directive::CreateDirective<'a, FakeFileSystem>
+pub type dotfiles_actions::create::directive::NativeCreateDirective<'a> = dotfiles_actions::create::directive::CreateDirective<'a, OsFileSystem>
+pub type dotfiles_actions::exec::directive::ExecDirective::ActionType = dotfiles_actions::exec::action::ExecAction<'a>
+pub type dotfiles_actions::link::action::FakeLinkAction<'a> = dotfiles_actions::link::action::LinkAction<'a, FakeFileSystem>
+pub type dotfiles_actions::link::action::NativeLinkAction<'a> = dotfiles_actions::link::action::LinkAction<'a, OsFileSystem>
+pub type dotfiles_actions::link::directive::FakeLinkDirective<'a> = dotfiles_actions::link::directive::LinkDirective<'a, FakeFileSystem>
+pub type dotfiles_actions::link::directive::LinkDirective::ActionType = dotfiles_actions::link::action::LinkAction<'a, F>
+pub type dotfiles_actions::link::directive::NativeLinkDirective<'a> = dotfiles_actions::link::directive::LinkDirective<'a, OsFileSystem>
