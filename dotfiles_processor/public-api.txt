@@ -1,0 +1,105 @@
+impl RefUnwindSafe for dotfiles_processor::context::Context
+impl RefUnwindSafe for dotfiles_processor::flags::Command
+impl RefUnwindSafe for dotfiles_processor::flags::FlagData
+impl RefUnwindSafe for dotfiles_processor::flags::LogLevelFilter
+impl RefUnwindSafe for dotfiles_processor::known_directive::KnownDirective
+impl Send for dotfiles_processor::context::Context
+impl Send for dotfiles_processor::flags::Command
+impl Send for dotfiles_processor::flags::FlagData
+impl Send for dotfiles_processor::flags::LogLevelFilter
+impl Send for dotfiles_processor::known_directive::KnownDirective
+impl Sync for dotfiles_processor::context::Context
+impl Sync for dotfiles_processor::flags::Command
+impl Sync for dotfiles_processor::flags::FlagData
+impl Sync for dotfiles_processor::flags::LogLevelFilter
+impl Sync for dotfiles_processor::known_directive::KnownDirective
+impl Unpin for dotfiles_processor::context::Context
+impl Unpin for dotfiles_processor::flags::Command
+impl Unpin for dotfiles_processor::flags::FlagData
+impl Unpin for dotfiles_processor::flags::LogLevelFilter
+impl Unpin for dotfiles_processor::known_directive::KnownDirective
+impl UnwindSafe for dotfiles_processor::context::Context
+impl UnwindSafe for dotfiles_processor::flags::Command
+impl UnwindSafe for dotfiles_processor::flags::FlagData
+impl UnwindSafe for dotfiles_processor::flags::LogLevelFilter
+impl UnwindSafe for dotfiles_processor::known_directive::KnownDirective
+impl<'a> RefUnwindSafe for dotfiles_processor::known_directive::KnownAction<'a>
+impl<'a> Send for dotfiles_processor::known_directive::KnownAction<'a>
+impl<'a> Sync for dotfiles_processor::known_directive::KnownAction<'a>
+impl<'a> Unpin for dotfiles_processor::known_directive::KnownAction<'a>
+impl<'a> UnwindSafe for dotfiles_processor::known_directive::KnownAction<'a>
+pub enum dotfiles_processor::flags::Command
+pub enum dotfiles_processor::flags::LogLevelFilter
+pub enum dotfiles_processor::known_directive::KnownAction<'a>
+pub enum dotfiles_processor::known_directive::KnownDirective
+pub enum variant dotfiles_processor::flags::Command::ApplyConfig
+pub enum variant dotfiles_processor::flags::Command::InstallHomebrew
+pub enum variant dotfiles_processor::flags::Command::InstallOhMyZsh
+pub enum variant dotfiles_processor::flags::LogLevelFilter::Debug
+pub enum variant dotfiles_processor::flags::LogLevelFilter::Error
+pub enum variant dotfiles_processor::flags::LogLevelFilter::Info
+pub enum variant dotfiles_processor::flags::LogLevelFilter::Off
+pub enum variant dotfiles_processor::flags::LogLevelFilter::Trace
+pub enum variant dotfiles_processor::flags::LogLevelFilter::Warn
+pub enum variant dotfiles_processor::known_directive::KnownAction::Brew(BrewAction<'a>)
+pub enum variant dotfiles_processor::known_directive::KnownAction::Create(NativeCreateAction<'a>)
+pub enum variant dotfiles_processor::known_directive::KnownAction::Exec(ExecAction<'a>)
+pub enum variant dotfiles_processor::known_directive::KnownAction::Link(NativeLinkAction<'a>)
+pub enum variant dotfiles_processor::known_directive::KnownDirective::Brew
+pub enum variant dotfiles_processor::known_directive::KnownDirective::Create
+pub enum variant dotfiles_processor::known_directive::KnownDirective::Exec
+pub enum variant dotfiles_processor::known_directive::KnownDirective::Link
+pub fn dotfiles_processor::context::Context::get_default(&self, dir: &str, setting: &str) -> Option<&Setting>
+pub fn dotfiles_processor::context::Context::parse_file(&mut self) -> Result<(), DotfilesError>
+pub fn dotfiles_processor::context::Context::run_actions(&mut self) -> Result<(), DotfilesError>
+pub fn dotfiles_processor::context::Context::try_from(file_name: &Path) -> Result<Self, Self::Error>
+pub fn dotfiles_processor::context::Context::try_from(file_name: &str) -> Result<Self, Self::Error>
+pub fn dotfiles_processor::flags::Command::augment_subcommands<'b>(__clap_app: clap::Command) -> clap::Command
+pub fn dotfiles_processor::flags::Command::augment_subcommands_for_update<'b>(__clap_app: clap::Command) -> clap::Command
+pub fn dotfiles_processor::flags::Command::from_arg_matches(__clap_arg_matches: &clap::ArgMatches) -> ::std::result::Result<Self, clap::Error>
+pub fn dotfiles_processor::flags::Command::from_arg_matches_mut(__clap_arg_matches: &mut clap::ArgMatches) -> ::std::result::Result<Self, clap::Error>
+pub fn dotfiles_processor::flags::Command::has_subcommand(__clap_name: &str) -> bool
+pub fn dotfiles_processor::flags::Command::update_from_arg_matches(&mut self, __clap_arg_matches: &clap::ArgMatches) -> ::std::result::Result<(), clap::Error>
+pub fn dotfiles_processor::flags::Command::update_from_arg_matches_mut<'b>(&mut self, __clap_arg_matches: &mut clap::ArgMatches) -> ::std::result::Result<(), clap::Error>
+pub fn dotfiles_processor::flags::FlagData::augment_args<'b>(__clap_app: clap::Command) -> clap::Command
+pub fn dotfiles_processor::flags::FlagData::augment_args_for_update<'b>(__clap_app: clap::Command) -> clap::Command
+pub fn dotfiles_processor::flags::FlagData::command<'b>() -> clap::Command
+pub fn dotfiles_processor::flags::FlagData::command_for_update<'b>() -> clap::Command
+pub fn dotfiles_processor::flags::FlagData::from_arg_matches(__clap_arg_matches: &clap::ArgMatches) -> ::std::result::Result<Self, clap::Error>
+pub fn dotfiles_processor::flags::FlagData::from_arg_matches_mut(__clap_arg_matches: &mut clap::ArgMatches) -> ::std::result::Result<Self, clap::Error>
+pub fn dotfiles_processor::flags::FlagData::group_id() -> Option<clap::Id>
+pub fn dotfiles_processor::flags::FlagData::update_from_arg_matches(&mut self, __clap_arg_matches: &clap::ArgMatches) -> ::std::result::Result<(), clap::Error>
+pub fn dotfiles_processor::flags::FlagData::update_from_arg_matches_mut(&mut self, __clap_arg_matches: &mut clap::ArgMatches) -> ::std::result::Result<(), clap::Error>
+pub fn dotfiles_processor::flags::LogLevelFilter::clone(&self) -> dotfiles_processor::flags::LogLevelFilter
+pub fn dotfiles_processor::flags::LogLevelFilter::cmp(&self, other: &dotfiles_processor::flags::LogLevelFilter) -> $crate::cmp::Ordering
+pub fn dotfiles_processor::flags::LogLevelFilter::eq(&self, other: &dotfiles_processor::flags::LogLevelFilter) -> bool
+pub fn dotfiles_processor::flags::LogLevelFilter::into(self) -> LevelFilter
+pub fn dotfiles_processor::flags::LogLevelFilter::partial_cmp(&self, other: &dotfiles_processor::flags::LogLevelFilter) -> $crate::option::Option<$crate::cmp::Ordering>
+pub fn dotfiles_processor::flags::LogLevelFilter::to_possible_value<'a>(&self) -> ::std::option::Option<clap::builder::PossibleValue>
+pub fn dotfiles_processor::flags::LogLevelFilter::value_variants<'a>() -> &'a [Self]
+pub fn dotfiles_processor::known_directive::KnownAction::execute(&'a self) -> Result<(), DotfilesError>
+pub fn dotfiles_processor::known_directive::KnownAction::from(value: BrewAction<'a>) -> Self
+pub fn dotfiles_processor::known_directive::KnownAction::from(value: ExecAction<'a>) -> Self
+pub fn dotfiles_processor::known_directive::KnownAction::from(value: NativeCreateAction<'a>) -> Self
+pub fn dotfiles_processor::known_directive::KnownAction::from(value: NativeLinkAction<'a>) -> Self
+pub fn dotfiles_processor::known_directive::KnownDirective::clone(&self) -> dotfiles_processor::known_directive::KnownDirective
+pub fn dotfiles_processor::known_directive::KnownDirective::data(&self) -> &DirectiveData
+pub fn dotfiles_processor::known_directive::KnownDirective::parse_action_list<'a>(directive: dotfiles_processor::known_directive::KnownDirective, context_settings: &Settings, actions: &strict_yaml_rust::StrictYaml, file: &Path) -> Result<Vec<dotfiles_processor::known_directive::KnownAction<'a>>, DotfilesError>
+pub fn dotfiles_processor::known_directive::KnownDirective::parse_context_defaults(&self, defaults: &strict_yaml_rust::StrictYaml) -> Result<(String, Settings), DotfilesError>
+pub fn dotfiles_processor::known_directive::KnownDirective::try_from(value: &str) -> Result<Self, Self::Error>
+pub fn dotfiles_processor::process::process(flag_data: &dotfiles_processor::flags::FlagData) -> Result<(), DotfilesError>
+pub mod dotfiles_processor
+pub mod dotfiles_processor::context
+pub mod dotfiles_processor::flags
+pub mod dotfiles_processor::known_directive
+pub mod dotfiles_processor::process
+pub struct dotfiles_processor::context::Context
+pub struct dotfiles_processor::flags::FlagData
+pub struct field dotfiles_processor::flags::Command::ApplyConfig::dry_run: bool
+pub struct field dotfiles_processor::flags::Command::ApplyConfig::file: String
+pub struct field dotfiles_processor::flags::Command::InstallOhMyZsh::skip_chsh: bool
+pub struct field dotfiles_processor::flags::FlagData::command: dotfiles_processor::flags::Command
+pub struct field dotfiles_processor::flags::FlagData::log_level_filter: dotfiles_processor::flags::LogLevelFilter
+pub type dotfiles_processor::context::Context::Error = DotfilesError
+pub type dotfiles_processor::context::Context::Error = DotfilesError
+pub type dotfiles_processor::known_directive::KnownDirective::Error = DotfilesError

@@ -69,10 +69,10 @@ impl Into<LevelFilter> for LogLevelFilter {
 
 #[derive(Subcommand)]
 pub enum Command {
-  /// Installs Homebrew on Mac or Linuxbrew on Linux, see http://brew.sh
+  /// Installs Homebrew on Mac or Linuxbrew on Linux, see <http://brew.sh>
   #[cfg(any(target_os = "linux", target_os = "macos"))]
   InstallHomebrew,
-  /// Installs Oh My Zsh! and sets `zsh` as the shell, see https://ohmyz.sh/
+  /// Installs Oh My Zsh! and sets `zsh` as the shell, see <https://ohmyz.sh/>
   #[cfg(unix)]
   InstallOhMyZsh {
     /// Skips running `chsh` to set `zsh` as the shell
