@@ -53,11 +53,13 @@ impl TryFrom<&str> for Context {
   type Error = DotfilesError;
   fn try_from(file_name: &str) -> Result<Self, Self::Error> {
     log::debug!("creating context for {:?}", file_name);
+    let absolute_file = convert_path_to_absolute(&PathBuf::from(file_name), None)?;
+    log::debug!("Absolute file name: {:?}", absolute_file.to_str());
 
     Ok(Self {
       defaults: Default::default(),
       actions: Default::default(),
-      file: convert_path_to_absolute(&PathBuf::from(file_name), None)?,
+      file: absolute_file,
     })
   }
 }

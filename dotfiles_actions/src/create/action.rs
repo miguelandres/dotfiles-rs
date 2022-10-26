@@ -36,6 +36,7 @@ use filesystem::OsFileSystem;
 
 use log::info;
 
+use std::io::ErrorKind;
 use std::path::Path;
 use std::path::PathBuf;
 
@@ -120,13 +121,17 @@ impl<F: FileSystem> Action<'_> for CreateAction<'_, F> {
       let path = convert_path_to_absolute(&path, Some(current_dir))?;
 
       if force {
-        Ok(
-          fs.create_dir_all(path)
-            .map_err(DotfilesError::from_io_error)?,
-        )
+        fs.create_dir_all(path)
       } else {
-        Ok(fs.create_dir(path).map_err(DotfilesError::from_io_error)?)
+        fs.create_dir(path)
       }
+      .or_else(|io_error| {
+        if let ErrorKind::AlreadyExists = io_error.kind() {
+          Ok(())
+        } else {
+          Err(DotfilesError::from_io_error(io_error))
+        }
+      })
     }
     create_dir(self.fs, &self.directory, self.force, &self.current_dir).map(|_| {
       info!("Created directory {}", &self.directory);
