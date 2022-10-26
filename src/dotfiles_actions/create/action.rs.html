@@ -133,6 +133,11 @@
 <span id="133">133</span>
 <span id="134">134</span>
 <span id="135">135</span>
+<span id="136">136</span>
+<span id="137">137</span>
+<span id="138">138</span>
+<span id="139">139</span>
+<span id="140">140</span>
 </pre><pre class="rust"><code><span class="comment">// Copyright (c) 2021-2022 Miguel Barreto and others
 //
 // Permission is hereby granted, free of charge, to any person obtaining
@@ -171,6 +176,7 @@
 
 <span class="kw">use </span>log::info;
 
+<span class="kw">use </span>std::io::ErrorKind;
 <span class="kw">use </span>std::path::Path;
 <span class="kw">use </span>std::path::PathBuf;
 
@@ -255,13 +261,17 @@
       <span class="kw">let </span>path = convert_path_to_absolute(<span class="kw-2">&amp;</span>path, <span class="prelude-val">Some</span>(current_dir))<span class="question-mark">?</span>;
 
       <span class="kw">if </span>force {
-        <span class="prelude-val">Ok</span>(
-          fs.create_dir_all(path)
-            .map_err(DotfilesError::from_io_error)<span class="question-mark">?</span>,
-        )
+        fs.create_dir_all(path)
       } <span class="kw">else </span>{
-        <span class="prelude-val">Ok</span>(fs.create_dir(path).map_err(DotfilesError::from_io_error)<span class="question-mark">?</span>)
+        fs.create_dir(path)
       }
+      .or_else(|io_error| {
+        <span class="kw">if let </span>ErrorKind::AlreadyExists = io_error.kind() {
+          <span class="prelude-val">Ok</span>(())
+        } <span class="kw">else </span>{
+          <span class="prelude-val">Err</span>(DotfilesError::from_io_error(io_error))
+        }
+      })
     }
     create_dir(<span class="self">self</span>.fs, <span class="kw-2">&amp;</span><span class="self">self</span>.directory, <span class="self">self</span>.force, <span class="kw-2">&amp;</span><span class="self">self</span>.current_dir).map(|<span class="kw">_</span>| {
       <span class="macro">info!</span>(<span class="string">&quot;Created directory {}&quot;</span>, <span class="kw-2">&amp;</span><span class="self">self</span>.directory);

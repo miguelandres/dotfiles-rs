@@ -209,6 +209,8 @@
 <span id="209">209</span>
 <span id="210">210</span>
 <span id="211">211</span>
+<span id="212">212</span>
+<span id="213">213</span>
 </pre><pre class="rust"><code><span class="comment">// Copyright (c) 2021-2022 Miguel Barreto and others
 //
 // Permission is hereby granted, free of charge, to any person obtaining
@@ -264,11 +266,13 @@
   <span class="kw">type </span>Error = DotfilesError;
   <span class="kw">fn </span>try_from(file_name: <span class="kw-2">&amp;</span>str) -&gt; <span class="prelude-ty">Result</span>&lt;<span class="self">Self</span>, <span class="self">Self</span>::Error&gt; {
     <span class="macro">log::debug!</span>(<span class="string">&quot;creating context for {:?}&quot;</span>, file_name);
+    <span class="kw">let </span>absolute_file = convert_path_to_absolute(<span class="kw-2">&amp;</span>PathBuf::from(file_name), <span class="prelude-val">None</span>)<span class="question-mark">?</span>;
+    <span class="macro">log::debug!</span>(<span class="string">&quot;Absolute file name: {:?}&quot;</span>, absolute_file.to_str());
 
     <span class="prelude-val">Ok</span>(<span class="self">Self </span>{
       defaults: Default::default(),
       actions: Default::default(),
-      file: convert_path_to_absolute(<span class="kw-2">&amp;</span>PathBuf::from(file_name), <span class="prelude-val">None</span>)<span class="question-mark">?</span>,
+      file: absolute_file,
     })
   }
 }
