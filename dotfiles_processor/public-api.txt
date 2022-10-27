@@ -45,13 +45,19 @@ pub enum variant dotfiles_processor::known_directive::KnownAction::Brew(BrewActi
 pub enum variant dotfiles_processor::known_directive::KnownAction::Create(NativeCreateAction<'a>)
 pub enum variant dotfiles_processor::known_directive::KnownAction::Exec(ExecAction<'a>)
 pub enum variant dotfiles_processor::known_directive::KnownAction::Link(NativeLinkAction<'a>)
+pub enum variant dotfiles_processor::known_directive::KnownAction::Subconfig(dotfiles_processor::context::Context)
 pub enum variant dotfiles_processor::known_directive::KnownDirective::Brew
 pub enum variant dotfiles_processor::known_directive::KnownDirective::Create
 pub enum variant dotfiles_processor::known_directive::KnownDirective::Exec
 pub enum variant dotfiles_processor::known_directive::KnownDirective::Link
+pub enum variant dotfiles_processor::known_directive::KnownDirective::Subconfig
+pub fn dotfiles_processor::context::Context::actions(&self) -> &Vec<dotfiles_processor::known_directive::KnownAction<'static>>
+pub fn dotfiles_processor::context::Context::defaults(&self) -> &HashMap<String, Settings>
+pub fn dotfiles_processor::context::Context::file(&self) -> &PathBuf
 pub fn dotfiles_processor::context::Context::get_default(&self, dir: &str, setting: &str) -> Option<&Setting>
 pub fn dotfiles_processor::context::Context::parse_file(&mut self) -> Result<(), DotfilesError>
-pub fn dotfiles_processor::context::Context::run_actions(&mut self) -> Result<(), DotfilesError>
+pub fn dotfiles_processor::context::Context::run_actions<'a>(context: dotfiles_processor::context::Context) -> Result<(), DotfilesError>
+pub fn dotfiles_processor::context::Context::subcontext(&self, file: &Path) -> Result<dotfiles_processor::context::Context, DotfilesError>
 pub fn dotfiles_processor::context::Context::try_from(file_name: &Path) -> Result<Self, Self::Error>
 pub fn dotfiles_processor::context::Context::try_from(file_name: &str) -> Result<Self, Self::Error>
 pub fn dotfiles_processor::flags::Command::augment_subcommands<'b>(__clap_app: clap::Command) -> clap::Command
@@ -77,14 +83,15 @@ pub fn dotfiles_processor::flags::LogLevelFilter::into(self) -> LevelFilter
 pub fn dotfiles_processor::flags::LogLevelFilter::partial_cmp(&self, other: &dotfiles_processor::flags::LogLevelFilter) -> $crate::option::Option<$crate::cmp::Ordering>
 pub fn dotfiles_processor::flags::LogLevelFilter::to_possible_value<'a>(&self) -> ::std::option::Option<clap::builder::PossibleValue>
 pub fn dotfiles_processor::flags::LogLevelFilter::value_variants<'a>() -> &'a [Self]
-pub fn dotfiles_processor::known_directive::KnownAction::execute(&'a self) -> Result<(), DotfilesError>
+pub fn dotfiles_processor::known_directive::KnownAction::execute(self) -> Result<(), DotfilesError>
 pub fn dotfiles_processor::known_directive::KnownAction::from(value: BrewAction<'a>) -> Self
 pub fn dotfiles_processor::known_directive::KnownAction::from(value: ExecAction<'a>) -> Self
 pub fn dotfiles_processor::known_directive::KnownAction::from(value: NativeCreateAction<'a>) -> Self
 pub fn dotfiles_processor::known_directive::KnownAction::from(value: NativeLinkAction<'a>) -> Self
+pub fn dotfiles_processor::known_directive::KnownAction::from(value: dotfiles_processor::context::Context) -> Self
 pub fn dotfiles_processor::known_directive::KnownDirective::clone(&self) -> dotfiles_processor::known_directive::KnownDirective
 pub fn dotfiles_processor::known_directive::KnownDirective::data(&self) -> &DirectiveData
-pub fn dotfiles_processor::known_directive::KnownDirective::parse_action_list<'a>(directive: dotfiles_processor::known_directive::KnownDirective, context_settings: &Settings, actions: &strict_yaml_rust::StrictYaml, file: &Path) -> Result<Vec<dotfiles_processor::known_directive::KnownAction<'a>>, DotfilesError>
+pub fn dotfiles_processor::known_directive::KnownDirective::parse_action_list<'a>(directive: dotfiles_processor::known_directive::KnownDirective, context_settings: &Settings, actions: &strict_yaml_rust::StrictYaml, context: &dotfiles_processor::context::Context) -> Result<Vec<dotfiles_processor::known_directive::KnownAction<'a>>, DotfilesError>
 pub fn dotfiles_processor::known_directive::KnownDirective::parse_context_defaults(&self, defaults: &strict_yaml_rust::StrictYaml) -> Result<(String, Settings), DotfilesError>
 pub fn dotfiles_processor::known_directive::KnownDirective::try_from(value: &str) -> Result<Self, Self::Error>
 pub fn dotfiles_processor::process::process(flag_data: &dotfiles_processor::flags::FlagData) -> Result<(), DotfilesError>

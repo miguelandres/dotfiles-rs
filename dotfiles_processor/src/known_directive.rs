@@ -20,7 +20,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 use std::convert::TryFrom;
-use std::path::Path;
+use std::path::PathBuf;
 
 use clap::__macro_refs::once_cell::sync::Lazy;
 #[cfg(any(target_os = "linux", target_os = "macos"))]
@@ -33,7 +33,11 @@ use dotfiles_core::action::ActionParser;
 use dotfiles_core::action::ConditionalAction;
 use dotfiles_core::directive::{DirectiveData, HasDirectiveData};
 use dotfiles_core::error::{DotfilesError, ErrorType};
+use dotfiles_core::yaml_util::map_yaml_array;
 use dotfiles_core::Settings;
+use strict_yaml_rust::StrictYaml;
+
+use crate::context::Context;
 
 #[cfg(any(target_os = "linux", target_os = "macos"))]
 static BREW: Lazy<BrewDirective<'static>> = Lazy::new(Default::default);
@@ -41,6 +45,11 @@ static CREATE: Lazy<NativeCreateDirective<'static>> = Lazy::new(Default::default
 static EXEC: Lazy<ExecDirective<'static>> = Lazy::new(Default::default);
 #[cfg(unix)]
 static LINK: Lazy<NativeLinkDirective<'static>> = Lazy::new(Default::default);
+static SUBCONFIG_DIRECTIVE_DATA: Lazy<DirectiveData> = Lazy::new(subconfig_directive_data);
+
+fn subconfig_directive_data() -> DirectiveData {
+  DirectiveData::from("subconfig".into(), Default::default())
+}
 
 #[derive(Clone)]
 pub enum KnownDirective {
@@ -50,6 +59,7 @@ pub enum KnownDirective {
   Exec,
   #[cfg(unix)]
   Link,
+  Subconfig,
 }
 
 pub enum KnownAction<'a> {
@@ -59,6 +69,7 @@ pub enum KnownAction<'a> {
   Exec(ExecAction<'a>),
   #[cfg(unix)]
   Link(NativeLinkAction<'a>),
+  Subconfig(Context),
 }
 
 #[cfg(any(target_os = "linux", target_os = "macos"))]
@@ -87,8 +98,14 @@ impl<'a> From<NativeLinkAction<'a>> for KnownAction<'a> {
   }
 }
 
+impl<'a> From<Context> for KnownAction<'a> {
+  fn from(value: Context) -> Self {
+    KnownAction::Subconfig(value)
+  }
+}
+
 impl<'a> KnownAction<'a> {
-  pub fn execute(&'a self) -> Result<(), DotfilesError> {
+  pub fn execute(self) -> Result<(), DotfilesError> {
     match self {
       #[cfg(any(target_os = "linux", target_os = "macos"))]
       KnownAction::Brew(action) => action.check_conditions_and_execute().map_err(|mut err| {
@@ -108,6 +125,7 @@ impl<'a> KnownAction<'a> {
         err.add_message_prefix("Executing link action".into());
         err
       }),
+      KnownAction::Subconfig(subcontext) => Context::run_actions(subcontext),
     }
   }
 }
@@ -121,6 +139,7 @@ impl KnownDirective {
       KnownDirective::Exec => EXEC.directive_data(),
       #[cfg(unix)]
       KnownDirective::Link => LINK.directive_data(),
+      KnownDirective::Subconfig => &SUBCONFIG_DIRECTIVE_DATA,
     }
   }
   pub fn parse_context_defaults(
@@ -137,8 +156,9 @@ impl KnownDirective {
     directive: KnownDirective,
     context_settings: &Settings,
     actions: &strict_yaml_rust::StrictYaml,
-    file: &Path,
+    context: &Context,
   ) -> Result<Vec<KnownAction<'a>>, DotfilesError> {
+    let file = context.file();
     let current_dir = file.parent().ok_or_else(||
       DotfilesError::from(
         format!(
@@ -160,6 +180,22 @@ impl KnownDirective {
       KnownDirective::Link => LINK
         .parse_action_list(context_settings, actions, current_dir)
         .map(|list| list.into_iter().map(KnownAction::from).collect()),
+      KnownDirective::Subconfig => map_yaml_array(actions, |file_yaml| {
+        file_yaml
+          .clone()
+          .into_string()
+          .ok_or(DotfilesError::from_wrong_yaml(
+            "Subconfig: Expected a file name".to_owned(),
+            actions.clone(),
+            StrictYaml::String("".into()),
+          ))
+          .and_then(|filename| {
+            let path = PathBuf::from(&filename);
+            let mut subcontext = context.subcontext(&path)?;
+            subcontext.parse_file()?;
+            Ok(KnownAction::from(subcontext))
+          })
+      }),
     }
   }
 }
@@ -174,6 +210,7 @@ impl TryFrom<&str> for KnownDirective {
       "create" => Ok(KnownDirective::Create),
       "exec" => Ok(KnownDirective::Exec),
       "link" => Ok(KnownDirective::Link),
+      "subconfig" => Ok(KnownDirective::Subconfig),
       _ => Err(DotfilesError::from(
         format!("Configuration refers to unknown directive `{}`", value),
         ErrorType::InconsistentConfigurationError,

@@ -31,6 +31,7 @@ use dotfiles_core::{
   yaml_util::{fold_hash_until_first_err, map_yaml_array, read_yaml_file},
   Setting, Settings,
 };
+use getset::Getters;
 use strict_yaml_rust::StrictYaml;
 
 use crate::known_directive::{KnownAction, KnownDirective};
@@ -40,12 +41,16 @@ use crate::known_directive::{KnownAction, KnownDirective};
 ///
 /// Notice that contexts *can* be built on top of one another, so that defaults can be overriden
 /// multiple times, and thus have some sort of configuration inheritance.
+#[derive(Getters)]
 pub struct Context {
   /// The default overrides for the current context.
+  #[getset(get = "pub")]
   defaults: HashMap<String, Settings>,
   /// The list of actions parsed from this file.
+  #[getset(get = "pub")]
   actions: Vec<KnownAction<'static>>,
   /// The absolute path to the file to which this context corresponds.
+  #[getset(get = "pub")]
   file: PathBuf,
 }
 
@@ -78,6 +83,13 @@ impl TryFrom<&Path> for Context {
 }
 
 impl Context {
+  pub fn subcontext(&self, file: &Path) -> Result<Context, DotfilesError> {
+    Ok(Context {
+      defaults: self.defaults.clone(),
+      actions: Default::default(),
+      file: convert_path_to_absolute(file, self.file.parent())?,
+    })
+  }
   pub fn get_default(&self, dir: &str, setting: &str) -> Option<&Setting> {
     self
       .defaults
@@ -94,7 +106,7 @@ impl Context {
         }
         if let Some(yaml_steps) = hash.get(&StrictYaml::String("steps".into())) {
           let mut local_defaults = self.defaults.clone();
-          self.actions = Self::parse_actions(&mut local_defaults, yaml_steps, &self.file)?;
+          self.actions = Self::parse_actions(&mut local_defaults, yaml_steps, &self)?;
         } else {
           log::warn!(
             "File {} does not contain any steps to parse",
@@ -183,7 +195,7 @@ impl Context {
   fn parse_actions(
     defaults: &mut HashMap<String, Settings>,
     steps_yaml: &StrictYaml,
-    file: &Path,
+    context: &Context,
   ) -> Result<Vec<KnownAction<'static>>, DotfilesError> {
     let all_actions: Vec<KnownAction> = map_yaml_array(steps_yaml, |step| {
       fold_hash_until_first_err(
@@ -193,7 +205,7 @@ impl Context {
           let directive = KnownDirective::try_from(dir_name.as_str())?;
           let context_settings = defaults.entry(dir_name).or_default();
 
-          KnownDirective::parse_action_list(directive, context_settings, steps_yaml, file)
+          KnownDirective::parse_action_list(directive, context_settings, steps_yaml, context)
         },
         |mut existing_actions, mut new_actions| {
           existing_actions.append(&mut new_actions);
@@ -207,7 +219,8 @@ impl Context {
     Ok(all_actions)
   }
 
-  pub fn run_actions(&mut self) -> Result<(), DotfilesError> {
-    process_until_first_err(self.actions.iter(), |action| action.execute())
+  /// Runs the actions in this context and consumes the context.
+  pub fn run_actions<'a>(context: Context) -> Result<(), DotfilesError> {
+    process_until_first_err(context.actions.into_iter(), |action| action.execute())
   }
 }

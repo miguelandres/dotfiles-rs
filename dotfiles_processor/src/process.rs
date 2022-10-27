@@ -51,7 +51,7 @@ pub fn process(flag_data: &FlagData) -> Result<(), DotfilesError> {
       let mut ctx = Context::try_from(file.as_str())?;
       ctx.parse_file()?;
       if !dry_run {
-        ctx.run_actions()?;
+        Context::run_actions(ctx)?;
       }
       Ok(())
     }

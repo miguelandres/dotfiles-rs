@@ -1,0 +1,14 @@
+defaults:
+  create:
+    force: true
+  link:
+    relink: true
+    force: true
+steps:
+  - create:
+      - scratch_dir/subcontext_test
+  - link:
+      - scratch_dir/subcontext_test/home: ~
+  - exec:
+      - ls -la scratch_dir/subcontext_test
+      - ls -la scratch_dir/subcontext_test/home
