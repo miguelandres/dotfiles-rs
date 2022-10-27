@@ -110,11 +110,11 @@
       <span class="kw">let </span><span class="kw-2">mut </span>ctx = Context::try_from(file.as_str())<span class="question-mark">?</span>;
       ctx.parse_file()<span class="question-mark">?</span>;
       <span class="kw">if </span>!dry_run {
-        ctx.run_actions()<span class="question-mark">?</span>;
+        Context::run_actions(ctx)<span class="question-mark">?</span>;
       }
       <span class="prelude-val">Ok</span>(())
     }
   }
 }
 </code></pre></div>
-</section></div></main><div id="rustdoc-vars" data-root-path="../../" data-current-crate="dotfiles_processor" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.66.0-nightly (bed4ad65b 2022-10-25)" ></div></body></html>
+</section></div></main><div id="rustdoc-vars" data-root-path="../../" data-current-crate="dotfiles_processor" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.66.0-nightly (1898c34e9 2022-10-26)" ></div></body></html>

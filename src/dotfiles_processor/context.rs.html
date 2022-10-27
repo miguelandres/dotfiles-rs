@@ -211,6 +211,19 @@
 <span id="211">211</span>
 <span id="212">212</span>
 <span id="213">213</span>
+<span id="214">214</span>
+<span id="215">215</span>
+<span id="216">216</span>
+<span id="217">217</span>
+<span id="218">218</span>
+<span id="219">219</span>
+<span id="220">220</span>
+<span id="221">221</span>
+<span id="222">222</span>
+<span id="223">223</span>
+<span id="224">224</span>
+<span id="225">225</span>
+<span id="226">226</span>
 </pre><pre class="rust"><code><span class="comment">// Copyright (c) 2021-2022 Miguel Barreto and others
 //
 // Permission is hereby granted, free of charge, to any person obtaining
@@ -244,6 +257,7 @@
   yaml_util::{fold_hash_until_first_err, map_yaml_array, read_yaml_file},
   Setting, Settings,
 };
+<span class="kw">use </span>getset::Getters;
 <span class="kw">use </span>strict_yaml_rust::StrictYaml;
 
 <span class="kw">use </span><span class="kw">crate</span>::known_directive::{KnownAction, KnownDirective};
@@ -253,12 +267,16 @@
 ///
 /// Notice that contexts *can* be built on top of one another, so that defaults can be overriden
 /// multiple times, and thus have some sort of configuration inheritance.
+</span><span class="attribute">#[derive(Getters)]
 </span><span class="kw">pub struct </span>Context {
   <span class="doccomment">/// The default overrides for the current context.
+  </span><span class="attribute">#[getset(get = <span class="string">&quot;pub&quot;</span>)]
   </span>defaults: HashMap&lt;String, Settings&gt;,
   <span class="doccomment">/// The list of actions parsed from this file.
+  </span><span class="attribute">#[getset(get = <span class="string">&quot;pub&quot;</span>)]
   </span>actions: Vec&lt;KnownAction&lt;<span class="lifetime">&#39;static</span>&gt;&gt;,
   <span class="doccomment">/// The absolute path to the file to which this context corresponds.
+  </span><span class="attribute">#[getset(get = <span class="string">&quot;pub&quot;</span>)]
   </span>file: PathBuf,
 }
 
@@ -291,6 +309,13 @@
 }
 
 <span class="kw">impl </span>Context {
+  <span class="kw">pub fn </span>subcontext(<span class="kw-2">&amp;</span><span class="self">self</span>, file: <span class="kw-2">&amp;</span>Path) -&gt; <span class="prelude-ty">Result</span>&lt;Context, DotfilesError&gt; {
+    <span class="prelude-val">Ok</span>(Context {
+      defaults: <span class="self">self</span>.defaults.clone(),
+      actions: Default::default(),
+      file: convert_path_to_absolute(file, <span class="self">self</span>.file.parent())<span class="question-mark">?</span>,
+    })
+  }
   <span class="kw">pub fn </span>get_default(<span class="kw-2">&amp;</span><span class="self">self</span>, dir: <span class="kw-2">&amp;</span>str, setting: <span class="kw-2">&amp;</span>str) -&gt; <span class="prelude-ty">Option</span>&lt;<span class="kw-2">&amp;</span>Setting&gt; {
     <span class="self">self
       </span>.defaults
@@ -307,7 +332,7 @@
         }
         <span class="kw">if let </span><span class="prelude-val">Some</span>(yaml_steps) = hash.get(<span class="kw-2">&amp;</span>StrictYaml::String(<span class="string">&quot;steps&quot;</span>.into())) {
           <span class="kw">let </span><span class="kw-2">mut </span>local_defaults = <span class="self">self</span>.defaults.clone();
-          <span class="self">self</span>.actions = <span class="self">Self</span>::parse_actions(<span class="kw-2">&amp;mut </span>local_defaults, yaml_steps, <span class="kw-2">&amp;</span><span class="self">self</span>.file)<span class="question-mark">?</span>;
+          <span class="self">self</span>.actions = <span class="self">Self</span>::parse_actions(<span class="kw-2">&amp;mut </span>local_defaults, yaml_steps, <span class="kw-2">&amp;</span><span class="self">self</span>)<span class="question-mark">?</span>;
         } <span class="kw">else </span>{
           <span class="macro">log::warn!</span>(
             <span class="string">&quot;File {} does not contain any steps to parse&quot;</span>,
@@ -396,7 +421,7 @@
   </span><span class="kw">fn </span>parse_actions(
     defaults: <span class="kw-2">&amp;mut </span>HashMap&lt;String, Settings&gt;,
     steps_yaml: <span class="kw-2">&amp;</span>StrictYaml,
-    file: <span class="kw-2">&amp;</span>Path,
+    context: <span class="kw-2">&amp;</span>Context,
   ) -&gt; <span class="prelude-ty">Result</span>&lt;Vec&lt;KnownAction&lt;<span class="lifetime">&#39;static</span>&gt;&gt;, DotfilesError&gt; {
     <span class="kw">let </span>all_actions: Vec&lt;KnownAction&gt; = map_yaml_array(steps_yaml, |step| {
       fold_hash_until_first_err(
@@ -406,7 +431,7 @@
           <span class="kw">let </span>directive = KnownDirective::try_from(dir_name.as_str())<span class="question-mark">?</span>;
           <span class="kw">let </span>context_settings = defaults.entry(dir_name).or_default();
 
-          KnownDirective::parse_action_list(directive, context_settings, steps_yaml, file)
+          KnownDirective::parse_action_list(directive, context_settings, steps_yaml, context)
         },
         |<span class="kw-2">mut </span>existing_actions, <span class="kw-2">mut </span>new_actions| {
           existing_actions.append(<span class="kw-2">&amp;mut </span>new_actions);
@@ -420,9 +445,10 @@
     <span class="prelude-val">Ok</span>(all_actions)
   }
 
-  <span class="kw">pub fn </span>run_actions(<span class="kw-2">&amp;mut </span><span class="self">self</span>) -&gt; <span class="prelude-ty">Result</span>&lt;(), DotfilesError&gt; {
-    process_until_first_err(<span class="self">self</span>.actions.iter(), |action| action.execute())
+  <span class="doccomment">/// Runs the actions in this context and consumes the context.
+  </span><span class="kw">pub fn </span>run_actions&lt;<span class="lifetime">&#39;a</span>&gt;(context: Context) -&gt; <span class="prelude-ty">Result</span>&lt;(), DotfilesError&gt; {
+    process_until_first_err(context.actions.into_iter(), |action| action.execute())
   }
 }
 </code></pre></div>
-</section></div></main><div id="rustdoc-vars" data-root-path="../../" data-current-crate="dotfiles_processor" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.66.0-nightly (bed4ad65b 2022-10-25)" ></div></body></html>
+</section></div></main><div id="rustdoc-vars" data-root-path="../../" data-current-crate="dotfiles_processor" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.66.0-nightly (1898c34e9 2022-10-26)" ></div></body></html>
