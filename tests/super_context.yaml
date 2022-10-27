@@ -1,0 +1,3 @@
+steps:
+  - subconfig:
+      - subcontext.yaml
