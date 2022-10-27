@@ -72,7 +72,7 @@ impl TryFrom<&str> for Context {
 impl TryFrom<&Path> for Context {
   type Error = DotfilesError;
   fn try_from(file_name: &Path) -> Result<Self, Self::Error> {
-    log::debug!("creating context for {:?}", file_name.to_str().unwrap());
+    log::info!("creating context for {:?}", file_name.to_str().unwrap());
 
     Ok(Self {
       defaults: Default::default(),
@@ -84,6 +84,7 @@ impl TryFrom<&Path> for Context {
 
 impl Context {
   pub fn subcontext(&self, file: &Path) -> Result<Context, DotfilesError> {
+    log::info!("creating subcontext for {:?}", file.to_str().unwrap());
     Ok(Context {
       defaults: self.defaults.clone(),
       actions: Default::default(),
