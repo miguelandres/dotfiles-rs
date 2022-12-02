@@ -186,32 +186,30 @@ jobs:
   build-mac-universal-binary-and-all-binaries-package:
     name: Build macOS universal binary
     needs: [create-nightly-release, build]
-    runs-on: macos-latest
+    runs-on: macos-12
     env:
       MACOS_PACKAGE_FILE: ${{ needs.create-nightly-release.outputs.package_prefix }}-macos-universal.tar.gz
       ALL_BINARIES_PACKAGE_FILE: ${{ needs.create-nightly-release.outputs.package_prefix }}-all_binaries.tar.gz
     steps:
-      - name: Download aarch64 binary
+      - name: Download aarch64 mac binary
         uses: actions/download-artifact@v2
         with:
           name: aarch64-apple-darwin
 
-      - name: Download x86_64 binary
+      - name: Download x86_64 mac binary
         uses: actions/download-artifact@v2
         with:
           name: x86_64-apple-darwin
 
       - name: Make universal binary
         run: |
-          lipo -create -output package/dotfiles target/x86_64-apple-darwin/release/dotfiles target/aarch64-apple-darwin/release/dotfiles
-          chmod +x package/dotfiles
+          lipo -create -output macos-universal/dotfiles target/x86_64-apple-darwin/release/dotfiles target/aarch64-apple-darwin/release/dotfiles
+          chmod +x macos_universal/dotfiles
 
       - name: Package macOS
         run: |
-          cd package
+          cd macos-universal
           tar -czvf ../${{ env.MACOS_PACKAGE_FILE }} *
-          cd ../
-          mv package macos-universal
 
       - name: Upload package
         uses: actions/upload-release-asset@v1
