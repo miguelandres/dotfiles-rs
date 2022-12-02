@@ -176,8 +176,7 @@ jobs:
           asset_name: ${{ env.PACKAGE_FILE }}
           asset_content_type: ${{ endsWith(env.PACKAGE_FILE, 'tar.gz') && 'application/gzip' || 'application/zip' }}
 
-      - name: Upload macOS build artifact
-        if: runner.os == 'macOS'
+      - name: Upload build artifact
         uses: actions/upload-artifact@v2
         with:
           name: ${{ matrix.target.name }}
@@ -208,6 +207,66 @@ jobs:
           chmod +x package/dotfiles
 
       - name: Package macOS
+        run: |
+          cd package
+          tar -czvf ../${{ env.PACKAGE_FILE }} *
+
+      - name: Upload package
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ needs.create-nightly-release.outputs.upload_url }}
+          asset_path: ./${{ env.PACKAGE_FILE }}
+          asset_name: ${{ env.PACKAGE_FILE }}
+          asset_content_type: application/gzip
+
+      - name: Upload build artifact
+        uses: actions/upload-artifact@v2
+        with:
+          name: macos-universal
+          path: |
+            package
+
+  build-complete-binary-tarball:
+    name: Build Complete tarball
+    needs: [create-nightly-release, build, build-mac-universal-binary]
+    runs-on: ubuntu-latest
+    env:
+      PACKAGE_FILE: ${{ needs.create-nightly-release.outputs.package_prefix }}-all_binaries.tar.gz
+    steps:
+      - name: Download mac OS binary
+        uses: actions/download-artifact@v2
+        with:
+          name: macos-universal
+
+      - name: Download x86_64 binary
+        uses: actions/download-artifact@v2
+        with:
+          name: x86_64-unknown-linux-gnu
+      - name: Download armv7 binary
+        uses: actions/download-artifact@v2
+        with:
+          name: armv7-unknown-linux-gnu
+      - name: Download aarch64 binary
+        uses: actions/download-artifact@v2
+        with:
+          name: aarch64-unknown-linux-gnu
+      - name: Organize package
+        run: |
+          mv package/dotfiles package/dotfiles-macos
+          chmod +x package/dotfiles-macos
+
+          mv target/x86_64-unknown-linux-gnu/release/dotfiles package/dotfiles-x86_64
+          chmod +x package/dotfiles-x86_64
+
+          mv target/armv7-unknown-linux-gnu/release/dotfiles package/dotfiles-armv7
+          chmod +x package/dotfiles-armv7
+
+          mv target/aarch64-unknown-linux-gnu/release/dotfiles package/dotfiles-aarch64
+          chmod +x package/dotfiles-aarch64
+
+      - name: Package all binaries
         run: |
           cd package
           tar -czvf ../${{ env.PACKAGE_FILE }} *
