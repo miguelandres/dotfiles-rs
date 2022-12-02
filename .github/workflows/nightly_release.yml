@@ -196,6 +196,7 @@ jobs:
         run: ls -R
       - name: Make universal binary
         run: |
+          mkdir macos-universal
           lipo -create -output macos-universal/dotfiles x86_64-apple-darwin/dotfiles aarch64-apple-darwin/dotfiles
           chmod +x macos-universal/dotfiles
 
