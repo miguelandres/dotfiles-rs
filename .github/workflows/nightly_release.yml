@@ -158,8 +158,7 @@ jobs:
           cp README.md package/README.md
           cp LICENSE.txt package/LICENSE.txt
 
-      - name: Package Linux
-        if: runner.os == 'Linux'
+      - name: Package
         run: |
           mv package ${{ matrix.target.name }}
           cp ${{ env.CARGO_BUILD_DIR }}/dotfiles ${{ matrix.target.name }}/dotfiles
@@ -167,7 +166,6 @@ jobs:
           tar -czvf ../${{ env.PACKAGE_FILE }} *
 
       - name: Upload package
-        if: runner.os != 'macOS'
         uses: actions/upload-release-asset@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
