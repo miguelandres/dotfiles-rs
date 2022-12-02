@@ -182,7 +182,6 @@ jobs:
           name: ${{ matrix.target.name }}
           path: |
             ${{ env.CARGO_BUILD_DIR }}/dotfiles
-            package
 
   build-mac-universal-binary-and-all-binaries-package:
     name: Build macOS universal binary
@@ -211,6 +210,8 @@ jobs:
         run: |
           cd package
           tar -czvf ../${{ env.MACOS_PACKAGE_FILE }} *
+          cd ../
+          mv package macos-universal
 
       - name: Upload package
         uses: actions/upload-release-asset@v1
@@ -227,7 +228,7 @@ jobs:
         with:
           name: macos-universal
           path: |
-            package
+            macos-universal
 
       - name: Download x86_64 binary
         uses: actions/download-artifact@v2
@@ -243,7 +244,8 @@ jobs:
           name: aarch64-unknown-linux-gnu
       - name: Organize package
         run: |
-          mv package/dotfiles package/dotfiles-macos
+          mkdir package
+          mv macos-universal/dotfiles package/dotfiles-macos
           chmod +x package/dotfiles-macos
 
           mv target/x86_64-unknown-linux-gnu/release/dotfiles package/dotfiles-x86_64
