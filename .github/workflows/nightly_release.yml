@@ -191,15 +191,18 @@ jobs:
       ALL_BINARIES_PACKAGE_FILE: ${{ needs.create-nightly-release.outputs.package_prefix }}-all_binaries.tar.gz
     steps:
       - name: Download aarch64 mac binary
-        uses: actions/download-artifact@v2
+        uses: actions/download-artifact@v3
         with:
           name: aarch64-apple-darwin
+      - name: Display structure of downloaded files
+        run: ls -R
 
       - name: Download x86_64 mac binary
-        uses: actions/download-artifact@v2
+        uses: actions/download-artifact@v3
         with:
           name: x86_64-apple-darwin
-
+      - name: Display structure of downloaded files
+        run: ls -R
       - name: Make universal binary
         run: |
           lipo -create -output macos-universal/dotfiles x86_64-apple-darwin/dotfiles aarch64-apple-darwin/dotfiles
@@ -228,15 +231,15 @@ jobs:
             macos-universal
 
       - name: Download x86_64 binary
-        uses: actions/download-artifact@v2
+        uses: actions/download-artifact@v3
         with:
           name: x86_64-unknown-linux-gnu
       - name: Download armv7 binary
-        uses: actions/download-artifact@v2
+        uses: actions/download-artifact@v3
         with:
           name: armv7-unknown-linux-gnueabihf
       - name: Download aarch64 binary
-        uses: actions/download-artifact@v2
+        uses: actions/download-artifact@v3
         with:
           name: aarch64-unknown-linux-gnu
       - name: Organize package
