@@ -247,7 +247,7 @@ jobs:
       - name: Download armv7 binary
         uses: actions/download-artifact@v2
         with:
-          name: armv7-unknown-linux-gnu
+          name: armv7-unknown-linux-gnueabihf
       - name: Download aarch64 binary
         uses: actions/download-artifact@v2
         with:
@@ -260,7 +260,7 @@ jobs:
           mv target/x86_64-unknown-linux-gnu/release/dotfiles package/dotfiles-x86_64
           chmod +x package/dotfiles-x86_64
 
-          mv target/armv7-unknown-linux-gnu/release/dotfiles package/dotfiles-armv7
+          mv target/armv7-unknown-linux-gnueabihf/release/dotfiles package/dotfiles-armv7
           chmod +x package/dotfiles-armv7
 
           mv target/aarch64-unknown-linux-gnu/release/dotfiles package/dotfiles-aarch64
