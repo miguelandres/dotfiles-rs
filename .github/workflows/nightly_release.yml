@@ -161,8 +161,9 @@ jobs:
       - name: Package Linux
         if: runner.os == 'Linux'
         run: |
-          cp ${{ env.CARGO_BUILD_DIR }}/dotfiles package/dotfiles
-          cd package/
+          mv package ${{ matrix.target.name }}
+          cp ${{ env.CARGO_BUILD_DIR }}/dotfiles ${{ matrix.target.name }}/dotfiles
+          cd ${{ matrix.target.name }}/
           tar -czvf ../${{ env.PACKAGE_FILE }} *
 
       - name: Upload package
@@ -181,7 +182,7 @@ jobs:
         with:
           name: ${{ matrix.target.name }}
           path: |
-            ${{ env.CARGO_BUILD_DIR }}/dotfiles
+            ${{ matrix.target.name }}
 
   build-mac-universal-binary-and-all-binaries-package:
     name: Build macOS universal binary
@@ -203,8 +204,8 @@ jobs:
 
       - name: Make universal binary
         run: |
-          lipo -create -output macos-universal/dotfiles target/x86_64-apple-darwin/release/dotfiles target/aarch64-apple-darwin/release/dotfiles
-          chmod +x macos_universal/dotfiles
+          lipo -create -output macos-universal/dotfiles x86_64-apple-darwin/dotfiles aarch64-apple-darwin/dotfiles
+          chmod +x macos-universal/dotfiles
 
       - name: Package macOS
         run: |
@@ -246,13 +247,13 @@ jobs:
           mv macos-universal/dotfiles package/dotfiles-macos
           chmod +x package/dotfiles-macos
 
-          mv target/x86_64-unknown-linux-gnu/release/dotfiles package/dotfiles-x86_64
+          mv x86_64-unknown-linux-gnu/dotfiles package/dotfiles-x86_64
           chmod +x package/dotfiles-x86_64
 
-          mv target/armv7-unknown-linux-gnueabihf/release/dotfiles package/dotfiles-armv7
+          mv armv7-unknown-linux-gnueabihf/dotfiles package/dotfiles-armv7
           chmod +x package/dotfiles-armv7
 
-          mv target/aarch64-unknown-linux-gnu/release/dotfiles package/dotfiles-aarch64
+          mv aarch64-unknown-linux-gnu/dotfiles package/dotfiles-aarch64
           chmod +x package/dotfiles-aarch64
 
       - name: Package all binaries
