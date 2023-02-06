@@ -199,10 +199,10 @@
   <span class="doccomment">/// Force creation of the directory and all its parents if they do not
   /// exist already.
   ///
-  /// Setting [`create_parents`](CreateAction::create_parents) to `true` is equivalent to using
-  /// the `-p` flag in `mkdir`.
+  /// Setting [`create_parent_dirs`](CreateAction::create_parent_dirs) to `true` is equivalent to
+  /// using the `-p` flag in `mkdir`.
   </span><span class="attr">#[get = <span class="string">&quot;pub&quot;</span>]
-  </span>create_parents: bool,
+  </span>create_parent_dirs: bool,
   <span class="doccomment">/// Current directory that will be used to determine relative file locations if necessary. It
   /// must match the parent directory of the configuration file that declared this action.
   </span><span class="attr">#[get = <span class="string">&quot;pub&quot;</span>]
@@ -220,14 +220,14 @@
     fs: <span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span>F,
     skip_in_ci: bool,
     directory: String,
-    create_parents: bool,
+    create_parent_dirs: bool,
     current_dir: PathBuf,
   ) -&gt; <span class="prelude-ty">Result</span>&lt;<span class="self">Self</span>, DotfilesError&gt; {
     <span class="kw">let </span>action = CreateAction {
       skip_in_ci,
       fs,
       directory,
-      create_parents,
+      create_parent_dirs: create_parent_dirs,
       current_dir,
     };
     <span class="macro">log::trace!</span>(<span class="string">&quot;Creating new {:?}&quot;</span>, action);
@@ -239,22 +239,22 @@
   <span class="doccomment">/// Creates the [`directory`](CreateAction::directory).
   ///
   /// # Errors
-  /// - The parent directory does not exist and [`create_parents`](CreateAction::create_parents) is
-  ///   false.
+  /// - The parent directory does not exist and
+  ///   [`create_parent_dirs`](CreateAction::create_parent_dirs) is false.
   /// - There is already a directory, file or symlink with the same name.
   /// - Permission denied.
   </span><span class="kw">fn </span>execute(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="prelude-ty">Result</span>&lt;(), DotfilesError&gt; {
     <span class="kw">fn </span>create_dir&lt;F: FileSystem&gt;(
       fs: <span class="kw-2">&amp;</span><span class="lifetime">&#39;_ </span>F,
       directory: <span class="kw-2">&amp;</span>str,
-      create_parents: bool,
+      create_parent_dirs: bool,
       current_dir: <span class="kw-2">&amp;</span>Path,
     ) -&gt; <span class="prelude-ty">Result</span>&lt;(), DotfilesError&gt; {
       <span class="kw">let </span>path = PathBuf::from(directory.to_owned());
       <span class="kw">let </span>path = process_home_dir_in_path(<span class="kw-2">&amp;</span>path);
       <span class="kw">let </span>path = convert_path_to_absolute(<span class="kw-2">&amp;</span>path, <span class="prelude-val">Some</span>(current_dir))<span class="question-mark">?</span>;
 
-      <span class="kw">if </span>create_parents {
+      <span class="kw">if </span>create_parent_dirs {
         fs.create_dir_all(path)
       } <span class="kw">else </span>{
         fs.create_dir(path)
@@ -270,7 +270,7 @@
     create_dir(
       <span class="self">self</span>.fs,
       <span class="kw-2">&amp;</span><span class="self">self</span>.directory,
-      <span class="self">self</span>.create_parents,
+      <span class="self">self</span>.create_parent_dirs,
       <span class="kw-2">&amp;</span><span class="self">self</span>.current_dir,
     )
     .map(|<span class="kw">_</span>| {

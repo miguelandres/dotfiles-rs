@@ -121,6 +121,9 @@
 <a href="#121" id="121">121</a>
 <a href="#122" id="122">122</a>
 <a href="#123" id="123">123</a>
+<a href="#124" id="124">124</a>
+<a href="#125" id="125">125</a>
+<a href="#126" id="126">126</a>
 </pre><pre class="rust"><code><span class="comment">// Copyright (c) 2021-2022 Miguel Barreto and others
 //
 // Permission is hereby granted, free of charge, to any person obtaining
@@ -166,9 +169,9 @@
 
 <span class="doccomment">/// Constant for the name of the `create` directive.
 </span><span class="kw">pub const </span>DIRECTIVE_NAME: <span class="kw-2">&amp;</span>str = <span class="string">&quot;create&quot;</span>;
-<span class="doccomment">/// Constant for the name of the [`create_parents`](CreateAction::create_parents) Setting which
-/// forces to create all parent directories if necessary.
-</span><span class="kw">pub const </span>CREATE_PARENTS_SETTING: <span class="kw-2">&amp;</span>str = <span class="string">&quot;create_parents&quot;</span>;
+<span class="doccomment">/// Constant for the name of the [`create_parent_dirs`](CreateAction::create_parent_dirs) Setting
+/// which forces to create all parent directories if necessary.
+</span><span class="kw">pub const </span>CREATE_PARENT_DIRS_SETTING: <span class="kw-2">&amp;</span>str = <span class="string">&quot;create_parent_dirs&quot;</span>;
 <span class="doccomment">/// Constant for the name of the [`directory`](CreateAction::directory) argument that contains the
 /// name of the directory to create
 </span><span class="kw">pub const </span>DIR_SETTING: <span class="kw-2">&amp;</span>str = <span class="string">&quot;dir&quot;</span>;
@@ -178,7 +181,10 @@
   DirectiveData::from(
     DIRECTIVE_NAME.into(),
     initialize_settings_object(<span class="kw-2">&amp;</span>[
-      (CREATE_PARENTS_SETTING.to_owned(), Setting::Boolean(<span class="bool-val">false</span>)),
+      (
+        CREATE_PARENT_DIRS_SETTING.to_owned(),
+        Setting::Boolean(<span class="bool-val">false</span>),
+      ),
       (SKIP_IN_CI_SETTING.to_owned(), Setting::Boolean(<span class="bool-val">false</span>)),
     ]),
   )
@@ -235,7 +241,7 @@
       )<span class="question-mark">?</span>,
       yaml_util::get_string_content_or_keyed_value(yaml, <span class="prelude-val">Some</span>(DIR_SETTING))<span class="question-mark">?</span>,
       yaml_util::get_boolean_setting_from_yaml_or_context(
-        CREATE_PARENTS_SETTING,
+        CREATE_PARENT_DIRS_SETTING,
         yaml,
         settings,
         <span class="self">self</span>.defaults(),
