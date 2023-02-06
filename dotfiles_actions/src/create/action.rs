@@ -34,6 +34,7 @@ use filesystem::FakeFileSystem;
 use filesystem::FileSystem;
 use filesystem::OsFileSystem;
 
+use getset::Getters;
 use log::info;
 
 use std::io::ErrorKind;
@@ -41,7 +42,7 @@ use std::path::Path;
 use std::path::PathBuf;
 
 /// [CreateAction] creates a new [directory](CreateAction::directory) when executed
-#[derive(Derivative, ConditionalAction)]
+#[derive(Derivative, ConditionalAction, Getters)]
 #[derivative(Debug, PartialEq)]
 pub struct CreateAction<'a, F: FileSystem> {
   /// Skips this action if it is running in a CI environment.
@@ -53,15 +54,18 @@ pub struct CreateAction<'a, F: FileSystem> {
   #[derivative(Debug = "ignore", PartialEq = "ignore")]
   fs: &'a F,
   /// Directory to create. Can be absolute or relative.
+  #[get = "pub"]
   directory: String,
   /// Force creation of the directory and all its parents if they do not
   /// exist already.
   ///
-  /// Setting [`force`](CreateAction::force) to `true` is equivalent to using
+  /// Setting [`create_parents`](CreateAction::create_parents) to `true` is equivalent to using
   /// the `-p` flag in `mkdir`.
-  force: bool,
+  #[get = "pub"]
+  create_parents: bool,
   /// Current directory that will be used to determine relative file locations if necessary. It
   /// must match the parent directory of the configuration file that declared this action.
+  #[get = "pub"]
   current_dir: PathBuf,
 }
 
@@ -76,29 +80,18 @@ impl<'a, F: FileSystem> CreateAction<'a, F> {
     fs: &'a F,
     skip_in_ci: bool,
     directory: String,
-    force: bool,
+    create_parents: bool,
     current_dir: PathBuf,
   ) -> Result<Self, DotfilesError> {
     let action = CreateAction {
       skip_in_ci,
       fs,
       directory,
-      force,
+      create_parents,
       current_dir,
     };
     log::trace!("Creating new {:?}", action);
     Ok(action)
-  }
-  /// Returns the directory to create.
-  pub fn directory(&self) -> &str {
-    &self.directory
-  }
-  /// Returns true if the action will create parent directories if necessary.
-  ///
-  /// [`force`](CreateAction::force) being `true` is equivalent to using the
-  /// `-p` flag in `mkdir`
-  pub fn force(&self) -> bool {
-    self.force
   }
 }
 
@@ -106,21 +99,22 @@ impl<F: FileSystem> Action<'_> for CreateAction<'_, F> {
   /// Creates the [`directory`](CreateAction::directory).
   ///
   /// # Errors
-  /// - The parent directory does not exist and [`force`](CreateAction::force) is false.
+  /// - The parent directory does not exist and [`create_parents`](CreateAction::create_parents) is
+  ///   false.
   /// - There is already a directory, file or symlink with the same name.
   /// - Permission denied.
   fn execute(&self) -> Result<(), DotfilesError> {
     fn create_dir<F: FileSystem>(
       fs: &'_ F,
       directory: &str,
-      force: bool,
+      create_parents: bool,
       current_dir: &Path,
     ) -> Result<(), DotfilesError> {
       let path = PathBuf::from(directory.to_owned());
       let path = process_home_dir_in_path(&path);
       let path = convert_path_to_absolute(&path, Some(current_dir))?;
 
-      if force {
+      if create_parents {
         fs.create_dir_all(path)
       } else {
         fs.create_dir(path)
@@ -133,7 +127,13 @@ impl<F: FileSystem> Action<'_> for CreateAction<'_, F> {
         }
       })
     }
-    create_dir(self.fs, &self.directory, self.force, &self.current_dir).map(|_| {
+    create_dir(
+      self.fs,
+      &self.directory,
+      self.create_parents,
+      &self.current_dir,
+    )
+    .map(|_| {
       info!("Created directory {}", &self.directory);
     })
   }

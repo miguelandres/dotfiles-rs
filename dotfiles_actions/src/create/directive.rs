@@ -43,9 +43,9 @@ use strict_yaml_rust::StrictYaml;
 
 /// Constant for the name of the `create` directive.
 pub const DIRECTIVE_NAME: &str = "create";
-/// Constant for the name of the [`force`](CreateAction::force) Setting which forces to create all
-/// parent directories if necessary.
-pub const FORCE_SETTING: &str = "force";
+/// Constant for the name of the [`create_parents`](CreateAction::create_parents) Setting which
+/// forces to create all parent directories if necessary.
+pub const CREATE_PARENTS_SETTING: &str = "create_parents";
 /// Constant for the name of the [`directory`](CreateAction::directory) argument that contains the
 /// name of the directory to create
 pub const DIR_SETTING: &str = "dir";
@@ -55,7 +55,7 @@ pub fn init_directive_data() -> DirectiveData {
   DirectiveData::from(
     DIRECTIVE_NAME.into(),
     initialize_settings_object(&[
-      (FORCE_SETTING.to_owned(), Setting::Boolean(false)),
+      (CREATE_PARENTS_SETTING.to_owned(), Setting::Boolean(false)),
       (SKIP_IN_CI_SETTING.to_owned(), Setting::Boolean(false)),
     ]),
   )
@@ -112,7 +112,7 @@ impl<'a, F: FileSystem + Default> ActionParser<'a> for CreateDirective<'a, F> {
       )?,
       yaml_util::get_string_content_or_keyed_value(yaml, Some(DIR_SETTING))?,
       yaml_util::get_boolean_setting_from_yaml_or_context(
-        FORCE_SETTING,
+        CREATE_PARENTS_SETTING,
         yaml,
         settings,
         self.defaults(),

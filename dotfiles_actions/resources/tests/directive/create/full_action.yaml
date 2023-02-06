@@ -1,2 +1,2 @@
 dir: some/dir
-force: true
+create_parents: true

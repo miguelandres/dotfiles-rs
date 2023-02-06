@@ -1,6 +1,6 @@
 defaults:
   create:
-    force: true
+    create_parents: true
   link:
     relink: true
     force: false

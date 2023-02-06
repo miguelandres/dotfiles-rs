@@ -63,9 +63,9 @@ pub const dotfiles_actions::brew::directive::DIRECTIVE_NAME: &'static str
 pub const dotfiles_actions::brew::directive::FORCE_CASKS_SETTING: &'static str
 pub const dotfiles_actions::brew::directive::FORMULA_SETTING: &'static str
 pub const dotfiles_actions::brew::directive::TAP_SETTING: &'static str
+pub const dotfiles_actions::create::directive::CREATE_PARENTS_SETTING: &'static str
 pub const dotfiles_actions::create::directive::DIRECTIVE_NAME: &'static str
 pub const dotfiles_actions::create::directive::DIR_SETTING: &'static str
-pub const dotfiles_actions::create::directive::FORCE_SETTING: &'static str
 pub const dotfiles_actions::exec::directive::COMMAND_SETTING: &'static str
 pub const dotfiles_actions::exec::directive::DESCRIPTION_SETTING: &'static str
 pub const dotfiles_actions::exec::directive::DIRECTIVE_NAME: &'static str
@@ -103,12 +103,13 @@ pub fn dotfiles_actions::brew::directive::BrewDirective::directive_data(&'a self
 pub fn dotfiles_actions::brew::directive::BrewDirective::parse_action(&'a self, context_settings: &Settings, yaml: &StrictYaml, &Path) -> Result<dotfiles_actions::brew::action::BrewAction<'a>, DotfilesError>
 pub fn dotfiles_actions::brew::directive::BrewDirective::parse_action_list(&'a self, context_settings: &Settings, yaml: &StrictYaml, current_dir: &Path) -> Result<Vec<dotfiles_actions::brew::action::BrewAction<'a>>, DotfilesError>
 pub fn dotfiles_actions::brew::directive::init_directive_data() -> DirectiveData
-pub fn dotfiles_actions::create::action::CreateAction::directory(&self) -> &str
+pub fn dotfiles_actions::create::action::CreateAction::create_parents(&self) -> &bool
+pub fn dotfiles_actions::create::action::CreateAction::current_dir(&self) -> &PathBuf
+pub fn dotfiles_actions::create::action::CreateAction::directory(&self) -> &String
 pub fn dotfiles_actions::create::action::CreateAction::eq(&self, other: &Self) -> bool
 pub fn dotfiles_actions::create::action::CreateAction::execute(&self) -> Result<(), DotfilesError>
 pub fn dotfiles_actions::create::action::CreateAction::fmt(&self, __f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result
-pub fn dotfiles_actions::create::action::CreateAction::force(&self) -> bool
-pub fn dotfiles_actions::create::action::CreateAction::new(fs: &'a F, skip_in_ci: bool, directory: String, force: bool, current_dir: PathBuf) -> Result<Self, DotfilesError>
+pub fn dotfiles_actions::create::action::CreateAction::new(fs: &'a F, skip_in_ci: bool, directory: String, create_parents: bool, current_dir: PathBuf) -> Result<Self, DotfilesError>
 pub fn dotfiles_actions::create::action::CreateAction::skip_in_ci(&self) -> bool
 pub fn dotfiles_actions::create::directive::CreateDirective::clone(&self) -> dotfiles_actions::create::directive::CreateDirective<'a, F>
 pub fn dotfiles_actions::create::directive::CreateDirective::default() -> Self
