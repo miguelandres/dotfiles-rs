@@ -1,6 +1,7 @@
 defaults:
   create:
-    force: true
+    create_parent_dirs: true
   link:
+    create_parent_dirs: true
     relink: true
     force: false
