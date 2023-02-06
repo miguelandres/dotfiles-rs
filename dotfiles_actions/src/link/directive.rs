@@ -199,9 +199,7 @@ where
 
         x => Err(DotfilesError::from(
           format!(
-            "StrictYaml passed to configure a short Link action is a hash with {} values, must be just 1",
-            x
-          ),
+            "StrictYaml passed to configure a short Link action is a hash with {x} values, must be just 1",),
           ErrorType::InconsistentConfigurationError,
         )),
       }

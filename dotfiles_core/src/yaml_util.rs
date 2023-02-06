@@ -221,10 +221,7 @@ pub fn get_boolean_setting_from_context(
     Ok(b)
   } else {
     Err(DotfilesError::from(
-      format!(
-        "Setting {} was found in directive defaults but is not boolean",
-        name
-      ),
+      format!("Setting {name} was found in directive defaults but is not boolean",),
       ErrorType::CoreError,
     ))
   }
@@ -246,10 +243,7 @@ pub fn get_string_setting(
     Ok(s)
   } else {
     Err(DotfilesError::from(
-      format!(
-        "Setting {} was found in directive defaults but is not a string",
-        name
-      ),
+      format!("Setting {name} was found in directive defaults but is not a string",),
       ErrorType::CoreError,
     ))
   }
@@ -271,10 +265,7 @@ pub fn get_integer_setting(
     Ok(x)
   } else {
     Err(DotfilesError::from(
-      format!(
-        "Setting {} was found in directive defaults but is not an integer",
-        name
-      ),
+      format!("Setting {name} was found in directive defaults but is not an integer",),
       ErrorType::CoreError,
     ))
   }

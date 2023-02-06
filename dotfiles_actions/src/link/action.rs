@@ -184,8 +184,7 @@ impl<F: FileSystem + UnixFileSystem> Action<'_> for LinkAction<'_, F> {
         Err(io::Error::new(
           ErrorKind::NotFound,
           format!(
-            "Couldn't find target file {:?} to link to, use `ignore_missing_target` to ignore",
-            target
+            "Couldn't find target file {target:?} to link to, use `ignore_missing_target` to ignore",
           ),
         ))
       }
