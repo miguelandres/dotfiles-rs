@@ -177,7 +177,7 @@ impl Display for DotfilesError {
 impl DotfilesError {
   /// Adds a prefix to the existing message
   pub fn add_message_prefix(&mut self, prefix: String) {
-    self.message = format!("{}: {}", prefix, self.message,);
+    self.message = format!("{prefix}: {}", self.message,);
   }
   /// returns whether the underlying error is a missing configuration
   pub fn is_missing_config(&self, config_name: &str) -> bool {

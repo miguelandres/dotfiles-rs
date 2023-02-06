@@ -87,7 +87,7 @@ impl<'a, F: FileSystem> CreateAction<'a, F> {
       skip_in_ci,
       fs,
       directory,
-      create_parent_dirs: create_parent_dirs,
+      create_parent_dirs,
       current_dir,
     };
     log::trace!("Creating new {:?}", action);

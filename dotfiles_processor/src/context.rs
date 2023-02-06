@@ -106,7 +106,7 @@ impl Context {
         }
         if let Some(yaml_steps) = hash.get(&StrictYaml::String("steps".into())) {
           let mut local_defaults = self.defaults.clone();
-          self.actions = Self::parse_actions(&mut local_defaults, yaml_steps, &self)?;
+          self.actions = Self::parse_actions(&mut local_defaults, yaml_steps, self)?;
         } else {
           log::warn!(
             "File {} does not contain any steps to parse",
@@ -122,7 +122,7 @@ impl Context {
               Ok(())
             } else {
               Err(DotfilesError::from(
-                format!("Found a  {} section which I don't know how to process", key),
+                format!("Found a  {key} section which I don't know how to process"),
                 dotfiles_core::error::ErrorType::InconsistentConfigurationError,
               ))
             }
@@ -220,7 +220,7 @@ impl Context {
   }
 
   /// Runs the actions in this context and consumes the context.
-  pub fn run_actions<'a>(context: Context) -> Result<(), DotfilesError> {
+  pub fn run_actions(context: Context) -> Result<(), DotfilesError> {
     process_until_first_err(context.actions.into_iter(), |action| action.execute())
   }
 }

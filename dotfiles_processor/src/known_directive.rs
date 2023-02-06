@@ -212,7 +212,7 @@ impl TryFrom<&str> for KnownDirective {
       "link" => Ok(KnownDirective::Link),
       "subconfig" => Ok(KnownDirective::Subconfig),
       _ => Err(DotfilesError::from(
-        format!("Configuration refers to unknown directive `{}`", value),
+        format!("Configuration refers to unknown directive `{value}`"),
         ErrorType::InconsistentConfigurationError,
       )),
     }

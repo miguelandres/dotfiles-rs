@@ -297,7 +297,7 @@ pub fn get_setting_from_context(
     Ok(setting.clone())
   } else {
     Err(DotfilesError::from(
-      format!("Setting {} couldn't be found in context or defaults", name),
+      format!("Setting {name} couldn't be found in context or defaults"),
       ErrorType::CoreError,
     ))
   }
@@ -410,7 +410,7 @@ pub fn parse_as_boolean(yaml: &StrictYaml) -> Result<bool, DotfilesError> {
   if let StrictYaml::String(b) = yaml {
     FromStr::from_str(b).map_err(|_| {
       DotfilesError::from_wrong_yaml(
-        format!("Got a Yaml String that can't be parsed as boolean: `{}`", b),
+        format!("Got a Yaml String that can't be parsed as boolean: `{b}`"),
         yaml.to_owned(),
         StrictYaml::String("true".into()),
       )
@@ -431,7 +431,7 @@ pub fn parse_as_integer(yaml: &StrictYaml) -> Result<i64, DotfilesError> {
   if let StrictYaml::String(i) = yaml {
     FromStr::from_str(i).map_err(|_| {
       DotfilesError::from_wrong_yaml(
-        format!("Got a Yaml String that can't be parsed as integer: `{}`", i),
+        format!("Got a Yaml String that can't be parsed as integer: `{i}`"),
         yaml.to_owned(),
         StrictYaml::String("11111".into()),
       )

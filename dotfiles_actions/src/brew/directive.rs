@@ -121,9 +121,9 @@ impl<'a> ActionParser<'a> for BrewDirective<'a> {
                 StrictYaml::String("".into()),
               ))
               .and_then(|id| {
-                i64::from_str_radix(&id, 10).map_err(|_| {
+                id.parse::<i64>().map_err(|_| {
                   DotfilesError::from(
-                    format!("{} is not a valid Mac App Store app id", id),
+                    format!("{id} is not a valid Mac App Store app id"),
                     ErrorType::InconsistentConfigurationError,
                   )
                 })
@@ -145,7 +145,7 @@ impl<'a> ActionParser<'a> for BrewDirective<'a> {
           Err(err)
         }
       },
-      |res| Ok(res),
+      Ok,
     )?;
 
     Ok(BrewAction::new(

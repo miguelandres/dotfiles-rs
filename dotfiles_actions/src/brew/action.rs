@@ -87,12 +87,11 @@ pub struct MacAppStoreCommand {
 #[cfg(target_os = "macos")]
 impl From<(i64, String)> for MacAppStoreCommand {
   fn from(value: (i64, String)) -> Self {
-    match value {
-      (id, name) => {
-        let item = MacAppStoreItem { id, name };
-        let args = vec!["install".to_string(), item.id().to_string()];
-        MacAppStoreCommand { item, args }
-      }
+    let (id, name) = value;
+    {
+      let item = MacAppStoreItem { id, name };
+      let args = vec!["install".to_string(), item.id().to_string()];
+      MacAppStoreCommand { item, args }
     }
   }
 }

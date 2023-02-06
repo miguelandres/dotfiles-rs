@@ -56,7 +56,7 @@ pub fn dotfiles_processor::context::Context::defaults(&self) -> &HashMap<String,
 pub fn dotfiles_processor::context::Context::file(&self) -> &PathBuf
 pub fn dotfiles_processor::context::Context::get_default(&self, dir: &str, setting: &str) -> Option<&Setting>
 pub fn dotfiles_processor::context::Context::parse_file(&mut self) -> Result<(), DotfilesError>
-pub fn dotfiles_processor::context::Context::run_actions<'a>(context: dotfiles_processor::context::Context) -> Result<(), DotfilesError>
+pub fn dotfiles_processor::context::Context::run_actions(context: dotfiles_processor::context::Context) -> Result<(), DotfilesError>
 pub fn dotfiles_processor::context::Context::subcontext(&self, file: &Path) -> Result<dotfiles_processor::context::Context, DotfilesError>
 pub fn dotfiles_processor::context::Context::try_from(file_name: &Path) -> Result<Self, Self::Error>
 pub fn dotfiles_processor::context::Context::try_from(file_name: &str) -> Result<Self, Self::Error>

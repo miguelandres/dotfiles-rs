@@ -57,7 +57,7 @@ fn handle_exec_error(
     |status| match status {
       ExitStatus::Exited(0) => Ok(()),
       _ => Err(DotfilesError::from(
-        format!("{}, {:?}", error_while_running_message, status),
+        format!("{error_while_running_message}, {status:?}"),
         execution_error(None, Some(status)),
       )),
     },
