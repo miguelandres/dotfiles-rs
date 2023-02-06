@@ -28,6 +28,7 @@ use dotfiles_core::action::SKIP_IN_CI_SETTING;
 use dotfiles_core::directive::DirectiveData;
 use dotfiles_core::error::add_directive_error_prefix;
 use dotfiles_core::error::DotfilesError;
+#[cfg(target_os = "macos")]
 use dotfiles_core::error::ErrorType;
 use dotfiles_core::settings::initialize_settings_object;
 use dotfiles_core::settings::Setting;
