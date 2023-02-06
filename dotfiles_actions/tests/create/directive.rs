@@ -44,7 +44,7 @@ fn create_directive_parsed_from_single_dir_name() -> Result<(), DotfilesError> {
 
   let action = directive.parse_action(&default_settings, &yaml, &PathBuf::from("/home/user"))?;
   assert_eq!(action.directory(), "directory");
-  assert!(!action.create_parents());
+  assert!(!action.create_parent_dirs());
 
   action.execute()
 }
@@ -61,6 +61,6 @@ fn create_directive_parsed_from_full_action() -> Result<(), DotfilesError> {
     .unwrap();
   let action = directive.parse_action(&default_settings, &yaml, &PathBuf::from("/home/user"))?;
   assert_eq!(action.directory(), "some/dir");
-  assert!(action.create_parents());
+  assert!(action.create_parent_dirs());
   action.execute()
 }

@@ -60,7 +60,10 @@ fn context_parses_correct_defaults() -> Result<(), DotfilesError> {
   ctx.parse_file()?;
   assert_eq!(
     Setting::Boolean(true),
-    ctx.get_default("create", "create_parents").unwrap().clone()
+    ctx
+      .get_default("create", "create_parent_dirs")
+      .unwrap()
+      .clone()
   );
   assert_eq!(
     Setting::Boolean(true),

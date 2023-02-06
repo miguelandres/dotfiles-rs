@@ -59,10 +59,10 @@ pub struct CreateAction<'a, F: FileSystem> {
   /// Force creation of the directory and all its parents if they do not
   /// exist already.
   ///
-  /// Setting [`create_parents`](CreateAction::create_parents) to `true` is equivalent to using
-  /// the `-p` flag in `mkdir`.
+  /// Setting [`create_parent_dirs`](CreateAction::create_parent_dirs) to `true` is equivalent to
+  /// using the `-p` flag in `mkdir`.
   #[get = "pub"]
-  create_parents: bool,
+  create_parent_dirs: bool,
   /// Current directory that will be used to determine relative file locations if necessary. It
   /// must match the parent directory of the configuration file that declared this action.
   #[get = "pub"]
@@ -80,14 +80,14 @@ impl<'a, F: FileSystem> CreateAction<'a, F> {
     fs: &'a F,
     skip_in_ci: bool,
     directory: String,
-    create_parents: bool,
+    create_parent_dirs: bool,
     current_dir: PathBuf,
   ) -> Result<Self, DotfilesError> {
     let action = CreateAction {
       skip_in_ci,
       fs,
       directory,
-      create_parents,
+      create_parent_dirs: create_parent_dirs,
       current_dir,
     };
     log::trace!("Creating new {:?}", action);
@@ -99,22 +99,22 @@ impl<F: FileSystem> Action<'_> for CreateAction<'_, F> {
   /// Creates the [`directory`](CreateAction::directory).
   ///
   /// # Errors
-  /// - The parent directory does not exist and [`create_parents`](CreateAction::create_parents) is
-  ///   false.
+  /// - The parent directory does not exist and
+  ///   [`create_parent_dirs`](CreateAction::create_parent_dirs) is false.
   /// - There is already a directory, file or symlink with the same name.
   /// - Permission denied.
   fn execute(&self) -> Result<(), DotfilesError> {
     fn create_dir<F: FileSystem>(
       fs: &'_ F,
       directory: &str,
-      create_parents: bool,
+      create_parent_dirs: bool,
       current_dir: &Path,
     ) -> Result<(), DotfilesError> {
       let path = PathBuf::from(directory.to_owned());
       let path = process_home_dir_in_path(&path);
       let path = convert_path_to_absolute(&path, Some(current_dir))?;
 
-      if create_parents {
+      if create_parent_dirs {
         fs.create_dir_all(path)
       } else {
         fs.create_dir(path)
@@ -130,7 +130,7 @@ impl<F: FileSystem> Action<'_> for CreateAction<'_, F> {
     create_dir(
       self.fs,
       &self.directory,
-      self.create_parents,
+      self.create_parent_dirs,
       &self.current_dir,
     )
     .map(|_| {
