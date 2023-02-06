@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `dotfiles_actions/src/create/action.rs`."><meta name="keywords" content="rust, rustlang, rust-lang"><title>action.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Regular-1f7d512b176f0f72.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Bold-124a1ca42af929b6.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../static.files/rustdoc-e3630034d0b07e68.css" id="mainThemeStyle"><link rel="stylesheet" id="themeStyle" href="../../../static.files/light-3bcdcab5f4113412.css"><link rel="stylesheet" disabled href="../../../static.files/dark-091ecdca18d5df85.css"><link rel="stylesheet" disabled href="../../../static.files/ayu-45445754dcd01ab2.css"><script id="default-settings" ></script><script src="../../../static.files/storage-d43fa987303ecbbb.js"></script><script defer src="../../../static.files/source-script-5cf2e01a42cc9858.js"></script><script defer src="../../../source-files.js"></script><script defer src="../../../static.files/main-287cecec4dbb45b0.js"></script><noscript><link rel="stylesheet" href="../../../static.files/noscript-13285aec31fa243e.css"></noscript><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc source"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><div class="width-limiter"><nav class="sub"><a class="sub-logo-container" href="../../../dotfiles_actions/index.html"><img class="rust-logo" src="../../../static.files/rust-logo-151179464ae7ed46.svg" alt="logo"></a><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../../static.files/wheel-5ec35bf9ca753509.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><pre class="src-line-numbers"><a href="#1" id="1">1</a>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `dotfiles_actions/src/create/action.rs`."><title>action.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Bold-a2c9cd1067f8b328.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../static.files/rustdoc-0ef3deca4ed45ad8.css" id="mainThemeStyle"><link rel="stylesheet" id="themeStyle" href="../../../static.files/light-f501212b8b071243.css"><link rel="stylesheet" disabled href="../../../static.files/dark-e92fc12c34ff89d3.css"><link rel="stylesheet" disabled href="../../../static.files/ayu-c8c85693c8a4f9db.css"><script id="default-settings" ></script><script src="../../../static.files/storage-3891ce972e3a2bf8.js"></script><script defer src="../../../static.files/source-script-ea63cb6500f71309.js"></script><script defer src="../../../source-files.js"></script><script defer src="../../../static.files/main-364b95f387bc3166.js"></script><noscript><link rel="stylesheet" href="../../../static.files/noscript-13285aec31fa243e.css"></noscript><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc source"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><a class="sub-logo-container" href="../../../dotfiles_actions/index.html"><img class="rust-logo" src="../../../static.files/rust-logo-151179464ae7ed46.svg" alt="logo"></a><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../../static.files/wheel-5ec35bf9ca753509.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><pre class="src-line-numbers"><a href="#1" id="1">1</a>
 <a href="#2" id="2">2</a>
 <a href="#3" id="3">3</a>
 <a href="#4" id="4">4</a>
@@ -174,6 +174,7 @@
 <span class="kw">use </span>filesystem::FileSystem;
 <span class="kw">use </span>filesystem::OsFileSystem;
 
+<span class="kw">use </span>getset::Getters;
 <span class="kw">use </span>log::info;
 
 <span class="kw">use </span>std::io::ErrorKind;
@@ -181,7 +182,7 @@
 <span class="kw">use </span>std::path::PathBuf;
 
 <span class="doccomment">/// [CreateAction] creates a new [directory](CreateAction::directory) when executed
-</span><span class="attr">#[derive(Derivative, ConditionalAction)]
+</span><span class="attr">#[derive(Derivative, ConditionalAction, Getters)]
 #[derivative(Debug, PartialEq)]
 </span><span class="kw">pub struct </span>CreateAction&lt;<span class="lifetime">&#39;a</span>, F: FileSystem&gt; {
   <span class="doccomment">/// Skips this action if it is running in a CI environment.
@@ -193,15 +194,18 @@
   </span><span class="attr">#[derivative(Debug = <span class="string">&quot;ignore&quot;</span>, PartialEq = <span class="string">&quot;ignore&quot;</span>)]
   </span>fs: <span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span>F,
   <span class="doccomment">/// Directory to create. Can be absolute or relative.
+  </span><span class="attr">#[get = <span class="string">&quot;pub&quot;</span>]
   </span>directory: String,
   <span class="doccomment">/// Force creation of the directory and all its parents if they do not
   /// exist already.
   ///
-  /// Setting [`force`](CreateAction::force) to `true` is equivalent to using
+  /// Setting [`create_parents`](CreateAction::create_parents) to `true` is equivalent to using
   /// the `-p` flag in `mkdir`.
-  </span>force: bool,
+  </span><span class="attr">#[get = <span class="string">&quot;pub&quot;</span>]
+  </span>create_parents: bool,
   <span class="doccomment">/// Current directory that will be used to determine relative file locations if necessary. It
   /// must match the parent directory of the configuration file that declared this action.
+  </span><span class="attr">#[get = <span class="string">&quot;pub&quot;</span>]
   </span>current_dir: PathBuf,
 }
 
@@ -216,29 +220,18 @@
     fs: <span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span>F,
     skip_in_ci: bool,
     directory: String,
-    force: bool,
+    create_parents: bool,
     current_dir: PathBuf,
   ) -&gt; <span class="prelude-ty">Result</span>&lt;<span class="self">Self</span>, DotfilesError&gt; {
     <span class="kw">let </span>action = CreateAction {
       skip_in_ci,
       fs,
       directory,
-      force,
+      create_parents,
       current_dir,
     };
     <span class="macro">log::trace!</span>(<span class="string">&quot;Creating new {:?}&quot;</span>, action);
     <span class="prelude-val">Ok</span>(action)
-  }
-  <span class="doccomment">/// Returns the directory to create.
-  </span><span class="kw">pub fn </span>directory(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="kw-2">&amp;</span>str {
-    <span class="kw-2">&amp;</span><span class="self">self</span>.directory
-  }
-  <span class="doccomment">/// Returns true if the action will create parent directories if necessary.
-  ///
-  /// [`force`](CreateAction::force) being `true` is equivalent to using the
-  /// `-p` flag in `mkdir`
-  </span><span class="kw">pub fn </span>force(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; bool {
-    <span class="self">self</span>.force
   }
 }
 
@@ -246,21 +239,22 @@
   <span class="doccomment">/// Creates the [`directory`](CreateAction::directory).
   ///
   /// # Errors
-  /// - The parent directory does not exist and [`force`](CreateAction::force) is false.
+  /// - The parent directory does not exist and [`create_parents`](CreateAction::create_parents) is
+  ///   false.
   /// - There is already a directory, file or symlink with the same name.
   /// - Permission denied.
   </span><span class="kw">fn </span>execute(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="prelude-ty">Result</span>&lt;(), DotfilesError&gt; {
     <span class="kw">fn </span>create_dir&lt;F: FileSystem&gt;(
       fs: <span class="kw-2">&amp;</span><span class="lifetime">&#39;_ </span>F,
       directory: <span class="kw-2">&amp;</span>str,
-      force: bool,
+      create_parents: bool,
       current_dir: <span class="kw-2">&amp;</span>Path,
     ) -&gt; <span class="prelude-ty">Result</span>&lt;(), DotfilesError&gt; {
       <span class="kw">let </span>path = PathBuf::from(directory.to_owned());
       <span class="kw">let </span>path = process_home_dir_in_path(<span class="kw-2">&amp;</span>path);
       <span class="kw">let </span>path = convert_path_to_absolute(<span class="kw-2">&amp;</span>path, <span class="prelude-val">Some</span>(current_dir))<span class="question-mark">?</span>;
 
-      <span class="kw">if </span>force {
+      <span class="kw">if </span>create_parents {
         fs.create_dir_all(path)
       } <span class="kw">else </span>{
         fs.create_dir(path)
@@ -273,10 +267,16 @@
         }
       })
     }
-    create_dir(<span class="self">self</span>.fs, <span class="kw-2">&amp;</span><span class="self">self</span>.directory, <span class="self">self</span>.force, <span class="kw-2">&amp;</span><span class="self">self</span>.current_dir).map(|<span class="kw">_</span>| {
+    create_dir(
+      <span class="self">self</span>.fs,
+      <span class="kw-2">&amp;</span><span class="self">self</span>.directory,
+      <span class="self">self</span>.create_parents,
+      <span class="kw-2">&amp;</span><span class="self">self</span>.current_dir,
+    )
+    .map(|<span class="kw">_</span>| {
       <span class="macro">info!</span>(<span class="string">&quot;Created directory {}&quot;</span>, <span class="kw-2">&amp;</span><span class="self">self</span>.directory);
     })
   }
 }
 </code></pre></div>
-</section></div></main><div id="rustdoc-vars" data-root-path="../../../" data-static-root-path="../../../static.files/" data-current-crate="dotfiles_actions" data-themes="" data-resource-suffix="" data-rustdoc-version="1.67.0-nightly (c090c6880 2022-12-01)" data-search-js="search-444266647c4dba98.js" data-settings-js="settings-bebeae96e00e4617.js" data-settings-css="settings-af96d9e2fc13e081.css" ></div></body></html>
+</section></main><div id="rustdoc-vars" data-root-path="../../../" data-static-root-path="../../../static.files/" data-current-crate="dotfiles_actions" data-themes="" data-resource-suffix="" data-rustdoc-version="1.69.0-nightly (75a0be98f 2023-02-05)" data-search-js="search-98d53477a794af0b.js" data-settings-js="settings-f0c5c39777a9a2f6.js" data-settings-css="settings-0bcba95ff279c1db.css" ></div></body></html>
