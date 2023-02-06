@@ -213,7 +213,6 @@
 <a href="#213" id="213">213</a>
 <a href="#214" id="214">214</a>
 <a href="#215" id="215">215</a>
-<a href="#216" id="216">216</a>
 </pre><pre class="rust"><code><span class="comment">// Copyright (c) 2021-2022 Miguel Barreto and others
 //
 // Permission is hereby granted, free of charge, to any person obtaining
@@ -400,8 +399,7 @@
         <span class="prelude-val">Err</span>(io::Error::new(
           ErrorKind::NotFound,
           <span class="macro">format!</span>(
-            <span class="string">&quot;Couldn&#39;t find target file {:?} to link to, use `ignore_missing_target` to ignore&quot;</span>,
-            target
+            <span class="string">&quot;Couldn&#39;t find target file {target:?} to link to, use `ignore_missing_target` to ignore&quot;</span>,
           ),
         ))
       }

@@ -227,8 +227,6 @@
 <a href="#227" id="227">227</a>
 <a href="#228" id="228">228</a>
 <a href="#229" id="229">229</a>
-<a href="#230" id="230">230</a>
-<a href="#231" id="231">231</a>
 </pre><pre class="rust"><code><span class="comment">// Copyright (c) 2021-2022 Miguel Barreto and others
 //
 // Permission is hereby granted, free of charge, to any person obtaining
@@ -430,9 +428,7 @@
 
         x =&gt; <span class="prelude-val">Err</span>(DotfilesError::from(
           <span class="macro">format!</span>(
-            <span class="string">&quot;StrictYaml passed to configure a short Link action is a hash with {} values, must be just 1&quot;</span>,
-            x
-          ),
+            <span class="string">&quot;StrictYaml passed to configure a short Link action is a hash with {x} values, must be just 1&quot;</span>,),
           ErrorType::InconsistentConfigurationError,
         )),
       }
