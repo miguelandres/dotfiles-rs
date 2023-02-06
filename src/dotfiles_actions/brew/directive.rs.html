@@ -173,6 +173,7 @@
 <a href="#173" id="173">173</a>
 <a href="#174" id="174">174</a>
 <a href="#175" id="175">175</a>
+<a href="#176" id="176">176</a>
 </pre><pre class="rust"><code><span class="comment">// Copyright (c) 2021-2022 Miguel Barreto and others
 //
 // Permission is hereby granted, free of charge, to any person obtaining
@@ -203,7 +204,8 @@
 <span class="kw">use </span>dotfiles_core::directive::DirectiveData;
 <span class="kw">use </span>dotfiles_core::error::add_directive_error_prefix;
 <span class="kw">use </span>dotfiles_core::error::DotfilesError;
-<span class="kw">use </span>dotfiles_core::error::ErrorType;
+<span class="attr">#[cfg(target_os = <span class="string">&quot;macos&quot;</span>)]
+</span><span class="kw">use </span>dotfiles_core::error::ErrorType;
 <span class="kw">use </span>dotfiles_core::settings::initialize_settings_object;
 <span class="kw">use </span>dotfiles_core::settings::Setting;
 <span class="kw">use </span>dotfiles_core::settings::Settings;
