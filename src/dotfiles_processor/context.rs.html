@@ -332,7 +332,7 @@
         }
         <span class="kw">if let </span><span class="prelude-val">Some</span>(yaml_steps) = hash.get(<span class="kw-2">&amp;</span>StrictYaml::String(<span class="string">&quot;steps&quot;</span>.into())) {
           <span class="kw">let </span><span class="kw-2">mut </span>local_defaults = <span class="self">self</span>.defaults.clone();
-          <span class="self">self</span>.actions = <span class="self">Self</span>::parse_actions(<span class="kw-2">&amp;mut </span>local_defaults, yaml_steps, <span class="kw-2">&amp;</span><span class="self">self</span>)<span class="question-mark">?</span>;
+          <span class="self">self</span>.actions = <span class="self">Self</span>::parse_actions(<span class="kw-2">&amp;mut </span>local_defaults, yaml_steps, <span class="self">self</span>)<span class="question-mark">?</span>;
         } <span class="kw">else </span>{
           <span class="macro">log::warn!</span>(
             <span class="string">&quot;File {} does not contain any steps to parse&quot;</span>,
@@ -348,7 +348,7 @@
               <span class="prelude-val">Ok</span>(())
             } <span class="kw">else </span>{
               <span class="prelude-val">Err</span>(DotfilesError::from(
-                <span class="macro">format!</span>(<span class="string">&quot;Found a  {} section which I don&#39;t know how to process&quot;</span>, key),
+                <span class="macro">format!</span>(<span class="string">&quot;Found a  {key} section which I don&#39;t know how to process&quot;</span>),
                 dotfiles_core::error::ErrorType::InconsistentConfigurationError,
               ))
             }
@@ -446,7 +446,7 @@
   }
 
   <span class="doccomment">/// Runs the actions in this context and consumes the context.
-  </span><span class="kw">pub fn </span>run_actions&lt;<span class="lifetime">&#39;a</span>&gt;(context: Context) -&gt; <span class="prelude-ty">Result</span>&lt;(), DotfilesError&gt; {
+  </span><span class="kw">pub fn </span>run_actions(context: Context) -&gt; <span class="prelude-ty">Result</span>&lt;(), DotfilesError&gt; {
     process_until_first_err(context.actions.into_iter(), |action| action.execute())
   }
 }

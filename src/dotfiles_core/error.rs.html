@@ -438,7 +438,7 @@
 <span class="kw">impl </span>DotfilesError {
   <span class="doccomment">/// Adds a prefix to the existing message
   </span><span class="kw">pub fn </span>add_message_prefix(<span class="kw-2">&amp;mut </span><span class="self">self</span>, prefix: String) {
-    <span class="self">self</span>.message = <span class="macro">format!</span>(<span class="string">&quot;{}: {}&quot;</span>, prefix, <span class="self">self</span>.message,);
+    <span class="self">self</span>.message = <span class="macro">format!</span>(<span class="string">&quot;{prefix}: {}&quot;</span>, <span class="self">self</span>.message,);
   }
   <span class="doccomment">/// returns whether the underlying error is a missing configuration
   </span><span class="kw">pub fn </span>is_missing_config(<span class="kw-2">&amp;</span><span class="self">self</span>, config_name: <span class="kw-2">&amp;</span>str) -&gt; bool {

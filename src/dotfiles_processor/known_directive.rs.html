@@ -432,7 +432,7 @@
       <span class="string">&quot;link&quot; </span>=&gt; <span class="prelude-val">Ok</span>(KnownDirective::Link),
       <span class="string">&quot;subconfig&quot; </span>=&gt; <span class="prelude-val">Ok</span>(KnownDirective::Subconfig),
       <span class="kw">_ </span>=&gt; <span class="prelude-val">Err</span>(DotfilesError::from(
-        <span class="macro">format!</span>(<span class="string">&quot;Configuration refers to unknown directive `{}`&quot;</span>, value),
+        <span class="macro">format!</span>(<span class="string">&quot;Configuration refers to unknown directive `{value}`&quot;</span>),
         ErrorType::InconsistentConfigurationError,
       )),
     }

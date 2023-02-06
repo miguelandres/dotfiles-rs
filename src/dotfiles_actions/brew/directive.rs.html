@@ -296,9 +296,9 @@
                 StrictYaml::String(<span class="string">&quot;&quot;</span>.into()),
               ))
               .and_then(|id| {
-                i64::from_str_radix(<span class="kw-2">&amp;</span>id, <span class="number">10</span>).map_err(|<span class="kw">_</span>| {
+                id.parse::&lt;i64&gt;().map_err(|<span class="kw">_</span>| {
                   DotfilesError::from(
-                    <span class="macro">format!</span>(<span class="string">&quot;{} is not a valid Mac App Store app id&quot;</span>, id),
+                    <span class="macro">format!</span>(<span class="string">&quot;{id} is not a valid Mac App Store app id&quot;</span>),
                     ErrorType::InconsistentConfigurationError,
                   )
                 })
@@ -320,7 +320,7 @@
           <span class="prelude-val">Err</span>(err)
         }
       },
-      |res| <span class="prelude-val">Ok</span>(res),
+      <span class="prelude-val">Ok</span>,
     )<span class="question-mark">?</span>;
 
     <span class="prelude-val">Ok</span>(BrewAction::new(

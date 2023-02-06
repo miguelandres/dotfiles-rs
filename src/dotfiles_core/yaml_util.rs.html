@@ -806,7 +806,7 @@
     <span class="prelude-val">Ok</span>(setting.clone())
   } <span class="kw">else </span>{
     <span class="prelude-val">Err</span>(DotfilesError::from(
-      <span class="macro">format!</span>(<span class="string">&quot;Setting {} couldn&#39;t be found in context or defaults&quot;</span>, name),
+      <span class="macro">format!</span>(<span class="string">&quot;Setting {name} couldn&#39;t be found in context or defaults&quot;</span>),
       ErrorType::CoreError,
     ))
   }
@@ -919,7 +919,7 @@
   <span class="kw">if let </span>StrictYaml::String(b) = yaml {
     FromStr::from_str(b).map_err(|<span class="kw">_</span>| {
       DotfilesError::from_wrong_yaml(
-        <span class="macro">format!</span>(<span class="string">&quot;Got a Yaml String that can&#39;t be parsed as boolean: `{}`&quot;</span>, b),
+        <span class="macro">format!</span>(<span class="string">&quot;Got a Yaml String that can&#39;t be parsed as boolean: `{b}`&quot;</span>),
         yaml.to_owned(),
         StrictYaml::String(<span class="string">&quot;true&quot;</span>.into()),
       )
@@ -940,7 +940,7 @@
   <span class="kw">if let </span>StrictYaml::String(i) = yaml {
     FromStr::from_str(i).map_err(|<span class="kw">_</span>| {
       DotfilesError::from_wrong_yaml(
-        <span class="macro">format!</span>(<span class="string">&quot;Got a Yaml String that can&#39;t be parsed as integer: `{}`&quot;</span>, i),
+        <span class="macro">format!</span>(<span class="string">&quot;Got a Yaml String that can&#39;t be parsed as integer: `{i}`&quot;</span>),
         yaml.to_owned(),
         StrictYaml::String(<span class="string">&quot;11111&quot;</span>.into()),
       )
