@@ -23,7 +23,7 @@ use clap::{Parser, Subcommand, ValueEnum};
 use log::LevelFilter;
 
 #[derive(Parser)]
-#[command(author)]
+#[command(author, version)]
 #[command(name = "dotfiles")]
 #[command(bin_name = "dotfiles")]
 #[command(
