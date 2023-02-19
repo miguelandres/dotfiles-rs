@@ -1,207 +1,527 @@
-impl RefUnwindSafe for dotfiles_actions::brew::action::MacAppStoreCommand
-impl RefUnwindSafe for dotfiles_actions::brew::action::MacAppStoreItem
-impl RefUnwindSafe for dotfiles_actions::homebrew_install::action::HomebrewInstallAction
-impl RefUnwindSafe for dotfiles_actions::ohmyzsh_install::action::OhMyZshInstallAction
-impl Send for dotfiles_actions::brew::action::MacAppStoreCommand
-impl Send for dotfiles_actions::brew::action::MacAppStoreItem
-impl Send for dotfiles_actions::homebrew_install::action::HomebrewInstallAction
-impl Send for dotfiles_actions::ohmyzsh_install::action::OhMyZshInstallAction
-impl Sync for dotfiles_actions::brew::action::MacAppStoreCommand
-impl Sync for dotfiles_actions::brew::action::MacAppStoreItem
-impl Sync for dotfiles_actions::homebrew_install::action::HomebrewInstallAction
-impl Sync for dotfiles_actions::ohmyzsh_install::action::OhMyZshInstallAction
-impl Unpin for dotfiles_actions::brew::action::MacAppStoreCommand
-impl Unpin for dotfiles_actions::brew::action::MacAppStoreItem
-impl Unpin for dotfiles_actions::homebrew_install::action::HomebrewInstallAction
-impl Unpin for dotfiles_actions::ohmyzsh_install::action::OhMyZshInstallAction
-impl UnwindSafe for dotfiles_actions::brew::action::MacAppStoreCommand
-impl UnwindSafe for dotfiles_actions::brew::action::MacAppStoreItem
-impl UnwindSafe for dotfiles_actions::homebrew_install::action::HomebrewInstallAction
-impl UnwindSafe for dotfiles_actions::ohmyzsh_install::action::OhMyZshInstallAction
-impl<'a, F> RefUnwindSafe for dotfiles_actions::create::action::CreateAction<'a, F> where F: RefUnwindSafe
-impl<'a, F> RefUnwindSafe for dotfiles_actions::create::directive::CreateDirective<'a, F> where F: RefUnwindSafe
-impl<'a, F> RefUnwindSafe for dotfiles_actions::link::action::LinkAction<'a, F> where F: RefUnwindSafe
-impl<'a, F> RefUnwindSafe for dotfiles_actions::link::directive::LinkDirective<'a, F> where F: RefUnwindSafe
-impl<'a, F> Send for dotfiles_actions::create::action::CreateAction<'a, F> where F: Sync
-impl<'a, F> Send for dotfiles_actions::create::directive::CreateDirective<'a, F> where F: Send + Sync
-impl<'a, F> Send for dotfiles_actions::link::action::LinkAction<'a, F> where F: Sync
-impl<'a, F> Send for dotfiles_actions::link::directive::LinkDirective<'a, F> where F: Send + Sync
-impl<'a, F> Sync for dotfiles_actions::create::action::CreateAction<'a, F> where F: Sync
-impl<'a, F> Sync for dotfiles_actions::create::directive::CreateDirective<'a, F> where F: Sync
-impl<'a, F> Sync for dotfiles_actions::link::action::LinkAction<'a, F> where F: Sync
-impl<'a, F> Sync for dotfiles_actions::link::directive::LinkDirective<'a, F> where F: Sync
-impl<'a, F> Unpin for dotfiles_actions::create::action::CreateAction<'a, F>
-impl<'a, F> Unpin for dotfiles_actions::create::directive::CreateDirective<'a, F> where F: Unpin
-impl<'a, F> Unpin for dotfiles_actions::link::action::LinkAction<'a, F>
-impl<'a, F> Unpin for dotfiles_actions::link::directive::LinkDirective<'a, F> where F: Unpin
-impl<'a, F> UnwindSafe for dotfiles_actions::create::action::CreateAction<'a, F> where F: RefUnwindSafe
-impl<'a, F> UnwindSafe for dotfiles_actions::create::directive::CreateDirective<'a, F> where F: UnwindSafe + RefUnwindSafe
-impl<'a, F> UnwindSafe for dotfiles_actions::link::action::LinkAction<'a, F> where F: RefUnwindSafe
-impl<'a, F> UnwindSafe for dotfiles_actions::link::directive::LinkDirective<'a, F> where F: UnwindSafe + RefUnwindSafe
-impl<'a> RefUnwindSafe for dotfiles_actions::brew::action::BrewAction<'a>
-impl<'a> RefUnwindSafe for dotfiles_actions::brew::directive::BrewDirective<'a>
-impl<'a> RefUnwindSafe for dotfiles_actions::exec::action::ExecAction<'a>
-impl<'a> RefUnwindSafe for dotfiles_actions::exec::directive::ExecDirective<'a>
-impl<'a> Send for dotfiles_actions::brew::action::BrewAction<'a>
-impl<'a> Send for dotfiles_actions::brew::directive::BrewDirective<'a>
-impl<'a> Send for dotfiles_actions::exec::action::ExecAction<'a>
-impl<'a> Send for dotfiles_actions::exec::directive::ExecDirective<'a>
-impl<'a> Sync for dotfiles_actions::brew::action::BrewAction<'a>
-impl<'a> Sync for dotfiles_actions::brew::directive::BrewDirective<'a>
-impl<'a> Sync for dotfiles_actions::exec::action::ExecAction<'a>
-impl<'a> Sync for dotfiles_actions::exec::directive::ExecDirective<'a>
-impl<'a> Unpin for dotfiles_actions::brew::action::BrewAction<'a>
-impl<'a> Unpin for dotfiles_actions::brew::directive::BrewDirective<'a>
-impl<'a> Unpin for dotfiles_actions::exec::action::ExecAction<'a>
-impl<'a> Unpin for dotfiles_actions::exec::directive::ExecDirective<'a>
-impl<'a> UnwindSafe for dotfiles_actions::brew::action::BrewAction<'a>
-impl<'a> UnwindSafe for dotfiles_actions::brew::directive::BrewDirective<'a>
-impl<'a> UnwindSafe for dotfiles_actions::exec::action::ExecAction<'a>
-impl<'a> UnwindSafe for dotfiles_actions::exec::directive::ExecDirective<'a>
-pub const dotfiles_actions::brew::directive::CASK_SETTING: &'static str
-pub const dotfiles_actions::brew::directive::DIRECTIVE_NAME: &'static str
-pub const dotfiles_actions::brew::directive::FORCE_CASKS_SETTING: &'static str
-pub const dotfiles_actions::brew::directive::FORMULA_SETTING: &'static str
-pub const dotfiles_actions::brew::directive::TAP_SETTING: &'static str
-pub const dotfiles_actions::create::directive::CREATE_PARENT_DIRS_SETTING: &'static str
-pub const dotfiles_actions::create::directive::DIRECTIVE_NAME: &'static str
-pub const dotfiles_actions::create::directive::DIR_SETTING: &'static str
-pub const dotfiles_actions::exec::directive::COMMAND_SETTING: &'static str
-pub const dotfiles_actions::exec::directive::DESCRIPTION_SETTING: &'static str
-pub const dotfiles_actions::exec::directive::DIRECTIVE_NAME: &'static str
-pub const dotfiles_actions::exec::directive::ECHO_SETTING: &'static str
-pub const dotfiles_actions::link::directive::CREATE_PARENT_DIRS_SETTING: &'static str
-pub const dotfiles_actions::link::directive::DIRECTIVE_NAME: &'static str
-pub const dotfiles_actions::link::directive::FORCE_SETTING: &'static str
-pub const dotfiles_actions::link::directive::IGNORE_MISSING_TARGET_SETTING: &'static str
-pub const dotfiles_actions::link::directive::PATH_SETTING: &'static str
-pub const dotfiles_actions::link::directive::RELINK_SETTING: &'static str
-pub const dotfiles_actions::link::directive::RESOLVE_SYMLINK_TARGET_SETTING: &'static str
-pub const dotfiles_actions::link::directive::TARGET_SETTING: &'static str
-pub fn dotfiles_actions::brew::action::BrewAction::casks(&self) -> &Vec<String>
-pub fn dotfiles_actions::brew::action::BrewAction::eq(&self, other: &dotfiles_actions::brew::action::BrewAction<'a>) -> bool
-pub fn dotfiles_actions::brew::action::BrewAction::execute(&self) -> Result<(), DotfilesError>
-pub fn dotfiles_actions::brew::action::BrewAction::fmt(&self, f: &mut $crate::fmt::Formatter<'_>) -> $crate::fmt::Result
-pub fn dotfiles_actions::brew::action::BrewAction::force_casks(&self) -> &bool
-pub fn dotfiles_actions::brew::action::BrewAction::formulae(&self) -> &Vec<String>
-pub fn dotfiles_actions::brew::action::BrewAction::mas_apps(&self) -> &Vec<dotfiles_actions::brew::action::MacAppStoreCommand>
-pub fn dotfiles_actions::brew::action::BrewAction::new(skip_in_ci: bool, force_casks: bool, taps: Vec<String>, formulae: Vec<String>, casks: Vec<String>, mas_apps: Vec<dotfiles_actions::brew::action::MacAppStoreCommand>) -> Self
-pub fn dotfiles_actions::brew::action::BrewAction::skip_in_ci(&self) -> &bool
-pub fn dotfiles_actions::brew::action::BrewAction::skip_in_ci(&self) -> bool
-pub fn dotfiles_actions::brew::action::BrewAction::taps(&self) -> &Vec<String>
-pub fn dotfiles_actions::brew::action::MacAppStoreCommand::clone(&self) -> dotfiles_actions::brew::action::MacAppStoreCommand
-pub fn dotfiles_actions::brew::action::MacAppStoreCommand::eq(&self, other: &dotfiles_actions::brew::action::MacAppStoreCommand) -> bool
-pub fn dotfiles_actions::brew::action::MacAppStoreCommand::fmt(&self, f: &mut $crate::fmt::Formatter<'_>) -> $crate::fmt::Result
-pub fn dotfiles_actions::brew::action::MacAppStoreCommand::from(value: (i64, String)) -> Self
-pub fn dotfiles_actions::brew::action::MacAppStoreItem::clone(&self) -> dotfiles_actions::brew::action::MacAppStoreItem
-pub fn dotfiles_actions::brew::action::MacAppStoreItem::eq(&self, other: &dotfiles_actions::brew::action::MacAppStoreItem) -> bool
-pub fn dotfiles_actions::brew::action::MacAppStoreItem::fmt(&self, f: &mut $crate::fmt::Formatter<'_>) -> $crate::fmt::Result
-pub fn dotfiles_actions::brew::action::MacAppStoreItem::fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result
-pub fn dotfiles_actions::brew::directive::BrewDirective::clone(&self) -> dotfiles_actions::brew::directive::BrewDirective<'a>
-pub fn dotfiles_actions::brew::directive::BrewDirective::default() -> dotfiles_actions::brew::directive::BrewDirective<'a>
-pub fn dotfiles_actions::brew::directive::BrewDirective::directive_data(&'a self) -> &'a DirectiveData
-pub fn dotfiles_actions::brew::directive::BrewDirective::parse_action(&'a self, context_settings: &Settings, yaml: &StrictYaml, &Path) -> Result<dotfiles_actions::brew::action::BrewAction<'a>, DotfilesError>
-pub fn dotfiles_actions::brew::directive::BrewDirective::parse_action_list(&'a self, context_settings: &Settings, yaml: &StrictYaml, current_dir: &Path) -> Result<Vec<dotfiles_actions::brew::action::BrewAction<'a>>, DotfilesError>
-pub fn dotfiles_actions::brew::directive::init_directive_data() -> DirectiveData
-pub fn dotfiles_actions::create::action::CreateAction::create_parent_dirs(&self) -> &bool
-pub fn dotfiles_actions::create::action::CreateAction::current_dir(&self) -> &PathBuf
-pub fn dotfiles_actions::create::action::CreateAction::directory(&self) -> &String
-pub fn dotfiles_actions::create::action::CreateAction::eq(&self, other: &Self) -> bool
-pub fn dotfiles_actions::create::action::CreateAction::execute(&self) -> Result<(), DotfilesError>
-pub fn dotfiles_actions::create::action::CreateAction::fmt(&self, __f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result
-pub fn dotfiles_actions::create::action::CreateAction::new(fs: &'a F, skip_in_ci: bool, directory: String, create_parent_dirs: bool, current_dir: PathBuf) -> Result<Self, DotfilesError>
-pub fn dotfiles_actions::create::action::CreateAction::skip_in_ci(&self) -> bool
-pub fn dotfiles_actions::create::directive::CreateDirective::clone(&self) -> dotfiles_actions::create::directive::CreateDirective<'a, F>
-pub fn dotfiles_actions::create::directive::CreateDirective::default() -> Self
-pub fn dotfiles_actions::create::directive::CreateDirective::directive_data(&'a self) -> &'a DirectiveData
-pub fn dotfiles_actions::create::directive::CreateDirective::fs(&self) -> &F
-pub fn dotfiles_actions::create::directive::CreateDirective::mut_fs(&mut self) -> &mut F
-pub fn dotfiles_actions::create::directive::CreateDirective::parse_action(&'a self, settings: &std::collections::HashMap<String, Setting>, yaml: &StrictYaml, current_dir: &Path) -> Result<dotfiles_actions::create::action::CreateAction<'_, F>, DotfilesError>
-pub fn dotfiles_actions::create::directive::init_directive_data() -> DirectiveData
-pub fn dotfiles_actions::exec::action::ExecAction::command(&self) -> &str
-pub fn dotfiles_actions::exec::action::ExecAction::description(&self) -> Option<&String>
-pub fn dotfiles_actions::exec::action::ExecAction::echo(&self) -> bool
-pub fn dotfiles_actions::exec::action::ExecAction::eq(&self, other: &dotfiles_actions::exec::action::ExecAction<'a>) -> bool
-pub fn dotfiles_actions::exec::action::ExecAction::execute(&self) -> Result<(), DotfilesError>
-pub fn dotfiles_actions::exec::action::ExecAction::fmt(&self, f: &mut $crate::fmt::Formatter<'_>) -> $crate::fmt::Result
-pub fn dotfiles_actions::exec::action::ExecAction::new(skip_in_ci: bool, command: String, description: Option<String>, echo: bool, current_dir: &Path) -> Result<Self, DotfilesError>
-pub fn dotfiles_actions::exec::action::ExecAction::skip_in_ci(&self) -> bool
-pub fn dotfiles_actions::exec::directive::ExecDirective::clone(&self) -> dotfiles_actions::exec::directive::ExecDirective<'a>
-pub fn dotfiles_actions::exec::directive::ExecDirective::default() -> Self
-pub fn dotfiles_actions::exec::directive::ExecDirective::directive_data(&'a self) -> &'a DirectiveData
-pub fn dotfiles_actions::exec::directive::ExecDirective::parse_action(&'a self, settings: &HashMap<String, Setting>, yaml: &StrictYaml, current_dir: &Path) -> Result<dotfiles_actions::exec::action::ExecAction<'_>, DotfilesError>
-pub fn dotfiles_actions::exec::directive::init_directive_data() -> DirectiveData
-pub fn dotfiles_actions::filesystem::FileSystemDirective::fs(&self) -> &F
-pub fn dotfiles_actions::filesystem::FileSystemDirective::mut_fs(&mut self) -> &mut F
-pub fn dotfiles_actions::homebrew_install::action::HomebrewInstallAction::check_brew_is_installed(&self) -> bool
-pub fn dotfiles_actions::homebrew_install::action::HomebrewInstallAction::default() -> Self
-pub fn dotfiles_actions::homebrew_install::action::HomebrewInstallAction::execute(&self) -> Result<(), DotfilesError>
-pub fn dotfiles_actions::homebrew_install::action::HomebrewInstallAction::new() -> Self
-pub fn dotfiles_actions::link::action::LinkAction::create_parent_dirs(&self) -> bool
-pub fn dotfiles_actions::link::action::LinkAction::eq(&self, other: &Self) -> bool
-pub fn dotfiles_actions::link::action::LinkAction::execute(&self) -> Result<(), DotfilesError>
-pub fn dotfiles_actions::link::action::LinkAction::fmt(&self, __f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result
-pub fn dotfiles_actions::link::action::LinkAction::force(&self) -> bool
-pub fn dotfiles_actions::link::action::LinkAction::ignore_missing_target(&self) -> bool
-pub fn dotfiles_actions::link::action::LinkAction::new(fs: &'a F, path: String, target: String, context_settings: &Settings, defaults: &Settings, current_dir: PathBuf) -> Result<Self, DotfilesError>
-pub fn dotfiles_actions::link::action::LinkAction::path(&self) -> &String
-pub fn dotfiles_actions::link::action::LinkAction::relink(&self) -> bool
-pub fn dotfiles_actions::link::action::LinkAction::resolve_symlink_target(&self) -> bool
-pub fn dotfiles_actions::link::action::LinkAction::skip_in_ci(&self) -> bool
-pub fn dotfiles_actions::link::action::LinkAction::target(&self) -> &String
-pub fn dotfiles_actions::link::directive::LinkDirective::clone(&self) -> dotfiles_actions::link::directive::LinkDirective<'a, F>
-pub fn dotfiles_actions::link::directive::LinkDirective::default() -> Self
-pub fn dotfiles_actions::link::directive::LinkDirective::directive_data(&'a self) -> &'a DirectiveData
-pub fn dotfiles_actions::link::directive::LinkDirective::fs(&self) -> &F
-pub fn dotfiles_actions::link::directive::LinkDirective::fs(&self) -> &F
-pub fn dotfiles_actions::link::directive::LinkDirective::mut_fs(&mut self) -> &mut F
-pub fn dotfiles_actions::link::directive::LinkDirective::parse_action(&'a self, settings: &Settings, yaml: &StrictYaml, current_directory: &Path) -> Result<dotfiles_actions::link::action::LinkAction<'a, F>, DotfilesError>
-pub fn dotfiles_actions::link::directive::LinkDirective::parse_shortened_action(&'a self, context_settings: &Settings, yaml: &StrictYaml, current_dir: &Path) -> Result<dotfiles_actions::link::action::LinkAction<'a, F>, DotfilesError>
-pub fn dotfiles_actions::link::directive::init_directive_data() -> DirectiveData
-pub fn dotfiles_actions::ohmyzsh_install::action::OhMyZshInstallAction::check_oh_my_zsh_is_installed(&self) -> bool
-pub fn dotfiles_actions::ohmyzsh_install::action::OhMyZshInstallAction::check_zsh_is_installed(&self) -> bool
-pub fn dotfiles_actions::ohmyzsh_install::action::OhMyZshInstallAction::execute(&self) -> Result<(), DotfilesError>
-pub fn dotfiles_actions::ohmyzsh_install::action::OhMyZshInstallAction::new(skip_chsh: bool) -> Self
 pub mod dotfiles_actions
 pub mod dotfiles_actions::brew
 pub mod dotfiles_actions::brew::action
+pub struct dotfiles_actions::brew::action::BrewAction<'a>
+impl<'a> dotfiles_actions::brew::action::BrewAction<'a>
+pub fn dotfiles_actions::brew::action::BrewAction::casks(&self) -> &alloc::vec::Vec<alloc::string::String>
+pub fn dotfiles_actions::brew::action::BrewAction::force_casks(&self) -> &bool
+pub fn dotfiles_actions::brew::action::BrewAction::formulae(&self) -> &alloc::vec::Vec<alloc::string::String>
+pub fn dotfiles_actions::brew::action::BrewAction::mas_apps(&self) -> &alloc::vec::Vec<dotfiles_actions::brew::action::MacAppStoreCommand>
+pub fn dotfiles_actions::brew::action::BrewAction::skip_in_ci(&self) -> &bool
+pub fn dotfiles_actions::brew::action::BrewAction::taps(&self) -> &alloc::vec::Vec<alloc::string::String>
+impl<'a> dotfiles_actions::brew::action::BrewAction<'a>
+pub fn dotfiles_actions::brew::action::BrewAction::new(skip_in_ci: bool, force_casks: bool, taps: alloc::vec::Vec<alloc::string::String>, formulae: alloc::vec::Vec<alloc::string::String>, casks: alloc::vec::Vec<alloc::string::String>, mas_apps: alloc::vec::Vec<dotfiles_actions::brew::action::MacAppStoreCommand>) -> Self
+impl dotfiles_core::action::Action<'_> for dotfiles_actions::brew::action::BrewAction<'_>
+pub fn dotfiles_actions::brew::action::BrewAction::execute(&self) -> core::result::Result<(), dotfiles_core::error::DotfilesError>
+impl<'a> core::cmp::Eq for dotfiles_actions::brew::action::BrewAction<'a>
+impl<'a> core::cmp::PartialEq<dotfiles_actions::brew::action::BrewAction<'a>> for dotfiles_actions::brew::action::BrewAction<'a>
+pub fn dotfiles_actions::brew::action::BrewAction::eq(&self, other: &dotfiles_actions::brew::action::BrewAction<'a>) -> bool
+impl<'a> core::fmt::Debug for dotfiles_actions::brew::action::BrewAction<'a>
+pub fn dotfiles_actions::brew::action::BrewAction::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl<'a> core::marker::StructuralEq for dotfiles_actions::brew::action::BrewAction<'a>
+impl<'a> core::marker::StructuralPartialEq for dotfiles_actions::brew::action::BrewAction<'a>
+impl<'a> dotfiles_core::action::ConditionalAction<'a> for dotfiles_actions::brew::action::BrewAction<'a>
+pub fn dotfiles_actions::brew::action::BrewAction::skip_in_ci(&self) -> bool
+impl<'a> core::marker::Send for dotfiles_actions::brew::action::BrewAction<'a>
+impl<'a> core::marker::Sync for dotfiles_actions::brew::action::BrewAction<'a>
+impl<'a> core::marker::Unpin for dotfiles_actions::brew::action::BrewAction<'a>
+impl<'a> core::panic::unwind_safe::RefUnwindSafe for dotfiles_actions::brew::action::BrewAction<'a>
+impl<'a> core::panic::unwind_safe::UnwindSafe for dotfiles_actions::brew::action::BrewAction<'a>
+impl<T, U> core::convert::Into<U> for dotfiles_actions::brew::action::BrewAction<'a> where U: core::convert::From<T>
+pub fn dotfiles_actions::brew::action::BrewAction::into(self) -> U
+impl<T, U> core::convert::TryFrom<U> for dotfiles_actions::brew::action::BrewAction<'a> where U: core::convert::Into<T>
+pub type dotfiles_actions::brew::action::BrewAction::Error = core::convert::Infallible
+pub fn dotfiles_actions::brew::action::BrewAction::try_from(value: U) -> core::result::Result<T, <T as core::convert::TryFrom<U>>::Error>
+impl<T, U> core::convert::TryInto<U> for dotfiles_actions::brew::action::BrewAction<'a> where U: core::convert::TryFrom<T>
+pub type dotfiles_actions::brew::action::BrewAction::Error = <U as core::convert::TryFrom<T>>::Error
+pub fn dotfiles_actions::brew::action::BrewAction::try_into(self) -> core::result::Result<U, <U as core::convert::TryFrom<T>>::Error>
+impl<T> core::any::Any for dotfiles_actions::brew::action::BrewAction<'a> where T: 'static + core::marker::Sized
+pub fn dotfiles_actions::brew::action::BrewAction::type_id(&self) -> core::any::TypeId
+impl<T> core::borrow::Borrow<T> for dotfiles_actions::brew::action::BrewAction<'a> where T: core::marker::Sized
+pub fn dotfiles_actions::brew::action::BrewAction::borrow(&self) -> &T
+impl<T> core::borrow::BorrowMut<T> for dotfiles_actions::brew::action::BrewAction<'a> where T: core::marker::Sized
+pub fn dotfiles_actions::brew::action::BrewAction::borrow_mut(&mut self) -> &mut T
+impl<T> core::convert::From<T> for dotfiles_actions::brew::action::BrewAction<'a>
+pub fn dotfiles_actions::brew::action::BrewAction::from(t: T) -> T
+impl<V, T> ppv_lite86::types::VZip<V> for dotfiles_actions::brew::action::BrewAction<'a> where V: ppv_lite86::types::MultiLane<T>
+pub fn dotfiles_actions::brew::action::BrewAction::vzip(self) -> V
+pub struct dotfiles_actions::brew::action::MacAppStoreCommand
+impl core::convert::From<(i64, alloc::string::String)> for dotfiles_actions::brew::action::MacAppStoreCommand
+pub fn dotfiles_actions::brew::action::MacAppStoreCommand::from(value: (i64, alloc::string::String)) -> Self
+impl core::clone::Clone for dotfiles_actions::brew::action::MacAppStoreCommand
+pub fn dotfiles_actions::brew::action::MacAppStoreCommand::clone(&self) -> dotfiles_actions::brew::action::MacAppStoreCommand
+impl core::cmp::Eq for dotfiles_actions::brew::action::MacAppStoreCommand
+impl core::cmp::PartialEq<dotfiles_actions::brew::action::MacAppStoreCommand> for dotfiles_actions::brew::action::MacAppStoreCommand
+pub fn dotfiles_actions::brew::action::MacAppStoreCommand::eq(&self, other: &dotfiles_actions::brew::action::MacAppStoreCommand) -> bool
+impl core::fmt::Debug for dotfiles_actions::brew::action::MacAppStoreCommand
+pub fn dotfiles_actions::brew::action::MacAppStoreCommand::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::StructuralEq for dotfiles_actions::brew::action::MacAppStoreCommand
+impl core::marker::StructuralPartialEq for dotfiles_actions::brew::action::MacAppStoreCommand
+impl core::marker::Send for dotfiles_actions::brew::action::MacAppStoreCommand
+impl core::marker::Sync for dotfiles_actions::brew::action::MacAppStoreCommand
+impl core::marker::Unpin for dotfiles_actions::brew::action::MacAppStoreCommand
+impl core::panic::unwind_safe::RefUnwindSafe for dotfiles_actions::brew::action::MacAppStoreCommand
+impl core::panic::unwind_safe::UnwindSafe for dotfiles_actions::brew::action::MacAppStoreCommand
+impl<T, U> core::convert::Into<U> for dotfiles_actions::brew::action::MacAppStoreCommand where U: core::convert::From<T>
+pub fn dotfiles_actions::brew::action::MacAppStoreCommand::into(self) -> U
+impl<T, U> core::convert::TryFrom<U> for dotfiles_actions::brew::action::MacAppStoreCommand where U: core::convert::Into<T>
+pub type dotfiles_actions::brew::action::MacAppStoreCommand::Error = core::convert::Infallible
+pub fn dotfiles_actions::brew::action::MacAppStoreCommand::try_from(value: U) -> core::result::Result<T, <T as core::convert::TryFrom<U>>::Error>
+impl<T, U> core::convert::TryInto<U> for dotfiles_actions::brew::action::MacAppStoreCommand where U: core::convert::TryFrom<T>
+pub type dotfiles_actions::brew::action::MacAppStoreCommand::Error = <U as core::convert::TryFrom<T>>::Error
+pub fn dotfiles_actions::brew::action::MacAppStoreCommand::try_into(self) -> core::result::Result<U, <U as core::convert::TryFrom<T>>::Error>
+impl<T> alloc::borrow::ToOwned for dotfiles_actions::brew::action::MacAppStoreCommand where T: core::clone::Clone
+pub type dotfiles_actions::brew::action::MacAppStoreCommand::Owned = T
+pub fn dotfiles_actions::brew::action::MacAppStoreCommand::clone_into(&self, target: &mut T)
+pub fn dotfiles_actions::brew::action::MacAppStoreCommand::to_owned(&self) -> T
+impl<T> core::any::Any for dotfiles_actions::brew::action::MacAppStoreCommand where T: 'static + core::marker::Sized
+pub fn dotfiles_actions::brew::action::MacAppStoreCommand::type_id(&self) -> core::any::TypeId
+impl<T> core::borrow::Borrow<T> for dotfiles_actions::brew::action::MacAppStoreCommand where T: core::marker::Sized
+pub fn dotfiles_actions::brew::action::MacAppStoreCommand::borrow(&self) -> &T
+impl<T> core::borrow::BorrowMut<T> for dotfiles_actions::brew::action::MacAppStoreCommand where T: core::marker::Sized
+pub fn dotfiles_actions::brew::action::MacAppStoreCommand::borrow_mut(&mut self) -> &mut T
+impl<T> core::convert::From<T> for dotfiles_actions::brew::action::MacAppStoreCommand
+pub fn dotfiles_actions::brew::action::MacAppStoreCommand::from(t: T) -> T
+impl<V, T> ppv_lite86::types::VZip<V> for dotfiles_actions::brew::action::MacAppStoreCommand where V: ppv_lite86::types::MultiLane<T>
+pub fn dotfiles_actions::brew::action::MacAppStoreCommand::vzip(self) -> V
+pub struct dotfiles_actions::brew::action::MacAppStoreItem
+impl core::fmt::Display for dotfiles_actions::brew::action::MacAppStoreItem
+pub fn dotfiles_actions::brew::action::MacAppStoreItem::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::clone::Clone for dotfiles_actions::brew::action::MacAppStoreItem
+pub fn dotfiles_actions::brew::action::MacAppStoreItem::clone(&self) -> dotfiles_actions::brew::action::MacAppStoreItem
+impl core::cmp::Eq for dotfiles_actions::brew::action::MacAppStoreItem
+impl core::cmp::PartialEq<dotfiles_actions::brew::action::MacAppStoreItem> for dotfiles_actions::brew::action::MacAppStoreItem
+pub fn dotfiles_actions::brew::action::MacAppStoreItem::eq(&self, other: &dotfiles_actions::brew::action::MacAppStoreItem) -> bool
+impl core::fmt::Debug for dotfiles_actions::brew::action::MacAppStoreItem
+pub fn dotfiles_actions::brew::action::MacAppStoreItem::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::StructuralEq for dotfiles_actions::brew::action::MacAppStoreItem
+impl core::marker::StructuralPartialEq for dotfiles_actions::brew::action::MacAppStoreItem
+impl core::marker::Send for dotfiles_actions::brew::action::MacAppStoreItem
+impl core::marker::Sync for dotfiles_actions::brew::action::MacAppStoreItem
+impl core::marker::Unpin for dotfiles_actions::brew::action::MacAppStoreItem
+impl core::panic::unwind_safe::RefUnwindSafe for dotfiles_actions::brew::action::MacAppStoreItem
+impl core::panic::unwind_safe::UnwindSafe for dotfiles_actions::brew::action::MacAppStoreItem
+impl<T, U> core::convert::Into<U> for dotfiles_actions::brew::action::MacAppStoreItem where U: core::convert::From<T>
+pub fn dotfiles_actions::brew::action::MacAppStoreItem::into(self) -> U
+impl<T, U> core::convert::TryFrom<U> for dotfiles_actions::brew::action::MacAppStoreItem where U: core::convert::Into<T>
+pub type dotfiles_actions::brew::action::MacAppStoreItem::Error = core::convert::Infallible
+pub fn dotfiles_actions::brew::action::MacAppStoreItem::try_from(value: U) -> core::result::Result<T, <T as core::convert::TryFrom<U>>::Error>
+impl<T, U> core::convert::TryInto<U> for dotfiles_actions::brew::action::MacAppStoreItem where U: core::convert::TryFrom<T>
+pub type dotfiles_actions::brew::action::MacAppStoreItem::Error = <U as core::convert::TryFrom<T>>::Error
+pub fn dotfiles_actions::brew::action::MacAppStoreItem::try_into(self) -> core::result::Result<U, <U as core::convert::TryFrom<T>>::Error>
+impl<T> alloc::borrow::ToOwned for dotfiles_actions::brew::action::MacAppStoreItem where T: core::clone::Clone
+pub type dotfiles_actions::brew::action::MacAppStoreItem::Owned = T
+pub fn dotfiles_actions::brew::action::MacAppStoreItem::clone_into(&self, target: &mut T)
+pub fn dotfiles_actions::brew::action::MacAppStoreItem::to_owned(&self) -> T
+impl<T> alloc::string::ToString for dotfiles_actions::brew::action::MacAppStoreItem where T: core::fmt::Display + core::marker::Sized
+pub fn dotfiles_actions::brew::action::MacAppStoreItem::to_string(&self) -> alloc::string::String
+impl<T> core::any::Any for dotfiles_actions::brew::action::MacAppStoreItem where T: 'static + core::marker::Sized
+pub fn dotfiles_actions::brew::action::MacAppStoreItem::type_id(&self) -> core::any::TypeId
+impl<T> core::borrow::Borrow<T> for dotfiles_actions::brew::action::MacAppStoreItem where T: core::marker::Sized
+pub fn dotfiles_actions::brew::action::MacAppStoreItem::borrow(&self) -> &T
+impl<T> core::borrow::BorrowMut<T> for dotfiles_actions::brew::action::MacAppStoreItem where T: core::marker::Sized
+pub fn dotfiles_actions::brew::action::MacAppStoreItem::borrow_mut(&mut self) -> &mut T
+impl<T> core::convert::From<T> for dotfiles_actions::brew::action::MacAppStoreItem
+pub fn dotfiles_actions::brew::action::MacAppStoreItem::from(t: T) -> T
+impl<V, T> ppv_lite86::types::VZip<V> for dotfiles_actions::brew::action::MacAppStoreItem where V: ppv_lite86::types::MultiLane<T>
+pub fn dotfiles_actions::brew::action::MacAppStoreItem::vzip(self) -> V
 pub mod dotfiles_actions::brew::directive
+pub struct dotfiles_actions::brew::directive::BrewDirective<'a>
+impl<'a> core::default::Default for dotfiles_actions::brew::directive::BrewDirective<'a>
+pub fn dotfiles_actions::brew::directive::BrewDirective::default() -> dotfiles_actions::brew::directive::BrewDirective<'a>
+impl<'a> dotfiles_core::action::ActionParser<'a> for dotfiles_actions::brew::directive::BrewDirective<'a>
+pub type dotfiles_actions::brew::directive::BrewDirective::ActionType = dotfiles_actions::brew::action::BrewAction<'a>
+pub fn dotfiles_actions::brew::directive::BrewDirective::parse_action(&'a self, context_settings: &dotfiles_core::settings::Settings, yaml: &strict_yaml_rust::strict_yaml::StrictYaml, &std::path::Path) -> core::result::Result<dotfiles_actions::brew::action::BrewAction<'a>, dotfiles_core::error::DotfilesError>
+pub fn dotfiles_actions::brew::directive::BrewDirective::parse_action_list(&'a self, context_settings: &dotfiles_core::settings::Settings, yaml: &strict_yaml_rust::strict_yaml::StrictYaml, current_dir: &std::path::Path) -> core::result::Result<alloc::vec::Vec<dotfiles_actions::brew::action::BrewAction<'a>>, dotfiles_core::error::DotfilesError>
+impl<'a> core::clone::Clone for dotfiles_actions::brew::directive::BrewDirective<'a>
+pub fn dotfiles_actions::brew::directive::BrewDirective::clone(&self) -> dotfiles_actions::brew::directive::BrewDirective<'a>
+impl<'a> dotfiles_core::directive::Directive<'a> for dotfiles_actions::brew::directive::BrewDirective<'a>
+impl<'a> dotfiles_core::directive::HasDirectiveData<'a> for dotfiles_actions::brew::directive::BrewDirective<'a>
+pub fn dotfiles_actions::brew::directive::BrewDirective::directive_data(&'a self) -> &'a dotfiles_core::directive::DirectiveData
+impl<'a> core::marker::Send for dotfiles_actions::brew::directive::BrewDirective<'a>
+impl<'a> core::marker::Sync for dotfiles_actions::brew::directive::BrewDirective<'a>
+impl<'a> core::marker::Unpin for dotfiles_actions::brew::directive::BrewDirective<'a>
+impl<'a> core::panic::unwind_safe::RefUnwindSafe for dotfiles_actions::brew::directive::BrewDirective<'a>
+impl<'a> core::panic::unwind_safe::UnwindSafe for dotfiles_actions::brew::directive::BrewDirective<'a>
+impl<T, U> core::convert::Into<U> for dotfiles_actions::brew::directive::BrewDirective<'a> where U: core::convert::From<T>
+pub fn dotfiles_actions::brew::directive::BrewDirective::into(self) -> U
+impl<T, U> core::convert::TryFrom<U> for dotfiles_actions::brew::directive::BrewDirective<'a> where U: core::convert::Into<T>
+pub type dotfiles_actions::brew::directive::BrewDirective::Error = core::convert::Infallible
+pub fn dotfiles_actions::brew::directive::BrewDirective::try_from(value: U) -> core::result::Result<T, <T as core::convert::TryFrom<U>>::Error>
+impl<T, U> core::convert::TryInto<U> for dotfiles_actions::brew::directive::BrewDirective<'a> where U: core::convert::TryFrom<T>
+pub type dotfiles_actions::brew::directive::BrewDirective::Error = <U as core::convert::TryFrom<T>>::Error
+pub fn dotfiles_actions::brew::directive::BrewDirective::try_into(self) -> core::result::Result<U, <U as core::convert::TryFrom<T>>::Error>
+impl<T> alloc::borrow::ToOwned for dotfiles_actions::brew::directive::BrewDirective<'a> where T: core::clone::Clone
+pub type dotfiles_actions::brew::directive::BrewDirective::Owned = T
+pub fn dotfiles_actions::brew::directive::BrewDirective::clone_into(&self, target: &mut T)
+pub fn dotfiles_actions::brew::directive::BrewDirective::to_owned(&self) -> T
+impl<T> core::any::Any for dotfiles_actions::brew::directive::BrewDirective<'a> where T: 'static + core::marker::Sized
+pub fn dotfiles_actions::brew::directive::BrewDirective::type_id(&self) -> core::any::TypeId
+impl<T> core::borrow::Borrow<T> for dotfiles_actions::brew::directive::BrewDirective<'a> where T: core::marker::Sized
+pub fn dotfiles_actions::brew::directive::BrewDirective::borrow(&self) -> &T
+impl<T> core::borrow::BorrowMut<T> for dotfiles_actions::brew::directive::BrewDirective<'a> where T: core::marker::Sized
+pub fn dotfiles_actions::brew::directive::BrewDirective::borrow_mut(&mut self) -> &mut T
+impl<T> core::convert::From<T> for dotfiles_actions::brew::directive::BrewDirective<'a>
+pub fn dotfiles_actions::brew::directive::BrewDirective::from(t: T) -> T
+impl<V, T> ppv_lite86::types::VZip<V> for dotfiles_actions::brew::directive::BrewDirective<'a> where V: ppv_lite86::types::MultiLane<T>
+pub fn dotfiles_actions::brew::directive::BrewDirective::vzip(self) -> V
+pub const dotfiles_actions::brew::directive::CASK_SETTING: &str
+pub const dotfiles_actions::brew::directive::DIRECTIVE_NAME: &str
+pub const dotfiles_actions::brew::directive::FORCE_CASKS_SETTING: &str
+pub const dotfiles_actions::brew::directive::FORMULA_SETTING: &str
+pub const dotfiles_actions::brew::directive::TAP_SETTING: &str
+pub fn dotfiles_actions::brew::directive::init_directive_data() -> dotfiles_core::directive::DirectiveData
 pub mod dotfiles_actions::create
 pub mod dotfiles_actions::create::action
+pub struct dotfiles_actions::create::action::CreateAction<'a, F: filesystem::FileSystem>
+impl<'a, F: filesystem::FileSystem> dotfiles_actions::create::action::CreateAction<'a, F>
+pub fn dotfiles_actions::create::action::CreateAction::create_parent_dirs(&self) -> &bool
+pub fn dotfiles_actions::create::action::CreateAction::current_dir(&self) -> &std::path::PathBuf
+pub fn dotfiles_actions::create::action::CreateAction::directory(&self) -> &alloc::string::String
+impl<'a, F: filesystem::FileSystem> dotfiles_actions::create::action::CreateAction<'a, F>
+pub fn dotfiles_actions::create::action::CreateAction::new(fs: &'a F, skip_in_ci: bool, directory: alloc::string::String, create_parent_dirs: bool, current_dir: std::path::PathBuf) -> core::result::Result<Self, dotfiles_core::error::DotfilesError>
+impl<'a, F: filesystem::FileSystem> core::cmp::PartialEq<dotfiles_actions::create::action::CreateAction<'a, F>> for dotfiles_actions::create::action::CreateAction<'a, F>
+pub fn dotfiles_actions::create::action::CreateAction::eq(&self, other: &Self) -> bool
+impl<'a, F: filesystem::FileSystem> core::fmt::Debug for dotfiles_actions::create::action::CreateAction<'a, F>
+pub fn dotfiles_actions::create::action::CreateAction::fmt(&self, __f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl<F: filesystem::FileSystem> dotfiles_core::action::Action<'_> for dotfiles_actions::create::action::CreateAction<'_, F>
+pub fn dotfiles_actions::create::action::CreateAction::execute(&self) -> core::result::Result<(), dotfiles_core::error::DotfilesError>
+impl<'a, F: filesystem::FileSystem> dotfiles_core::action::ConditionalAction<'a> for dotfiles_actions::create::action::CreateAction<'a, F>
+pub fn dotfiles_actions::create::action::CreateAction::skip_in_ci(&self) -> bool
+impl<'a, F> core::marker::Send for dotfiles_actions::create::action::CreateAction<'a, F> where F: core::marker::Sync
+impl<'a, F> core::marker::Sync for dotfiles_actions::create::action::CreateAction<'a, F> where F: core::marker::Sync
+impl<'a, F> core::marker::Unpin for dotfiles_actions::create::action::CreateAction<'a, F>
+impl<'a, F> core::panic::unwind_safe::RefUnwindSafe for dotfiles_actions::create::action::CreateAction<'a, F> where F: core::panic::unwind_safe::RefUnwindSafe
+impl<'a, F> core::panic::unwind_safe::UnwindSafe for dotfiles_actions::create::action::CreateAction<'a, F> where F: core::panic::unwind_safe::RefUnwindSafe
+impl<T, U> core::convert::Into<U> for dotfiles_actions::create::action::CreateAction<'a, F> where U: core::convert::From<T>
+pub fn dotfiles_actions::create::action::CreateAction::into(self) -> U
+impl<T, U> core::convert::TryFrom<U> for dotfiles_actions::create::action::CreateAction<'a, F> where U: core::convert::Into<T>
+pub type dotfiles_actions::create::action::CreateAction::Error = core::convert::Infallible
+pub fn dotfiles_actions::create::action::CreateAction::try_from(value: U) -> core::result::Result<T, <T as core::convert::TryFrom<U>>::Error>
+impl<T, U> core::convert::TryInto<U> for dotfiles_actions::create::action::CreateAction<'a, F> where U: core::convert::TryFrom<T>
+pub type dotfiles_actions::create::action::CreateAction::Error = <U as core::convert::TryFrom<T>>::Error
+pub fn dotfiles_actions::create::action::CreateAction::try_into(self) -> core::result::Result<U, <U as core::convert::TryFrom<T>>::Error>
+impl<T> core::any::Any for dotfiles_actions::create::action::CreateAction<'a, F> where T: 'static + core::marker::Sized
+pub fn dotfiles_actions::create::action::CreateAction::type_id(&self) -> core::any::TypeId
+impl<T> core::borrow::Borrow<T> for dotfiles_actions::create::action::CreateAction<'a, F> where T: core::marker::Sized
+pub fn dotfiles_actions::create::action::CreateAction::borrow(&self) -> &T
+impl<T> core::borrow::BorrowMut<T> for dotfiles_actions::create::action::CreateAction<'a, F> where T: core::marker::Sized
+pub fn dotfiles_actions::create::action::CreateAction::borrow_mut(&mut self) -> &mut T
+impl<T> core::convert::From<T> for dotfiles_actions::create::action::CreateAction<'a, F>
+pub fn dotfiles_actions::create::action::CreateAction::from(t: T) -> T
+impl<V, T> ppv_lite86::types::VZip<V> for dotfiles_actions::create::action::CreateAction<'a, F> where V: ppv_lite86::types::MultiLane<T>
+pub fn dotfiles_actions::create::action::CreateAction::vzip(self) -> V
+pub type dotfiles_actions::create::action::FakeCreateAction<'a> = dotfiles_actions::create::action::CreateAction<'a, filesystem::fake::FakeFileSystem>
+pub type dotfiles_actions::create::action::NativeCreateAction<'a> = dotfiles_actions::create::action::CreateAction<'a, filesystem::os::OsFileSystem>
 pub mod dotfiles_actions::create::directive
+pub struct dotfiles_actions::create::directive::CreateDirective<'a, F: filesystem::FileSystem + core::default::Default>
+impl<'a, F: filesystem::FileSystem + core::default::Default> core::default::Default for dotfiles_actions::create::directive::CreateDirective<'a, F>
+pub fn dotfiles_actions::create::directive::CreateDirective::default() -> Self
+impl<'a, F: filesystem::FileSystem + core::default::Default> dotfiles_actions::filesystem::FileSystemDirective<'a, F> for dotfiles_actions::create::directive::CreateDirective<'a, F>
+pub fn dotfiles_actions::create::directive::CreateDirective::fs(&self) -> &F
+pub fn dotfiles_actions::create::directive::CreateDirective::mut_fs(&mut self) -> &mut F
+impl<'a, F: filesystem::FileSystem + core::default::Default> dotfiles_core::action::ActionParser<'a> for dotfiles_actions::create::directive::CreateDirective<'a, F>
+pub type dotfiles_actions::create::directive::CreateDirective::ActionType = dotfiles_actions::create::action::CreateAction<'a, F>
+pub fn dotfiles_actions::create::directive::CreateDirective::parse_action(&'a self, settings: &std::collections::hash::map::HashMap<alloc::string::String, dotfiles_core::settings::Setting>, yaml: &strict_yaml_rust::strict_yaml::StrictYaml, current_dir: &std::path::Path) -> core::result::Result<dotfiles_actions::create::action::CreateAction<'_, F>, dotfiles_core::error::DotfilesError>
+impl<'a, F: core::clone::Clone + filesystem::FileSystem + core::default::Default> core::clone::Clone for dotfiles_actions::create::directive::CreateDirective<'a, F>
+pub fn dotfiles_actions::create::directive::CreateDirective::clone(&self) -> dotfiles_actions::create::directive::CreateDirective<'a, F>
+impl<'a, F: filesystem::FileSystem + core::default::Default> dotfiles_core::directive::Directive<'a> for dotfiles_actions::create::directive::CreateDirective<'a, F>
+impl<'a, F: filesystem::FileSystem + core::default::Default> dotfiles_core::directive::HasDirectiveData<'a> for dotfiles_actions::create::directive::CreateDirective<'a, F>
+pub fn dotfiles_actions::create::directive::CreateDirective::directive_data(&'a self) -> &'a dotfiles_core::directive::DirectiveData
+impl<'a, F> core::marker::Send for dotfiles_actions::create::directive::CreateDirective<'a, F> where F: core::marker::Send + core::marker::Sync
+impl<'a, F> core::marker::Sync for dotfiles_actions::create::directive::CreateDirective<'a, F> where F: core::marker::Sync
+impl<'a, F> core::marker::Unpin for dotfiles_actions::create::directive::CreateDirective<'a, F> where F: core::marker::Unpin
+impl<'a, F> core::panic::unwind_safe::RefUnwindSafe for dotfiles_actions::create::directive::CreateDirective<'a, F> where F: core::panic::unwind_safe::RefUnwindSafe
+impl<'a, F> core::panic::unwind_safe::UnwindSafe for dotfiles_actions::create::directive::CreateDirective<'a, F> where F: core::panic::unwind_safe::UnwindSafe + core::panic::unwind_safe::RefUnwindSafe
+impl<T, U> core::convert::Into<U> for dotfiles_actions::create::directive::CreateDirective<'a, F> where U: core::convert::From<T>
+pub fn dotfiles_actions::create::directive::CreateDirective::into(self) -> U
+impl<T, U> core::convert::TryFrom<U> for dotfiles_actions::create::directive::CreateDirective<'a, F> where U: core::convert::Into<T>
+pub type dotfiles_actions::create::directive::CreateDirective::Error = core::convert::Infallible
+pub fn dotfiles_actions::create::directive::CreateDirective::try_from(value: U) -> core::result::Result<T, <T as core::convert::TryFrom<U>>::Error>
+impl<T, U> core::convert::TryInto<U> for dotfiles_actions::create::directive::CreateDirective<'a, F> where U: core::convert::TryFrom<T>
+pub type dotfiles_actions::create::directive::CreateDirective::Error = <U as core::convert::TryFrom<T>>::Error
+pub fn dotfiles_actions::create::directive::CreateDirective::try_into(self) -> core::result::Result<U, <U as core::convert::TryFrom<T>>::Error>
+impl<T> alloc::borrow::ToOwned for dotfiles_actions::create::directive::CreateDirective<'a, F> where T: core::clone::Clone
+pub type dotfiles_actions::create::directive::CreateDirective::Owned = T
+pub fn dotfiles_actions::create::directive::CreateDirective::clone_into(&self, target: &mut T)
+pub fn dotfiles_actions::create::directive::CreateDirective::to_owned(&self) -> T
+impl<T> core::any::Any for dotfiles_actions::create::directive::CreateDirective<'a, F> where T: 'static + core::marker::Sized
+pub fn dotfiles_actions::create::directive::CreateDirective::type_id(&self) -> core::any::TypeId
+impl<T> core::borrow::Borrow<T> for dotfiles_actions::create::directive::CreateDirective<'a, F> where T: core::marker::Sized
+pub fn dotfiles_actions::create::directive::CreateDirective::borrow(&self) -> &T
+impl<T> core::borrow::BorrowMut<T> for dotfiles_actions::create::directive::CreateDirective<'a, F> where T: core::marker::Sized
+pub fn dotfiles_actions::create::directive::CreateDirective::borrow_mut(&mut self) -> &mut T
+impl<T> core::convert::From<T> for dotfiles_actions::create::directive::CreateDirective<'a, F>
+pub fn dotfiles_actions::create::directive::CreateDirective::from(t: T) -> T
+impl<V, T> ppv_lite86::types::VZip<V> for dotfiles_actions::create::directive::CreateDirective<'a, F> where V: ppv_lite86::types::MultiLane<T>
+pub fn dotfiles_actions::create::directive::CreateDirective::vzip(self) -> V
+pub const dotfiles_actions::create::directive::CREATE_PARENT_DIRS_SETTING: &str
+pub const dotfiles_actions::create::directive::DIRECTIVE_NAME: &str
+pub const dotfiles_actions::create::directive::DIR_SETTING: &str
+pub fn dotfiles_actions::create::directive::init_directive_data() -> dotfiles_core::directive::DirectiveData
+pub type dotfiles_actions::create::directive::FakeCreateDirective<'a> = dotfiles_actions::create::directive::CreateDirective<'a, filesystem::fake::FakeFileSystem>
+pub type dotfiles_actions::create::directive::NativeCreateDirective<'a> = dotfiles_actions::create::directive::CreateDirective<'a, filesystem::os::OsFileSystem>
 pub mod dotfiles_actions::exec
 pub mod dotfiles_actions::exec::action
+pub struct dotfiles_actions::exec::action::ExecAction<'a>
+impl<'a> dotfiles_actions::exec::action::ExecAction<'a>
+pub fn dotfiles_actions::exec::action::ExecAction::command(&self) -> &str
+pub fn dotfiles_actions::exec::action::ExecAction::description(&self) -> core::option::Option<&alloc::string::String>
+pub fn dotfiles_actions::exec::action::ExecAction::echo(&self) -> bool
+pub fn dotfiles_actions::exec::action::ExecAction::new(skip_in_ci: bool, command: alloc::string::String, description: core::option::Option<alloc::string::String>, echo: bool, current_dir: &std::path::Path) -> core::result::Result<Self, dotfiles_core::error::DotfilesError>
+impl<'a> dotfiles_core::action::Action<'a> for dotfiles_actions::exec::action::ExecAction<'a>
+pub fn dotfiles_actions::exec::action::ExecAction::execute(&self) -> core::result::Result<(), dotfiles_core::error::DotfilesError>
+impl<'a> core::cmp::Eq for dotfiles_actions::exec::action::ExecAction<'a>
+impl<'a> core::cmp::PartialEq<dotfiles_actions::exec::action::ExecAction<'a>> for dotfiles_actions::exec::action::ExecAction<'a>
+pub fn dotfiles_actions::exec::action::ExecAction::eq(&self, other: &dotfiles_actions::exec::action::ExecAction<'a>) -> bool
+impl<'a> core::fmt::Debug for dotfiles_actions::exec::action::ExecAction<'a>
+pub fn dotfiles_actions::exec::action::ExecAction::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl<'a> core::marker::StructuralEq for dotfiles_actions::exec::action::ExecAction<'a>
+impl<'a> core::marker::StructuralPartialEq for dotfiles_actions::exec::action::ExecAction<'a>
+impl<'a> dotfiles_core::action::ConditionalAction<'a> for dotfiles_actions::exec::action::ExecAction<'a>
+pub fn dotfiles_actions::exec::action::ExecAction::skip_in_ci(&self) -> bool
+impl<'a> core::marker::Send for dotfiles_actions::exec::action::ExecAction<'a>
+impl<'a> core::marker::Sync for dotfiles_actions::exec::action::ExecAction<'a>
+impl<'a> core::marker::Unpin for dotfiles_actions::exec::action::ExecAction<'a>
+impl<'a> core::panic::unwind_safe::RefUnwindSafe for dotfiles_actions::exec::action::ExecAction<'a>
+impl<'a> core::panic::unwind_safe::UnwindSafe for dotfiles_actions::exec::action::ExecAction<'a>
+impl<T, U> core::convert::Into<U> for dotfiles_actions::exec::action::ExecAction<'a> where U: core::convert::From<T>
+pub fn dotfiles_actions::exec::action::ExecAction::into(self) -> U
+impl<T, U> core::convert::TryFrom<U> for dotfiles_actions::exec::action::ExecAction<'a> where U: core::convert::Into<T>
+pub type dotfiles_actions::exec::action::ExecAction::Error = core::convert::Infallible
+pub fn dotfiles_actions::exec::action::ExecAction::try_from(value: U) -> core::result::Result<T, <T as core::convert::TryFrom<U>>::Error>
+impl<T, U> core::convert::TryInto<U> for dotfiles_actions::exec::action::ExecAction<'a> where U: core::convert::TryFrom<T>
+pub type dotfiles_actions::exec::action::ExecAction::Error = <U as core::convert::TryFrom<T>>::Error
+pub fn dotfiles_actions::exec::action::ExecAction::try_into(self) -> core::result::Result<U, <U as core::convert::TryFrom<T>>::Error>
+impl<T> core::any::Any for dotfiles_actions::exec::action::ExecAction<'a> where T: 'static + core::marker::Sized
+pub fn dotfiles_actions::exec::action::ExecAction::type_id(&self) -> core::any::TypeId
+impl<T> core::borrow::Borrow<T> for dotfiles_actions::exec::action::ExecAction<'a> where T: core::marker::Sized
+pub fn dotfiles_actions::exec::action::ExecAction::borrow(&self) -> &T
+impl<T> core::borrow::BorrowMut<T> for dotfiles_actions::exec::action::ExecAction<'a> where T: core::marker::Sized
+pub fn dotfiles_actions::exec::action::ExecAction::borrow_mut(&mut self) -> &mut T
+impl<T> core::convert::From<T> for dotfiles_actions::exec::action::ExecAction<'a>
+pub fn dotfiles_actions::exec::action::ExecAction::from(t: T) -> T
+impl<V, T> ppv_lite86::types::VZip<V> for dotfiles_actions::exec::action::ExecAction<'a> where V: ppv_lite86::types::MultiLane<T>
+pub fn dotfiles_actions::exec::action::ExecAction::vzip(self) -> V
 pub mod dotfiles_actions::exec::directive
+pub struct dotfiles_actions::exec::directive::ExecDirective<'a>
+impl<'a> core::default::Default for dotfiles_actions::exec::directive::ExecDirective<'a>
+pub fn dotfiles_actions::exec::directive::ExecDirective::default() -> Self
+impl<'a> dotfiles_core::action::ActionParser<'a> for dotfiles_actions::exec::directive::ExecDirective<'a>
+pub type dotfiles_actions::exec::directive::ExecDirective::ActionType = dotfiles_actions::exec::action::ExecAction<'a>
+pub fn dotfiles_actions::exec::directive::ExecDirective::parse_action(&'a self, settings: &std::collections::hash::map::HashMap<alloc::string::String, dotfiles_core::settings::Setting>, yaml: &strict_yaml_rust::strict_yaml::StrictYaml, current_dir: &std::path::Path) -> core::result::Result<dotfiles_actions::exec::action::ExecAction<'_>, dotfiles_core::error::DotfilesError>
+impl<'a> core::clone::Clone for dotfiles_actions::exec::directive::ExecDirective<'a>
+pub fn dotfiles_actions::exec::directive::ExecDirective::clone(&self) -> dotfiles_actions::exec::directive::ExecDirective<'a>
+impl<'a> dotfiles_core::directive::Directive<'a> for dotfiles_actions::exec::directive::ExecDirective<'a>
+impl<'a> dotfiles_core::directive::HasDirectiveData<'a> for dotfiles_actions::exec::directive::ExecDirective<'a>
+pub fn dotfiles_actions::exec::directive::ExecDirective::directive_data(&'a self) -> &'a dotfiles_core::directive::DirectiveData
+impl<'a> core::marker::Send for dotfiles_actions::exec::directive::ExecDirective<'a>
+impl<'a> core::marker::Sync for dotfiles_actions::exec::directive::ExecDirective<'a>
+impl<'a> core::marker::Unpin for dotfiles_actions::exec::directive::ExecDirective<'a>
+impl<'a> core::panic::unwind_safe::RefUnwindSafe for dotfiles_actions::exec::directive::ExecDirective<'a>
+impl<'a> core::panic::unwind_safe::UnwindSafe for dotfiles_actions::exec::directive::ExecDirective<'a>
+impl<T, U> core::convert::Into<U> for dotfiles_actions::exec::directive::ExecDirective<'a> where U: core::convert::From<T>
+pub fn dotfiles_actions::exec::directive::ExecDirective::into(self) -> U
+impl<T, U> core::convert::TryFrom<U> for dotfiles_actions::exec::directive::ExecDirective<'a> where U: core::convert::Into<T>
+pub type dotfiles_actions::exec::directive::ExecDirective::Error = core::convert::Infallible
+pub fn dotfiles_actions::exec::directive::ExecDirective::try_from(value: U) -> core::result::Result<T, <T as core::convert::TryFrom<U>>::Error>
+impl<T, U> core::convert::TryInto<U> for dotfiles_actions::exec::directive::ExecDirective<'a> where U: core::convert::TryFrom<T>
+pub type dotfiles_actions::exec::directive::ExecDirective::Error = <U as core::convert::TryFrom<T>>::Error
+pub fn dotfiles_actions::exec::directive::ExecDirective::try_into(self) -> core::result::Result<U, <U as core::convert::TryFrom<T>>::Error>
+impl<T> alloc::borrow::ToOwned for dotfiles_actions::exec::directive::ExecDirective<'a> where T: core::clone::Clone
+pub type dotfiles_actions::exec::directive::ExecDirective::Owned = T
+pub fn dotfiles_actions::exec::directive::ExecDirective::clone_into(&self, target: &mut T)
+pub fn dotfiles_actions::exec::directive::ExecDirective::to_owned(&self) -> T
+impl<T> core::any::Any for dotfiles_actions::exec::directive::ExecDirective<'a> where T: 'static + core::marker::Sized
+pub fn dotfiles_actions::exec::directive::ExecDirective::type_id(&self) -> core::any::TypeId
+impl<T> core::borrow::Borrow<T> for dotfiles_actions::exec::directive::ExecDirective<'a> where T: core::marker::Sized
+pub fn dotfiles_actions::exec::directive::ExecDirective::borrow(&self) -> &T
+impl<T> core::borrow::BorrowMut<T> for dotfiles_actions::exec::directive::ExecDirective<'a> where T: core::marker::Sized
+pub fn dotfiles_actions::exec::directive::ExecDirective::borrow_mut(&mut self) -> &mut T
+impl<T> core::convert::From<T> for dotfiles_actions::exec::directive::ExecDirective<'a>
+pub fn dotfiles_actions::exec::directive::ExecDirective::from(t: T) -> T
+impl<V, T> ppv_lite86::types::VZip<V> for dotfiles_actions::exec::directive::ExecDirective<'a> where V: ppv_lite86::types::MultiLane<T>
+pub fn dotfiles_actions::exec::directive::ExecDirective::vzip(self) -> V
+pub const dotfiles_actions::exec::directive::COMMAND_SETTING: &str
+pub const dotfiles_actions::exec::directive::DESCRIPTION_SETTING: &str
+pub const dotfiles_actions::exec::directive::DIRECTIVE_NAME: &str
+pub const dotfiles_actions::exec::directive::ECHO_SETTING: &str
+pub fn dotfiles_actions::exec::directive::init_directive_data() -> dotfiles_core::directive::DirectiveData
 pub mod dotfiles_actions::filesystem
+pub trait dotfiles_actions::filesystem::FileSystemDirective<'a, F: filesystem::FileSystem>: dotfiles_core::directive::Directive<'a>
+pub fn dotfiles_actions::filesystem::FileSystemDirective::fs(&self) -> &F
+pub fn dotfiles_actions::filesystem::FileSystemDirective::mut_fs(&mut self) -> &mut F
+impl<'a, F: filesystem::FileSystem + core::default::Default> dotfiles_actions::filesystem::FileSystemDirective<'a, F> for dotfiles_actions::create::directive::CreateDirective<'a, F>
+pub fn dotfiles_actions::filesystem::FileSystemDirective::fs(&self) -> &F
+pub fn dotfiles_actions::filesystem::FileSystemDirective::mut_fs(&mut self) -> &mut F
+impl<'a, F: filesystem::FileSystem + filesystem::UnixFileSystem + core::default::Default> dotfiles_actions::filesystem::FileSystemDirective<'a, F> for dotfiles_actions::link::directive::LinkDirective<'a, F>
+pub fn dotfiles_actions::filesystem::FileSystemDirective::fs(&self) -> &F
+pub fn dotfiles_actions::filesystem::FileSystemDirective::mut_fs(&mut self) -> &mut F
 pub mod dotfiles_actions::homebrew_install
 pub mod dotfiles_actions::homebrew_install::action
+pub struct dotfiles_actions::homebrew_install::action::HomebrewInstallAction
+impl dotfiles_actions::homebrew_install::action::HomebrewInstallAction
+pub fn dotfiles_actions::homebrew_install::action::HomebrewInstallAction::check_brew_is_installed(&self) -> bool
+pub fn dotfiles_actions::homebrew_install::action::HomebrewInstallAction::new() -> Self
+impl core::default::Default for dotfiles_actions::homebrew_install::action::HomebrewInstallAction
+pub fn dotfiles_actions::homebrew_install::action::HomebrewInstallAction::default() -> Self
+impl dotfiles_core::action::Action<'_> for dotfiles_actions::homebrew_install::action::HomebrewInstallAction
+pub fn dotfiles_actions::homebrew_install::action::HomebrewInstallAction::execute(&self) -> core::result::Result<(), dotfiles_core::error::DotfilesError>
+impl core::marker::Send for dotfiles_actions::homebrew_install::action::HomebrewInstallAction
+impl core::marker::Sync for dotfiles_actions::homebrew_install::action::HomebrewInstallAction
+impl core::marker::Unpin for dotfiles_actions::homebrew_install::action::HomebrewInstallAction
+impl core::panic::unwind_safe::RefUnwindSafe for dotfiles_actions::homebrew_install::action::HomebrewInstallAction
+impl core::panic::unwind_safe::UnwindSafe for dotfiles_actions::homebrew_install::action::HomebrewInstallAction
+impl<T, U> core::convert::Into<U> for dotfiles_actions::homebrew_install::action::HomebrewInstallAction where U: core::convert::From<T>
+pub fn dotfiles_actions::homebrew_install::action::HomebrewInstallAction::into(self) -> U
+impl<T, U> core::convert::TryFrom<U> for dotfiles_actions::homebrew_install::action::HomebrewInstallAction where U: core::convert::Into<T>
+pub type dotfiles_actions::homebrew_install::action::HomebrewInstallAction::Error = core::convert::Infallible
+pub fn dotfiles_actions::homebrew_install::action::HomebrewInstallAction::try_from(value: U) -> core::result::Result<T, <T as core::convert::TryFrom<U>>::Error>
+impl<T, U> core::convert::TryInto<U> for dotfiles_actions::homebrew_install::action::HomebrewInstallAction where U: core::convert::TryFrom<T>
+pub type dotfiles_actions::homebrew_install::action::HomebrewInstallAction::Error = <U as core::convert::TryFrom<T>>::Error
+pub fn dotfiles_actions::homebrew_install::action::HomebrewInstallAction::try_into(self) -> core::result::Result<U, <U as core::convert::TryFrom<T>>::Error>
+impl<T> core::any::Any for dotfiles_actions::homebrew_install::action::HomebrewInstallAction where T: 'static + core::marker::Sized
+pub fn dotfiles_actions::homebrew_install::action::HomebrewInstallAction::type_id(&self) -> core::any::TypeId
+impl<T> core::borrow::Borrow<T> for dotfiles_actions::homebrew_install::action::HomebrewInstallAction where T: core::marker::Sized
+pub fn dotfiles_actions::homebrew_install::action::HomebrewInstallAction::borrow(&self) -> &T
+impl<T> core::borrow::BorrowMut<T> for dotfiles_actions::homebrew_install::action::HomebrewInstallAction where T: core::marker::Sized
+pub fn dotfiles_actions::homebrew_install::action::HomebrewInstallAction::borrow_mut(&mut self) -> &mut T
+impl<T> core::convert::From<T> for dotfiles_actions::homebrew_install::action::HomebrewInstallAction
+pub fn dotfiles_actions::homebrew_install::action::HomebrewInstallAction::from(t: T) -> T
+impl<V, T> ppv_lite86::types::VZip<V> for dotfiles_actions::homebrew_install::action::HomebrewInstallAction where V: ppv_lite86::types::MultiLane<T>
+pub fn dotfiles_actions::homebrew_install::action::HomebrewInstallAction::vzip(self) -> V
 pub mod dotfiles_actions::link
 pub mod dotfiles_actions::link::action
+pub struct dotfiles_actions::link::action::LinkAction<'a, F: filesystem::FileSystem + filesystem::UnixFileSystem>
+impl<'a, F: filesystem::FileSystem + filesystem::UnixFileSystem> dotfiles_actions::link::action::LinkAction<'a, F>
+pub fn dotfiles_actions::link::action::LinkAction::create_parent_dirs(&self) -> bool
+pub fn dotfiles_actions::link::action::LinkAction::force(&self) -> bool
+pub fn dotfiles_actions::link::action::LinkAction::ignore_missing_target(&self) -> bool
+pub fn dotfiles_actions::link::action::LinkAction::relink(&self) -> bool
+pub fn dotfiles_actions::link::action::LinkAction::resolve_symlink_target(&self) -> bool
+impl<'a, F: filesystem::FileSystem + filesystem::UnixFileSystem> dotfiles_actions::link::action::LinkAction<'a, F>
+pub fn dotfiles_actions::link::action::LinkAction::new(fs: &'a F, path: alloc::string::String, target: alloc::string::String, context_settings: &dotfiles_core::settings::Settings, defaults: &dotfiles_core::settings::Settings, current_dir: std::path::PathBuf) -> core::result::Result<Self, dotfiles_core::error::DotfilesError>
+impl<'a, F: filesystem::FileSystem + filesystem::UnixFileSystem> dotfiles_actions::link::action::LinkAction<'a, F>
+pub fn dotfiles_actions::link::action::LinkAction::path(&self) -> &alloc::string::String
+pub fn dotfiles_actions::link::action::LinkAction::target(&self) -> &alloc::string::String
+impl<'a, F: filesystem::FileSystem + filesystem::UnixFileSystem> core::cmp::PartialEq<dotfiles_actions::link::action::LinkAction<'a, F>> for dotfiles_actions::link::action::LinkAction<'a, F>
+pub fn dotfiles_actions::link::action::LinkAction::eq(&self, other: &Self) -> bool
+impl<'a, F: filesystem::FileSystem + filesystem::UnixFileSystem> core::fmt::Debug for dotfiles_actions::link::action::LinkAction<'a, F>
+pub fn dotfiles_actions::link::action::LinkAction::fmt(&self, __f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl<F: filesystem::FileSystem + filesystem::UnixFileSystem> dotfiles_core::action::Action<'_> for dotfiles_actions::link::action::LinkAction<'_, F>
+pub fn dotfiles_actions::link::action::LinkAction::execute(&self) -> core::result::Result<(), dotfiles_core::error::DotfilesError>
+impl<'a, F: filesystem::FileSystem + filesystem::UnixFileSystem> dotfiles_core::action::ConditionalAction<'a> for dotfiles_actions::link::action::LinkAction<'a, F>
+pub fn dotfiles_actions::link::action::LinkAction::skip_in_ci(&self) -> bool
+impl<'a, F> core::marker::Send for dotfiles_actions::link::action::LinkAction<'a, F> where F: core::marker::Sync
+impl<'a, F> core::marker::Sync for dotfiles_actions::link::action::LinkAction<'a, F> where F: core::marker::Sync
+impl<'a, F> core::marker::Unpin for dotfiles_actions::link::action::LinkAction<'a, F>
+impl<'a, F> core::panic::unwind_safe::RefUnwindSafe for dotfiles_actions::link::action::LinkAction<'a, F> where F: core::panic::unwind_safe::RefUnwindSafe
+impl<'a, F> core::panic::unwind_safe::UnwindSafe for dotfiles_actions::link::action::LinkAction<'a, F> where F: core::panic::unwind_safe::RefUnwindSafe
+impl<T, U> core::convert::Into<U> for dotfiles_actions::link::action::LinkAction<'a, F> where U: core::convert::From<T>
+pub fn dotfiles_actions::link::action::LinkAction::into(self) -> U
+impl<T, U> core::convert::TryFrom<U> for dotfiles_actions::link::action::LinkAction<'a, F> where U: core::convert::Into<T>
+pub type dotfiles_actions::link::action::LinkAction::Error = core::convert::Infallible
+pub fn dotfiles_actions::link::action::LinkAction::try_from(value: U) -> core::result::Result<T, <T as core::convert::TryFrom<U>>::Error>
+impl<T, U> core::convert::TryInto<U> for dotfiles_actions::link::action::LinkAction<'a, F> where U: core::convert::TryFrom<T>
+pub type dotfiles_actions::link::action::LinkAction::Error = <U as core::convert::TryFrom<T>>::Error
+pub fn dotfiles_actions::link::action::LinkAction::try_into(self) -> core::result::Result<U, <U as core::convert::TryFrom<T>>::Error>
+impl<T> core::any::Any for dotfiles_actions::link::action::LinkAction<'a, F> where T: 'static + core::marker::Sized
+pub fn dotfiles_actions::link::action::LinkAction::type_id(&self) -> core::any::TypeId
+impl<T> core::borrow::Borrow<T> for dotfiles_actions::link::action::LinkAction<'a, F> where T: core::marker::Sized
+pub fn dotfiles_actions::link::action::LinkAction::borrow(&self) -> &T
+impl<T> core::borrow::BorrowMut<T> for dotfiles_actions::link::action::LinkAction<'a, F> where T: core::marker::Sized
+pub fn dotfiles_actions::link::action::LinkAction::borrow_mut(&mut self) -> &mut T
+impl<T> core::convert::From<T> for dotfiles_actions::link::action::LinkAction<'a, F>
+pub fn dotfiles_actions::link::action::LinkAction::from(t: T) -> T
+impl<V, T> ppv_lite86::types::VZip<V> for dotfiles_actions::link::action::LinkAction<'a, F> where V: ppv_lite86::types::MultiLane<T>
+pub fn dotfiles_actions::link::action::LinkAction::vzip(self) -> V
+pub type dotfiles_actions::link::action::FakeLinkAction<'a> = dotfiles_actions::link::action::LinkAction<'a, filesystem::fake::FakeFileSystem>
+pub type dotfiles_actions::link::action::NativeLinkAction<'a> = dotfiles_actions::link::action::LinkAction<'a, filesystem::os::OsFileSystem>
 pub mod dotfiles_actions::link::directive
+pub struct dotfiles_actions::link::directive::LinkDirective<'a, F: filesystem::FileSystem + filesystem::UnixFileSystem + core::default::Default>
+impl<'a, F: filesystem::FileSystem + filesystem::UnixFileSystem + core::default::Default> dotfiles_actions::link::directive::LinkDirective<'a, F> where dotfiles_actions::link::directive::LinkDirective<'a, F>: dotfiles_core::directive::HasDirectiveData<'a> + dotfiles_core::directive::Directive<'a>
+pub fn dotfiles_actions::link::directive::LinkDirective::fs(&self) -> &F
+pub fn dotfiles_actions::link::directive::LinkDirective::parse_shortened_action(&'a self, context_settings: &dotfiles_core::settings::Settings, yaml: &strict_yaml_rust::strict_yaml::StrictYaml, current_dir: &std::path::Path) -> core::result::Result<dotfiles_actions::link::action::LinkAction<'a, F>, dotfiles_core::error::DotfilesError>
+impl<'a, F: filesystem::FileSystem + filesystem::UnixFileSystem + core::default::Default> core::default::Default for dotfiles_actions::link::directive::LinkDirective<'a, F>
+pub fn dotfiles_actions::link::directive::LinkDirective::default() -> Self
+impl<'a, F: filesystem::FileSystem + filesystem::UnixFileSystem + core::default::Default> dotfiles_actions::filesystem::FileSystemDirective<'a, F> for dotfiles_actions::link::directive::LinkDirective<'a, F>
+pub fn dotfiles_actions::link::directive::LinkDirective::fs(&self) -> &F
+pub fn dotfiles_actions::link::directive::LinkDirective::mut_fs(&mut self) -> &mut F
+impl<'a, F: filesystem::FileSystem + filesystem::UnixFileSystem + core::default::Default> dotfiles_core::action::ActionParser<'a> for dotfiles_actions::link::directive::LinkDirective<'a, F>
+pub type dotfiles_actions::link::directive::LinkDirective::ActionType = dotfiles_actions::link::action::LinkAction<'a, F>
+pub fn dotfiles_actions::link::directive::LinkDirective::parse_action(&'a self, settings: &dotfiles_core::settings::Settings, yaml: &strict_yaml_rust::strict_yaml::StrictYaml, current_directory: &std::path::Path) -> core::result::Result<dotfiles_actions::link::action::LinkAction<'a, F>, dotfiles_core::error::DotfilesError>
+impl<'a, F: core::clone::Clone + filesystem::FileSystem + filesystem::UnixFileSystem + core::default::Default> core::clone::Clone for dotfiles_actions::link::directive::LinkDirective<'a, F>
+pub fn dotfiles_actions::link::directive::LinkDirective::clone(&self) -> dotfiles_actions::link::directive::LinkDirective<'a, F>
+impl<'a, F: filesystem::FileSystem + filesystem::UnixFileSystem + core::default::Default> dotfiles_core::directive::Directive<'a> for dotfiles_actions::link::directive::LinkDirective<'a, F>
+impl<'a, F: filesystem::FileSystem + filesystem::UnixFileSystem + core::default::Default> dotfiles_core::directive::HasDirectiveData<'a> for dotfiles_actions::link::directive::LinkDirective<'a, F>
+pub fn dotfiles_actions::link::directive::LinkDirective::directive_data(&'a self) -> &'a dotfiles_core::directive::DirectiveData
+impl<'a, F> core::marker::Send for dotfiles_actions::link::directive::LinkDirective<'a, F> where F: core::marker::Send + core::marker::Sync
+impl<'a, F> core::marker::Sync for dotfiles_actions::link::directive::LinkDirective<'a, F> where F: core::marker::Sync
+impl<'a, F> core::marker::Unpin for dotfiles_actions::link::directive::LinkDirective<'a, F> where F: core::marker::Unpin
+impl<'a, F> core::panic::unwind_safe::RefUnwindSafe for dotfiles_actions::link::directive::LinkDirective<'a, F> where F: core::panic::unwind_safe::RefUnwindSafe
+impl<'a, F> core::panic::unwind_safe::UnwindSafe for dotfiles_actions::link::directive::LinkDirective<'a, F> where F: core::panic::unwind_safe::UnwindSafe + core::panic::unwind_safe::RefUnwindSafe
+impl<T, U> core::convert::Into<U> for dotfiles_actions::link::directive::LinkDirective<'a, F> where U: core::convert::From<T>
+pub fn dotfiles_actions::link::directive::LinkDirective::into(self) -> U
+impl<T, U> core::convert::TryFrom<U> for dotfiles_actions::link::directive::LinkDirective<'a, F> where U: core::convert::Into<T>
+pub type dotfiles_actions::link::directive::LinkDirective::Error = core::convert::Infallible
+pub fn dotfiles_actions::link::directive::LinkDirective::try_from(value: U) -> core::result::Result<T, <T as core::convert::TryFrom<U>>::Error>
+impl<T, U> core::convert::TryInto<U> for dotfiles_actions::link::directive::LinkDirective<'a, F> where U: core::convert::TryFrom<T>
+pub type dotfiles_actions::link::directive::LinkDirective::Error = <U as core::convert::TryFrom<T>>::Error
+pub fn dotfiles_actions::link::directive::LinkDirective::try_into(self) -> core::result::Result<U, <U as core::convert::TryFrom<T>>::Error>
+impl<T> alloc::borrow::ToOwned for dotfiles_actions::link::directive::LinkDirective<'a, F> where T: core::clone::Clone
+pub type dotfiles_actions::link::directive::LinkDirective::Owned = T
+pub fn dotfiles_actions::link::directive::LinkDirective::clone_into(&self, target: &mut T)
+pub fn dotfiles_actions::link::directive::LinkDirective::to_owned(&self) -> T
+impl<T> core::any::Any for dotfiles_actions::link::directive::LinkDirective<'a, F> where T: 'static + core::marker::Sized
+pub fn dotfiles_actions::link::directive::LinkDirective::type_id(&self) -> core::any::TypeId
+impl<T> core::borrow::Borrow<T> for dotfiles_actions::link::directive::LinkDirective<'a, F> where T: core::marker::Sized
+pub fn dotfiles_actions::link::directive::LinkDirective::borrow(&self) -> &T
+impl<T> core::borrow::BorrowMut<T> for dotfiles_actions::link::directive::LinkDirective<'a, F> where T: core::marker::Sized
+pub fn dotfiles_actions::link::directive::LinkDirective::borrow_mut(&mut self) -> &mut T
+impl<T> core::convert::From<T> for dotfiles_actions::link::directive::LinkDirective<'a, F>
+pub fn dotfiles_actions::link::directive::LinkDirective::from(t: T) -> T
+impl<V, T> ppv_lite86::types::VZip<V> for dotfiles_actions::link::directive::LinkDirective<'a, F> where V: ppv_lite86::types::MultiLane<T>
+pub fn dotfiles_actions::link::directive::LinkDirective::vzip(self) -> V
+pub const dotfiles_actions::link::directive::CREATE_PARENT_DIRS_SETTING: &str
+pub const dotfiles_actions::link::directive::DIRECTIVE_NAME: &str
+pub const dotfiles_actions::link::directive::FORCE_SETTING: &str
+pub const dotfiles_actions::link::directive::IGNORE_MISSING_TARGET_SETTING: &str
+pub const dotfiles_actions::link::directive::PATH_SETTING: &str
+pub const dotfiles_actions::link::directive::RELINK_SETTING: &str
+pub const dotfiles_actions::link::directive::RESOLVE_SYMLINK_TARGET_SETTING: &str
+pub const dotfiles_actions::link::directive::TARGET_SETTING: &str
+pub fn dotfiles_actions::link::directive::init_directive_data() -> dotfiles_core::directive::DirectiveData
+pub type dotfiles_actions::link::directive::FakeLinkDirective<'a> = dotfiles_actions::link::directive::LinkDirective<'a, filesystem::fake::FakeFileSystem>
+pub type dotfiles_actions::link::directive::NativeLinkDirective<'a> = dotfiles_actions::link::directive::LinkDirective<'a, filesystem::os::OsFileSystem>
 pub mod dotfiles_actions::ohmyzsh_install
 pub mod dotfiles_actions::ohmyzsh_install::action
-pub struct dotfiles_actions::brew::action::BrewAction<'a>
-pub struct dotfiles_actions::brew::action::MacAppStoreCommand
-pub struct dotfiles_actions::brew::action::MacAppStoreItem
-pub struct dotfiles_actions::brew::directive::BrewDirective<'a>
-pub struct dotfiles_actions::create::action::CreateAction<'a, F: FileSystem>
-pub struct dotfiles_actions::create::directive::CreateDirective<'a, F: FileSystem + Default>
-pub struct dotfiles_actions::exec::action::ExecAction<'a>
-pub struct dotfiles_actions::exec::directive::ExecDirective<'a>
-pub struct dotfiles_actions::homebrew_install::action::HomebrewInstallAction
-pub struct dotfiles_actions::link::action::LinkAction<'a, F: FileSystem + UnixFileSystem>
-pub struct dotfiles_actions::link::directive::LinkDirective<'a, F: FileSystem + UnixFileSystem + Default>
 pub struct dotfiles_actions::ohmyzsh_install::action::OhMyZshInstallAction
-pub trait dotfiles_actions::filesystem::FileSystemDirective<'a, F: FileSystem>: Directive<'a>
-pub type dotfiles_actions::brew::directive::BrewDirective::ActionType = dotfiles_actions::brew::action::BrewAction<'a>
-pub type dotfiles_actions::create::action::FakeCreateAction<'a> = dotfiles_actions::create::action::CreateAction<'a, FakeFileSystem>
-pub type dotfiles_actions::create::action::NativeCreateAction<'a> = dotfiles_actions::create::action::CreateAction<'a, OsFileSystem>
-pub type dotfiles_actions::create::directive::CreateDirective::ActionType = dotfiles_actions::create::action::CreateAction<'a, F>
-pub type dotfiles_actions::create::directive::FakeCreateDirective<'a> = dotfiles_actions::create::directive::CreateDirective<'a, FakeFileSystem>
-pub type dotfiles_actions::create::directive::NativeCreateDirective<'a> = dotfiles_actions::create::directive::CreateDirective<'a, OsFileSystem>
-pub type dotfiles_actions::exec::directive::ExecDirective::ActionType = dotfiles_actions::exec::action::ExecAction<'a>
-pub type dotfiles_actions::link::action::FakeLinkAction<'a> = dotfiles_actions::link::action::LinkAction<'a, FakeFileSystem>
-pub type dotfiles_actions::link::action::NativeLinkAction<'a> = dotfiles_actions::link::action::LinkAction<'a, OsFileSystem>
-pub type dotfiles_actions::link::directive::FakeLinkDirective<'a> = dotfiles_actions::link::directive::LinkDirective<'a, FakeFileSystem>
-pub type dotfiles_actions::link::directive::LinkDirective::ActionType = dotfiles_actions::link::action::LinkAction<'a, F>
-pub type dotfiles_actions::link::directive::NativeLinkDirective<'a> = dotfiles_actions::link::directive::LinkDirective<'a, OsFileSystem>
+impl dotfiles_actions::ohmyzsh_install::action::OhMyZshInstallAction
+pub fn dotfiles_actions::ohmyzsh_install::action::OhMyZshInstallAction::check_oh_my_zsh_is_installed(&self) -> bool
+pub fn dotfiles_actions::ohmyzsh_install::action::OhMyZshInstallAction::check_zsh_is_installed(&self) -> bool
+pub fn dotfiles_actions::ohmyzsh_install::action::OhMyZshInstallAction::new(skip_chsh: bool) -> Self
+impl dotfiles_core::action::Action<'_> for dotfiles_actions::ohmyzsh_install::action::OhMyZshInstallAction
+pub fn dotfiles_actions::ohmyzsh_install::action::OhMyZshInstallAction::execute(&self) -> core::result::Result<(), dotfiles_core::error::DotfilesError>
+impl core::marker::Send for dotfiles_actions::ohmyzsh_install::action::OhMyZshInstallAction
+impl core::marker::Sync for dotfiles_actions::ohmyzsh_install::action::OhMyZshInstallAction
+impl core::marker::Unpin for dotfiles_actions::ohmyzsh_install::action::OhMyZshInstallAction
+impl core::panic::unwind_safe::RefUnwindSafe for dotfiles_actions::ohmyzsh_install::action::OhMyZshInstallAction
+impl core::panic::unwind_safe::UnwindSafe for dotfiles_actions::ohmyzsh_install::action::OhMyZshInstallAction
+impl<T, U> core::convert::Into<U> for dotfiles_actions::ohmyzsh_install::action::OhMyZshInstallAction where U: core::convert::From<T>
+pub fn dotfiles_actions::ohmyzsh_install::action::OhMyZshInstallAction::into(self) -> U
+impl<T, U> core::convert::TryFrom<U> for dotfiles_actions::ohmyzsh_install::action::OhMyZshInstallAction where U: core::convert::Into<T>
+pub type dotfiles_actions::ohmyzsh_install::action::OhMyZshInstallAction::Error = core::convert::Infallible
+pub fn dotfiles_actions::ohmyzsh_install::action::OhMyZshInstallAction::try_from(value: U) -> core::result::Result<T, <T as core::convert::TryFrom<U>>::Error>
+impl<T, U> core::convert::TryInto<U> for dotfiles_actions::ohmyzsh_install::action::OhMyZshInstallAction where U: core::convert::TryFrom<T>
+pub type dotfiles_actions::ohmyzsh_install::action::OhMyZshInstallAction::Error = <U as core::convert::TryFrom<T>>::Error
+pub fn dotfiles_actions::ohmyzsh_install::action::OhMyZshInstallAction::try_into(self) -> core::result::Result<U, <U as core::convert::TryFrom<T>>::Error>
+impl<T> core::any::Any for dotfiles_actions::ohmyzsh_install::action::OhMyZshInstallAction where T: 'static + core::marker::Sized
+pub fn dotfiles_actions::ohmyzsh_install::action::OhMyZshInstallAction::type_id(&self) -> core::any::TypeId
+impl<T> core::borrow::Borrow<T> for dotfiles_actions::ohmyzsh_install::action::OhMyZshInstallAction where T: core::marker::Sized
+pub fn dotfiles_actions::ohmyzsh_install::action::OhMyZshInstallAction::borrow(&self) -> &T
+impl<T> core::borrow::BorrowMut<T> for dotfiles_actions::ohmyzsh_install::action::OhMyZshInstallAction where T: core::marker::Sized
+pub fn dotfiles_actions::ohmyzsh_install::action::OhMyZshInstallAction::borrow_mut(&mut self) -> &mut T
+impl<T> core::convert::From<T> for dotfiles_actions::ohmyzsh_install::action::OhMyZshInstallAction
+pub fn dotfiles_actions::ohmyzsh_install::action::OhMyZshInstallAction::from(t: T) -> T
+impl<V, T> ppv_lite86::types::VZip<V> for dotfiles_actions::ohmyzsh_install::action::OhMyZshInstallAction where V: ppv_lite86::types::MultiLane<T>
+pub fn dotfiles_actions::ohmyzsh_install::action::OhMyZshInstallAction::vzip(self) -> V

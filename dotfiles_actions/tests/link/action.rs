@@ -98,6 +98,31 @@ fn convert_to_absolute() -> Result<(), DotfilesError> {
   Ok(())
 }
 
+#[cfg(unix)]
+#[test]
+fn handles_tildes() -> Result<(), DotfilesError> {
+  let fs = FakeFileSystem::new();
+  setup_fs(&fs)?;
+  env::set_var("HOME".to_owned(), "/home/user".to_owned());
+  fs.create_dir("/home/user/target").unwrap();
+  let settings = Settings::new();
+
+  let action = FakeLinkAction::new(
+    &fs,
+    String::from("~/path"),
+    String::from("/home/user/target"),
+    &settings,
+    init_directive_data().defaults(),
+    PathBuf::from("/home/user"),
+  )?;
+  action.check_conditions_and_execute()?;
+  assert_eq!(
+    PathBuf::from("/home/user/target"),
+    fs.get_symlink_src("/home/user/path").unwrap()
+  );
+  Ok(())
+}
+
 #[test]
 fn link_fails_on_nonexistent_path() -> Result<(), DotfilesError> {
   let fs = FakeFileSystem::new();
