@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"struct":[["BrewAction","[BrewAction] Installs software using homebrew."]]};
+window.SIDEBAR_ITEMS = {"struct":["BrewAction"]};

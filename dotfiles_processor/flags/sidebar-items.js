@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"enum":[["Command",""],["LogLevelFilter",""]],"struct":[["FlagData",""]]};
+window.SIDEBAR_ITEMS = {"enum":["Command","LogLevelFilter"],"struct":["FlagData"]};

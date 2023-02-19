@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"struct":[["CreateAction","[CreateAction] creates a new directory when executed"]],"type":[["FakeCreateAction","A Fake create action that works on a fake test filesystem."],["NativeCreateAction","A native create action that works on the real filesystem."]]};
+window.SIDEBAR_ITEMS = {"struct":["CreateAction"],"type":["FakeCreateAction","NativeCreateAction"]};

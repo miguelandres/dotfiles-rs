@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"struct":[["OhMyZshInstallAction","[OhMyZshInstallAction] sets up ohmyzsh."]]};
+window.SIDEBAR_ITEMS = {"struct":["OhMyZshInstallAction"]};

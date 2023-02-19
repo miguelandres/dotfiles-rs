@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"mod":[["action","This module contains the [ExecAction] that executes a command in the shell"],["directive","This module defines [ExecDirective] which represents commands to execute in a shell."]]};
+window.SIDEBAR_ITEMS = {"mod":["action","directive"]};

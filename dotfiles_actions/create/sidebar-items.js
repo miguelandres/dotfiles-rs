@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"mod":[["action","This module contains the [CreateAction] that creates a new directory when executed"],["directive","This module defines [CreateDirective]."]]};
+window.SIDEBAR_ITEMS = {"mod":["action","directive"]};

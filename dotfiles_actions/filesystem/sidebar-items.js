@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"trait":[["FileSystemDirective","Common trait for all the directives that use a Filesystem"]]};
+window.SIDEBAR_ITEMS = {"trait":["FileSystemDirective"]};

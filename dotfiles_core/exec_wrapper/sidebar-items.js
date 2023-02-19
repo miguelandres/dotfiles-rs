@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"fn":[["execute_commands","Executes the `cmd` and waits for it to finish."]]};
+window.SIDEBAR_ITEMS = {"fn":["execute_commands"]};

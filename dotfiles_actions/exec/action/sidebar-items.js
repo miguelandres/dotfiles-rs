@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"struct":[["ExecAction","[ExecAction] Installs software using homebrew."]]};
+window.SIDEBAR_ITEMS = {"struct":["ExecAction"]};

@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"struct":[["Context","A context represents an environment in which defaults can be overriden, it can be thought of as the context of an individual configuration file to apply."]]};
+window.SIDEBAR_ITEMS = {"struct":["Context"]};

@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"constant":[["SKIP_IN_CI_SETTING","Skip this whole action in CI environments."]],"fn":[["is_running_in_ci","Whether the execution environment is presumed to be CI"]],"trait":[["Action","An action to be run by a the dotfiles runtime."],["ActionParser","Trait to parse a specific action type from StrictYaml."],["ConditionalAction","Trait for actions to be skippable under certain conditions."]]};
+window.SIDEBAR_ITEMS = {"constant":["SKIP_IN_CI_SETTING"],"fn":["is_running_in_ci"],"trait":["Action","ActionParser","ConditionalAction"]};

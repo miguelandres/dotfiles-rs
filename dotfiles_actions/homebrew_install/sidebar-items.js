@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"mod":[["action","This module contains the [HomebrewInstallAction] that installs homebrew on a macOS computer"]]};
+window.SIDEBAR_ITEMS = {"mod":["action"]};

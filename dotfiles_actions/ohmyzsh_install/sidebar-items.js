@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"mod":[["action","This module contains the [OhMyZshInstallAction] that sets up ohmyzsh"]]};
+window.SIDEBAR_ITEMS = {"mod":["action"]};
