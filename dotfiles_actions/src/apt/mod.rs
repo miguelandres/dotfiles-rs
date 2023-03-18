@@ -20,6 +20,6 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //! This module contains the [BrewAction](action::BrewAction) and
 //! [BrewDirective](directive::BrewDirective)
-#![cfg(unix)]
+#![cfg(target_os = "linux")]
 pub mod action;
 pub mod directive;

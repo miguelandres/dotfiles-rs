@@ -44,7 +44,7 @@ pub mod filesystem;
 #[cfg(any(target_os = "linux", target_os = "macos"))]
 pub mod homebrew_install;
 pub mod install_command;
-#[cfg(unix)]
+#[cfg(target_os = "linux")]
 pub mod link;
 #[cfg(unix)]
 pub mod ohmyzsh_install;
