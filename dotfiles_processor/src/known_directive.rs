@@ -23,6 +23,8 @@ use std::convert::TryFrom;
 use std::path::PathBuf;
 
 use clap::__macro_refs::once_cell::sync::Lazy;
+#[cfg(target_os = "linux")]
+use dotfiles_actions::apt::{action::AptAction, directive::AptDirective};
 #[cfg(any(target_os = "linux", target_os = "macos"))]
 use dotfiles_actions::brew::{action::BrewAction, directive::BrewDirective};
 use dotfiles_actions::create::{action::NativeCreateAction, directive::NativeCreateDirective};
@@ -39,6 +41,8 @@ use strict_yaml_rust::StrictYaml;
 
 use crate::context::Context;
 
+#[cfg(target_os = "linux")]
+static APT: Lazy<AptDirective<'static>> = Lazy::new(Default::default);
 #[cfg(any(target_os = "linux", target_os = "macos"))]
 static BREW: Lazy<BrewDirective<'static>> = Lazy::new(Default::default);
 static CREATE: Lazy<NativeCreateDirective<'static>> = Lazy::new(Default::default);
@@ -53,6 +57,8 @@ fn subconfig_directive_data() -> DirectiveData {
 
 #[derive(Clone)]
 pub enum KnownDirective {
+  #[cfg(target_os = "linux")]
+  Apt,
   #[cfg(any(target_os = "linux", target_os = "macos"))]
   Brew,
   Create,
@@ -63,6 +69,8 @@ pub enum KnownDirective {
 }
 
 pub enum KnownAction<'a> {
+  #[cfg(target_os = "linux")]
+  Apt(AptAction<'a>),
   #[cfg(any(target_os = "linux", target_os = "macos"))]
   Brew(BrewAction<'a>),
   Create(NativeCreateAction<'a>),
@@ -70,6 +78,13 @@ pub enum KnownAction<'a> {
   #[cfg(unix)]
   Link(NativeLinkAction<'a>),
   Subconfig(Context),
+}
+
+#[cfg(target_os = "linux")]
+impl<'a> From<AptAction<'a>> for KnownAction<'a> {
+  fn from(value: AptAction<'a>) -> Self {
+    KnownAction::Apt(value)
+  }
 }
 
 #[cfg(any(target_os = "linux", target_os = "macos"))]
@@ -107,6 +122,11 @@ impl<'a> From<Context> for KnownAction<'a> {
 impl<'a> KnownAction<'a> {
   pub fn execute(self) -> Result<(), DotfilesError> {
     match self {
+      #[cfg(target_os = "linux")]
+      KnownAction::Apt(action) => action.check_conditions_and_execute().map_err(|mut err| {
+        err.add_message_prefix("Executing apt action".into());
+        err
+      }),
       #[cfg(any(target_os = "linux", target_os = "macos"))]
       KnownAction::Brew(action) => action.check_conditions_and_execute().map_err(|mut err| {
         err.add_message_prefix("Executing brew action".into());
@@ -133,6 +153,8 @@ impl<'a> KnownAction<'a> {
 impl KnownDirective {
   pub fn data(&self) -> &DirectiveData {
     match self {
+      #[cfg(target_os = "linux")]
+      KnownDirective::Apt => APT.directive_data(),
       #[cfg(any(target_os = "linux", target_os = "macos"))]
       KnownDirective::Brew => BREW.directive_data(),
       KnownDirective::Create => CREATE.directive_data(),
@@ -166,6 +188,10 @@ impl KnownDirective {
           file.to_str().unwrap()) ,
       ErrorType::CoreError))?;
     match directive {
+      #[cfg(target_os = "linux")]
+      KnownDirective::Apt => APT
+        .parse_action_list(context_settings, actions, current_dir)
+        .map(|list| list.into_iter().map(KnownAction::from).collect()),
       #[cfg(any(target_os = "linux", target_os = "macos"))]
       KnownDirective::Brew => BREW
         .parse_action_list(context_settings, actions, current_dir)
@@ -205,6 +231,8 @@ impl TryFrom<&str> for KnownDirective {
 
   fn try_from(value: &str) -> Result<Self, Self::Error> {
     match value {
+      #[cfg(target_os = "linux")]
+      "apt" => Ok(KnownDirective::Apt),
       #[cfg(any(target_os = "linux", target_os = "macos"))]
       "brew" => Ok(KnownDirective::Brew),
       "create" => Ok(KnownDirective::Create),

@@ -20,10 +20,28 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 #![cfg(test)]
-mod brew;
-#[cfg(target_os="linux")]
-mod apt;
-mod create;
-mod exec;
-mod link;
-mod utils;
+use std::path::PathBuf;
+
+use crate::utils::read_test_yaml;
+
+use dotfiles_actions::apt::directive::AptDirective;
+use dotfiles_core::{action::ActionParser, error::DotfilesError, settings::Settings};
+
+#[test]
+fn apt_directive_parsed() -> Result<(), DotfilesError> {
+  let default_settings = Settings::new();
+  let yaml = read_test_yaml("directive/apt/plain_functional.yaml")
+    .unwrap()
+    .pop()
+    .unwrap();
+  let directive = AptDirective::default();
+  let action = directive.parse_action(&default_settings, &yaml, &PathBuf::from("/home/user"))?;
+  assert_eq!(
+    action.packages().to_owned(),
+    Vec::from([
+      "fzf",
+      "zsh",
+    ])
+  );
+  Ok(())
+}

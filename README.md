@@ -22,6 +22,7 @@ to allow for modularization and reuse of these configurations.
 A directive is a type of action that `dotfiles-rs` can execute, currently the
 following directives are supported:
 
+* [`apt`](docs/apt.md): uses apt to install packages
 * [`brew`](docs/brew.md): uses homebrew to install formulae, casks or Mac App
   Store apps via `mas`
 * [`create`](docs/create.md): creates a new directory
