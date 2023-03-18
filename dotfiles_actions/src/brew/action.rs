@@ -28,6 +28,7 @@ use dotfiles_core::action::Action;
 use dotfiles_core::error::DotfilesError;
 use dotfiles_core_macros::ConditionalAction;
 use getset::Getters;
+#[cfg(target_os = "macos")]
 use std::fmt::Display;
 use std::marker::PhantomData;
 use subprocess::Exec;
@@ -42,8 +43,8 @@ pub struct MacAppStoreItem {
   /// Human readable name.
   name: String,
 }
-#[cfg(target_os = "macos")]
 
+#[cfg(target_os = "macos")]
 impl Display for MacAppStoreItem {
   fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
     write!(f, "id: {}, name: {}", self.id, self.name)
