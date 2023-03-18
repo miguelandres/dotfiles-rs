@@ -18,33 +18,8 @@
 // LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-
-#![warn(missing_docs)]
-#![deny(rustdoc::broken_intra_doc_links)]
-#![feature(io_error_more)]
-#![feature(drain_filter)]
-
-//! This crate contains all concrete [actions](dotfiles_core::action::Action)
-//! and [directives](dotfiles_core::directive::Directive). They are contained in
-//! each of the modules in this crate:
-//!
-//! - [brew]: A set of actions and directive that act as wrappers around [homebrew](http://brew.sh).
-//! - [create]: Creates a new directory
-//! - [exec]: runs a command in the shell
-//! - [homebrew_install]: installs [homebrew](http://brew.sh).
-//! - [link]: Creates a symlink to a file or directory
-//! - [ohmyzsh_install]: installs ohmyzsh
-// #[cfg(target_os = "linux")]
-pub mod apt;
-#[cfg(any(target_os = "linux", target_os = "macos"))]
-pub mod brew;
-pub mod create;
-pub mod exec;
-pub mod filesystem;
-#[cfg(any(target_os = "linux", target_os = "macos"))]
-pub mod homebrew_install;
-pub mod install_command;
-#[cfg(unix)]
-pub mod link;
-#[cfg(unix)]
-pub mod ohmyzsh_install;
+//! This module contains the [BrewAction](action::BrewAction) and
+//! [BrewDirective](directive::BrewDirective)
+#![cfg(unix)]
+pub mod action;
+pub mod directive;

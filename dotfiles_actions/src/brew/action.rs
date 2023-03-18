@@ -23,42 +23,14 @@
 //! a brew formula using homebrew
 
 #![cfg(unix)]
+use crate::install_command::InstallCommand;
 use dotfiles_core::action::Action;
 use dotfiles_core::error::DotfilesError;
-use dotfiles_core::exec_wrapper::execute_commands;
 use dotfiles_core_macros::ConditionalAction;
 use getset::Getters;
-use log::info;
 use std::fmt::Display;
 use std::marker::PhantomData;
 use subprocess::Exec;
-
-trait InstallCommand<F: Display> {
-  fn base_command(&self) -> Exec;
-  fn args(&self) -> &Vec<String>;
-  fn action_description(&self) -> &str;
-  fn action_name(&self) -> &str;
-
-  fn item(&self) -> &F;
-
-  fn execute(&self) -> Result<(), DotfilesError> {
-    info!("{} {}", self.action_description(), self.item());
-    let mut cmd = self.base_command();
-    for arg in self.args().iter() {
-      cmd = cmd.arg(arg);
-    }
-    execute_commands(
-      vec![cmd],
-      format!("Couldn't {} {}", self.action_name(), self.item()).as_str(),
-      format!(
-        "Unexpected error while {} {}",
-        self.action_description(),
-        self.item()
-      )
-      .as_str(),
-    )
-  }
-}
 #[cfg(target_os = "macos")]
 #[derive(Getters, Eq, PartialEq, Debug, Clone)]
 /// An item to download from the app store
