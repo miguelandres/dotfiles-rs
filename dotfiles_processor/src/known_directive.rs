@@ -23,7 +23,7 @@ use std::convert::TryFrom;
 use std::path::PathBuf;
 
 use clap::__macro_refs::once_cell::sync::Lazy;
-#[cfg(any(target_os = "linux", target_os = "macos"))]
+#[cfg(target_os = "linux", target_os = "macos")]
 use dotfiles_actions::apt::{action::AptAction, directive::AptDirective};
 #[cfg(any(target_os = "linux", target_os = "macos"))]
 use dotfiles_actions::brew::{action::BrewAction, directive::BrewDirective};
