@@ -62,7 +62,7 @@ impl AptCommand {
   fn install(item: &str) -> AptCommand {
     AptCommand {
       item: item.into(),
-      args: vec!["apt".into(), "install".into(), item.into(), "-y"],
+      args: vec!["apt".into(), "install".into(), item.into(), "-y".into()],
     }
   }
 }
