@@ -34,7 +34,7 @@
 //! - [homebrew_install]: installs [homebrew](http://brew.sh).
 //! - [link]: Creates a symlink to a file or directory
 //! - [ohmyzsh_install]: installs ohmyzsh
-// #[cfg(target_os = "linux")]
+#[cfg(target_os = "linux")]
 pub mod apt;
 #[cfg(any(target_os = "linux", target_os = "macos"))]
 pub mod brew;
@@ -44,7 +44,7 @@ pub mod filesystem;
 #[cfg(any(target_os = "linux", target_os = "macos"))]
 pub mod homebrew_install;
 pub mod install_command;
-#[cfg(target_os = "linux")]
+#[cfg(unix)]
 pub mod link;
 #[cfg(unix)]
 pub mod ohmyzsh_install;
