@@ -38,7 +38,7 @@ struct AptCommand {
 
 impl InstallCommand<String> for AptCommand {
   fn base_command(&self) -> Exec {
-    Exec::cmd("sudo apt")
+    Exec::cmd("sudo")
   }
 
   fn args(&self) -> &Vec<String> {
@@ -62,7 +62,7 @@ impl AptCommand {
   fn install(item: &str) -> AptCommand {
     AptCommand {
       item: item.into(),
-      args: vec!["install".into(), item.into()],
+      args: vec!["apt".into(), "install".into(), item.into(), "-y"],
     }
   }
 }
