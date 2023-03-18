@@ -37,7 +37,7 @@ use dotfiles_core_macros::Directive;
 use std::marker::PhantomData;
 use std::path::Path;
 use strict_yaml_rust::StrictYaml;
-/// Name of the Brew directive
+/// Name of the APT directive
 pub const DIRECTIVE_NAME: &str = "apt";
 
 /// The string that identifies the list of packages to install
@@ -51,7 +51,7 @@ pub fn init_directive_data() -> DirectiveData {
   )
 }
 
-/// A directive that can build [AptAction]s to install formulae, casks
+/// A directive that can build [AptAction]s to install packages
 #[derive(Directive, Clone)]
 pub struct AptDirective<'a> {
   data: DirectiveData,

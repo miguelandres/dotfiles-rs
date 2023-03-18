@@ -19,8 +19,8 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-//! This module contains the [BrewAction] that installs
-//! a brew formula using homebrew
+//! This module contains the [AptAction] that installs
+//! packages using apt on debian-based distros
 
 #![cfg(unix)]
 use crate::install_command::InstallCommand;
