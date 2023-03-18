@@ -1,3 +1,0 @@
-pub mod dotfiles_core_macros
-pub proc macro dotfiles_core_macros::#[derive(ConditionalAction)]
-pub proc macro dotfiles_core_macros::#[derive(Directive)]

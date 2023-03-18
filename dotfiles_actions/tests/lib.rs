@@ -20,9 +20,9 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 #![cfg(test)]
-mod brew;
-#[cfg(target_os="linux")]
+#[cfg(target_os = "linux")]
 mod apt;
+mod brew;
 mod create;
 mod exec;
 mod link;
