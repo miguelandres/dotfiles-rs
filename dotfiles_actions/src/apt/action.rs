@@ -32,7 +32,7 @@ use std::marker::PhantomData;
 use subprocess::Exec;
 
 struct AptCommand {
-  item: String,
+  joined_item_list: String,
   args: Vec<String>,
 }
 
@@ -50,7 +50,7 @@ impl InstallCommand<String> for AptCommand {
   }
 
   fn item(&self) -> &String {
-    &self.item
+    &self.joined_item_list
   }
 
   fn action_name(&self) -> &str {
@@ -59,10 +59,14 @@ impl InstallCommand<String> for AptCommand {
 }
 
 impl AptCommand {
-  fn install(item: &str) -> AptCommand {
+  fn install(items: &Vec<String>) -> AptCommand {
+    let mut args = vec!["apt".into(), "install".into(), "-y".into()];
+    let mut items_mut = items.clone();
+    args.append(&mut items_mut);
+
     AptCommand {
-      item: item.into(),
-      args: vec!["apt".into(), "install".into(), item.into(), "-y".into()],
+      joined_item_list: items.join(", "),
+      args,
     }
   }
 }
@@ -94,9 +98,8 @@ impl<'a> AptAction<'a> {
 
 impl Action<'_> for AptAction<'_> {
   fn execute(&self) -> Result<(), DotfilesError> {
-    for pkg in &self.packages {
-      AptCommand::install(pkg).execute()?;
-    }
+    AptCommand::install(&self.packages).execute()?;
+
     Ok(())
   }
 }
