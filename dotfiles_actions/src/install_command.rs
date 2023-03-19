@@ -39,22 +39,28 @@ pub trait InstallCommand<F: Display> {
   fn action_name(&self) -> &str;
 
   /// The item actually being installed, for example a homebrew formula.
-  fn item(&self) -> &F;
+  fn items(&self) -> &Vec<F>;
+
+  /// a list of items to display
+  fn formatted_item_list(&self) -> Vec<String> {
+    self.items().iter().map(|it| format!("{}", it)).collect()
+  }
 
   /// Runs the command to execut
   fn execute(&self) -> Result<(), DotfilesError> {
-    info!("{} {}", self.action_description(), self.item());
+    let item_list: String = self.formatted_item_list().join(", ").into();
+    info!("{} {}", self.action_description(), item_list);
     let mut cmd = self.base_command();
     for arg in self.args().iter() {
       cmd = cmd.arg(arg);
     }
     execute_commands(
       vec![cmd],
-      format!("Couldn't {} {}", self.action_name(), self.item()).as_str(),
+      format!("Couldn't {} {}", self.action_name(), item_list).as_str(),
       format!(
         "Unexpected error while {} {}",
         self.action_description(),
-        self.item()
+        &item_list
       )
       .as_str(),
     )

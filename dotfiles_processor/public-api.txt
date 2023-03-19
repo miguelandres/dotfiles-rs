@@ -1,0 +1,259 @@
+pub mod dotfiles_processor
+pub mod dotfiles_processor::context
+pub struct dotfiles_processor::context::Context
+impl dotfiles_processor::context::Context
+pub fn dotfiles_processor::context::Context::actions(&self) -> &alloc::vec::Vec<dotfiles_processor::known_directive::KnownAction<'static>>
+pub fn dotfiles_processor::context::Context::defaults(&self) -> &std::collections::hash::map::HashMap<alloc::string::String, dotfiles_core::settings::Settings>
+pub fn dotfiles_processor::context::Context::file(&self) -> &std::path::PathBuf
+impl dotfiles_processor::context::Context
+pub fn dotfiles_processor::context::Context::get_default(&self, dir: &str, setting: &str) -> core::option::Option<&dotfiles_core::settings::Setting>
+pub fn dotfiles_processor::context::Context::parse_file(&mut self) -> core::result::Result<(), dotfiles_core::error::DotfilesError>
+pub fn dotfiles_processor::context::Context::run_actions(context: dotfiles_processor::context::Context) -> core::result::Result<(), dotfiles_core::error::DotfilesError>
+pub fn dotfiles_processor::context::Context::subcontext(&self, file: &std::path::Path) -> core::result::Result<dotfiles_processor::context::Context, dotfiles_core::error::DotfilesError>
+impl core::convert::TryFrom<&std::path::Path> for dotfiles_processor::context::Context
+pub type dotfiles_processor::context::Context::Error = dotfiles_core::error::DotfilesError
+pub fn dotfiles_processor::context::Context::try_from(file_name: &std::path::Path) -> core::result::Result<Self, Self::Error>
+impl core::convert::TryFrom<&str> for dotfiles_processor::context::Context
+pub type dotfiles_processor::context::Context::Error = dotfiles_core::error::DotfilesError
+pub fn dotfiles_processor::context::Context::try_from(file_name: &str) -> core::result::Result<Self, Self::Error>
+impl<'a> core::convert::From<dotfiles_processor::context::Context> for dotfiles_processor::known_directive::KnownAction<'a>
+pub fn dotfiles_processor::context::Context::from(value: dotfiles_processor::context::Context) -> Self
+impl core::marker::Send for dotfiles_processor::context::Context
+impl core::marker::Sync for dotfiles_processor::context::Context
+impl core::marker::Unpin for dotfiles_processor::context::Context
+impl core::panic::unwind_safe::RefUnwindSafe for dotfiles_processor::context::Context
+impl core::panic::unwind_safe::UnwindSafe for dotfiles_processor::context::Context
+impl<T, U> core::convert::Into<U> for dotfiles_processor::context::Context where U: core::convert::From<T>
+pub fn dotfiles_processor::context::Context::into(self) -> U
+impl<T, U> core::convert::TryFrom<U> for dotfiles_processor::context::Context where U: core::convert::Into<T>
+pub type dotfiles_processor::context::Context::Error = core::convert::Infallible
+pub fn dotfiles_processor::context::Context::try_from(value: U) -> core::result::Result<T, <T as core::convert::TryFrom<U>>::Error>
+impl<T, U> core::convert::TryInto<U> for dotfiles_processor::context::Context where U: core::convert::TryFrom<T>
+pub type dotfiles_processor::context::Context::Error = <U as core::convert::TryFrom<T>>::Error
+pub fn dotfiles_processor::context::Context::try_into(self) -> core::result::Result<U, <U as core::convert::TryFrom<T>>::Error>
+impl<T> core::any::Any for dotfiles_processor::context::Context where T: 'static + core::marker::Sized
+pub fn dotfiles_processor::context::Context::type_id(&self) -> core::any::TypeId
+impl<T> core::borrow::Borrow<T> for dotfiles_processor::context::Context where T: core::marker::Sized
+pub fn dotfiles_processor::context::Context::borrow(&self) -> &T
+impl<T> core::borrow::BorrowMut<T> for dotfiles_processor::context::Context where T: core::marker::Sized
+pub fn dotfiles_processor::context::Context::borrow_mut(&mut self) -> &mut T
+impl<T> core::convert::From<T> for dotfiles_processor::context::Context
+pub fn dotfiles_processor::context::Context::from(t: T) -> T
+impl<V, T> ppv_lite86::types::VZip<V> for dotfiles_processor::context::Context where V: ppv_lite86::types::MultiLane<T>
+pub fn dotfiles_processor::context::Context::vzip(self) -> V
+pub mod dotfiles_processor::flags
+pub enum dotfiles_processor::flags::Command
+pub dotfiles_processor::flags::Command::ApplyConfig
+pub dotfiles_processor::flags::Command::ApplyConfig::dry_run: bool
+pub dotfiles_processor::flags::Command::ApplyConfig::file: alloc::string::String
+pub dotfiles_processor::flags::Command::InstallHomebrew
+pub dotfiles_processor::flags::Command::InstallOhMyZsh
+pub dotfiles_processor::flags::Command::InstallOhMyZsh::skip_chsh: bool
+impl clap::derive::FromArgMatches for dotfiles_processor::flags::Command
+pub fn dotfiles_processor::flags::Command::from_arg_matches(__clap_arg_matches: &clap::parser::matches::arg_matches::ArgMatches) -> core::result::Result<Self, clap::Error>
+pub fn dotfiles_processor::flags::Command::from_arg_matches_mut(__clap_arg_matches: &mut clap::parser::matches::arg_matches::ArgMatches) -> core::result::Result<Self, clap::Error>
+pub fn dotfiles_processor::flags::Command::update_from_arg_matches(&mut self, __clap_arg_matches: &clap::parser::matches::arg_matches::ArgMatches) -> core::result::Result<(), clap::Error>
+pub fn dotfiles_processor::flags::Command::update_from_arg_matches_mut<'b>(&mut self, __clap_arg_matches: &mut clap::parser::matches::arg_matches::ArgMatches) -> core::result::Result<(), clap::Error>
+impl clap::derive::Subcommand for dotfiles_processor::flags::Command
+pub fn dotfiles_processor::flags::Command::augment_subcommands<'b>(__clap_app: clap::builder::command::Command) -> clap::builder::command::Command
+pub fn dotfiles_processor::flags::Command::augment_subcommands_for_update<'b>(__clap_app: clap::builder::command::Command) -> clap::builder::command::Command
+pub fn dotfiles_processor::flags::Command::has_subcommand(__clap_name: &str) -> bool
+impl core::marker::Send for dotfiles_processor::flags::Command
+impl core::marker::Sync for dotfiles_processor::flags::Command
+impl core::marker::Unpin for dotfiles_processor::flags::Command
+impl core::panic::unwind_safe::RefUnwindSafe for dotfiles_processor::flags::Command
+impl core::panic::unwind_safe::UnwindSafe for dotfiles_processor::flags::Command
+impl<T, U> core::convert::Into<U> for dotfiles_processor::flags::Command where U: core::convert::From<T>
+pub fn dotfiles_processor::flags::Command::into(self) -> U
+impl<T, U> core::convert::TryFrom<U> for dotfiles_processor::flags::Command where U: core::convert::Into<T>
+pub type dotfiles_processor::flags::Command::Error = core::convert::Infallible
+pub fn dotfiles_processor::flags::Command::try_from(value: U) -> core::result::Result<T, <T as core::convert::TryFrom<U>>::Error>
+impl<T, U> core::convert::TryInto<U> for dotfiles_processor::flags::Command where U: core::convert::TryFrom<T>
+pub type dotfiles_processor::flags::Command::Error = <U as core::convert::TryFrom<T>>::Error
+pub fn dotfiles_processor::flags::Command::try_into(self) -> core::result::Result<U, <U as core::convert::TryFrom<T>>::Error>
+impl<T> core::any::Any for dotfiles_processor::flags::Command where T: 'static + core::marker::Sized
+pub fn dotfiles_processor::flags::Command::type_id(&self) -> core::any::TypeId
+impl<T> core::borrow::Borrow<T> for dotfiles_processor::flags::Command where T: core::marker::Sized
+pub fn dotfiles_processor::flags::Command::borrow(&self) -> &T
+impl<T> core::borrow::BorrowMut<T> for dotfiles_processor::flags::Command where T: core::marker::Sized
+pub fn dotfiles_processor::flags::Command::borrow_mut(&mut self) -> &mut T
+impl<T> core::convert::From<T> for dotfiles_processor::flags::Command
+pub fn dotfiles_processor::flags::Command::from(t: T) -> T
+impl<V, T> ppv_lite86::types::VZip<V> for dotfiles_processor::flags::Command where V: ppv_lite86::types::MultiLane<T>
+pub fn dotfiles_processor::flags::Command::vzip(self) -> V
+pub enum dotfiles_processor::flags::LogLevelFilter
+pub dotfiles_processor::flags::LogLevelFilter::Debug
+pub dotfiles_processor::flags::LogLevelFilter::Error
+pub dotfiles_processor::flags::LogLevelFilter::Info
+pub dotfiles_processor::flags::LogLevelFilter::Off
+pub dotfiles_processor::flags::LogLevelFilter::Trace
+pub dotfiles_processor::flags::LogLevelFilter::Warn
+impl clap::derive::ValueEnum for dotfiles_processor::flags::LogLevelFilter
+pub fn dotfiles_processor::flags::LogLevelFilter::to_possible_value<'a>(&self) -> core::option::Option<clap::builder::possible_value::PossibleValue>
+pub fn dotfiles_processor::flags::LogLevelFilter::value_variants<'a>() -> &'a [Self]
+impl core::convert::Into<log::LevelFilter> for dotfiles_processor::flags::LogLevelFilter
+pub fn dotfiles_processor::flags::LogLevelFilter::into(self) -> log::LevelFilter
+impl core::clone::Clone for dotfiles_processor::flags::LogLevelFilter
+pub fn dotfiles_processor::flags::LogLevelFilter::clone(&self) -> dotfiles_processor::flags::LogLevelFilter
+impl core::cmp::Eq for dotfiles_processor::flags::LogLevelFilter
+impl core::cmp::Ord for dotfiles_processor::flags::LogLevelFilter
+pub fn dotfiles_processor::flags::LogLevelFilter::cmp(&self, other: &dotfiles_processor::flags::LogLevelFilter) -> core::cmp::Ordering
+impl core::cmp::PartialEq<dotfiles_processor::flags::LogLevelFilter> for dotfiles_processor::flags::LogLevelFilter
+pub fn dotfiles_processor::flags::LogLevelFilter::eq(&self, other: &dotfiles_processor::flags::LogLevelFilter) -> bool
+impl core::cmp::PartialOrd<dotfiles_processor::flags::LogLevelFilter> for dotfiles_processor::flags::LogLevelFilter
+pub fn dotfiles_processor::flags::LogLevelFilter::partial_cmp(&self, other: &dotfiles_processor::flags::LogLevelFilter) -> core::option::Option<core::cmp::Ordering>
+impl core::marker::Copy for dotfiles_processor::flags::LogLevelFilter
+impl core::marker::StructuralEq for dotfiles_processor::flags::LogLevelFilter
+impl core::marker::StructuralPartialEq for dotfiles_processor::flags::LogLevelFilter
+impl core::marker::Send for dotfiles_processor::flags::LogLevelFilter
+impl core::marker::Sync for dotfiles_processor::flags::LogLevelFilter
+impl core::marker::Unpin for dotfiles_processor::flags::LogLevelFilter
+impl core::panic::unwind_safe::RefUnwindSafe for dotfiles_processor::flags::LogLevelFilter
+impl core::panic::unwind_safe::UnwindSafe for dotfiles_processor::flags::LogLevelFilter
+impl<T, U> core::convert::Into<U> for dotfiles_processor::flags::LogLevelFilter where U: core::convert::From<T>
+pub fn dotfiles_processor::flags::LogLevelFilter::into(self) -> U
+impl<T, U> core::convert::TryFrom<U> for dotfiles_processor::flags::LogLevelFilter where U: core::convert::Into<T>
+pub type dotfiles_processor::flags::LogLevelFilter::Error = core::convert::Infallible
+pub fn dotfiles_processor::flags::LogLevelFilter::try_from(value: U) -> core::result::Result<T, <T as core::convert::TryFrom<U>>::Error>
+impl<T, U> core::convert::TryInto<U> for dotfiles_processor::flags::LogLevelFilter where U: core::convert::TryFrom<T>
+pub type dotfiles_processor::flags::LogLevelFilter::Error = <U as core::convert::TryFrom<T>>::Error
+pub fn dotfiles_processor::flags::LogLevelFilter::try_into(self) -> core::result::Result<U, <U as core::convert::TryFrom<T>>::Error>
+impl<T> alloc::borrow::ToOwned for dotfiles_processor::flags::LogLevelFilter where T: core::clone::Clone
+pub type dotfiles_processor::flags::LogLevelFilter::Owned = T
+pub fn dotfiles_processor::flags::LogLevelFilter::clone_into(&self, target: &mut T)
+pub fn dotfiles_processor::flags::LogLevelFilter::to_owned(&self) -> T
+impl<T> core::any::Any for dotfiles_processor::flags::LogLevelFilter where T: 'static + core::marker::Sized
+pub fn dotfiles_processor::flags::LogLevelFilter::type_id(&self) -> core::any::TypeId
+impl<T> core::borrow::Borrow<T> for dotfiles_processor::flags::LogLevelFilter where T: core::marker::Sized
+pub fn dotfiles_processor::flags::LogLevelFilter::borrow(&self) -> &T
+impl<T> core::borrow::BorrowMut<T> for dotfiles_processor::flags::LogLevelFilter where T: core::marker::Sized
+pub fn dotfiles_processor::flags::LogLevelFilter::borrow_mut(&mut self) -> &mut T
+impl<T> core::convert::From<T> for dotfiles_processor::flags::LogLevelFilter
+pub fn dotfiles_processor::flags::LogLevelFilter::from(t: T) -> T
+impl<V, T> ppv_lite86::types::VZip<V> for dotfiles_processor::flags::LogLevelFilter where V: ppv_lite86::types::MultiLane<T>
+pub fn dotfiles_processor::flags::LogLevelFilter::vzip(self) -> V
+pub struct dotfiles_processor::flags::FlagData
+pub dotfiles_processor::flags::FlagData::command: dotfiles_processor::flags::Command
+pub dotfiles_processor::flags::FlagData::log_level_filter: dotfiles_processor::flags::LogLevelFilter
+impl clap::derive::Args for dotfiles_processor::flags::FlagData
+pub fn dotfiles_processor::flags::FlagData::augment_args<'b>(__clap_app: clap::builder::command::Command) -> clap::builder::command::Command
+pub fn dotfiles_processor::flags::FlagData::augment_args_for_update<'b>(__clap_app: clap::builder::command::Command) -> clap::builder::command::Command
+pub fn dotfiles_processor::flags::FlagData::group_id() -> core::option::Option<clap::util::id::Id>
+impl clap::derive::CommandFactory for dotfiles_processor::flags::FlagData
+pub fn dotfiles_processor::flags::FlagData::command<'b>() -> clap::builder::command::Command
+pub fn dotfiles_processor::flags::FlagData::command_for_update<'b>() -> clap::builder::command::Command
+impl clap::derive::FromArgMatches for dotfiles_processor::flags::FlagData
+pub fn dotfiles_processor::flags::FlagData::from_arg_matches(__clap_arg_matches: &clap::parser::matches::arg_matches::ArgMatches) -> core::result::Result<Self, clap::Error>
+pub fn dotfiles_processor::flags::FlagData::from_arg_matches_mut(__clap_arg_matches: &mut clap::parser::matches::arg_matches::ArgMatches) -> core::result::Result<Self, clap::Error>
+pub fn dotfiles_processor::flags::FlagData::update_from_arg_matches(&mut self, __clap_arg_matches: &clap::parser::matches::arg_matches::ArgMatches) -> core::result::Result<(), clap::Error>
+pub fn dotfiles_processor::flags::FlagData::update_from_arg_matches_mut(&mut self, __clap_arg_matches: &mut clap::parser::matches::arg_matches::ArgMatches) -> core::result::Result<(), clap::Error>
+impl clap::derive::Parser for dotfiles_processor::flags::FlagData
+impl core::marker::Send for dotfiles_processor::flags::FlagData
+impl core::marker::Sync for dotfiles_processor::flags::FlagData
+impl core::marker::Unpin for dotfiles_processor::flags::FlagData
+impl core::panic::unwind_safe::RefUnwindSafe for dotfiles_processor::flags::FlagData
+impl core::panic::unwind_safe::UnwindSafe for dotfiles_processor::flags::FlagData
+impl<T, U> core::convert::Into<U> for dotfiles_processor::flags::FlagData where U: core::convert::From<T>
+pub fn dotfiles_processor::flags::FlagData::into(self) -> U
+impl<T, U> core::convert::TryFrom<U> for dotfiles_processor::flags::FlagData where U: core::convert::Into<T>
+pub type dotfiles_processor::flags::FlagData::Error = core::convert::Infallible
+pub fn dotfiles_processor::flags::FlagData::try_from(value: U) -> core::result::Result<T, <T as core::convert::TryFrom<U>>::Error>
+impl<T, U> core::convert::TryInto<U> for dotfiles_processor::flags::FlagData where U: core::convert::TryFrom<T>
+pub type dotfiles_processor::flags::FlagData::Error = <U as core::convert::TryFrom<T>>::Error
+pub fn dotfiles_processor::flags::FlagData::try_into(self) -> core::result::Result<U, <U as core::convert::TryFrom<T>>::Error>
+impl<T> core::any::Any for dotfiles_processor::flags::FlagData where T: 'static + core::marker::Sized
+pub fn dotfiles_processor::flags::FlagData::type_id(&self) -> core::any::TypeId
+impl<T> core::borrow::Borrow<T> for dotfiles_processor::flags::FlagData where T: core::marker::Sized
+pub fn dotfiles_processor::flags::FlagData::borrow(&self) -> &T
+impl<T> core::borrow::BorrowMut<T> for dotfiles_processor::flags::FlagData where T: core::marker::Sized
+pub fn dotfiles_processor::flags::FlagData::borrow_mut(&mut self) -> &mut T
+impl<T> core::convert::From<T> for dotfiles_processor::flags::FlagData
+pub fn dotfiles_processor::flags::FlagData::from(t: T) -> T
+impl<V, T> ppv_lite86::types::VZip<V> for dotfiles_processor::flags::FlagData where V: ppv_lite86::types::MultiLane<T>
+pub fn dotfiles_processor::flags::FlagData::vzip(self) -> V
+pub mod dotfiles_processor::known_directive
+pub enum dotfiles_processor::known_directive::KnownAction<'a>
+pub dotfiles_processor::known_directive::KnownAction::Brew(dotfiles_actions::brew::action::BrewAction<'a>)
+pub dotfiles_processor::known_directive::KnownAction::Create(dotfiles_actions::create::action::NativeCreateAction<'a>)
+pub dotfiles_processor::known_directive::KnownAction::Exec(dotfiles_actions::exec::action::ExecAction<'a>)
+pub dotfiles_processor::known_directive::KnownAction::Link(dotfiles_actions::link::action::NativeLinkAction<'a>)
+pub dotfiles_processor::known_directive::KnownAction::Subconfig(dotfiles_processor::context::Context)
+impl<'a> dotfiles_processor::known_directive::KnownAction<'a>
+pub fn dotfiles_processor::known_directive::KnownAction::execute(self) -> core::result::Result<(), dotfiles_core::error::DotfilesError>
+impl<'a> core::convert::From<dotfiles_actions::brew::action::BrewAction<'a>> for dotfiles_processor::known_directive::KnownAction<'a>
+pub fn dotfiles_processor::known_directive::KnownAction::from(value: dotfiles_actions::brew::action::BrewAction<'a>) -> Self
+impl<'a> core::convert::From<dotfiles_actions::create::action::CreateAction<'a, filesystem::os::OsFileSystem>> for dotfiles_processor::known_directive::KnownAction<'a>
+pub fn dotfiles_processor::known_directive::KnownAction::from(value: dotfiles_actions::create::action::NativeCreateAction<'a>) -> Self
+impl<'a> core::convert::From<dotfiles_actions::exec::action::ExecAction<'a>> for dotfiles_processor::known_directive::KnownAction<'a>
+pub fn dotfiles_processor::known_directive::KnownAction::from(value: dotfiles_actions::exec::action::ExecAction<'a>) -> Self
+impl<'a> core::convert::From<dotfiles_actions::link::action::LinkAction<'a, filesystem::os::OsFileSystem>> for dotfiles_processor::known_directive::KnownAction<'a>
+pub fn dotfiles_processor::known_directive::KnownAction::from(value: dotfiles_actions::link::action::NativeLinkAction<'a>) -> Self
+impl<'a> core::convert::From<dotfiles_processor::context::Context> for dotfiles_processor::known_directive::KnownAction<'a>
+pub fn dotfiles_processor::known_directive::KnownAction::from(value: dotfiles_processor::context::Context) -> Self
+impl<'a> core::marker::Send for dotfiles_processor::known_directive::KnownAction<'a>
+impl<'a> core::marker::Sync for dotfiles_processor::known_directive::KnownAction<'a>
+impl<'a> core::marker::Unpin for dotfiles_processor::known_directive::KnownAction<'a>
+impl<'a> core::panic::unwind_safe::RefUnwindSafe for dotfiles_processor::known_directive::KnownAction<'a>
+impl<'a> core::panic::unwind_safe::UnwindSafe for dotfiles_processor::known_directive::KnownAction<'a>
+impl<T, U> core::convert::Into<U> for dotfiles_processor::known_directive::KnownAction<'a> where U: core::convert::From<T>
+pub fn dotfiles_processor::known_directive::KnownAction::into(self) -> U
+impl<T, U> core::convert::TryFrom<U> for dotfiles_processor::known_directive::KnownAction<'a> where U: core::convert::Into<T>
+pub type dotfiles_processor::known_directive::KnownAction::Error = core::convert::Infallible
+pub fn dotfiles_processor::known_directive::KnownAction::try_from(value: U) -> core::result::Result<T, <T as core::convert::TryFrom<U>>::Error>
+impl<T, U> core::convert::TryInto<U> for dotfiles_processor::known_directive::KnownAction<'a> where U: core::convert::TryFrom<T>
+pub type dotfiles_processor::known_directive::KnownAction::Error = <U as core::convert::TryFrom<T>>::Error
+pub fn dotfiles_processor::known_directive::KnownAction::try_into(self) -> core::result::Result<U, <U as core::convert::TryFrom<T>>::Error>
+impl<T> core::any::Any for dotfiles_processor::known_directive::KnownAction<'a> where T: 'static + core::marker::Sized
+pub fn dotfiles_processor::known_directive::KnownAction::type_id(&self) -> core::any::TypeId
+impl<T> core::borrow::Borrow<T> for dotfiles_processor::known_directive::KnownAction<'a> where T: core::marker::Sized
+pub fn dotfiles_processor::known_directive::KnownAction::borrow(&self) -> &T
+impl<T> core::borrow::BorrowMut<T> for dotfiles_processor::known_directive::KnownAction<'a> where T: core::marker::Sized
+pub fn dotfiles_processor::known_directive::KnownAction::borrow_mut(&mut self) -> &mut T
+impl<T> core::convert::From<T> for dotfiles_processor::known_directive::KnownAction<'a>
+pub fn dotfiles_processor::known_directive::KnownAction::from(t: T) -> T
+impl<V, T> ppv_lite86::types::VZip<V> for dotfiles_processor::known_directive::KnownAction<'a> where V: ppv_lite86::types::MultiLane<T>
+pub fn dotfiles_processor::known_directive::KnownAction::vzip(self) -> V
+pub enum dotfiles_processor::known_directive::KnownDirective
+pub dotfiles_processor::known_directive::KnownDirective::Brew
+pub dotfiles_processor::known_directive::KnownDirective::Create
+pub dotfiles_processor::known_directive::KnownDirective::Exec
+pub dotfiles_processor::known_directive::KnownDirective::Link
+pub dotfiles_processor::known_directive::KnownDirective::Subconfig
+impl dotfiles_processor::known_directive::KnownDirective
+pub fn dotfiles_processor::known_directive::KnownDirective::data(&self) -> &dotfiles_core::directive::DirectiveData
+pub fn dotfiles_processor::known_directive::KnownDirective::parse_action_list<'a>(directive: dotfiles_processor::known_directive::KnownDirective, context_settings: &dotfiles_core::settings::Settings, actions: &strict_yaml_rust::strict_yaml::StrictYaml, context: &dotfiles_processor::context::Context) -> core::result::Result<alloc::vec::Vec<dotfiles_processor::known_directive::KnownAction<'a>>, dotfiles_core::error::DotfilesError>
+pub fn dotfiles_processor::known_directive::KnownDirective::parse_context_defaults(&self, defaults: &strict_yaml_rust::strict_yaml::StrictYaml) -> core::result::Result<(alloc::string::String, dotfiles_core::settings::Settings), dotfiles_core::error::DotfilesError>
+impl core::convert::TryFrom<&str> for dotfiles_processor::known_directive::KnownDirective
+pub type dotfiles_processor::known_directive::KnownDirective::Error = dotfiles_core::error::DotfilesError
+pub fn dotfiles_processor::known_directive::KnownDirective::try_from(value: &str) -> core::result::Result<Self, Self::Error>
+impl core::clone::Clone for dotfiles_processor::known_directive::KnownDirective
+pub fn dotfiles_processor::known_directive::KnownDirective::clone(&self) -> dotfiles_processor::known_directive::KnownDirective
+impl core::marker::Send for dotfiles_processor::known_directive::KnownDirective
+impl core::marker::Sync for dotfiles_processor::known_directive::KnownDirective
+impl core::marker::Unpin for dotfiles_processor::known_directive::KnownDirective
+impl core::panic::unwind_safe::RefUnwindSafe for dotfiles_processor::known_directive::KnownDirective
+impl core::panic::unwind_safe::UnwindSafe for dotfiles_processor::known_directive::KnownDirective
+impl<T, U> core::convert::Into<U> for dotfiles_processor::known_directive::KnownDirective where U: core::convert::From<T>
+pub fn dotfiles_processor::known_directive::KnownDirective::into(self) -> U
+impl<T, U> core::convert::TryFrom<U> for dotfiles_processor::known_directive::KnownDirective where U: core::convert::Into<T>
+pub type dotfiles_processor::known_directive::KnownDirective::Error = core::convert::Infallible
+pub fn dotfiles_processor::known_directive::KnownDirective::try_from(value: U) -> core::result::Result<T, <T as core::convert::TryFrom<U>>::Error>
+impl<T, U> core::convert::TryInto<U> for dotfiles_processor::known_directive::KnownDirective where U: core::convert::TryFrom<T>
+pub type dotfiles_processor::known_directive::KnownDirective::Error = <U as core::convert::TryFrom<T>>::Error
+pub fn dotfiles_processor::known_directive::KnownDirective::try_into(self) -> core::result::Result<U, <U as core::convert::TryFrom<T>>::Error>
+impl<T> alloc::borrow::ToOwned for dotfiles_processor::known_directive::KnownDirective where T: core::clone::Clone
+pub type dotfiles_processor::known_directive::KnownDirective::Owned = T
+pub fn dotfiles_processor::known_directive::KnownDirective::clone_into(&self, target: &mut T)
+pub fn dotfiles_processor::known_directive::KnownDirective::to_owned(&self) -> T
+impl<T> core::any::Any for dotfiles_processor::known_directive::KnownDirective where T: 'static + core::marker::Sized
+pub fn dotfiles_processor::known_directive::KnownDirective::type_id(&self) -> core::any::TypeId
+impl<T> core::borrow::Borrow<T> for dotfiles_processor::known_directive::KnownDirective where T: core::marker::Sized
+pub fn dotfiles_processor::known_directive::KnownDirective::borrow(&self) -> &T
+impl<T> core::borrow::BorrowMut<T> for dotfiles_processor::known_directive::KnownDirective where T: core::marker::Sized
+pub fn dotfiles_processor::known_directive::KnownDirective::borrow_mut(&mut self) -> &mut T
+impl<T> core::convert::From<T> for dotfiles_processor::known_directive::KnownDirective
+pub fn dotfiles_processor::known_directive::KnownDirective::from(t: T) -> T
+impl<V, T> ppv_lite86::types::VZip<V> for dotfiles_processor::known_directive::KnownDirective where V: ppv_lite86::types::MultiLane<T>
+pub fn dotfiles_processor::known_directive::KnownDirective::vzip(self) -> V
+pub mod dotfiles_processor::process
+pub fn dotfiles_processor::process::process(flag_data: &dotfiles_processor::flags::FlagData) -> core::result::Result<(), dotfiles_core::error::DotfilesError>

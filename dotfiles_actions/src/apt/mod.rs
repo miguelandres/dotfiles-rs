@@ -20,6 +20,5 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //! This module contains the [AptAction](action::AptAction) and
 //! [AptDirective](directive::AptDirective)
-#![cfg(target_os = "linux")]
 pub mod action;
 pub mod directive;

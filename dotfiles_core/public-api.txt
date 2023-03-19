@@ -1,0 +1,263 @@
+pub mod dotfiles_core
+pub mod dotfiles_core::action
+pub const dotfiles_core::action::SKIP_IN_CI_SETTING: &str
+pub trait dotfiles_core::action::Action<'a>
+pub fn dotfiles_core::action::Action::execute(&self) -> core::result::Result<(), dotfiles_core::error::DotfilesError>
+pub trait dotfiles_core::action::ActionParser<'a>: dotfiles_core::directive::HasDirectiveData<'a>
+pub type dotfiles_core::action::ActionParser::ActionType: dotfiles_core::action::Action<'a>
+pub fn dotfiles_core::action::ActionParser::parse_action(&'a self, settings: &dotfiles_core::settings::Settings, yaml: &strict_yaml_rust::strict_yaml::StrictYaml, current_dir: &std::path::Path) -> core::result::Result<Self::ActionType, dotfiles_core::error::DotfilesError>
+pub fn dotfiles_core::action::ActionParser::parse_action_list(&'a self, settings: &dotfiles_core::settings::Settings, yaml: &strict_yaml_rust::strict_yaml::StrictYaml, current_dir: &std::path::Path) -> core::result::Result<alloc::vec::Vec<Self::ActionType>, dotfiles_core::error::DotfilesError>
+pub trait dotfiles_core::action::ConditionalAction<'a>: dotfiles_core::action::Action<'a>
+pub fn dotfiles_core::action::ConditionalAction::check_conditions_and_execute(&self) -> core::result::Result<(), dotfiles_core::error::DotfilesError>
+pub fn dotfiles_core::action::ConditionalAction::skip_in_ci(&self) -> bool
+pub fn dotfiles_core::action::is_running_in_ci() -> bool
+pub mod dotfiles_core::directive
+pub struct dotfiles_core::directive::DirectiveData
+impl dotfiles_core::directive::DirectiveData
+pub fn dotfiles_core::directive::DirectiveData::defaults(&self) -> &dotfiles_core::settings::Settings
+pub fn dotfiles_core::directive::DirectiveData::name(&self) -> &alloc::string::String
+impl dotfiles_core::directive::DirectiveData
+pub fn dotfiles_core::directive::DirectiveData::from(name: alloc::string::String, defaults: dotfiles_core::settings::Settings) -> dotfiles_core::directive::DirectiveData
+pub fn dotfiles_core::directive::DirectiveData::parse_context_defaults(&self, yaml_settings: &strict_yaml_rust::strict_yaml::StrictYaml) -> core::result::Result<dotfiles_core::settings::Settings, dotfiles_core::error::DotfilesError>
+pub fn dotfiles_core::directive::DirectiveData::parse_setting_value(&self, name: &str, yaml: &strict_yaml_rust::strict_yaml::StrictYaml) -> core::result::Result<dotfiles_core::settings::Setting, dotfiles_core::error::DotfilesError>
+impl core::clone::Clone for dotfiles_core::directive::DirectiveData
+pub fn dotfiles_core::directive::DirectiveData::clone(&self) -> dotfiles_core::directive::DirectiveData
+impl core::fmt::Debug for dotfiles_core::directive::DirectiveData
+pub fn dotfiles_core::directive::DirectiveData::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::Send for dotfiles_core::directive::DirectiveData
+impl core::marker::Sync for dotfiles_core::directive::DirectiveData
+impl core::marker::Unpin for dotfiles_core::directive::DirectiveData
+impl core::panic::unwind_safe::RefUnwindSafe for dotfiles_core::directive::DirectiveData
+impl core::panic::unwind_safe::UnwindSafe for dotfiles_core::directive::DirectiveData
+impl<T, U> core::convert::Into<U> for dotfiles_core::directive::DirectiveData where U: core::convert::From<T>
+pub fn dotfiles_core::directive::DirectiveData::into(self) -> U
+impl<T, U> core::convert::TryFrom<U> for dotfiles_core::directive::DirectiveData where U: core::convert::Into<T>
+pub type dotfiles_core::directive::DirectiveData::Error = core::convert::Infallible
+pub fn dotfiles_core::directive::DirectiveData::try_from(value: U) -> core::result::Result<T, <T as core::convert::TryFrom<U>>::Error>
+impl<T, U> core::convert::TryInto<U> for dotfiles_core::directive::DirectiveData where U: core::convert::TryFrom<T>
+pub type dotfiles_core::directive::DirectiveData::Error = <U as core::convert::TryFrom<T>>::Error
+pub fn dotfiles_core::directive::DirectiveData::try_into(self) -> core::result::Result<U, <U as core::convert::TryFrom<T>>::Error>
+impl<T> alloc::borrow::ToOwned for dotfiles_core::directive::DirectiveData where T: core::clone::Clone
+pub type dotfiles_core::directive::DirectiveData::Owned = T
+pub fn dotfiles_core::directive::DirectiveData::clone_into(&self, target: &mut T)
+pub fn dotfiles_core::directive::DirectiveData::to_owned(&self) -> T
+impl<T> core::any::Any for dotfiles_core::directive::DirectiveData where T: 'static + core::marker::Sized
+pub fn dotfiles_core::directive::DirectiveData::type_id(&self) -> core::any::TypeId
+impl<T> core::borrow::Borrow<T> for dotfiles_core::directive::DirectiveData where T: core::marker::Sized
+pub fn dotfiles_core::directive::DirectiveData::borrow(&self) -> &T
+impl<T> core::borrow::BorrowMut<T> for dotfiles_core::directive::DirectiveData where T: core::marker::Sized
+pub fn dotfiles_core::directive::DirectiveData::borrow_mut(&mut self) -> &mut T
+impl<T> core::convert::From<T> for dotfiles_core::directive::DirectiveData
+pub fn dotfiles_core::directive::DirectiveData::from(t: T) -> T
+pub trait dotfiles_core::directive::Directive<'a>: dotfiles_core::directive::HasDirectiveData<'a>
+pub fn dotfiles_core::directive::Directive::get_setting_from_yaml_hash(&'a self, name: &str, yaml: &strict_yaml_rust::strict_yaml::StrictYaml) -> core::result::Result<dotfiles_core::settings::Setting, dotfiles_core::error::DotfilesError>
+pub fn dotfiles_core::directive::Directive::get_setting_from_yaml_hash_or_from_context(&'a self, name: &str, yaml: &strict_yaml_rust::strict_yaml::StrictYaml, context_settings: &dotfiles_core::settings::Settings) -> core::result::Result<dotfiles_core::settings::Setting, dotfiles_core::error::DotfilesError>
+pub trait dotfiles_core::directive::HasDirectiveData<'a>
+pub fn dotfiles_core::directive::HasDirectiveData::defaults(&'a self) -> &'a dotfiles_core::settings::Settings
+pub fn dotfiles_core::directive::HasDirectiveData::directive_data(&'a self) -> &'a dotfiles_core::directive::DirectiveData
+pub fn dotfiles_core::directive::HasDirectiveData::name(&'a self) -> &'a str
+pub mod dotfiles_core::error
+pub enum dotfiles_core::error::ErrorType
+pub dotfiles_core::error::ErrorType::CoreError
+pub dotfiles_core::error::ErrorType::ExecutionError
+pub dotfiles_core::error::ErrorType::ExecutionError::exit_status: core::option::Option<subprocess::os_common::ExitStatus>
+pub dotfiles_core::error::ErrorType::ExecutionError::popen_error: core::option::Option<subprocess::popen::PopenError>
+pub dotfiles_core::error::ErrorType::FileSystemError
+pub dotfiles_core::error::ErrorType::FileSystemError::fs_error: std::io::error::Error
+pub dotfiles_core::error::ErrorType::IncompleteConfigurationError
+pub dotfiles_core::error::ErrorType::IncompleteConfigurationError::missing_field: alloc::string::String
+pub dotfiles_core::error::ErrorType::InconsistentConfigurationError
+pub dotfiles_core::error::ErrorType::TestingErrorActionSucceedsWhenItShouldFail
+pub dotfiles_core::error::ErrorType::UnexpectedYamlTypeError
+pub dotfiles_core::error::ErrorType::UnexpectedYamlTypeError::encountered: strict_yaml_rust::strict_yaml::StrictYaml
+pub dotfiles_core::error::ErrorType::UnexpectedYamlTypeError::expected: strict_yaml_rust::strict_yaml::StrictYaml
+pub dotfiles_core::error::ErrorType::YamlParseError
+pub dotfiles_core::error::ErrorType::YamlParseError::scan_error: strict_yaml_rust::scanner::ScanError
+impl core::fmt::Display for dotfiles_core::error::ErrorType
+pub fn dotfiles_core::error::ErrorType::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::fmt::Debug for dotfiles_core::error::ErrorType
+pub fn dotfiles_core::error::ErrorType::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl !core::panic::unwind_safe::RefUnwindSafe for dotfiles_core::error::ErrorType
+impl !core::panic::unwind_safe::UnwindSafe for dotfiles_core::error::ErrorType
+impl core::marker::Send for dotfiles_core::error::ErrorType
+impl core::marker::Sync for dotfiles_core::error::ErrorType
+impl core::marker::Unpin for dotfiles_core::error::ErrorType
+impl<T, U> core::convert::Into<U> for dotfiles_core::error::ErrorType where U: core::convert::From<T>
+pub fn dotfiles_core::error::ErrorType::into(self) -> U
+impl<T, U> core::convert::TryFrom<U> for dotfiles_core::error::ErrorType where U: core::convert::Into<T>
+pub type dotfiles_core::error::ErrorType::Error = core::convert::Infallible
+pub fn dotfiles_core::error::ErrorType::try_from(value: U) -> core::result::Result<T, <T as core::convert::TryFrom<U>>::Error>
+impl<T, U> core::convert::TryInto<U> for dotfiles_core::error::ErrorType where U: core::convert::TryFrom<T>
+pub type dotfiles_core::error::ErrorType::Error = <U as core::convert::TryFrom<T>>::Error
+pub fn dotfiles_core::error::ErrorType::try_into(self) -> core::result::Result<U, <U as core::convert::TryFrom<T>>::Error>
+impl<T> alloc::string::ToString for dotfiles_core::error::ErrorType where T: core::fmt::Display + core::marker::Sized
+pub fn dotfiles_core::error::ErrorType::to_string(&self) -> alloc::string::String
+impl<T> core::any::Any for dotfiles_core::error::ErrorType where T: 'static + core::marker::Sized
+pub fn dotfiles_core::error::ErrorType::type_id(&self) -> core::any::TypeId
+impl<T> core::borrow::Borrow<T> for dotfiles_core::error::ErrorType where T: core::marker::Sized
+pub fn dotfiles_core::error::ErrorType::borrow(&self) -> &T
+impl<T> core::borrow::BorrowMut<T> for dotfiles_core::error::ErrorType where T: core::marker::Sized
+pub fn dotfiles_core::error::ErrorType::borrow_mut(&mut self) -> &mut T
+impl<T> core::convert::From<T> for dotfiles_core::error::ErrorType
+pub fn dotfiles_core::error::ErrorType::from(t: T) -> T
+pub struct dotfiles_core::error::DotfilesError
+impl dotfiles_core::error::DotfilesError
+pub fn dotfiles_core::error::DotfilesError::add_message_prefix(&mut self, prefix: alloc::string::String)
+pub fn dotfiles_core::error::DotfilesError::from(message: alloc::string::String, error_type: dotfiles_core::error::ErrorType) -> Self
+pub fn dotfiles_core::error::DotfilesError::from_io_error(io_error: std::io::error::Error) -> Self
+pub fn dotfiles_core::error::DotfilesError::from_wrong_yaml(message: alloc::string::String, wrong_yaml: strict_yaml_rust::strict_yaml::StrictYaml, expected_type: strict_yaml_rust::strict_yaml::StrictYaml) -> Self
+pub fn dotfiles_core::error::DotfilesError::is_fs_error(&self) -> bool
+pub fn dotfiles_core::error::DotfilesError::is_inconsistent_config(&self) -> bool
+pub fn dotfiles_core::error::DotfilesError::is_missing_config(&self, config_name: &str) -> bool
+pub fn dotfiles_core::error::DotfilesError::is_wrong_yaml(&self) -> bool
+pub fn dotfiles_core::error::DotfilesError::is_yaml_parse_error(&self) -> bool
+impl dotfiles_core::error::DotfilesError
+pub fn dotfiles_core::error::DotfilesError::error_type(&self) -> &dotfiles_core::error::ErrorType
+pub fn dotfiles_core::error::DotfilesError::message(&self) -> &alloc::string::String
+impl core::fmt::Display for dotfiles_core::error::DotfilesError
+pub fn dotfiles_core::error::DotfilesError::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::fmt::Debug for dotfiles_core::error::DotfilesError
+pub fn dotfiles_core::error::DotfilesError::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl !core::panic::unwind_safe::RefUnwindSafe for dotfiles_core::error::DotfilesError
+impl !core::panic::unwind_safe::UnwindSafe for dotfiles_core::error::DotfilesError
+impl core::marker::Send for dotfiles_core::error::DotfilesError
+impl core::marker::Sync for dotfiles_core::error::DotfilesError
+impl core::marker::Unpin for dotfiles_core::error::DotfilesError
+impl<T, U> core::convert::Into<U> for dotfiles_core::error::DotfilesError where U: core::convert::From<T>
+pub fn dotfiles_core::error::DotfilesError::into(self) -> U
+impl<T, U> core::convert::TryFrom<U> for dotfiles_core::error::DotfilesError where U: core::convert::Into<T>
+pub type dotfiles_core::error::DotfilesError::Error = core::convert::Infallible
+pub fn dotfiles_core::error::DotfilesError::try_from(value: U) -> core::result::Result<T, <T as core::convert::TryFrom<U>>::Error>
+impl<T, U> core::convert::TryInto<U> for dotfiles_core::error::DotfilesError where U: core::convert::TryFrom<T>
+pub type dotfiles_core::error::DotfilesError::Error = <U as core::convert::TryFrom<T>>::Error
+pub fn dotfiles_core::error::DotfilesError::try_into(self) -> core::result::Result<U, <U as core::convert::TryFrom<T>>::Error>
+impl<T> alloc::string::ToString for dotfiles_core::error::DotfilesError where T: core::fmt::Display + core::marker::Sized
+pub fn dotfiles_core::error::DotfilesError::to_string(&self) -> alloc::string::String
+impl<T> core::any::Any for dotfiles_core::error::DotfilesError where T: 'static + core::marker::Sized
+pub fn dotfiles_core::error::DotfilesError::type_id(&self) -> core::any::TypeId
+impl<T> core::borrow::Borrow<T> for dotfiles_core::error::DotfilesError where T: core::marker::Sized
+pub fn dotfiles_core::error::DotfilesError::borrow(&self) -> &T
+impl<T> core::borrow::BorrowMut<T> for dotfiles_core::error::DotfilesError where T: core::marker::Sized
+pub fn dotfiles_core::error::DotfilesError::borrow_mut(&mut self) -> &mut T
+impl<T> core::convert::From<T> for dotfiles_core::error::DotfilesError
+pub fn dotfiles_core::error::DotfilesError::from(t: T) -> T
+pub fn dotfiles_core::error::add_directive_error_prefix<'a, D, T>(dir: &'a D, res: core::result::Result<T, dotfiles_core::error::DotfilesError>) -> core::result::Result<T, dotfiles_core::error::DotfilesError> where D: dotfiles_core::directive::Directive<'a>
+pub fn dotfiles_core::error::execution_error(popen_error: core::option::Option<subprocess::popen::PopenError>, exit_status: core::option::Option<subprocess::os_common::ExitStatus>) -> dotfiles_core::error::ErrorType
+pub fn dotfiles_core::error::fold_until_first_err<I, Folded, Processed, F, P, E>(iterable: I, init: core::result::Result<Folded, E>, process_function: P, fold_function: F) -> core::result::Result<Folded, E> where I: core::iter::traits::collect::IntoIterator, F: core::ops::function::FnMut(Folded, Processed) -> core::result::Result<Folded, E>, P: core::ops::function::FnMut(<I as core::iter::traits::collect::IntoIterator>::Item) -> core::result::Result<Processed, E>
+pub fn dotfiles_core::error::process_until_first_err<I, F, E>(iterable: I, process_function: F) -> core::result::Result<(), E> where I: core::iter::traits::collect::IntoIterator, F: core::ops::function::FnMut(<I as core::iter::traits::collect::IntoIterator>::Item) -> core::result::Result<(), E>
+pub mod dotfiles_core::exec_wrapper
+pub fn dotfiles_core::exec_wrapper::execute_commands(cmds: alloc::vec::Vec<subprocess::builder::exec::Exec>, popen_error_message: &str, error_while_running_message: &str) -> core::result::Result<(), dotfiles_core::error::DotfilesError>
+pub mod dotfiles_core::path
+pub fn dotfiles_core::path::convert_path_to_absolute(file_name: &std::path::Path, current_dir: core::option::Option<&std::path::Path>) -> core::result::Result<std::path::PathBuf, dotfiles_core::error::DotfilesError>
+pub fn dotfiles_core::path::process_home_dir_in_path(value: &std::path::Path) -> std::path::PathBuf
+pub mod dotfiles_core::settings
+pub enum dotfiles_core::settings::Setting
+pub dotfiles_core::settings::Setting::Boolean(bool)
+pub dotfiles_core::settings::Setting::Integer(i64)
+pub dotfiles_core::settings::Setting::String(alloc::string::String)
+impl core::clone::Clone for dotfiles_core::settings::Setting
+pub fn dotfiles_core::settings::Setting::clone(&self) -> dotfiles_core::settings::Setting
+impl core::cmp::Eq for dotfiles_core::settings::Setting
+impl core::cmp::PartialEq<dotfiles_core::settings::Setting> for dotfiles_core::settings::Setting
+pub fn dotfiles_core::settings::Setting::eq(&self, other: &dotfiles_core::settings::Setting) -> bool
+impl core::fmt::Debug for dotfiles_core::settings::Setting
+pub fn dotfiles_core::settings::Setting::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::StructuralEq for dotfiles_core::settings::Setting
+impl core::marker::StructuralPartialEq for dotfiles_core::settings::Setting
+impl core::marker::Send for dotfiles_core::settings::Setting
+impl core::marker::Sync for dotfiles_core::settings::Setting
+impl core::marker::Unpin for dotfiles_core::settings::Setting
+impl core::panic::unwind_safe::RefUnwindSafe for dotfiles_core::settings::Setting
+impl core::panic::unwind_safe::UnwindSafe for dotfiles_core::settings::Setting
+impl<T, U> core::convert::Into<U> for dotfiles_core::settings::Setting where U: core::convert::From<T>
+pub fn dotfiles_core::settings::Setting::into(self) -> U
+impl<T, U> core::convert::TryFrom<U> for dotfiles_core::settings::Setting where U: core::convert::Into<T>
+pub type dotfiles_core::settings::Setting::Error = core::convert::Infallible
+pub fn dotfiles_core::settings::Setting::try_from(value: U) -> core::result::Result<T, <T as core::convert::TryFrom<U>>::Error>
+impl<T, U> core::convert::TryInto<U> for dotfiles_core::settings::Setting where U: core::convert::TryFrom<T>
+pub type dotfiles_core::settings::Setting::Error = <U as core::convert::TryFrom<T>>::Error
+pub fn dotfiles_core::settings::Setting::try_into(self) -> core::result::Result<U, <U as core::convert::TryFrom<T>>::Error>
+impl<T> alloc::borrow::ToOwned for dotfiles_core::settings::Setting where T: core::clone::Clone
+pub type dotfiles_core::settings::Setting::Owned = T
+pub fn dotfiles_core::settings::Setting::clone_into(&self, target: &mut T)
+pub fn dotfiles_core::settings::Setting::to_owned(&self) -> T
+impl<T> core::any::Any for dotfiles_core::settings::Setting where T: 'static + core::marker::Sized
+pub fn dotfiles_core::settings::Setting::type_id(&self) -> core::any::TypeId
+impl<T> core::borrow::Borrow<T> for dotfiles_core::settings::Setting where T: core::marker::Sized
+pub fn dotfiles_core::settings::Setting::borrow(&self) -> &T
+impl<T> core::borrow::BorrowMut<T> for dotfiles_core::settings::Setting where T: core::marker::Sized
+pub fn dotfiles_core::settings::Setting::borrow_mut(&mut self) -> &mut T
+impl<T> core::convert::From<T> for dotfiles_core::settings::Setting
+pub fn dotfiles_core::settings::Setting::from(t: T) -> T
+pub fn dotfiles_core::settings::initialize_settings_object(settings: &[(alloc::string::String, dotfiles_core::settings::Setting)]) -> dotfiles_core::settings::Settings
+pub fn dotfiles_core::settings::parse_setting(setting_type: &dotfiles_core::settings::Setting, yaml: &strict_yaml_rust::strict_yaml::StrictYaml) -> core::result::Result<dotfiles_core::settings::Setting, dotfiles_core::error::DotfilesError>
+pub type dotfiles_core::settings::Settings = std::collections::hash::map::HashMap<alloc::string::String, dotfiles_core::settings::Setting>
+pub mod dotfiles_core::yaml_util
+pub fn dotfiles_core::yaml_util::fold_hash_until_first_err<T, P, Processed, F>(yaml: &strict_yaml_rust::strict_yaml::StrictYaml, init: core::result::Result<T, dotfiles_core::error::DotfilesError>, process_function: P, fold_function: F) -> core::result::Result<T, dotfiles_core::error::DotfilesError> where P: core::ops::function::FnMut(alloc::string::String, &strict_yaml_rust::strict_yaml::StrictYaml) -> core::result::Result<Processed, dotfiles_core::error::DotfilesError>, F: core::ops::function::FnMut(T, Processed) -> core::result::Result<T, dotfiles_core::error::DotfilesError>
+pub fn dotfiles_core::yaml_util::get_boolean_from_yaml_hash(name: &str, yaml: &strict_yaml_rust::strict_yaml::StrictYaml) -> core::result::Result<bool, dotfiles_core::error::DotfilesError>
+pub fn dotfiles_core::yaml_util::get_boolean_setting_from_context(name: &str, context_settings: &dotfiles_core::settings::Settings, directive_defaults: &dotfiles_core::settings::Settings) -> core::result::Result<bool, dotfiles_core::error::DotfilesError>
+pub fn dotfiles_core::yaml_util::get_boolean_setting_from_yaml_or_context(name: &str, yaml: &strict_yaml_rust::strict_yaml::StrictYaml, context_settings: &dotfiles_core::settings::Settings, directive_defaults: &dotfiles_core::settings::Settings) -> core::result::Result<bool, dotfiles_core::error::DotfilesError>
+pub fn dotfiles_core::yaml_util::get_integer_from_yaml_hash(name: &str, yaml: &strict_yaml_rust::strict_yaml::StrictYaml) -> core::result::Result<i64, dotfiles_core::error::DotfilesError>
+pub fn dotfiles_core::yaml_util::get_integer_setting(name: &str, context_settings: &dotfiles_core::settings::Settings, directive_defaults: &dotfiles_core::settings::Settings) -> core::result::Result<i64, dotfiles_core::error::DotfilesError>
+pub fn dotfiles_core::yaml_util::get_integer_setting_from_yaml_or_context(name: &str, yaml: &strict_yaml_rust::strict_yaml::StrictYaml, context_settings: &dotfiles_core::settings::Settings, directive_defaults: &dotfiles_core::settings::Settings) -> core::result::Result<i64, dotfiles_core::error::DotfilesError>
+pub fn dotfiles_core::yaml_util::get_optional_string_array_from_yaml_hash(name: &str, yaml: &strict_yaml_rust::strict_yaml::StrictYaml) -> core::result::Result<alloc::vec::Vec<alloc::string::String>, dotfiles_core::error::DotfilesError>
+pub fn dotfiles_core::yaml_util::get_setting_from_context(name: &str, context_settings: &dotfiles_core::settings::Settings, directive_defaults: &dotfiles_core::settings::Settings) -> core::result::Result<dotfiles_core::settings::Setting, dotfiles_core::error::DotfilesError>
+pub fn dotfiles_core::yaml_util::get_setting_from_yaml_hash(name: &str, setting_type: &dotfiles_core::settings::Setting, yaml: &strict_yaml_rust::strict_yaml::StrictYaml) -> core::result::Result<dotfiles_core::settings::Setting, dotfiles_core::error::DotfilesError>
+pub fn dotfiles_core::yaml_util::get_string_array_from_yaml_hash(name: &str, yaml: &strict_yaml_rust::strict_yaml::StrictYaml) -> core::result::Result<alloc::vec::Vec<alloc::string::String>, dotfiles_core::error::DotfilesError>
+pub fn dotfiles_core::yaml_util::get_string_content_or_keyed_value(yaml: &strict_yaml_rust::strict_yaml::StrictYaml, key: core::option::Option<&str>) -> core::result::Result<alloc::string::String, dotfiles_core::error::DotfilesError>
+pub fn dotfiles_core::yaml_util::get_string_from_yaml_hash(name: &str, yaml: &strict_yaml_rust::strict_yaml::StrictYaml) -> core::result::Result<alloc::string::String, dotfiles_core::error::DotfilesError>
+pub fn dotfiles_core::yaml_util::get_string_setting(name: &str, context_settings: &dotfiles_core::settings::Settings, directive_defaults: &dotfiles_core::settings::Settings) -> core::result::Result<alloc::string::String, dotfiles_core::error::DotfilesError>
+pub fn dotfiles_core::yaml_util::get_string_setting_from_yaml_or_context(name: &str, yaml: &strict_yaml_rust::strict_yaml::StrictYaml, context_settings: &dotfiles_core::settings::Settings, directive_defaults: &dotfiles_core::settings::Settings) -> core::result::Result<alloc::string::String, dotfiles_core::error::DotfilesError>
+pub fn dotfiles_core::yaml_util::map_yaml_array<T, F>(yaml_array: &strict_yaml_rust::strict_yaml::StrictYaml, process: F) -> core::result::Result<alloc::vec::Vec<T>, dotfiles_core::error::DotfilesError> where F: core::ops::function::FnMut(&strict_yaml_rust::strict_yaml::StrictYaml) -> core::result::Result<T, dotfiles_core::error::DotfilesError>
+pub fn dotfiles_core::yaml_util::parse_as_array(yaml: &strict_yaml_rust::strict_yaml::StrictYaml) -> core::result::Result<alloc::vec::Vec<strict_yaml_rust::strict_yaml::StrictYaml>, dotfiles_core::error::DotfilesError>
+pub fn dotfiles_core::yaml_util::parse_as_boolean(yaml: &strict_yaml_rust::strict_yaml::StrictYaml) -> core::result::Result<bool, dotfiles_core::error::DotfilesError>
+pub fn dotfiles_core::yaml_util::parse_as_integer(yaml: &strict_yaml_rust::strict_yaml::StrictYaml) -> core::result::Result<i64, dotfiles_core::error::DotfilesError>
+pub fn dotfiles_core::yaml_util::parse_as_string(yaml_to_parse: &strict_yaml_rust::strict_yaml::StrictYaml) -> core::result::Result<alloc::string::String, dotfiles_core::error::DotfilesError>
+pub fn dotfiles_core::yaml_util::parse_as_string_array(yaml: &strict_yaml_rust::strict_yaml::StrictYaml) -> core::result::Result<alloc::vec::Vec<alloc::string::String>, dotfiles_core::error::DotfilesError>
+pub fn dotfiles_core::yaml_util::process_value_from_yaml_hash<T, F>(key: &str, yaml_hash: &strict_yaml_rust::strict_yaml::StrictYaml, process: F) -> core::result::Result<T, dotfiles_core::error::DotfilesError> where F: core::ops::function::FnMut(&strict_yaml_rust::strict_yaml::StrictYaml) -> core::result::Result<T, dotfiles_core::error::DotfilesError>
+pub fn dotfiles_core::yaml_util::process_yaml_hash_until_first_err<F>(yaml_hash: &strict_yaml_rust::strict_yaml::StrictYaml, process_function: F) -> core::result::Result<(), dotfiles_core::error::DotfilesError> where F: core::ops::function::FnMut(alloc::string::String, &strict_yaml_rust::strict_yaml::StrictYaml) -> core::result::Result<(), dotfiles_core::error::DotfilesError>
+pub fn dotfiles_core::yaml_util::read_yaml_file(file: &std::path::Path) -> core::result::Result<alloc::vec::Vec<strict_yaml_rust::strict_yaml::StrictYaml>, dotfiles_core::error::DotfilesError>
+pub enum dotfiles_core::Setting
+pub dotfiles_core::Setting::Boolean(bool)
+pub dotfiles_core::Setting::Integer(i64)
+pub dotfiles_core::Setting::String(alloc::string::String)
+impl core::clone::Clone for dotfiles_core::settings::Setting
+pub fn dotfiles_core::Setting::clone(&self) -> dotfiles_core::settings::Setting
+impl core::cmp::Eq for dotfiles_core::settings::Setting
+impl core::cmp::PartialEq<dotfiles_core::settings::Setting> for dotfiles_core::settings::Setting
+pub fn dotfiles_core::Setting::eq(&self, other: &dotfiles_core::settings::Setting) -> bool
+impl core::fmt::Debug for dotfiles_core::settings::Setting
+pub fn dotfiles_core::Setting::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::StructuralEq for dotfiles_core::settings::Setting
+impl core::marker::StructuralPartialEq for dotfiles_core::settings::Setting
+impl core::marker::Send for dotfiles_core::settings::Setting
+impl core::marker::Sync for dotfiles_core::settings::Setting
+impl core::marker::Unpin for dotfiles_core::settings::Setting
+impl core::panic::unwind_safe::RefUnwindSafe for dotfiles_core::settings::Setting
+impl core::panic::unwind_safe::UnwindSafe for dotfiles_core::settings::Setting
+impl<T, U> core::convert::Into<U> for dotfiles_core::settings::Setting where U: core::convert::From<T>
+pub fn dotfiles_core::Setting::into(self) -> U
+impl<T, U> core::convert::TryFrom<U> for dotfiles_core::settings::Setting where U: core::convert::Into<T>
+pub type dotfiles_core::Setting::Error = core::convert::Infallible
+pub fn dotfiles_core::Setting::try_from(value: U) -> core::result::Result<T, <T as core::convert::TryFrom<U>>::Error>
+impl<T, U> core::convert::TryInto<U> for dotfiles_core::settings::Setting where U: core::convert::TryFrom<T>
+pub type dotfiles_core::Setting::Error = <U as core::convert::TryFrom<T>>::Error
+pub fn dotfiles_core::Setting::try_into(self) -> core::result::Result<U, <U as core::convert::TryFrom<T>>::Error>
+impl<T> alloc::borrow::ToOwned for dotfiles_core::settings::Setting where T: core::clone::Clone
+pub type dotfiles_core::Setting::Owned = T
+pub fn dotfiles_core::Setting::clone_into(&self, target: &mut T)
+pub fn dotfiles_core::Setting::to_owned(&self) -> T
+impl<T> core::any::Any for dotfiles_core::settings::Setting where T: 'static + core::marker::Sized
+pub fn dotfiles_core::Setting::type_id(&self) -> core::any::TypeId
+impl<T> core::borrow::Borrow<T> for dotfiles_core::settings::Setting where T: core::marker::Sized
+pub fn dotfiles_core::Setting::borrow(&self) -> &T
+impl<T> core::borrow::BorrowMut<T> for dotfiles_core::settings::Setting where T: core::marker::Sized
+pub fn dotfiles_core::Setting::borrow_mut(&mut self) -> &mut T
+impl<T> core::convert::From<T> for dotfiles_core::settings::Setting
+pub fn dotfiles_core::Setting::from(t: T) -> T
+pub trait dotfiles_core::Action<'a>
+pub fn dotfiles_core::Action::execute(&self) -> core::result::Result<(), dotfiles_core::error::DotfilesError>
+pub trait dotfiles_core::Directive<'a>: dotfiles_core::directive::HasDirectiveData<'a>
+pub fn dotfiles_core::Directive::get_setting_from_yaml_hash(&'a self, name: &str, yaml: &strict_yaml_rust::strict_yaml::StrictYaml) -> core::result::Result<dotfiles_core::settings::Setting, dotfiles_core::error::DotfilesError>
+pub fn dotfiles_core::Directive::get_setting_from_yaml_hash_or_from_context(&'a self, name: &str, yaml: &strict_yaml_rust::strict_yaml::StrictYaml, context_settings: &dotfiles_core::settings::Settings) -> core::result::Result<dotfiles_core::settings::Setting, dotfiles_core::error::DotfilesError>
+pub type dotfiles_core::Settings = std::collections::hash::map::HashMap<alloc::string::String, dotfiles_core::settings::Setting>
