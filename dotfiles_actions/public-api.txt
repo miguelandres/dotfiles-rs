@@ -407,7 +407,7 @@ pub fn dotfiles_actions::homebrew_install::action::HomebrewInstallAction::from(t
 impl<V, T> ppv_lite86::types::VZip<V> for dotfiles_actions::homebrew_install::action::HomebrewInstallAction where V: ppv_lite86::types::MultiLane<T>
 pub fn dotfiles_actions::homebrew_install::action::HomebrewInstallAction::vzip(self) -> V
 pub mod dotfiles_actions::install_command
-pub trait dotfiles_actions::install_command::InstallCommand<F> where F: core::fmt::Display
+pub trait dotfiles_actions::install_command::InstallCommand<F: core::fmt::Display>
 pub fn dotfiles_actions::install_command::InstallCommand::action_description(&self) -> &str
 pub fn dotfiles_actions::install_command::InstallCommand::action_name(&self) -> &str
 pub fn dotfiles_actions::install_command::InstallCommand::args(&self) -> &alloc::vec::Vec<alloc::string::String>

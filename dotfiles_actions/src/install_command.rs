@@ -28,10 +28,7 @@ use subprocess::Exec;
 
 /// Trait that represents a command that installs an item using an action (brew install, brew
 /// install cask, apt install...)
-pub trait InstallCommand<F>
-where
-  F: Display,
-{
+pub trait InstallCommand<F: Display> {
   /// The base command to run
   fn base_command(&self) -> Exec;
   /// The arguments to pass to the command
