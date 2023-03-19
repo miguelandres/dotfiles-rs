@@ -60,6 +60,12 @@
 <a href="#60" id="60">60</a>
 <a href="#61" id="61">61</a>
 <a href="#62" id="62">62</a>
+<a href="#63" id="63">63</a>
+<a href="#64" id="64">64</a>
+<a href="#65" id="65">65</a>
+<a href="#66" id="66">66</a>
+<a href="#67" id="67">67</a>
+<a href="#68" id="68">68</a>
 </pre><pre class="rust"><code><span class="comment">// Copyright (c) 2021-2022 Miguel Barreto and others
 //
 // Permission is hereby granted, free of charge, to any person obtaining
@@ -101,22 +107,28 @@
   </span><span class="kw">fn </span>action_name(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="kw-2">&amp;</span>str;
 
   <span class="doccomment">/// The item actually being installed, for example a homebrew formula.
-  </span><span class="kw">fn </span>item(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="kw-2">&amp;</span>F;
+  </span><span class="kw">fn </span>items(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="kw-2">&amp;</span>Vec&lt;F&gt;;
+
+  <span class="doccomment">/// a list of items to display
+  </span><span class="kw">fn </span>formatted_item_list(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; Vec&lt;String&gt; {
+    <span class="self">self</span>.items().iter().map(|it| <span class="macro">format!</span>(<span class="string">&quot;{}&quot;</span>, it)).collect()
+  }
 
   <span class="doccomment">/// Runs the command to execut
   </span><span class="kw">fn </span>execute(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="prelude-ty">Result</span>&lt;(), DotfilesError&gt; {
-    <span class="macro">info!</span>(<span class="string">&quot;{} {}&quot;</span>, <span class="self">self</span>.action_description(), <span class="self">self</span>.item());
+    <span class="kw">let </span>item_list: String = <span class="self">self</span>.formatted_item_list().join(<span class="string">&quot;, &quot;</span>).into();
+    <span class="macro">info!</span>(<span class="string">&quot;{} {}&quot;</span>, <span class="self">self</span>.action_description(), item_list);
     <span class="kw">let </span><span class="kw-2">mut </span>cmd = <span class="self">self</span>.base_command();
     <span class="kw">for </span>arg <span class="kw">in </span><span class="self">self</span>.args().iter() {
       cmd = cmd.arg(arg);
     }
     execute_commands(
       <span class="macro">vec!</span>[cmd],
-      <span class="macro">format!</span>(<span class="string">&quot;Couldn&#39;t {} {}&quot;</span>, <span class="self">self</span>.action_name(), <span class="self">self</span>.item()).as_str(),
+      <span class="macro">format!</span>(<span class="string">&quot;Couldn&#39;t {} {}&quot;</span>, <span class="self">self</span>.action_name(), item_list).as_str(),
       <span class="macro">format!</span>(
         <span class="string">&quot;Unexpected error while {} {}&quot;</span>,
         <span class="self">self</span>.action_description(),
-        <span class="self">self</span>.item()
+        <span class="kw-2">&amp;</span>item_list
       )
       .as_str(),
     )

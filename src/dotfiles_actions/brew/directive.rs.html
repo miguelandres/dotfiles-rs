@@ -173,7 +173,6 @@
 <a href="#173" id="173">173</a>
 <a href="#174" id="174">174</a>
 <a href="#175" id="175">175</a>
-<a href="#176" id="176">176</a>
 </pre><pre class="rust"><code><span class="comment">// Copyright (c) 2021-2022 Miguel Barreto and others
 //
 // Permission is hereby granted, free of charge, to any person obtaining
@@ -199,6 +198,8 @@
 </span><span class="kw">extern crate </span>strict_yaml_rust;
 
 <span class="kw">use </span><span class="kw">crate</span>::brew::action::BrewAction;
+<span class="attr">#[cfg(target_os = <span class="string">&quot;macos&quot;</span>)]
+</span><span class="kw">use </span><span class="kw">crate</span>::brew::action::MacAppStoreItem;
 <span class="kw">use </span>dotfiles_core::action::ActionParser;
 <span class="kw">use </span>dotfiles_core::action::SKIP_IN_CI_SETTING;
 <span class="kw">use </span>dotfiles_core::directive::DirectiveData;
@@ -211,9 +212,6 @@
 <span class="kw">use </span>dotfiles_core::settings::Settings;
 <span class="kw">use </span>dotfiles_core::yaml_util::<span class="kw-2">*</span>;
 <span class="kw">use </span>dotfiles_core_macros::Directive;
-
-<span class="attr">#[cfg(target_os = <span class="string">&quot;macos&quot;</span>)]
-</span><span class="kw">use </span><span class="kw">crate</span>::brew::action::MacAppStoreCommand;
 
 <span class="kw">use </span>std::marker::PhantomData;
 <span class="kw">use </span>std::path::Path;
@@ -286,7 +284,7 @@
     </span><span class="kw">let </span>mas_apps = process_value_from_yaml_hash(<span class="string">&quot;mas&quot;</span>, yaml, |mas_yaml| {
       fold_hash_until_first_err(
         mas_yaml,
-        <span class="prelude-val">Ok</span>(Vec::&lt;MacAppStoreCommand&gt;::new()),
+        <span class="prelude-val">Ok</span>(Vec::&lt;MacAppStoreItem&gt;::new()),
         |key, val| {
           <span class="prelude-val">Ok</span>((
             val
@@ -309,7 +307,7 @@
           ))
         },
         |<span class="kw-2">mut </span>list, item| {
-          list.push(MacAppStoreCommand::from(item));
+          list.push(MacAppStoreItem::from(item));
           <span class="prelude-val">Ok</span>(list)
         },
       )
