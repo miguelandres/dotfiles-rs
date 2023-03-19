@@ -54,7 +54,7 @@ fn brew_directive_parsed() -> Result<(), DotfilesError> {
 #[cfg(target_os = "macos")]
 #[test]
 fn brew_directive_with_mas_parsed() -> Result<(), DotfilesError> {
-  use dotfiles_actions::brew::action::MacAppStoreCommand;
+  use dotfiles_actions::brew::action::MacAppStoreItem;
 
   let default_settings = Settings::new();
   let yaml = read_test_yaml("directive/brew/with_mas.yaml")
@@ -76,15 +76,11 @@ fn brew_directive_with_mas_parsed() -> Result<(), DotfilesError> {
   assert_eq!(action.casks().to_owned(), vec!["firefox"]);
   assert_eq!(action.formulae().to_owned(), vec!["fzf", "zsh"]);
 
-  assert_eq!(
-    action.mas_apps().clone(),
-    vec![
-      (i64::from(123), "Excel".to_owned()),
-      (i64::from(155), "Microsoft Word".to_owned())
-    ]
-    .into_iter()
-    .map(MacAppStoreCommand::from)
-    .collect::<Vec<MacAppStoreCommand>>(),
-  );
+  let apps = vec![
+    MacAppStoreItem::from((i64::from(123), "Excel".to_owned())),
+    MacAppStoreItem::from((i64::from(155), "Microsoft Word".to_owned())),
+  ];
+
+  assert_eq!(action.mas_apps().clone(), apps);
   Ok(())
 }

@@ -28,6 +28,7 @@ use dotfiles_core::action::Action;
 use dotfiles_core::error::DotfilesError;
 use dotfiles_core_macros::ConditionalAction;
 use getset::Getters;
+use log::info;
 #[cfg(target_os = "macos")]
 use std::fmt::Display;
 use std::marker::PhantomData;
@@ -45,27 +46,36 @@ pub struct MacAppStoreItem {
 }
 
 #[cfg(target_os = "macos")]
+impl From<(i64, String)> for MacAppStoreItem {
+  fn from(value: (i64, String)) -> Self {
+    MacAppStoreItem {
+      id: value.0,
+      name: value.1,
+    }
+  }
+}
+
+#[cfg(target_os = "macos")]
 impl Display for MacAppStoreItem {
   fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
     write!(f, "id: {}, name: {}", self.id, self.name)
   }
 }
+
 #[cfg(target_os = "macos")]
 #[derive(Eq, PartialEq, Debug, Clone)]
 /// Command to download something from the mac app store
 pub struct MacAppStoreCommand {
-  item: MacAppStoreItem,
+  items: Vec<MacAppStoreItem>,
   args: Vec<String>,
 }
+
 #[cfg(target_os = "macos")]
-impl From<(i64, String)> for MacAppStoreCommand {
-  fn from(value: (i64, String)) -> Self {
-    let (id, name) = value;
-    {
-      let item = MacAppStoreItem { id, name };
-      let args = vec!["install".to_string(), item.id().to_string()];
-      MacAppStoreCommand { item, args }
-    }
+impl From<Vec<MacAppStoreItem>> for MacAppStoreCommand {
+  fn from(items: Vec<MacAppStoreItem>) -> Self {
+    let mut args: Vec<String> = items.iter().map(|it| it.id().to_string()).collect();
+    args.insert(0, "install".into());
+    MacAppStoreCommand { items, args }
   }
 }
 
@@ -83,17 +93,41 @@ impl InstallCommand<MacAppStoreItem> for MacAppStoreCommand {
     "Installing from Mac App Store"
   }
 
-  fn item(&self) -> &MacAppStoreItem {
-    &self.item
+  fn items(&self) -> &Vec<MacAppStoreItem> {
+    &self.items
   }
 
   fn action_name(&self) -> &str {
     "mas"
   }
+
+  fn execute(&self) -> Result<(), DotfilesError> {
+    let item_list: String = self
+      .items()
+      .iter()
+      .map(|it| format!("{}", it))
+      .collect::<Vec<String>>()
+      .join(", ");
+    info!("{} {}", self.action_description(), item_list);
+    let mut cmd = self.base_command();
+    for arg in self.args().iter() {
+      cmd = cmd.arg(arg);
+    }
+    dotfiles_core::exec_wrapper::execute_commands(
+      vec![cmd],
+      format!("Couldn't {} {}", self.action_name(), item_list).as_str(),
+      format!(
+        "Unexpected error while {} {}",
+        self.action_description(),
+        &item_list
+      )
+      .as_str(),
+    )
+  }
 }
 
 struct BrewCommand {
-  item: String,
+  items: Vec<String>,
   args: Vec<String>,
   action_name: String,
   action_description: String,
@@ -112,8 +146,8 @@ impl InstallCommand<String> for BrewCommand {
     &self.action_description
   }
 
-  fn item(&self) -> &String {
-    &self.item
+  fn items(&self) -> &Vec<String> {
+    &self.items
   }
 
   fn action_name(&self) -> &str {
@@ -121,28 +155,42 @@ impl InstallCommand<String> for BrewCommand {
   }
 }
 impl BrewCommand {
-  fn tap(item: &str) -> BrewCommand {
+  fn tap(items: &Vec<String>) -> BrewCommand {
+    let mut args: Vec<String> = items.clone();
+    args.insert(0, "tap".into());
     BrewCommand {
-      item: item.into(),
-      args: vec!["tap".into(), item.into()],
+      items: items.clone(),
+      args: args,
       action_name: "tap".into(),
       action_description: "tapping".into(),
     }
   }
 
-  fn install_formula(item: &str) -> BrewCommand {
+  fn install_formulae(items: &Vec<String>) -> BrewCommand {
+    let mut args: Vec<String> = items.clone();
+    args.insert(0, "install".into());
     BrewCommand {
-      item: item.into(),
-      args: vec!["install".into(), item.into()],
+      items: items.clone(),
+      args: args,
       action_name: "install formula".into(),
       action_description: "installing formula".into(),
     }
   }
 
-  fn install_cask(item: &str) -> BrewCommand {
+  fn install_casks(items: &Vec<String>, force: &bool) -> BrewCommand {
+    let mut args = vec!["install".into(), "--cask".into()];
+    if *force {
+      args.push("--force".into())
+    }
+    {
+      let mut items = items.clone();
+      args.append(&mut items)
+    }
+    let args = args;
+    let items = items.clone();
     BrewCommand {
-      item: item.into(),
-      args: vec!["install".into(), "--cask".into(), item.into()],
+      items,
+      args,
       action_name: "install cask".into(),
       action_description: "installing cask".into(),
     }
@@ -174,7 +222,7 @@ pub struct BrewAction<'a> {
   #[cfg(target_os = "macos")]
   /// List of Mac OS apps to install from the App Store
   #[get = "pub"]
-  mas_apps: Vec<MacAppStoreCommand>,
+  mas_apps: Vec<MacAppStoreItem>,
   phantom_data: PhantomData<&'a String>,
 }
 impl<'a> BrewAction<'a> {
@@ -185,7 +233,7 @@ impl<'a> BrewAction<'a> {
     taps: Vec<String>,
     formulae: Vec<String>,
     casks: Vec<String>,
-    #[cfg(target_os = "macos")] mas_apps: Vec<MacAppStoreCommand>,
+    #[cfg(target_os = "macos")] mas_apps: Vec<MacAppStoreItem>,
   ) -> Self {
     let action = BrewAction {
       skip_in_ci,
@@ -204,15 +252,9 @@ impl<'a> BrewAction<'a> {
 
 impl Action<'_> for BrewAction<'_> {
   fn execute(&self) -> Result<(), DotfilesError> {
-    for tap in &self.taps {
-      BrewCommand::tap(tap).execute()?;
-    }
-    for formula in &self.formulae {
-      BrewCommand::install_formula(formula).execute()?;
-    }
-    for cask in &self.casks {
-      BrewCommand::install_cask(cask).execute()?;
-    }
+    BrewCommand::tap(&self.taps).execute()?;
+    BrewCommand::install_formulae(&self.formulae).execute()?;
+    BrewCommand::install_casks(&self.casks, self.force_casks()).execute()?;
     Ok(())
   }
 }

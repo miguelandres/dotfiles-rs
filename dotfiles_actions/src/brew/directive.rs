@@ -23,6 +23,8 @@
 extern crate strict_yaml_rust;
 
 use crate::brew::action::BrewAction;
+#[cfg(target_os = "macos")]
+use crate::brew::action::MacAppStoreItem;
 use dotfiles_core::action::ActionParser;
 use dotfiles_core::action::SKIP_IN_CI_SETTING;
 use dotfiles_core::directive::DirectiveData;
@@ -35,9 +37,6 @@ use dotfiles_core::settings::Setting;
 use dotfiles_core::settings::Settings;
 use dotfiles_core::yaml_util::*;
 use dotfiles_core_macros::Directive;
-
-#[cfg(target_os = "macos")]
-use crate::brew::action::MacAppStoreCommand;
 
 use std::marker::PhantomData;
 use std::path::Path;
@@ -110,7 +109,7 @@ impl<'a> ActionParser<'a> for BrewDirective<'a> {
     let mas_apps = process_value_from_yaml_hash("mas", yaml, |mas_yaml| {
       fold_hash_until_first_err(
         mas_yaml,
-        Ok(Vec::<MacAppStoreCommand>::new()),
+        Ok(Vec::<MacAppStoreItem>::new()),
         |key, val| {
           Ok((
             val
@@ -133,7 +132,7 @@ impl<'a> ActionParser<'a> for BrewDirective<'a> {
           ))
         },
         |mut list, item| {
-          list.push(MacAppStoreCommand::from(item));
+          list.push(MacAppStoreItem::from(item));
           Ok(list)
         },
       )

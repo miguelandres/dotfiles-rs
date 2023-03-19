@@ -36,12 +36,6 @@ fn apt_directive_parsed() -> Result<(), DotfilesError> {
     .unwrap();
   let directive = AptDirective::default();
   let action = directive.parse_action(&default_settings, &yaml, &PathBuf::from("/home/user"))?;
-  assert_eq!(
-    action.packages().to_owned(),
-    Vec::from([
-      "fzf",
-      "zsh",
-    ])
-  );
+  assert_eq!(action.packages().to_owned(), Vec::from(["fzf", "zsh",]));
   Ok(())
 }

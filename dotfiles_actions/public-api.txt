@@ -1,89 +1,4 @@
 pub mod dotfiles_actions
-pub mod dotfiles_actions::apt
-pub mod dotfiles_actions::apt::action
-pub struct dotfiles_actions::apt::action::AptAction<'a>
-impl<'a> dotfiles_actions::apt::action::AptAction<'a>
-pub fn dotfiles_actions::apt::action::AptAction::new(skip_in_ci: bool, packages: alloc::vec::Vec<alloc::string::String>) -> Self
-impl<'a> dotfiles_actions::apt::action::AptAction<'a>
-pub fn dotfiles_actions::apt::action::AptAction::packages(&self) -> &alloc::vec::Vec<alloc::string::String>
-pub fn dotfiles_actions::apt::action::AptAction::skip_in_ci(&self) -> &bool
-impl dotfiles_core::action::Action<'_> for dotfiles_actions::apt::action::AptAction<'_>
-pub fn dotfiles_actions::apt::action::AptAction::execute(&self) -> core::result::Result<(), dotfiles_core::error::DotfilesError>
-impl<'a> core::cmp::Eq for dotfiles_actions::apt::action::AptAction<'a>
-impl<'a> core::cmp::PartialEq<dotfiles_actions::apt::action::AptAction<'a>> for dotfiles_actions::apt::action::AptAction<'a>
-pub fn dotfiles_actions::apt::action::AptAction::eq(&self, other: &dotfiles_actions::apt::action::AptAction<'a>) -> bool
-impl<'a> core::fmt::Debug for dotfiles_actions::apt::action::AptAction<'a>
-pub fn dotfiles_actions::apt::action::AptAction::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
-impl<'a> core::marker::StructuralEq for dotfiles_actions::apt::action::AptAction<'a>
-impl<'a> core::marker::StructuralPartialEq for dotfiles_actions::apt::action::AptAction<'a>
-impl<'a> dotfiles_core::action::ConditionalAction<'a> for dotfiles_actions::apt::action::AptAction<'a>
-pub fn dotfiles_actions::apt::action::AptAction::skip_in_ci(&self) -> bool
-impl<'a> core::marker::Send for dotfiles_actions::apt::action::AptAction<'a>
-impl<'a> core::marker::Sync for dotfiles_actions::apt::action::AptAction<'a>
-impl<'a> core::marker::Unpin for dotfiles_actions::apt::action::AptAction<'a>
-impl<'a> core::panic::unwind_safe::RefUnwindSafe for dotfiles_actions::apt::action::AptAction<'a>
-impl<'a> core::panic::unwind_safe::UnwindSafe for dotfiles_actions::apt::action::AptAction<'a>
-impl<T, U> core::convert::Into<U> for dotfiles_actions::apt::action::AptAction<'a> where U: core::convert::From<T>
-pub fn dotfiles_actions::apt::action::AptAction::into(self) -> U
-impl<T, U> core::convert::TryFrom<U> for dotfiles_actions::apt::action::AptAction<'a> where U: core::convert::Into<T>
-pub type dotfiles_actions::apt::action::AptAction::Error = core::convert::Infallible
-pub fn dotfiles_actions::apt::action::AptAction::try_from(value: U) -> core::result::Result<T, <T as core::convert::TryFrom<U>>::Error>
-impl<T, U> core::convert::TryInto<U> for dotfiles_actions::apt::action::AptAction<'a> where U: core::convert::TryFrom<T>
-pub type dotfiles_actions::apt::action::AptAction::Error = <U as core::convert::TryFrom<T>>::Error
-pub fn dotfiles_actions::apt::action::AptAction::try_into(self) -> core::result::Result<U, <U as core::convert::TryFrom<T>>::Error>
-impl<T> core::any::Any for dotfiles_actions::apt::action::AptAction<'a> where T: 'static + core::marker::Sized
-pub fn dotfiles_actions::apt::action::AptAction::type_id(&self) -> core::any::TypeId
-impl<T> core::borrow::Borrow<T> for dotfiles_actions::apt::action::AptAction<'a> where T: core::marker::Sized
-pub fn dotfiles_actions::apt::action::AptAction::borrow(&self) -> &T
-impl<T> core::borrow::BorrowMut<T> for dotfiles_actions::apt::action::AptAction<'a> where T: core::marker::Sized
-pub fn dotfiles_actions::apt::action::AptAction::borrow_mut(&mut self) -> &mut T
-impl<T> core::convert::From<T> for dotfiles_actions::apt::action::AptAction<'a>
-pub fn dotfiles_actions::apt::action::AptAction::from(t: T) -> T
-impl<V, T> ppv_lite86::types::VZip<V> for dotfiles_actions::apt::action::AptAction<'a> where V: ppv_lite86::types::MultiLane<T>
-pub fn dotfiles_actions::apt::action::AptAction::vzip(self) -> V
-pub mod dotfiles_actions::apt::directive
-pub struct dotfiles_actions::apt::directive::AptDirective<'a>
-impl<'a> core::default::Default for dotfiles_actions::apt::directive::AptDirective<'a>
-pub fn dotfiles_actions::apt::directive::AptDirective::default() -> dotfiles_actions::apt::directive::AptDirective<'a>
-impl<'a> dotfiles_core::action::ActionParser<'a> for dotfiles_actions::apt::directive::AptDirective<'a>
-pub type dotfiles_actions::apt::directive::AptDirective::ActionType = dotfiles_actions::apt::action::AptAction<'a>
-pub fn dotfiles_actions::apt::directive::AptDirective::parse_action(&'a self, context_settings: &dotfiles_core::settings::Settings, yaml: &strict_yaml_rust::strict_yaml::StrictYaml, &std::path::Path) -> core::result::Result<dotfiles_actions::apt::action::AptAction<'a>, dotfiles_core::error::DotfilesError>
-pub fn dotfiles_actions::apt::directive::AptDirective::parse_action_list(&'a self, context_settings: &dotfiles_core::settings::Settings, yaml: &strict_yaml_rust::strict_yaml::StrictYaml, current_dir: &std::path::Path) -> core::result::Result<alloc::vec::Vec<dotfiles_actions::apt::action::AptAction<'a>>, dotfiles_core::error::DotfilesError>
-impl<'a> core::clone::Clone for dotfiles_actions::apt::directive::AptDirective<'a>
-pub fn dotfiles_actions::apt::directive::AptDirective::clone(&self) -> dotfiles_actions::apt::directive::AptDirective<'a>
-impl<'a> dotfiles_core::directive::Directive<'a> for dotfiles_actions::apt::directive::AptDirective<'a>
-impl<'a> dotfiles_core::directive::HasDirectiveData<'a> for dotfiles_actions::apt::directive::AptDirective<'a>
-pub fn dotfiles_actions::apt::directive::AptDirective::directive_data(&'a self) -> &'a dotfiles_core::directive::DirectiveData
-impl<'a> core::marker::Send for dotfiles_actions::apt::directive::AptDirective<'a>
-impl<'a> core::marker::Sync for dotfiles_actions::apt::directive::AptDirective<'a>
-impl<'a> core::marker::Unpin for dotfiles_actions::apt::directive::AptDirective<'a>
-impl<'a> core::panic::unwind_safe::RefUnwindSafe for dotfiles_actions::apt::directive::AptDirective<'a>
-impl<'a> core::panic::unwind_safe::UnwindSafe for dotfiles_actions::apt::directive::AptDirective<'a>
-impl<T, U> core::convert::Into<U> for dotfiles_actions::apt::directive::AptDirective<'a> where U: core::convert::From<T>
-pub fn dotfiles_actions::apt::directive::AptDirective::into(self) -> U
-impl<T, U> core::convert::TryFrom<U> for dotfiles_actions::apt::directive::AptDirective<'a> where U: core::convert::Into<T>
-pub type dotfiles_actions::apt::directive::AptDirective::Error = core::convert::Infallible
-pub fn dotfiles_actions::apt::directive::AptDirective::try_from(value: U) -> core::result::Result<T, <T as core::convert::TryFrom<U>>::Error>
-impl<T, U> core::convert::TryInto<U> for dotfiles_actions::apt::directive::AptDirective<'a> where U: core::convert::TryFrom<T>
-pub type dotfiles_actions::apt::directive::AptDirective::Error = <U as core::convert::TryFrom<T>>::Error
-pub fn dotfiles_actions::apt::directive::AptDirective::try_into(self) -> core::result::Result<U, <U as core::convert::TryFrom<T>>::Error>
-impl<T> alloc::borrow::ToOwned for dotfiles_actions::apt::directive::AptDirective<'a> where T: core::clone::Clone
-pub type dotfiles_actions::apt::directive::AptDirective::Owned = T
-pub fn dotfiles_actions::apt::directive::AptDirective::clone_into(&self, target: &mut T)
-pub fn dotfiles_actions::apt::directive::AptDirective::to_owned(&self) -> T
-impl<T> core::any::Any for dotfiles_actions::apt::directive::AptDirective<'a> where T: 'static + core::marker::Sized
-pub fn dotfiles_actions::apt::directive::AptDirective::type_id(&self) -> core::any::TypeId
-impl<T> core::borrow::Borrow<T> for dotfiles_actions::apt::directive::AptDirective<'a> where T: core::marker::Sized
-pub fn dotfiles_actions::apt::directive::AptDirective::borrow(&self) -> &T
-impl<T> core::borrow::BorrowMut<T> for dotfiles_actions::apt::directive::AptDirective<'a> where T: core::marker::Sized
-pub fn dotfiles_actions::apt::directive::AptDirective::borrow_mut(&mut self) -> &mut T
-impl<T> core::convert::From<T> for dotfiles_actions::apt::directive::AptDirective<'a>
-pub fn dotfiles_actions::apt::directive::AptDirective::from(t: T) -> T
-impl<V, T> ppv_lite86::types::VZip<V> for dotfiles_actions::apt::directive::AptDirective<'a> where V: ppv_lite86::types::MultiLane<T>
-pub fn dotfiles_actions::apt::directive::AptDirective::vzip(self) -> V
-pub const dotfiles_actions::apt::directive::DIRECTIVE_NAME: &str
-pub const dotfiles_actions::apt::directive::PACKAGE_SETTING: &str
-pub fn dotfiles_actions::apt::directive::init_directive_data() -> dotfiles_core::directive::DirectiveData
 pub mod dotfiles_actions::brew
 pub mod dotfiles_actions::brew::action
 pub struct dotfiles_actions::brew::action::BrewAction<'a>
@@ -91,11 +6,11 @@ impl<'a> dotfiles_actions::brew::action::BrewAction<'a>
 pub fn dotfiles_actions::brew::action::BrewAction::casks(&self) -> &alloc::vec::Vec<alloc::string::String>
 pub fn dotfiles_actions::brew::action::BrewAction::force_casks(&self) -> &bool
 pub fn dotfiles_actions::brew::action::BrewAction::formulae(&self) -> &alloc::vec::Vec<alloc::string::String>
-pub fn dotfiles_actions::brew::action::BrewAction::mas_apps(&self) -> &alloc::vec::Vec<dotfiles_actions::brew::action::MacAppStoreCommand>
+pub fn dotfiles_actions::brew::action::BrewAction::mas_apps(&self) -> &alloc::vec::Vec<dotfiles_actions::brew::action::MacAppStoreItem>
 pub fn dotfiles_actions::brew::action::BrewAction::skip_in_ci(&self) -> &bool
 pub fn dotfiles_actions::brew::action::BrewAction::taps(&self) -> &alloc::vec::Vec<alloc::string::String>
 impl<'a> dotfiles_actions::brew::action::BrewAction<'a>
-pub fn dotfiles_actions::brew::action::BrewAction::new(skip_in_ci: bool, force_casks: bool, taps: alloc::vec::Vec<alloc::string::String>, formulae: alloc::vec::Vec<alloc::string::String>, casks: alloc::vec::Vec<alloc::string::String>, mas_apps: alloc::vec::Vec<dotfiles_actions::brew::action::MacAppStoreCommand>) -> Self
+pub fn dotfiles_actions::brew::action::BrewAction::new(skip_in_ci: bool, force_casks: bool, taps: alloc::vec::Vec<alloc::string::String>, formulae: alloc::vec::Vec<alloc::string::String>, casks: alloc::vec::Vec<alloc::string::String>, mas_apps: alloc::vec::Vec<dotfiles_actions::brew::action::MacAppStoreItem>) -> Self
 impl dotfiles_core::action::Action<'_> for dotfiles_actions::brew::action::BrewAction<'_>
 pub fn dotfiles_actions::brew::action::BrewAction::execute(&self) -> core::result::Result<(), dotfiles_core::error::DotfilesError>
 impl<'a> core::cmp::Eq for dotfiles_actions::brew::action::BrewAction<'a>
@@ -131,14 +46,15 @@ pub fn dotfiles_actions::brew::action::BrewAction::from(t: T) -> T
 impl<V, T> ppv_lite86::types::VZip<V> for dotfiles_actions::brew::action::BrewAction<'a> where V: ppv_lite86::types::MultiLane<T>
 pub fn dotfiles_actions::brew::action::BrewAction::vzip(self) -> V
 pub struct dotfiles_actions::brew::action::MacAppStoreCommand
-impl core::convert::From<(i64, alloc::string::String)> for dotfiles_actions::brew::action::MacAppStoreCommand
-pub fn dotfiles_actions::brew::action::MacAppStoreCommand::from(value: (i64, alloc::string::String)) -> Self
+impl core::convert::From<alloc::vec::Vec<dotfiles_actions::brew::action::MacAppStoreItem, alloc::alloc::Global>> for dotfiles_actions::brew::action::MacAppStoreCommand
+pub fn dotfiles_actions::brew::action::MacAppStoreCommand::from(items: alloc::vec::Vec<dotfiles_actions::brew::action::MacAppStoreItem>) -> Self
 impl dotfiles_actions::install_command::InstallCommand<dotfiles_actions::brew::action::MacAppStoreItem> for dotfiles_actions::brew::action::MacAppStoreCommand
 pub fn dotfiles_actions::brew::action::MacAppStoreCommand::action_description(&self) -> &str
 pub fn dotfiles_actions::brew::action::MacAppStoreCommand::action_name(&self) -> &str
 pub fn dotfiles_actions::brew::action::MacAppStoreCommand::args(&self) -> &alloc::vec::Vec<alloc::string::String>
 pub fn dotfiles_actions::brew::action::MacAppStoreCommand::base_command(&self) -> subprocess::builder::exec::Exec
-pub fn dotfiles_actions::brew::action::MacAppStoreCommand::item(&self) -> &dotfiles_actions::brew::action::MacAppStoreItem
+pub fn dotfiles_actions::brew::action::MacAppStoreCommand::execute(&self) -> core::result::Result<(), dotfiles_core::error::DotfilesError>
+pub fn dotfiles_actions::brew::action::MacAppStoreCommand::items(&self) -> &alloc::vec::Vec<dotfiles_actions::brew::action::MacAppStoreItem>
 impl core::clone::Clone for dotfiles_actions::brew::action::MacAppStoreCommand
 pub fn dotfiles_actions::brew::action::MacAppStoreCommand::clone(&self) -> dotfiles_actions::brew::action::MacAppStoreCommand
 impl core::cmp::Eq for dotfiles_actions::brew::action::MacAppStoreCommand
@@ -176,6 +92,8 @@ pub fn dotfiles_actions::brew::action::MacAppStoreCommand::from(t: T) -> T
 impl<V, T> ppv_lite86::types::VZip<V> for dotfiles_actions::brew::action::MacAppStoreCommand where V: ppv_lite86::types::MultiLane<T>
 pub fn dotfiles_actions::brew::action::MacAppStoreCommand::vzip(self) -> V
 pub struct dotfiles_actions::brew::action::MacAppStoreItem
+impl core::convert::From<(i64, alloc::string::String)> for dotfiles_actions::brew::action::MacAppStoreItem
+pub fn dotfiles_actions::brew::action::MacAppStoreItem::from(value: (i64, alloc::string::String)) -> Self
 impl core::fmt::Display for dotfiles_actions::brew::action::MacAppStoreItem
 pub fn dotfiles_actions::brew::action::MacAppStoreItem::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
 impl dotfiles_actions::install_command::InstallCommand<dotfiles_actions::brew::action::MacAppStoreItem> for dotfiles_actions::brew::action::MacAppStoreCommand
@@ -183,7 +101,8 @@ pub fn dotfiles_actions::brew::action::MacAppStoreItem::action_description(&self
 pub fn dotfiles_actions::brew::action::MacAppStoreItem::action_name(&self) -> &str
 pub fn dotfiles_actions::brew::action::MacAppStoreItem::args(&self) -> &alloc::vec::Vec<alloc::string::String>
 pub fn dotfiles_actions::brew::action::MacAppStoreItem::base_command(&self) -> subprocess::builder::exec::Exec
-pub fn dotfiles_actions::brew::action::MacAppStoreItem::item(&self) -> &dotfiles_actions::brew::action::MacAppStoreItem
+pub fn dotfiles_actions::brew::action::MacAppStoreItem::execute(&self) -> core::result::Result<(), dotfiles_core::error::DotfilesError>
+pub fn dotfiles_actions::brew::action::MacAppStoreItem::items(&self) -> &alloc::vec::Vec<dotfiles_actions::brew::action::MacAppStoreItem>
 impl core::clone::Clone for dotfiles_actions::brew::action::MacAppStoreItem
 pub fn dotfiles_actions::brew::action::MacAppStoreItem::clone(&self) -> dotfiles_actions::brew::action::MacAppStoreItem
 impl core::cmp::Eq for dotfiles_actions::brew::action::MacAppStoreItem
@@ -488,19 +407,21 @@ pub fn dotfiles_actions::homebrew_install::action::HomebrewInstallAction::from(t
 impl<V, T> ppv_lite86::types::VZip<V> for dotfiles_actions::homebrew_install::action::HomebrewInstallAction where V: ppv_lite86::types::MultiLane<T>
 pub fn dotfiles_actions::homebrew_install::action::HomebrewInstallAction::vzip(self) -> V
 pub mod dotfiles_actions::install_command
-pub trait dotfiles_actions::install_command::InstallCommand<F: core::fmt::Display>
+pub trait dotfiles_actions::install_command::InstallCommand<F> where F: core::fmt::Display
 pub fn dotfiles_actions::install_command::InstallCommand::action_description(&self) -> &str
 pub fn dotfiles_actions::install_command::InstallCommand::action_name(&self) -> &str
 pub fn dotfiles_actions::install_command::InstallCommand::args(&self) -> &alloc::vec::Vec<alloc::string::String>
 pub fn dotfiles_actions::install_command::InstallCommand::base_command(&self) -> subprocess::builder::exec::Exec
 pub fn dotfiles_actions::install_command::InstallCommand::execute(&self) -> core::result::Result<(), dotfiles_core::error::DotfilesError>
-pub fn dotfiles_actions::install_command::InstallCommand::item(&self) -> &F
+pub fn dotfiles_actions::install_command::InstallCommand::formatted_item_list(&self) -> alloc::vec::Vec<alloc::string::String>
+pub fn dotfiles_actions::install_command::InstallCommand::items(&self) -> &alloc::vec::Vec<F>
 impl dotfiles_actions::install_command::InstallCommand<dotfiles_actions::brew::action::MacAppStoreItem> for dotfiles_actions::brew::action::MacAppStoreCommand
 pub fn dotfiles_actions::install_command::InstallCommand::action_description(&self) -> &str
 pub fn dotfiles_actions::install_command::InstallCommand::action_name(&self) -> &str
 pub fn dotfiles_actions::install_command::InstallCommand::args(&self) -> &alloc::vec::Vec<alloc::string::String>
 pub fn dotfiles_actions::install_command::InstallCommand::base_command(&self) -> subprocess::builder::exec::Exec
-pub fn dotfiles_actions::install_command::InstallCommand::item(&self) -> &dotfiles_actions::brew::action::MacAppStoreItem
+pub fn dotfiles_actions::install_command::InstallCommand::execute(&self) -> core::result::Result<(), dotfiles_core::error::DotfilesError>
+pub fn dotfiles_actions::install_command::InstallCommand::items(&self) -> &alloc::vec::Vec<dotfiles_actions::brew::action::MacAppStoreItem>
 pub mod dotfiles_actions::link
 pub mod dotfiles_actions::link::action
 pub struct dotfiles_actions::link::action::LinkAction<'a, F: filesystem::FileSystem + filesystem::UnixFileSystem>
