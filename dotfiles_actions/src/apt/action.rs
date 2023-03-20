@@ -98,7 +98,9 @@ impl<'a> AptAction<'a> {
 
 impl Action<'_> for AptAction<'_> {
   fn execute(&self) -> Result<(), DotfilesError> {
-    AptCommand::install(&self.packages).execute()?;
+    if !self.packages.is_empty() {
+      AptCommand::install(&self.packages).execute()?;
+    }
     Ok(())
   }
 }

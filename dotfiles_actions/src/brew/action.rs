@@ -253,8 +253,12 @@ impl Action<'_> for BrewAction<'_> {
     for tap in &self.taps {
       BrewCommand::tap(tap).execute()?;
     }
-    BrewCommand::install_formulae(&self.formulae).execute()?;
-    BrewCommand::install_casks(&self.casks, self.force_casks()).execute()?;
+    if !self.formulae.is_empty() {
+      BrewCommand::install_formulae(&self.formulae).execute()?;
+    }
+    if !self.casks.is_empty() {
+      BrewCommand::install_casks(&self.casks, self.force_casks()).execute()?;
+    }
     Ok(())
   }
 }

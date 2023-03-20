@@ -1,6 +1,6 @@
 [package]
 name = "dotfiles_processor"
-version = "0.10.1"
+version = "0.10.2"
 authors = ["Miguel Barreto <miguelandres@users.noreply.github.com>"]
 edition = "2018"
 
@@ -10,5 +10,5 @@ getset = "0.1.2"
 dotfiles_core = {path = "../dotfiles_core"}
 dotfiles_actions = {path = "../dotfiles_actions"}
 log = "0.4.14"
-itertools = "0.10.1"
+itertools = "0.10.2"
 strict-yaml-rust = "0.1.2"
