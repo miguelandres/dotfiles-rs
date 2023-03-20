@@ -28,6 +28,7 @@ use dotfiles_core::action::Action;
 use dotfiles_core::error::DotfilesError;
 use dotfiles_core_macros::ConditionalAction;
 use getset::Getters;
+#[cfg(target_os = "macos")]
 use log::info;
 #[cfg(target_os = "macos")]
 use std::fmt::Display;
