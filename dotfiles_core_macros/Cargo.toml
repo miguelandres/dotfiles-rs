@@ -3,7 +3,7 @@ proc-macro = true
 
 [package]
 name = "dotfiles_core_macros"
-version = "0.10.0"
+version = "0.10.1"
 edition = "2021"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html

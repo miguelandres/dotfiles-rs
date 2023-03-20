@@ -155,12 +155,10 @@ impl InstallCommand<String> for BrewCommand {
   }
 }
 impl BrewCommand {
-  fn tap(items: &Vec<String>) -> BrewCommand {
-    let mut args: Vec<String> = items.clone();
-    args.insert(0, "tap".into());
+  fn tap(tap: &str) -> BrewCommand {
     BrewCommand {
-      items: items.clone(),
-      args: args,
+      items: vec![tap.into()],
+      args: vec!["tap".into(), tap.into()],
       action_name: "tap".into(),
       action_description: "tapping".into(),
     }
@@ -252,7 +250,9 @@ impl<'a> BrewAction<'a> {
 
 impl Action<'_> for BrewAction<'_> {
   fn execute(&self) -> Result<(), DotfilesError> {
-    BrewCommand::tap(&self.taps).execute()?;
+    for tap in &self.taps {
+      BrewCommand::tap(tap).execute()?;
+    }
     BrewCommand::install_formulae(&self.formulae).execute()?;
     BrewCommand::install_casks(&self.casks, self.force_casks()).execute()?;
     Ok(())
