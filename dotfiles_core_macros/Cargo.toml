@@ -12,4 +12,4 @@ edition = "2021"
 dotfiles_core = {path = "../dotfiles_core"}
 proc-macro2 = "1.0.42"
 quote = "1.0.20"
-syn = "1.0.98"
+syn = "2.0.2"
