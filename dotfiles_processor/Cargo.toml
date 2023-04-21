@@ -6,9 +6,10 @@ edition = "2018"
 
 [dependencies]
 clap = {version ="4.0.13", features = ["derive"]}
-getset = "0.1.2"
 dotfiles_core = {path = "../dotfiles_core"}
 dotfiles_actions = {path = "../dotfiles_actions"}
-log = "0.4.14"
+getset = "0.1.2"
 itertools = "0.10.2"
+log = "0.4.14"
+once_cell = "1.17.1"
 strict-yaml-rust = "0.1.2"

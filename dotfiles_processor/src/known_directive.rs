@@ -22,7 +22,6 @@
 use std::convert::TryFrom;
 use std::path::PathBuf;
 
-use clap::__macro_refs::once_cell::sync::Lazy;
 #[cfg(target_os = "linux")]
 use dotfiles_actions::apt::{action::AptAction, directive::AptDirective};
 #[cfg(any(target_os = "linux", target_os = "macos"))]
@@ -37,6 +36,7 @@ use dotfiles_core::directive::{DirectiveData, HasDirectiveData};
 use dotfiles_core::error::{DotfilesError, ErrorType};
 use dotfiles_core::yaml_util::map_yaml_array;
 use dotfiles_core::Settings;
+use once_cell::sync::Lazy;
 use strict_yaml_rust::StrictYaml;
 
 use crate::context::Context;

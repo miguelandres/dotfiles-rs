@@ -49,14 +49,14 @@ pub dotfiles_processor::flags::Command::ApplyConfig::file: alloc::string::String
 pub dotfiles_processor::flags::Command::InstallHomebrew
 pub dotfiles_processor::flags::Command::InstallOhMyZsh
 pub dotfiles_processor::flags::Command::InstallOhMyZsh::skip_chsh: bool
-impl clap::derive::FromArgMatches for dotfiles_processor::flags::Command
-pub fn dotfiles_processor::flags::Command::from_arg_matches(__clap_arg_matches: &clap::parser::matches::arg_matches::ArgMatches) -> core::result::Result<Self, clap::Error>
-pub fn dotfiles_processor::flags::Command::from_arg_matches_mut(__clap_arg_matches: &mut clap::parser::matches::arg_matches::ArgMatches) -> core::result::Result<Self, clap::Error>
-pub fn dotfiles_processor::flags::Command::update_from_arg_matches(&mut self, __clap_arg_matches: &clap::parser::matches::arg_matches::ArgMatches) -> core::result::Result<(), clap::Error>
-pub fn dotfiles_processor::flags::Command::update_from_arg_matches_mut<'b>(&mut self, __clap_arg_matches: &mut clap::parser::matches::arg_matches::ArgMatches) -> core::result::Result<(), clap::Error>
-impl clap::derive::Subcommand for dotfiles_processor::flags::Command
-pub fn dotfiles_processor::flags::Command::augment_subcommands<'b>(__clap_app: clap::builder::command::Command) -> clap::builder::command::Command
-pub fn dotfiles_processor::flags::Command::augment_subcommands_for_update<'b>(__clap_app: clap::builder::command::Command) -> clap::builder::command::Command
+impl clap_builder::derive::FromArgMatches for dotfiles_processor::flags::Command
+pub fn dotfiles_processor::flags::Command::from_arg_matches(__clap_arg_matches: &clap_builder::parser::matches::arg_matches::ArgMatches) -> core::result::Result<Self, clap_builder::Error>
+pub fn dotfiles_processor::flags::Command::from_arg_matches_mut(__clap_arg_matches: &mut clap_builder::parser::matches::arg_matches::ArgMatches) -> core::result::Result<Self, clap_builder::Error>
+pub fn dotfiles_processor::flags::Command::update_from_arg_matches(&mut self, __clap_arg_matches: &clap_builder::parser::matches::arg_matches::ArgMatches) -> core::result::Result<(), clap_builder::Error>
+pub fn dotfiles_processor::flags::Command::update_from_arg_matches_mut<'b>(&mut self, __clap_arg_matches: &mut clap_builder::parser::matches::arg_matches::ArgMatches) -> core::result::Result<(), clap_builder::Error>
+impl clap_builder::derive::Subcommand for dotfiles_processor::flags::Command
+pub fn dotfiles_processor::flags::Command::augment_subcommands<'b>(__clap_app: clap_builder::builder::command::Command) -> clap_builder::builder::command::Command
+pub fn dotfiles_processor::flags::Command::augment_subcommands_for_update<'b>(__clap_app: clap_builder::builder::command::Command) -> clap_builder::builder::command::Command
 pub fn dotfiles_processor::flags::Command::has_subcommand(__clap_name: &str) -> bool
 impl core::marker::Send for dotfiles_processor::flags::Command
 impl core::marker::Sync for dotfiles_processor::flags::Command
@@ -88,8 +88,8 @@ pub dotfiles_processor::flags::LogLevelFilter::Info
 pub dotfiles_processor::flags::LogLevelFilter::Off
 pub dotfiles_processor::flags::LogLevelFilter::Trace
 pub dotfiles_processor::flags::LogLevelFilter::Warn
-impl clap::derive::ValueEnum for dotfiles_processor::flags::LogLevelFilter
-pub fn dotfiles_processor::flags::LogLevelFilter::to_possible_value<'a>(&self) -> core::option::Option<clap::builder::possible_value::PossibleValue>
+impl clap_builder::derive::ValueEnum for dotfiles_processor::flags::LogLevelFilter
+pub fn dotfiles_processor::flags::LogLevelFilter::to_possible_value<'a>(&self) -> core::option::Option<clap_builder::builder::possible_value::PossibleValue>
 pub fn dotfiles_processor::flags::LogLevelFilter::value_variants<'a>() -> &'a [Self]
 impl core::convert::Into<log::LevelFilter> for dotfiles_processor::flags::LogLevelFilter
 pub fn dotfiles_processor::flags::LogLevelFilter::into(self) -> log::LevelFilter
@@ -135,19 +135,19 @@ pub fn dotfiles_processor::flags::LogLevelFilter::vzip(self) -> V
 pub struct dotfiles_processor::flags::FlagData
 pub dotfiles_processor::flags::FlagData::command: dotfiles_processor::flags::Command
 pub dotfiles_processor::flags::FlagData::log_level_filter: dotfiles_processor::flags::LogLevelFilter
-impl clap::derive::Args for dotfiles_processor::flags::FlagData
-pub fn dotfiles_processor::flags::FlagData::augment_args<'b>(__clap_app: clap::builder::command::Command) -> clap::builder::command::Command
-pub fn dotfiles_processor::flags::FlagData::augment_args_for_update<'b>(__clap_app: clap::builder::command::Command) -> clap::builder::command::Command
-pub fn dotfiles_processor::flags::FlagData::group_id() -> core::option::Option<clap::util::id::Id>
-impl clap::derive::CommandFactory for dotfiles_processor::flags::FlagData
-pub fn dotfiles_processor::flags::FlagData::command<'b>() -> clap::builder::command::Command
-pub fn dotfiles_processor::flags::FlagData::command_for_update<'b>() -> clap::builder::command::Command
-impl clap::derive::FromArgMatches for dotfiles_processor::flags::FlagData
-pub fn dotfiles_processor::flags::FlagData::from_arg_matches(__clap_arg_matches: &clap::parser::matches::arg_matches::ArgMatches) -> core::result::Result<Self, clap::Error>
-pub fn dotfiles_processor::flags::FlagData::from_arg_matches_mut(__clap_arg_matches: &mut clap::parser::matches::arg_matches::ArgMatches) -> core::result::Result<Self, clap::Error>
-pub fn dotfiles_processor::flags::FlagData::update_from_arg_matches(&mut self, __clap_arg_matches: &clap::parser::matches::arg_matches::ArgMatches) -> core::result::Result<(), clap::Error>
-pub fn dotfiles_processor::flags::FlagData::update_from_arg_matches_mut(&mut self, __clap_arg_matches: &mut clap::parser::matches::arg_matches::ArgMatches) -> core::result::Result<(), clap::Error>
-impl clap::derive::Parser for dotfiles_processor::flags::FlagData
+impl clap_builder::derive::Args for dotfiles_processor::flags::FlagData
+pub fn dotfiles_processor::flags::FlagData::augment_args<'b>(__clap_app: clap_builder::builder::command::Command) -> clap_builder::builder::command::Command
+pub fn dotfiles_processor::flags::FlagData::augment_args_for_update<'b>(__clap_app: clap_builder::builder::command::Command) -> clap_builder::builder::command::Command
+pub fn dotfiles_processor::flags::FlagData::group_id() -> core::option::Option<clap_builder::util::id::Id>
+impl clap_builder::derive::CommandFactory for dotfiles_processor::flags::FlagData
+pub fn dotfiles_processor::flags::FlagData::command<'b>() -> clap_builder::builder::command::Command
+pub fn dotfiles_processor::flags::FlagData::command_for_update<'b>() -> clap_builder::builder::command::Command
+impl clap_builder::derive::FromArgMatches for dotfiles_processor::flags::FlagData
+pub fn dotfiles_processor::flags::FlagData::from_arg_matches(__clap_arg_matches: &clap_builder::parser::matches::arg_matches::ArgMatches) -> core::result::Result<Self, clap_builder::Error>
+pub fn dotfiles_processor::flags::FlagData::from_arg_matches_mut(__clap_arg_matches: &mut clap_builder::parser::matches::arg_matches::ArgMatches) -> core::result::Result<Self, clap_builder::Error>
+pub fn dotfiles_processor::flags::FlagData::update_from_arg_matches(&mut self, __clap_arg_matches: &clap_builder::parser::matches::arg_matches::ArgMatches) -> core::result::Result<(), clap_builder::Error>
+pub fn dotfiles_processor::flags::FlagData::update_from_arg_matches_mut(&mut self, __clap_arg_matches: &mut clap_builder::parser::matches::arg_matches::ArgMatches) -> core::result::Result<(), clap_builder::Error>
+impl clap_builder::derive::Parser for dotfiles_processor::flags::FlagData
 impl core::marker::Send for dotfiles_processor::flags::FlagData
 impl core::marker::Sync for dotfiles_processor::flags::FlagData
 impl core::marker::Unpin for dotfiles_processor::flags::FlagData
