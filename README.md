@@ -93,7 +93,7 @@ defaults:
 steps:
  - create:
   - dir: ~/src
-    create_parent_dirs: true
+    create_parent_dirs: false
   - ~/.vim/plugins
   - ~/.oh-my-zsh/custom
 ```
