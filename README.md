@@ -1,9 +1,9 @@
 # dotfiles-rs
 
 [![Build Status](https://github.com/miguelandres/dotfiles-rs/actions/workflows/rust_build_and_test.yml/badge.svg?branch=main)](https://github.com/miguelandres/dotfiles-rs/actions/workflows/rust_build_and_test.yml)
-[![Rust Documentation](https://github.com/miguelandres/dotfiles-rs/actions/workflows/rust_doc_generator.yml/badge.svg?branch=main)](https://miguelandres.github.io/dotfiles-rs/)
+[![Rust Documentation](https://github.com/miguelandres/dotfiles-rs/actions/workflows/rust_doc_generator.yml/badge.svg?branch=main)](https://miguelandres.github.io/dotfiles-rs/dotfiles_core/index.html)
 
-[Rust Documentation](https://miguelandres.github.io/dotfiles-rs/)
+[Rust Documentation](https://miguelandres.github.io/dotfiles-rs/dotfiles_core/index.html)
 
 Dotfiles-rs is an automation framework that can be used for dotfiles
 configuration. It was inspired by
