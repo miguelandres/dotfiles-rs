@@ -22,7 +22,6 @@
 #![warn(missing_docs)]
 #![deny(rustdoc::broken_intra_doc_links)]
 #![feature(io_error_more)]
-#![feature(drain_filter)]
 #![feature(slice_concat_trait)]
 
 //! This crate contains all concrete [actions](dotfiles_core::action::Action)
