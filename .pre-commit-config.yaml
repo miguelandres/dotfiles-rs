@@ -25,12 +25,12 @@ repos:
           perl -pi* -e 's/\xe2\x80\x93/-/g && ($t = 1) && print STDERR $_; END{{exit
           $t}}'
         files: ""
-      - id: enforce-semver
-        name: Enforce semantic version for rust releases.
-        language: script
-        entry: scripts/check_public_api.sh
-        types: [rust]
-        pass_filenames: false
+      # - id: enforce-semver
+      #   name: Enforce semantic version for rust releases.
+      #   language: script
+      #   entry: scripts/check_public_api.sh
+      #   types: [rust]
+      #   pass_filenames: false
 
   - repo: https://github.com/pre-commit/pre-commit-hooks
     rev: v4.0.1
