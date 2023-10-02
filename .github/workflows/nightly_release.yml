@@ -91,9 +91,9 @@ jobs:
           - name: armv7-unknown-linux-gnueabihf
             gh_env: ubuntu-latest
           - name: aarch64-apple-darwin
-            gh_env: macos-12
+            gh_env: macos-13-xlarge
           - name: x86_64-apple-darwin
-            gh_env: macos-12
+            gh_env: macos-13-xlarge
         include:
           - target:
               name: x86_64-unknown-linux-gnu
@@ -185,7 +185,7 @@ jobs:
   build-mac-universal-binary-and-all-binaries-package:
     name: Build macOS universal binary
     needs: [create-nightly-release, build]
-    runs-on: macos-12
+    runs-on: macos-13-xlarge
     env:
       MACOS_PACKAGE_FILE: ${{ needs.create-nightly-release.outputs.package_prefix }}-macos-universal.tar.gz
       ALL_BINARIES_PACKAGE_FILE: ${{ needs.create-nightly-release.outputs.package_prefix }}-all_binaries.tar.gz
