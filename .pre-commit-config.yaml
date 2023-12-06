@@ -51,13 +51,13 @@ repos:
       - id: trailing-whitespace
       - id: trailing-whitespace
   - repo: https://github.com/jumanjihouse/pre-commit-hooks
-    rev: 2.1.5
+    rev: 3.0.0
     hooks:
       - id: forbid-binary
       - id: git-dirty
       - id: markdownlint
   - repo: https://github.com/Lucas-C/pre-commit-hooks
-    rev: v1.1.10
+    rev: v1.5.4
     hooks:
       - id: forbid-tabs
       - id: remove-tabs
