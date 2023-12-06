@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `dotfiles_actions/src/create/directive.rs`."><title>directive.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../static.files/rustdoc-9ee3a5e31a2afa3e.css"><meta name="rustdoc-vars" data-root-path="../../../" data-static-root-path="../../../static.files/" data-current-crate="dotfiles_actions" data-themes="" data-resource-suffix="" data-rustdoc-version="1.76.0-nightly (9a66e4471 2023-11-19)" data-channel="nightly" data-search-js="search-d23a059ec093b287.js" data-settings-js="settings-74424d7eec62a23e.js" ><script src="../../../static.files/storage-fec3eaa3851e447d.js"></script><script defer src="../../../static.files/src-script-3280b574d94e47b4.js"></script><script defer src="../../../src-files.js"></script><script defer src="../../../static.files/main-f06f02fd918e3bb3.js"></script><noscript><link rel="stylesheet" href="../../../static.files/noscript-5d8b3c7633ad77ba.css"></noscript><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `dotfiles_actions/src/create/directive.rs`."><title>directive.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../static.files/rustdoc-c67e44d78ab2db17.css"><meta name="rustdoc-vars" data-root-path="../../../" data-static-root-path="../../../static.files/" data-current-crate="dotfiles_actions" data-themes="" data-resource-suffix="" data-rustdoc-version="1.76.0-nightly (e9013ac0e 2023-12-05)" data-channel="nightly" data-search-js="search-5a66c239c06b3a66.js" data-settings-js="settings-fe03fdc259827cd2.js" ><script src="../../../static.files/storage-fec3eaa3851e447d.js"></script><script defer src="../../../static.files/src-script-3280b574d94e47b4.js"></script><script defer src="../../../src-files.js"></script><script defer src="../../../static.files/main-77dede896d6ac08e.js"></script><noscript><link rel="stylesheet" href="../../../static.files/noscript-5d8b3c7633ad77ba.css"></noscript><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
 <a href="#2" id="2">2</a>
 <a href="#3" id="3">3</a>
 <a href="#4" id="4">4</a>
@@ -128,7 +128,7 @@
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
-// &quot;Software&quot;), to deal in the Software without restriction, including
+// "Software"), to deal in the Software without restriction, including
 // without limitation the rights to use, copy, modify, merge, publish,
 // distribute, sublicense, and/or sell copies of the Software, and to
 // permit persons to whom the Software is furnished to do so, subject to
@@ -137,7 +137,7 @@
 // The above copyright notice and this permission notice shall be
 // included in all copies or substantial portions of the Software.
 //
-// THE SOFTWARE IS PROVIDED &quot;AS IS&quot;, WITHOUT WARRANTY OF ANY KIND,
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
 // EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
 // MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
 // NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
@@ -168,13 +168,13 @@
 <span class="kw">use </span>strict_yaml_rust::StrictYaml;
 
 <span class="doccomment">/// Constant for the name of the `create` directive.
-</span><span class="kw">pub const </span>DIRECTIVE_NAME: <span class="kw-2">&amp;</span>str = <span class="string">&quot;create&quot;</span>;
+</span><span class="kw">pub const </span>DIRECTIVE_NAME: <span class="kw-2">&amp;</span>str = <span class="string">"create"</span>;
 <span class="doccomment">/// Constant for the name of the [`create_parent_dirs`](CreateAction::create_parent_dirs) Setting
 /// which forces to create all parent directories if necessary.
-</span><span class="kw">pub const </span>CREATE_PARENT_DIRS_SETTING: <span class="kw-2">&amp;</span>str = <span class="string">&quot;create_parent_dirs&quot;</span>;
+</span><span class="kw">pub const </span>CREATE_PARENT_DIRS_SETTING: <span class="kw-2">&amp;</span>str = <span class="string">"create_parent_dirs"</span>;
 <span class="doccomment">/// Constant for the name of the [`directory`](CreateAction::directory) argument that contains the
 /// name of the directory to create
-</span><span class="kw">pub const </span>DIR_SETTING: <span class="kw-2">&amp;</span>str = <span class="string">&quot;dir&quot;</span>;
+</span><span class="kw">pub const </span>DIR_SETTING: <span class="kw-2">&amp;</span>str = <span class="string">"dir"</span>;
 
 <span class="doccomment">/// Initializes the default configuration for the [CreateDirective]
 </span><span class="kw">pub fn </span>init_directive_data() -&gt; DirectiveData {
@@ -192,17 +192,17 @@
 
 <span class="doccomment">/// A directive that can build [CreateAction]s to create directories in the filesystem.
 </span><span class="attr">#[derive(Directive, Clone)]
-</span><span class="kw">pub struct </span>CreateDirective&lt;<span class="lifetime">&#39;a</span>, F: FileSystem + Default&gt; {
+</span><span class="kw">pub struct </span>CreateDirective&lt;<span class="lifetime">'a</span>, F: FileSystem + Default&gt; {
   fs: F,
   data: DirectiveData,
-  phantom: PhantomData&lt;<span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span>F&gt;,
+  phantom: PhantomData&lt;<span class="kw-2">&amp;</span><span class="lifetime">'a </span>F&gt;,
 }
 <span class="doccomment">/// [CreateDirective] that uses the native [OsFileSystem].
-</span><span class="kw">pub type </span>NativeCreateDirective&lt;<span class="lifetime">&#39;a</span>&gt; = CreateDirective&lt;<span class="lifetime">&#39;a</span>, OsFileSystem&gt;;
+</span><span class="kw">pub type </span>NativeCreateDirective&lt;<span class="lifetime">'a</span>&gt; = CreateDirective&lt;<span class="lifetime">'a</span>, OsFileSystem&gt;;
 <span class="doccomment">/// [CreateDirective] that uses the native [FakeFileSystem] for testing.
-</span><span class="kw">pub type </span>FakeCreateDirective&lt;<span class="lifetime">&#39;a</span>&gt; = CreateDirective&lt;<span class="lifetime">&#39;a</span>, FakeFileSystem&gt;;
+</span><span class="kw">pub type </span>FakeCreateDirective&lt;<span class="lifetime">'a</span>&gt; = CreateDirective&lt;<span class="lifetime">'a</span>, FakeFileSystem&gt;;
 
-<span class="kw">impl</span>&lt;<span class="lifetime">&#39;a</span>, F: FileSystem + Default&gt; FileSystemDirective&lt;<span class="lifetime">&#39;a</span>, F&gt; <span class="kw">for </span>CreateDirective&lt;<span class="lifetime">&#39;a</span>, F&gt; {
+<span class="kw">impl</span>&lt;<span class="lifetime">'a</span>, F: FileSystem + Default&gt; FileSystemDirective&lt;<span class="lifetime">'a</span>, F&gt; <span class="kw">for </span>CreateDirective&lt;<span class="lifetime">'a</span>, F&gt; {
   <span class="kw">fn </span>fs(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="kw-2">&amp;</span>F {
     <span class="kw-2">&amp;</span><span class="self">self</span>.fs
   }
@@ -212,7 +212,7 @@
   }
 }
 
-<span class="kw">impl</span>&lt;<span class="lifetime">&#39;a</span>, F: FileSystem + Default&gt; Default <span class="kw">for </span>CreateDirective&lt;<span class="lifetime">&#39;a</span>, F&gt; {
+<span class="kw">impl</span>&lt;<span class="lifetime">'a</span>, F: FileSystem + Default&gt; Default <span class="kw">for </span>CreateDirective&lt;<span class="lifetime">'a</span>, F&gt; {
   <span class="kw">fn </span>default() -&gt; <span class="self">Self </span>{
     <span class="self">Self </span>{
       fs: Default::default(),
@@ -222,16 +222,16 @@
   }
 }
 
-<span class="kw">impl</span>&lt;<span class="lifetime">&#39;a</span>, F: FileSystem + Default&gt; ActionParser&lt;<span class="lifetime">&#39;a</span>&gt; <span class="kw">for </span>CreateDirective&lt;<span class="lifetime">&#39;a</span>, F&gt; {
-  <span class="kw">type </span>ActionType = CreateAction&lt;<span class="lifetime">&#39;a</span>, F&gt;;
+<span class="kw">impl</span>&lt;<span class="lifetime">'a</span>, F: FileSystem + Default&gt; ActionParser&lt;<span class="lifetime">'a</span>&gt; <span class="kw">for </span>CreateDirective&lt;<span class="lifetime">'a</span>, F&gt; {
+  <span class="kw">type </span>ActionType = CreateAction&lt;<span class="lifetime">'a</span>, F&gt;;
 
   <span class="kw">fn </span>parse_action(
-    <span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span><span class="self">self</span>,
+    <span class="kw-2">&amp;</span><span class="lifetime">'a </span><span class="self">self</span>,
     settings: <span class="kw-2">&amp;</span>std::collections::HashMap&lt;String, Setting&gt;,
     yaml: <span class="kw-2">&amp;</span>StrictYaml,
     current_dir: <span class="kw-2">&amp;</span>Path,
   ) -&gt; <span class="prelude-ty">Result</span>&lt;CreateAction&lt;F&gt;, DotfilesError&gt; {
-    CreateAction::&lt;<span class="lifetime">&#39;a</span>, F&gt;::new(
+    CreateAction::&lt;<span class="lifetime">'a</span>, F&gt;::new(
       <span class="self">self</span>.fs(),
       yaml_util::get_boolean_setting_from_yaml_or_context(
         SKIP_IN_CI_SETTING,

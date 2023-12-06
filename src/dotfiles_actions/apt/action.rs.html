@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `dotfiles_actions/src/apt/action.rs`."><title>action.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../static.files/rustdoc-9ee3a5e31a2afa3e.css"><meta name="rustdoc-vars" data-root-path="../../../" data-static-root-path="../../../static.files/" data-current-crate="dotfiles_actions" data-themes="" data-resource-suffix="" data-rustdoc-version="1.76.0-nightly (9a66e4471 2023-11-19)" data-channel="nightly" data-search-js="search-d23a059ec093b287.js" data-settings-js="settings-74424d7eec62a23e.js" ><script src="../../../static.files/storage-fec3eaa3851e447d.js"></script><script defer src="../../../static.files/src-script-3280b574d94e47b4.js"></script><script defer src="../../../src-files.js"></script><script defer src="../../../static.files/main-f06f02fd918e3bb3.js"></script><noscript><link rel="stylesheet" href="../../../static.files/noscript-5d8b3c7633ad77ba.css"></noscript><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `dotfiles_actions/src/apt/action.rs`."><title>action.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../static.files/rustdoc-c67e44d78ab2db17.css"><meta name="rustdoc-vars" data-root-path="../../../" data-static-root-path="../../../static.files/" data-current-crate="dotfiles_actions" data-themes="" data-resource-suffix="" data-rustdoc-version="1.76.0-nightly (e9013ac0e 2023-12-05)" data-channel="nightly" data-search-js="search-5a66c239c06b3a66.js" data-settings-js="settings-fe03fdc259827cd2.js" ><script src="../../../static.files/storage-fec3eaa3851e447d.js"></script><script defer src="../../../static.files/src-script-3280b574d94e47b4.js"></script><script defer src="../../../src-files.js"></script><script defer src="../../../static.files/main-77dede896d6ac08e.js"></script><noscript><link rel="stylesheet" href="../../../static.files/noscript-5d8b3c7633ad77ba.css"></noscript><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
 <a href="#2" id="2">2</a>
 <a href="#3" id="3">3</a>
 <a href="#4" id="4">4</a>
@@ -108,7 +108,7 @@
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
-// &quot;Software&quot;), to deal in the Software without restriction, including
+// "Software"), to deal in the Software without restriction, including
 // without limitation the rights to use, copy, modify, merge, publish,
 // distribute, sublicense, and/or sell copies of the Software, and to
 // permit persons to whom the Software is furnished to do so, subject to
@@ -117,7 +117,7 @@
 // The above copyright notice and this permission notice shall be
 // included in all copies or substantial portions of the Software.
 //
-// THE SOFTWARE IS PROVIDED &quot;AS IS&quot;, WITHOUT WARRANTY OF ANY KIND,
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
 // EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
 // MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
 // NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
@@ -144,7 +144,7 @@
 
 <span class="kw">impl </span>InstallCommand&lt;String&gt; <span class="kw">for </span>AptCommand {
   <span class="kw">fn </span>base_command(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; Exec {
-    Exec::cmd(<span class="string">&quot;sudo&quot;</span>)
+    Exec::cmd(<span class="string">"sudo"</span>)
   }
 
   <span class="kw">fn </span>args(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="kw-2">&amp;</span>Vec&lt;String&gt; {
@@ -152,7 +152,7 @@
   }
 
   <span class="kw">fn </span>action_description(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="kw-2">&amp;</span>str {
-    <span class="string">&quot;apt installing&quot;
+    <span class="string">"apt installing"
   </span>}
 
   <span class="kw">fn </span>items(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="kw-2">&amp;</span>Vec&lt;String&gt; {
@@ -160,14 +160,14 @@
   }
 
   <span class="kw">fn </span>action_name(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="kw-2">&amp;</span>str {
-    <span class="string">&quot;apt install&quot;
+    <span class="string">"apt install"
   </span>}
 }
 
 <span class="kw">impl </span>AptCommand {
   <span class="kw">fn </span>install(items: <span class="kw-2">&amp;</span>Vec&lt;String&gt;) -&gt; AptCommand {
     <span class="kw">let </span><span class="kw-2">mut </span>arg_items = items.clone();
-    <span class="kw">let </span><span class="kw-2">mut </span>args: Vec&lt;String&gt; = <span class="macro">vec!</span>[<span class="string">&quot;apt&quot;</span>.into(), <span class="string">&quot;install&quot;</span>.into(), <span class="string">&quot;-y&quot;</span>.into()];
+    <span class="kw">let </span><span class="kw-2">mut </span>args: Vec&lt;String&gt; = <span class="macro">vec!</span>[<span class="string">"apt"</span>.into(), <span class="string">"install"</span>.into(), <span class="string">"-y"</span>.into()];
     args.append(<span class="kw-2">&amp;mut </span>arg_items);
 
     AptCommand {
@@ -179,17 +179,17 @@
 
 <span class="doccomment">/// [AptAction] Installs software using apt.
 </span><span class="attr">#[derive(Eq, PartialEq, Debug, ConditionalAction, Getters)]
-</span><span class="kw">pub struct </span>AptAction&lt;<span class="lifetime">&#39;a</span>&gt; {
+</span><span class="kw">pub struct </span>AptAction&lt;<span class="lifetime">'a</span>&gt; {
   <span class="doccomment">/// Skips this action if it is running in a CI environment.
-  </span><span class="attr">#[get = <span class="string">&quot;pub&quot;</span>]
+  </span><span class="attr">#[get = <span class="string">"pub"</span>]
   </span>skip_in_ci: bool,
   <span class="doccomment">/// List of packages to install.
-  </span><span class="attr">#[get = <span class="string">&quot;pub&quot;</span>]
+  </span><span class="attr">#[get = <span class="string">"pub"</span>]
   </span>packages: Vec&lt;String&gt;,
 
-  phantom_data: PhantomData&lt;<span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span>String&gt;,
+  phantom_data: PhantomData&lt;<span class="kw-2">&amp;</span><span class="lifetime">'a </span>String&gt;,
 }
-<span class="kw">impl</span>&lt;<span class="lifetime">&#39;a</span>&gt; AptAction&lt;<span class="lifetime">&#39;a</span>&gt; {
+<span class="kw">impl</span>&lt;<span class="lifetime">'a</span>&gt; AptAction&lt;<span class="lifetime">'a</span>&gt; {
   <span class="doccomment">/// Constructs a new [AptAction]
   </span><span class="kw">pub fn </span>new(skip_in_ci: bool, packages: Vec&lt;String&gt;) -&gt; <span class="self">Self </span>{
     <span class="kw">let </span>action = AptAction {
@@ -197,12 +197,12 @@
       packages,
       phantom_data: PhantomData,
     };
-    <span class="macro">log::trace!</span>(<span class="string">&quot;Creating new {:?}&quot;</span>, action);
+    <span class="macro">log::trace!</span>(<span class="string">"Creating new {:?}"</span>, action);
     action
   }
 }
 
-<span class="kw">impl </span>Action&lt;<span class="lifetime">&#39;_</span>&gt; <span class="kw">for </span>AptAction&lt;<span class="lifetime">&#39;_</span>&gt; {
+<span class="kw">impl </span>Action&lt;<span class="lifetime">'_</span>&gt; <span class="kw">for </span>AptAction&lt;<span class="lifetime">'_</span>&gt; {
   <span class="kw">fn </span>execute(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="prelude-ty">Result</span>&lt;(), DotfilesError&gt; {
     <span class="kw">if </span>!<span class="self">self</span>.packages.is_empty() {
       AptCommand::install(<span class="kw-2">&amp;</span><span class="self">self</span>.packages).execute()<span class="question-mark">?</span>;

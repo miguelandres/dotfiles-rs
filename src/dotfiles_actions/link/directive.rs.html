@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `dotfiles_actions/src/link/directive.rs`."><title>directive.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../static.files/rustdoc-9ee3a5e31a2afa3e.css"><meta name="rustdoc-vars" data-root-path="../../../" data-static-root-path="../../../static.files/" data-current-crate="dotfiles_actions" data-themes="" data-resource-suffix="" data-rustdoc-version="1.76.0-nightly (9a66e4471 2023-11-19)" data-channel="nightly" data-search-js="search-d23a059ec093b287.js" data-settings-js="settings-74424d7eec62a23e.js" ><script src="../../../static.files/storage-fec3eaa3851e447d.js"></script><script defer src="../../../static.files/src-script-3280b574d94e47b4.js"></script><script defer src="../../../src-files.js"></script><script defer src="../../../static.files/main-f06f02fd918e3bb3.js"></script><noscript><link rel="stylesheet" href="../../../static.files/noscript-5d8b3c7633ad77ba.css"></noscript><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `dotfiles_actions/src/link/directive.rs`."><title>directive.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../static.files/rustdoc-c67e44d78ab2db17.css"><meta name="rustdoc-vars" data-root-path="../../../" data-static-root-path="../../../static.files/" data-current-crate="dotfiles_actions" data-themes="" data-resource-suffix="" data-rustdoc-version="1.76.0-nightly (e9013ac0e 2023-12-05)" data-channel="nightly" data-search-js="search-5a66c239c06b3a66.js" data-settings-js="settings-fe03fdc259827cd2.js" ><script src="../../../static.files/storage-fec3eaa3851e447d.js"></script><script defer src="../../../static.files/src-script-3280b574d94e47b4.js"></script><script defer src="../../../src-files.js"></script><script defer src="../../../static.files/main-77dede896d6ac08e.js"></script><noscript><link rel="stylesheet" href="../../../static.files/noscript-5d8b3c7633ad77ba.css"></noscript><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
 <a href="#2" id="2">2</a>
 <a href="#3" id="3">3</a>
 <a href="#4" id="4">4</a>
@@ -231,7 +231,7 @@
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
-// &quot;Software&quot;), to deal in the Software without restriction, including
+// "Software"), to deal in the Software without restriction, including
 // without limitation the rights to use, copy, modify, merge, publish,
 // distribute, sublicense, and/or sell copies of the Software, and to
 // permit persons to whom the Software is furnished to do so, subject to
@@ -240,7 +240,7 @@
 // The above copyright notice and this permission notice shall be
 // included in all copies or substantial portions of the Software.
 //
-// THE SOFTWARE IS PROVIDED &quot;AS IS&quot;, WITHOUT WARRANTY OF ANY KIND,
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
 // EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
 // MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
 // NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
@@ -275,22 +275,22 @@
 <span class="kw">use </span>strict_yaml_rust::StrictYaml;
 
 <span class="doccomment">/// Name of the link directive
-</span><span class="kw">pub const </span>DIRECTIVE_NAME: <span class="kw-2">&amp;</span>str = <span class="string">&quot;link&quot;</span>;
+</span><span class="kw">pub const </span>DIRECTIVE_NAME: <span class="kw-2">&amp;</span>str = <span class="string">"link"</span>;
 <span class="doccomment">/// Path setting (path of the symlink)
-</span><span class="kw">pub const </span>PATH_SETTING: <span class="kw-2">&amp;</span>str = <span class="string">&quot;path&quot;</span>;
+</span><span class="kw">pub const </span>PATH_SETTING: <span class="kw-2">&amp;</span>str = <span class="string">"path"</span>;
 <span class="doccomment">/// Target setting (path to the file the symlink points to)
-</span><span class="kw">pub const </span>TARGET_SETTING: <span class="kw-2">&amp;</span>str = <span class="string">&quot;target&quot;</span>;
+</span><span class="kw">pub const </span>TARGET_SETTING: <span class="kw-2">&amp;</span>str = <span class="string">"target"</span>;
 <span class="doccomment">/// Force setting, replaces any other file or directory
-</span><span class="kw">pub const </span>FORCE_SETTING: <span class="kw-2">&amp;</span>str = <span class="string">&quot;force&quot;</span>;
+</span><span class="kw">pub const </span>FORCE_SETTING: <span class="kw-2">&amp;</span>str = <span class="string">"force"</span>;
 <span class="doccomment">/// Relink setting, if true the action relinks an existing symlink
 /// (applies if force is false)
-</span><span class="kw">pub const </span>RELINK_SETTING: <span class="kw-2">&amp;</span>str = <span class="string">&quot;relink&quot;</span>;
-<span class="doccomment">/// Create parent dirs if they don&#39;t exist
-</span><span class="kw">pub const </span>CREATE_PARENT_DIRS_SETTING: <span class="kw-2">&amp;</span>str = <span class="string">&quot;create_parent_dirs&quot;</span>;
+</span><span class="kw">pub const </span>RELINK_SETTING: <span class="kw-2">&amp;</span>str = <span class="string">"relink"</span>;
+<span class="doccomment">/// Create parent dirs if they don't exist
+</span><span class="kw">pub const </span>CREATE_PARENT_DIRS_SETTING: <span class="kw-2">&amp;</span>str = <span class="string">"create_parent_dirs"</span>;
 <span class="doccomment">/// Create the symlink even if the target file does not exist
-</span><span class="kw">pub const </span>IGNORE_MISSING_TARGET_SETTING: <span class="kw-2">&amp;</span>str = <span class="string">&quot;ignore_missing_target&quot;</span>;
+</span><span class="kw">pub const </span>IGNORE_MISSING_TARGET_SETTING: <span class="kw-2">&amp;</span>str = <span class="string">"ignore_missing_target"</span>;
 <span class="doccomment">/// Resolves the target if it is a symlink and uses the final target file as the target.
-</span><span class="kw">pub const </span>RESOLVE_SYMLINK_TARGET_SETTING: <span class="kw-2">&amp;</span>str = <span class="string">&quot;resolve_symlink_target&quot;</span>;
+</span><span class="kw">pub const </span>RESOLVE_SYMLINK_TARGET_SETTING: <span class="kw-2">&amp;</span>str = <span class="string">"resolve_symlink_target"</span>;
 
 <span class="doccomment">/// Initialize the defaults for the LinkDirective.
 </span><span class="kw">pub fn </span>init_directive_data() -&gt; DirectiveData {
@@ -319,18 +319,18 @@
 <span class="doccomment">/// A directive that can build [LinkAction]s to create directories
 /// in the filesystem.
 </span><span class="attr">#[derive(Directive, Clone)]
-</span><span class="kw">pub struct </span>LinkDirective&lt;<span class="lifetime">&#39;a</span>, F: FileSystem + UnixFileSystem + Default&gt; {
+</span><span class="kw">pub struct </span>LinkDirective&lt;<span class="lifetime">'a</span>, F: FileSystem + UnixFileSystem + Default&gt; {
   fs: F,
   data: DirectiveData,
-  phantom: PhantomData&lt;<span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span>F&gt;,
+  phantom: PhantomData&lt;<span class="kw-2">&amp;</span><span class="lifetime">'a </span>F&gt;,
 }
 
 <span class="doccomment">/// [LinkDirective] that uses the native [OsFileSystem].
-</span><span class="kw">pub type </span>NativeLinkDirective&lt;<span class="lifetime">&#39;a</span>&gt; = LinkDirective&lt;<span class="lifetime">&#39;a</span>, OsFileSystem&gt;;
+</span><span class="kw">pub type </span>NativeLinkDirective&lt;<span class="lifetime">'a</span>&gt; = LinkDirective&lt;<span class="lifetime">'a</span>, OsFileSystem&gt;;
 <span class="doccomment">/// [LinkDirective] that uses the native [FakeFileSystem] for testing.
-</span><span class="kw">pub type </span>FakeLinkDirective&lt;<span class="lifetime">&#39;a</span>&gt; = LinkDirective&lt;<span class="lifetime">&#39;a</span>, FakeFileSystem&gt;;
+</span><span class="kw">pub type </span>FakeLinkDirective&lt;<span class="lifetime">'a</span>&gt; = LinkDirective&lt;<span class="lifetime">'a</span>, FakeFileSystem&gt;;
 
-<span class="kw">impl</span>&lt;<span class="lifetime">&#39;a</span>, F: FileSystem + UnixFileSystem + Default&gt; Default <span class="kw">for </span>LinkDirective&lt;<span class="lifetime">&#39;a</span>, F&gt; {
+<span class="kw">impl</span>&lt;<span class="lifetime">'a</span>, F: FileSystem + UnixFileSystem + Default&gt; Default <span class="kw">for </span>LinkDirective&lt;<span class="lifetime">'a</span>, F&gt; {
   <span class="kw">fn </span>default() -&gt; <span class="self">Self </span>{
     <span class="self">Self </span>{
       fs: Default::default(),
@@ -340,8 +340,8 @@
   }
 }
 
-<span class="kw">impl</span>&lt;<span class="lifetime">&#39;a</span>, F: FileSystem + UnixFileSystem + Default&gt; FileSystemDirective&lt;<span class="lifetime">&#39;a</span>, F&gt;
-  <span class="kw">for </span>LinkDirective&lt;<span class="lifetime">&#39;a</span>, F&gt;
+<span class="kw">impl</span>&lt;<span class="lifetime">'a</span>, F: FileSystem + UnixFileSystem + Default&gt; FileSystemDirective&lt;<span class="lifetime">'a</span>, F&gt;
+  <span class="kw">for </span>LinkDirective&lt;<span class="lifetime">'a</span>, F&gt;
 {
   <span class="kw">fn </span>fs(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="kw-2">&amp;</span>F {
     <span class="kw-2">&amp;</span><span class="self">self</span>.fs
@@ -352,9 +352,9 @@
   }
 }
 
-<span class="kw">impl</span>&lt;<span class="lifetime">&#39;a</span>, F: FileSystem + UnixFileSystem + Default&gt; LinkDirective&lt;<span class="lifetime">&#39;a</span>, F&gt;
+<span class="kw">impl</span>&lt;<span class="lifetime">'a</span>, F: FileSystem + UnixFileSystem + Default&gt; LinkDirective&lt;<span class="lifetime">'a</span>, F&gt;
 <span class="kw">where
-  </span>LinkDirective&lt;<span class="lifetime">&#39;a</span>, F&gt;: HasDirectiveData&lt;<span class="lifetime">&#39;a</span>&gt; + Directive&lt;<span class="lifetime">&#39;a</span>&gt;,
+  </span>LinkDirective&lt;<span class="lifetime">'a</span>, F&gt;: HasDirectiveData&lt;<span class="lifetime">'a</span>&gt; + Directive&lt;<span class="lifetime">'a</span>&gt;,
 {
   <span class="doccomment">/// Returns the [FileSystem] instance being used.
   </span><span class="kw">pub fn </span>fs(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="kw-2">&amp;</span>F {
@@ -362,11 +362,11 @@
   }
 
   <span class="kw">fn </span>parse_full_action(
-    <span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span><span class="self">self</span>,
+    <span class="kw-2">&amp;</span><span class="lifetime">'a </span><span class="self">self</span>,
     context_settings: <span class="kw-2">&amp;</span>Settings,
     yaml: <span class="kw-2">&amp;</span>StrictYaml,
     current_dir: <span class="kw-2">&amp;</span>Path,
-  ) -&gt; <span class="prelude-ty">Result</span>&lt;LinkAction&lt;<span class="lifetime">&#39;a</span>, F&gt;, DotfilesError&gt; {
+  ) -&gt; <span class="prelude-ty">Result</span>&lt;LinkAction&lt;<span class="lifetime">'a</span>, F&gt;, DotfilesError&gt; {
     <span class="kw">let </span>path = get_string_setting_from_yaml_or_context(
       PATH_SETTING,
       yaml,
@@ -390,7 +390,7 @@
       })
       .collect();
 
-    LinkAction::&lt;<span class="lifetime">&#39;a</span>, F&gt;::new(
+    LinkAction::&lt;<span class="lifetime">'a</span>, F&gt;::new(
       <span class="kw-2">&amp;</span><span class="self">self</span>.fs,
       path,
       target,
@@ -402,16 +402,16 @@
 
   <span class="doccomment">/// Parse a shortened action with only link name to target name
   </span><span class="kw">pub fn </span>parse_shortened_action(
-    <span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span><span class="self">self</span>,
+    <span class="kw-2">&amp;</span><span class="lifetime">'a </span><span class="self">self</span>,
     context_settings: <span class="kw-2">&amp;</span>Settings,
     yaml: <span class="kw-2">&amp;</span>StrictYaml,
     current_dir: <span class="kw-2">&amp;</span>Path,
-  ) -&gt; <span class="prelude-ty">Result</span>&lt;LinkAction&lt;<span class="lifetime">&#39;a</span>, F&gt;, DotfilesError&gt; {
+  ) -&gt; <span class="prelude-ty">Result</span>&lt;LinkAction&lt;<span class="lifetime">'a</span>, F&gt;, DotfilesError&gt; {
     <span class="kw">if let </span>StrictYaml::Hash(hash) = yaml {
       <span class="kw">match </span>hash.len() {
         <span class="number">1 </span>=&gt; {
           <span class="kw">if let </span>(StrictYaml::String(path), StrictYaml::String(target)) = hash.front().unwrap() {
-            LinkAction::&lt;<span class="lifetime">&#39;a</span>, F&gt;::new(
+            LinkAction::&lt;<span class="lifetime">'a</span>, F&gt;::new(
               <span class="kw-2">&amp;</span><span class="self">self</span>.fs,
               path.clone(),
               target.clone(),
@@ -421,20 +421,20 @@
             )
           } <span class="kw">else </span>{
             <span class="prelude-val">Err</span>(DotfilesError::from_wrong_yaml(
-                        <span class="string">&quot;StrictYaml passed to configure a short Link action is not a hash of string to string, cant parse&quot;</span>.into(),
+                        <span class="string">"StrictYaml passed to configure a short Link action is not a hash of string to string, cant parse"</span>.into(),
                         yaml.to_owned(), StrictYaml::Hash(Default::default())))
           }
         }
 
         x =&gt; <span class="prelude-val">Err</span>(DotfilesError::from(
           <span class="macro">format!</span>(
-            <span class="string">&quot;StrictYaml passed to configure a short Link action is a hash with {x} values, must be just 1&quot;</span>,),
+            <span class="string">"StrictYaml passed to configure a short Link action is a hash with {x} values, must be just 1"</span>,),
           ErrorType::InconsistentConfigurationError,
         )),
       }
     } <span class="kw">else </span>{
       <span class="prelude-val">Err</span>(DotfilesError::from_wrong_yaml(
-        <span class="string">&quot;StrictYaml passed to configure a Link action is not a Hash&quot;</span>.into(),
+        <span class="string">"StrictYaml passed to configure a Link action is not a Hash"</span>.into(),
         yaml.to_owned(),
         StrictYaml::Hash(Default::default()),
       ))
@@ -442,15 +442,15 @@
   }
 }
 
-<span class="kw">impl</span>&lt;<span class="lifetime">&#39;a</span>, F: FileSystem + UnixFileSystem + Default&gt; ActionParser&lt;<span class="lifetime">&#39;a</span>&gt; <span class="kw">for </span>LinkDirective&lt;<span class="lifetime">&#39;a</span>, F&gt; {
-  <span class="kw">type </span>ActionType = LinkAction&lt;<span class="lifetime">&#39;a</span>, F&gt;;
+<span class="kw">impl</span>&lt;<span class="lifetime">'a</span>, F: FileSystem + UnixFileSystem + Default&gt; ActionParser&lt;<span class="lifetime">'a</span>&gt; <span class="kw">for </span>LinkDirective&lt;<span class="lifetime">'a</span>, F&gt; {
+  <span class="kw">type </span>ActionType = LinkAction&lt;<span class="lifetime">'a</span>, F&gt;;
 
   <span class="kw">fn </span>parse_action(
-    <span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span><span class="self">self</span>,
+    <span class="kw-2">&amp;</span><span class="lifetime">'a </span><span class="self">self</span>,
     settings: <span class="kw-2">&amp;</span>Settings,
     yaml: <span class="kw-2">&amp;</span>StrictYaml,
     current_directory: <span class="kw-2">&amp;</span>Path,
-  ) -&gt; <span class="prelude-ty">Result</span>&lt;LinkAction&lt;<span class="lifetime">&#39;a</span>, F&gt;, DotfilesError&gt; {
+  ) -&gt; <span class="prelude-ty">Result</span>&lt;LinkAction&lt;<span class="lifetime">'a</span>, F&gt;, DotfilesError&gt; {
     <span class="self">self
       </span>.parse_shortened_action(settings, yaml, current_directory)
       .or_else(|<span class="kw">_</span>| <span class="self">self</span>.parse_full_action(settings, yaml, current_directory))

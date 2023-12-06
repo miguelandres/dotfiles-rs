@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `dotfiles_processor/src/context.rs`."><title>context.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../static.files/rustdoc-9ee3a5e31a2afa3e.css"><meta name="rustdoc-vars" data-root-path="../../" data-static-root-path="../../static.files/" data-current-crate="dotfiles_processor" data-themes="" data-resource-suffix="" data-rustdoc-version="1.76.0-nightly (9a66e4471 2023-11-19)" data-channel="nightly" data-search-js="search-d23a059ec093b287.js" data-settings-js="settings-74424d7eec62a23e.js" ><script src="../../static.files/storage-fec3eaa3851e447d.js"></script><script defer src="../../static.files/src-script-3280b574d94e47b4.js"></script><script defer src="../../src-files.js"></script><script defer src="../../static.files/main-f06f02fd918e3bb3.js"></script><noscript><link rel="stylesheet" href="../../static.files/noscript-5d8b3c7633ad77ba.css"></noscript><link rel="alternate icon" type="image/png" href="../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `dotfiles_processor/src/context.rs`."><title>context.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../static.files/rustdoc-c67e44d78ab2db17.css"><meta name="rustdoc-vars" data-root-path="../../" data-static-root-path="../../static.files/" data-current-crate="dotfiles_processor" data-themes="" data-resource-suffix="" data-rustdoc-version="1.76.0-nightly (e9013ac0e 2023-12-05)" data-channel="nightly" data-search-js="search-5a66c239c06b3a66.js" data-settings-js="settings-fe03fdc259827cd2.js" ><script src="../../static.files/storage-fec3eaa3851e447d.js"></script><script defer src="../../static.files/src-script-3280b574d94e47b4.js"></script><script defer src="../../src-files.js"></script><script defer src="../../static.files/main-77dede896d6ac08e.js"></script><noscript><link rel="stylesheet" href="../../static.files/noscript-5d8b3c7633ad77ba.css"></noscript><link rel="alternate icon" type="image/png" href="../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
 <a href="#2" id="2">2</a>
 <a href="#3" id="3">3</a>
 <a href="#4" id="4">4</a>
@@ -228,7 +228,7 @@
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
-// &quot;Software&quot;), to deal in the Software without restriction, including
+// "Software"), to deal in the Software without restriction, including
 // without limitation the rights to use, copy, modify, merge, publish,
 // distribute, sublicense, and/or sell copies of the Software, and to
 // permit persons to whom the Software is furnished to do so, subject to
@@ -237,7 +237,7 @@
 // The above copyright notice and this permission notice shall be
 // included in all copies or substantial portions of the Software.
 //
-// THE SOFTWARE IS PROVIDED &quot;AS IS&quot;, WITHOUT WARRANTY OF ANY KIND,
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
 // EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
 // MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
 // NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
@@ -270,22 +270,22 @@
 </span><span class="attr">#[derive(Getters)]
 </span><span class="kw">pub struct </span>Context {
   <span class="doccomment">/// The default overrides for the current context.
-  </span><span class="attr">#[getset(get = <span class="string">&quot;pub&quot;</span>)]
+  </span><span class="attr">#[getset(get = <span class="string">"pub"</span>)]
   </span>defaults: HashMap&lt;String, Settings&gt;,
   <span class="doccomment">/// The list of actions parsed from this file.
-  </span><span class="attr">#[getset(get = <span class="string">&quot;pub&quot;</span>)]
-  </span>actions: Vec&lt;KnownAction&lt;<span class="lifetime">&#39;static</span>&gt;&gt;,
+  </span><span class="attr">#[getset(get = <span class="string">"pub"</span>)]
+  </span>actions: Vec&lt;KnownAction&lt;<span class="lifetime">'static</span>&gt;&gt;,
   <span class="doccomment">/// The absolute path to the file to which this context corresponds.
-  </span><span class="attr">#[getset(get = <span class="string">&quot;pub&quot;</span>)]
+  </span><span class="attr">#[getset(get = <span class="string">"pub"</span>)]
   </span>file: PathBuf,
 }
 
 <span class="kw">impl </span>TryFrom&lt;<span class="kw-2">&amp;</span>str&gt; <span class="kw">for </span>Context {
   <span class="kw">type </span>Error = DotfilesError;
   <span class="kw">fn </span>try_from(file_name: <span class="kw-2">&amp;</span>str) -&gt; <span class="prelude-ty">Result</span>&lt;<span class="self">Self</span>, <span class="self">Self</span>::Error&gt; {
-    <span class="macro">log::debug!</span>(<span class="string">&quot;creating context for {:?}&quot;</span>, file_name);
+    <span class="macro">log::debug!</span>(<span class="string">"creating context for {:?}"</span>, file_name);
     <span class="kw">let </span>absolute_file = convert_path_to_absolute(<span class="kw-2">&amp;</span>PathBuf::from(file_name), <span class="prelude-val">None</span>)<span class="question-mark">?</span>;
-    <span class="macro">log::debug!</span>(<span class="string">&quot;Absolute file name: {:?}&quot;</span>, absolute_file.to_str());
+    <span class="macro">log::debug!</span>(<span class="string">"Absolute file name: {:?}"</span>, absolute_file.to_str());
 
     <span class="prelude-val">Ok</span>(<span class="self">Self </span>{
       defaults: Default::default(),
@@ -298,7 +298,7 @@
 <span class="kw">impl </span>TryFrom&lt;<span class="kw-2">&amp;</span>Path&gt; <span class="kw">for </span>Context {
   <span class="kw">type </span>Error = DotfilesError;
   <span class="kw">fn </span>try_from(file_name: <span class="kw-2">&amp;</span>Path) -&gt; <span class="prelude-ty">Result</span>&lt;<span class="self">Self</span>, <span class="self">Self</span>::Error&gt; {
-    <span class="macro">log::debug!</span>(<span class="string">&quot;creating context for {:?}&quot;</span>, file_name.to_str().unwrap());
+    <span class="macro">log::debug!</span>(<span class="string">"creating context for {:?}"</span>, file_name.to_str().unwrap());
 
     <span class="prelude-val">Ok</span>(<span class="self">Self </span>{
       defaults: Default::default(),
@@ -327,15 +327,15 @@
     {
       <span class="kw">let </span>yaml = read_yaml_file(<span class="kw-2">&amp;</span><span class="self">self</span>.file)<span class="question-mark">?</span>;
       <span class="kw">if let </span><span class="prelude-val">Some</span>(hash) = yaml.first().and_then(|yaml_first| yaml_first.as_hash()) {
-        <span class="kw">if let </span><span class="prelude-val">Some</span>(yaml_defaults) = hash.get(<span class="kw-2">&amp;</span>StrictYaml::String(<span class="string">&quot;defaults&quot;</span>.into())) {
+        <span class="kw">if let </span><span class="prelude-val">Some</span>(yaml_defaults) = hash.get(<span class="kw-2">&amp;</span>StrictYaml::String(<span class="string">"defaults"</span>.into())) {
           <span class="self">self</span>.defaults = <span class="self">Self</span>::parse_defaults(yaml_defaults)<span class="question-mark">?</span>;
         }
-        <span class="kw">if let </span><span class="prelude-val">Some</span>(yaml_steps) = hash.get(<span class="kw-2">&amp;</span>StrictYaml::String(<span class="string">&quot;steps&quot;</span>.into())) {
+        <span class="kw">if let </span><span class="prelude-val">Some</span>(yaml_steps) = hash.get(<span class="kw-2">&amp;</span>StrictYaml::String(<span class="string">"steps"</span>.into())) {
           <span class="kw">let </span><span class="kw-2">mut </span>local_defaults = <span class="self">self</span>.defaults.clone();
           <span class="self">self</span>.actions = <span class="self">Self</span>::parse_actions(<span class="kw-2">&amp;mut </span>local_defaults, yaml_steps, <span class="self">self</span>)<span class="question-mark">?</span>;
         } <span class="kw">else </span>{
           <span class="macro">log::warn!</span>(
-            <span class="string">&quot;File {} does not contain any steps to parse&quot;</span>,
+            <span class="string">"File {} does not contain any steps to parse"</span>,
             <span class="self">self</span>.file.to_str().unwrap()
           );
         }
@@ -344,11 +344,11 @@
           yaml.first().unwrap(),
           <span class="prelude-val">Ok</span>(()),
           |key, <span class="kw">_</span>| {
-            <span class="kw">if </span>key == <span class="string">&quot;defaults&quot; </span>|| key == <span class="string">&quot;steps&quot; </span>{
+            <span class="kw">if </span>key == <span class="string">"defaults" </span>|| key == <span class="string">"steps" </span>{
               <span class="prelude-val">Ok</span>(())
             } <span class="kw">else </span>{
               <span class="prelude-val">Err</span>(DotfilesError::from(
-                <span class="macro">format!</span>(<span class="string">&quot;Found a  {key} section which I don&#39;t know how to process&quot;</span>),
+                <span class="macro">format!</span>(<span class="string">"Found a  {key} section which I don't know how to process"</span>),
                 dotfiles_core::error::ErrorType::InconsistentConfigurationError,
               ))
             }
@@ -357,7 +357,7 @@
         )
       } <span class="kw">else </span>{
         <span class="prelude-val">Err</span>(DotfilesError::from_wrong_yaml(
-          <span class="string">&quot;StrictYaml file root is expected to be a hash that contains defaults and steps&quot;
+          <span class="string">"StrictYaml file root is expected to be a hash that contains defaults and steps"
             </span>.to_owned(),
           StrictYaml::BadValue,
           StrictYaml::Hash(Default::default()),
@@ -365,7 +365,7 @@
       }
     }
     .map_err(|<span class="kw-2">mut </span>err| {
-      err.add_message_prefix(<span class="macro">format!</span>(<span class="string">&quot;Parsing {}&quot;</span>, <span class="self">self</span>.file.to_str().unwrap()));
+      err.add_message_prefix(<span class="macro">format!</span>(<span class="string">"Parsing {}"</span>, <span class="self">self</span>.file.to_str().unwrap()));
       err
     })
   }
@@ -375,7 +375,7 @@
   /// It may fail for several reasons:
   ///
   /// * [ErrorType::InconsistentConfigurationError]
-  ///   - In case the configuration mentions a directive that doesn&#39;t exist
+  ///   - In case the configuration mentions a directive that doesn't exist
   /// * [ErrorType::YamlParseError]
   ///   - A directive is mentioned more than once.
   ///   - Some other Yaml syntax error.
@@ -409,7 +409,7 @@
   /// It may fail for several reasons:
   ///
   /// * [ErrorType::InconsistentConfigurationError]
-  ///   - In case the configuration mentions a directive that doesn&#39;t exist
+  ///   - In case the configuration mentions a directive that doesn't exist
   /// * [ErrorType::YamlParseError]
   ///   - A directive is mentioned more than once.
   ///   - Some other Yaml syntax error.
@@ -422,7 +422,7 @@
     defaults: <span class="kw-2">&amp;mut </span>HashMap&lt;String, Settings&gt;,
     steps_yaml: <span class="kw-2">&amp;</span>StrictYaml,
     context: <span class="kw-2">&amp;</span>Context,
-  ) -&gt; <span class="prelude-ty">Result</span>&lt;Vec&lt;KnownAction&lt;<span class="lifetime">&#39;static</span>&gt;&gt;, DotfilesError&gt; {
+  ) -&gt; <span class="prelude-ty">Result</span>&lt;Vec&lt;KnownAction&lt;<span class="lifetime">'static</span>&gt;&gt;, DotfilesError&gt; {
     <span class="kw">let </span>all_actions: Vec&lt;KnownAction&gt; = map_yaml_array(steps_yaml, |step| {
       fold_hash_until_first_err(
         step,

@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `dotfiles_actions/src/brew/action.rs`."><title>action.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../static.files/rustdoc-9ee3a5e31a2afa3e.css"><meta name="rustdoc-vars" data-root-path="../../../" data-static-root-path="../../../static.files/" data-current-crate="dotfiles_actions" data-themes="" data-resource-suffix="" data-rustdoc-version="1.76.0-nightly (9a66e4471 2023-11-19)" data-channel="nightly" data-search-js="search-d23a059ec093b287.js" data-settings-js="settings-74424d7eec62a23e.js" ><script src="../../../static.files/storage-fec3eaa3851e447d.js"></script><script defer src="../../../static.files/src-script-3280b574d94e47b4.js"></script><script defer src="../../../src-files.js"></script><script defer src="../../../static.files/main-f06f02fd918e3bb3.js"></script><noscript><link rel="stylesheet" href="../../../static.files/noscript-5d8b3c7633ad77ba.css"></noscript><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `dotfiles_actions/src/brew/action.rs`."><title>action.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../static.files/rustdoc-c67e44d78ab2db17.css"><meta name="rustdoc-vars" data-root-path="../../../" data-static-root-path="../../../static.files/" data-current-crate="dotfiles_actions" data-themes="" data-resource-suffix="" data-rustdoc-version="1.76.0-nightly (e9013ac0e 2023-12-05)" data-channel="nightly" data-search-js="search-5a66c239c06b3a66.js" data-settings-js="settings-fe03fdc259827cd2.js" ><script src="../../../static.files/storage-fec3eaa3851e447d.js"></script><script defer src="../../../static.files/src-script-3280b574d94e47b4.js"></script><script defer src="../../../src-files.js"></script><script defer src="../../../static.files/main-77dede896d6ac08e.js"></script><noscript><link rel="stylesheet" href="../../../static.files/noscript-5d8b3c7633ad77ba.css"></noscript><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
 <a href="#2" id="2">2</a>
 <a href="#3" id="3">3</a>
 <a href="#4" id="4">4</a>
@@ -267,7 +267,7 @@
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
-// &quot;Software&quot;), to deal in the Software without restriction, including
+// "Software"), to deal in the Software without restriction, including
 // without limitation the rights to use, copy, modify, merge, publish,
 // distribute, sublicense, and/or sell copies of the Software, and to
 // permit persons to whom the Software is furnished to do so, subject to
@@ -276,7 +276,7 @@
 // The above copyright notice and this permission notice shall be
 // included in all copies or substantial portions of the Software.
 //
-// THE SOFTWARE IS PROVIDED &quot;AS IS&quot;, WITHOUT WARRANTY OF ANY KIND,
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
 // EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
 // MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
 // NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
@@ -293,13 +293,13 @@
 <span class="kw">use </span>dotfiles_core::error::DotfilesError;
 <span class="kw">use </span>dotfiles_core_macros::ConditionalAction;
 <span class="kw">use </span>getset::Getters;
-<span class="attr">#[cfg(target_os = <span class="string">&quot;macos&quot;</span>)]
+<span class="attr">#[cfg(target_os = <span class="string">"macos"</span>)]
 </span><span class="kw">use </span>log::info;
-<span class="attr">#[cfg(target_os = <span class="string">&quot;macos&quot;</span>)]
+<span class="attr">#[cfg(target_os = <span class="string">"macos"</span>)]
 </span><span class="kw">use </span>std::fmt::Display;
 <span class="kw">use </span>std::marker::PhantomData;
 <span class="kw">use </span>subprocess::Exec;
-<span class="attr">#[cfg(target_os = <span class="string">&quot;macos&quot;</span>)]
+<span class="attr">#[cfg(target_os = <span class="string">"macos"</span>)]
 #[derive(Getters, Eq, PartialEq, Debug, Clone)]
 </span><span class="doccomment">/// An item to download from the app store
 </span><span class="kw">pub struct </span>MacAppStoreItem {
@@ -311,7 +311,7 @@
   </span>name: String,
 }
 
-<span class="attr">#[cfg(target_os = <span class="string">&quot;macos&quot;</span>)]
+<span class="attr">#[cfg(target_os = <span class="string">"macos"</span>)]
 </span><span class="kw">impl </span>From&lt;(i64, String)&gt; <span class="kw">for </span>MacAppStoreItem {
   <span class="kw">fn </span>from(value: (i64, String)) -&gt; <span class="self">Self </span>{
     MacAppStoreItem {
@@ -321,14 +321,14 @@
   }
 }
 
-<span class="attr">#[cfg(target_os = <span class="string">&quot;macos&quot;</span>)]
+<span class="attr">#[cfg(target_os = <span class="string">"macos"</span>)]
 </span><span class="kw">impl </span>Display <span class="kw">for </span>MacAppStoreItem {
-  <span class="kw">fn </span>fmt(<span class="kw-2">&amp;</span><span class="self">self</span>, f: <span class="kw-2">&amp;mut </span>std::fmt::Formatter&lt;<span class="lifetime">&#39;_</span>&gt;) -&gt; std::fmt::Result {
-    <span class="macro">write!</span>(f, <span class="string">&quot;id: {}, name: {}&quot;</span>, <span class="self">self</span>.id, <span class="self">self</span>.name)
+  <span class="kw">fn </span>fmt(<span class="kw-2">&amp;</span><span class="self">self</span>, f: <span class="kw-2">&amp;mut </span>std::fmt::Formatter&lt;<span class="lifetime">'_</span>&gt;) -&gt; std::fmt::Result {
+    <span class="macro">write!</span>(f, <span class="string">"id: {}, name: {}"</span>, <span class="self">self</span>.id, <span class="self">self</span>.name)
   }
 }
 
-<span class="attr">#[cfg(target_os = <span class="string">&quot;macos&quot;</span>)]
+<span class="attr">#[cfg(target_os = <span class="string">"macos"</span>)]
 #[derive(Eq, PartialEq, Debug, Clone)]
 </span><span class="doccomment">/// Command to download something from the mac app store
 </span><span class="kw">pub struct </span>MacAppStoreCommand {
@@ -336,19 +336,19 @@
   args: Vec&lt;String&gt;,
 }
 
-<span class="attr">#[cfg(target_os = <span class="string">&quot;macos&quot;</span>)]
+<span class="attr">#[cfg(target_os = <span class="string">"macos"</span>)]
 </span><span class="kw">impl </span>From&lt;Vec&lt;MacAppStoreItem&gt;&gt; <span class="kw">for </span>MacAppStoreCommand {
   <span class="kw">fn </span>from(items: Vec&lt;MacAppStoreItem&gt;) -&gt; <span class="self">Self </span>{
     <span class="kw">let </span><span class="kw-2">mut </span>args: Vec&lt;String&gt; = items.iter().map(|it| it.id().to_string()).collect();
-    args.insert(<span class="number">0</span>, <span class="string">&quot;install&quot;</span>.into());
+    args.insert(<span class="number">0</span>, <span class="string">"install"</span>.into());
     MacAppStoreCommand { items, args }
   }
 }
 
-<span class="attr">#[cfg(target_os = <span class="string">&quot;macos&quot;</span>)]
+<span class="attr">#[cfg(target_os = <span class="string">"macos"</span>)]
 </span><span class="kw">impl </span>InstallCommand&lt;MacAppStoreItem&gt; <span class="kw">for </span>MacAppStoreCommand {
   <span class="kw">fn </span>base_command(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; Exec {
-    Exec::cmd(<span class="string">&quot;mas&quot;</span>)
+    Exec::cmd(<span class="string">"mas"</span>)
   }
 
   <span class="kw">fn </span>args(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="kw-2">&amp;</span>Vec&lt;String&gt; {
@@ -356,7 +356,7 @@
   }
 
   <span class="kw">fn </span>action_description(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="kw-2">&amp;</span>str {
-    <span class="string">&quot;Installing from Mac App Store&quot;
+    <span class="string">"Installing from Mac App Store"
   </span>}
 
   <span class="kw">fn </span>items(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="kw-2">&amp;</span>Vec&lt;MacAppStoreItem&gt; {
@@ -364,26 +364,26 @@
   }
 
   <span class="kw">fn </span>action_name(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="kw-2">&amp;</span>str {
-    <span class="string">&quot;mas&quot;
+    <span class="string">"mas"
   </span>}
 
   <span class="kw">fn </span>execute(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="prelude-ty">Result</span>&lt;(), DotfilesError&gt; {
     <span class="kw">let </span>item_list: String = <span class="self">self
       </span>.items()
       .iter()
-      .map(|it| <span class="macro">format!</span>(<span class="string">&quot;{}&quot;</span>, it))
+      .map(|it| <span class="macro">format!</span>(<span class="string">"{}"</span>, it))
       .collect::&lt;Vec&lt;String&gt;&gt;()
-      .join(<span class="string">&quot;, &quot;</span>);
-    <span class="macro">info!</span>(<span class="string">&quot;{} {}&quot;</span>, <span class="self">self</span>.action_description(), item_list);
+      .join(<span class="string">", "</span>);
+    <span class="macro">info!</span>(<span class="string">"{} {}"</span>, <span class="self">self</span>.action_description(), item_list);
     <span class="kw">let </span><span class="kw-2">mut </span>cmd = <span class="self">self</span>.base_command();
     <span class="kw">for </span>arg <span class="kw">in </span><span class="self">self</span>.args().iter() {
       cmd = cmd.arg(arg);
     }
     dotfiles_core::exec_wrapper::execute_commands(
       <span class="macro">vec!</span>[cmd],
-      <span class="macro">format!</span>(<span class="string">&quot;Couldn&#39;t {} {}&quot;</span>, <span class="self">self</span>.action_name(), item_list).as_str(),
+      <span class="macro">format!</span>(<span class="string">"Couldn't {} {}"</span>, <span class="self">self</span>.action_name(), item_list).as_str(),
       <span class="macro">format!</span>(
-        <span class="string">&quot;Unexpected error while {} {}&quot;</span>,
+        <span class="string">"Unexpected error while {} {}"</span>,
         <span class="self">self</span>.action_description(),
         <span class="kw-2">&amp;</span>item_list
       )
@@ -401,7 +401,7 @@
 
 <span class="kw">impl </span>InstallCommand&lt;String&gt; <span class="kw">for </span>BrewCommand {
   <span class="kw">fn </span>base_command(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; Exec {
-    Exec::cmd(<span class="string">&quot;brew&quot;</span>)
+    Exec::cmd(<span class="string">"brew"</span>)
   }
 
   <span class="kw">fn </span>args(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="kw-2">&amp;</span>Vec&lt;String&gt; {
@@ -424,27 +424,27 @@
   <span class="kw">fn </span>tap(tap: <span class="kw-2">&amp;</span>str) -&gt; BrewCommand {
     BrewCommand {
       items: <span class="macro">vec!</span>[tap.into()],
-      args: <span class="macro">vec!</span>[<span class="string">&quot;tap&quot;</span>.into(), tap.into()],
-      action_name: <span class="string">&quot;tap&quot;</span>.into(),
-      action_description: <span class="string">&quot;tapping&quot;</span>.into(),
+      args: <span class="macro">vec!</span>[<span class="string">"tap"</span>.into(), tap.into()],
+      action_name: <span class="string">"tap"</span>.into(),
+      action_description: <span class="string">"tapping"</span>.into(),
     }
   }
 
   <span class="kw">fn </span>install_formulae(items: <span class="kw-2">&amp;</span>Vec&lt;String&gt;) -&gt; BrewCommand {
     <span class="kw">let </span><span class="kw-2">mut </span>args: Vec&lt;String&gt; = items.clone();
-    args.insert(<span class="number">0</span>, <span class="string">&quot;install&quot;</span>.into());
+    args.insert(<span class="number">0</span>, <span class="string">"install"</span>.into());
     BrewCommand {
       items: items.clone(),
       args: args,
-      action_name: <span class="string">&quot;install formula&quot;</span>.into(),
-      action_description: <span class="string">&quot;installing formula&quot;</span>.into(),
+      action_name: <span class="string">"install formula"</span>.into(),
+      action_description: <span class="string">"installing formula"</span>.into(),
     }
   }
 
   <span class="kw">fn </span>install_casks(items: <span class="kw-2">&amp;</span>Vec&lt;String&gt;, force: <span class="kw-2">&amp;</span>bool) -&gt; BrewCommand {
-    <span class="kw">let </span><span class="kw-2">mut </span>args = <span class="macro">vec!</span>[<span class="string">&quot;install&quot;</span>.into(), <span class="string">&quot;--cask&quot;</span>.into()];
+    <span class="kw">let </span><span class="kw-2">mut </span>args = <span class="macro">vec!</span>[<span class="string">"install"</span>.into(), <span class="string">"--cask"</span>.into()];
     <span class="kw">if </span><span class="kw-2">*</span>force {
-      args.push(<span class="string">&quot;--force&quot;</span>.into())
+      args.push(<span class="string">"--force"</span>.into())
     }
     {
       <span class="kw">let </span><span class="kw-2">mut </span>items = items.clone();
@@ -455,41 +455,41 @@
     BrewCommand {
       items,
       args,
-      action_name: <span class="string">&quot;install cask&quot;</span>.into(),
-      action_description: <span class="string">&quot;installing cask&quot;</span>.into(),
+      action_name: <span class="string">"install cask"</span>.into(),
+      action_description: <span class="string">"installing cask"</span>.into(),
     }
   }
 }
 
 <span class="doccomment">/// [BrewAction] Installs software using homebrew.
 </span><span class="attr">#[derive(Eq, PartialEq, Debug, ConditionalAction, Getters)]
-</span><span class="kw">pub struct </span>BrewAction&lt;<span class="lifetime">&#39;a</span>&gt; {
+</span><span class="kw">pub struct </span>BrewAction&lt;<span class="lifetime">'a</span>&gt; {
   <span class="doccomment">/// Skips this action if it is running in a CI environment.
-  </span><span class="attr">#[get = <span class="string">&quot;pub&quot;</span>]
+  </span><span class="attr">#[get = <span class="string">"pub"</span>]
   </span>skip_in_ci: bool,
   <span class="doccomment">/// Passes `--force` to `brew install --cask` to prevent the install failure
   /// when the app is already installed before the cask install.
-  </span><span class="attr">#[get = <span class="string">&quot;pub&quot;</span>]
+  </span><span class="attr">#[get = <span class="string">"pub"</span>]
   </span>force_casks: bool,
   <span class="doccomment">/// List of repositories to tap into using `brew tap`.
-  </span><span class="attr">#[get = <span class="string">&quot;pub&quot;</span>]
+  </span><span class="attr">#[get = <span class="string">"pub"</span>]
   </span>taps: Vec&lt;String&gt;,
   <span class="doccomment">/// List of brew formulae to `brew install`, usually command line tools.
-  </span><span class="attr">#[get = <span class="string">&quot;pub&quot;</span>]
+  </span><span class="attr">#[get = <span class="string">"pub"</span>]
   </span>formulae: Vec&lt;String&gt;,
 
   <span class="doccomment">/// List of casks to install. Casks usually are macOS apps with some sort of UI or framework
   /// dependencies.
-  </span><span class="attr">#[get = <span class="string">&quot;pub&quot;</span>]
+  </span><span class="attr">#[get = <span class="string">"pub"</span>]
   </span>casks: Vec&lt;String&gt;,
 
-  <span class="attr">#[cfg(target_os = <span class="string">&quot;macos&quot;</span>)]
+  <span class="attr">#[cfg(target_os = <span class="string">"macos"</span>)]
   </span><span class="doccomment">/// List of Mac OS apps to install from the App Store
-  </span><span class="attr">#[get = <span class="string">&quot;pub&quot;</span>]
+  </span><span class="attr">#[get = <span class="string">"pub"</span>]
   </span>mas_apps: Vec&lt;MacAppStoreItem&gt;,
-  phantom_data: PhantomData&lt;<span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span>String&gt;,
+  phantom_data: PhantomData&lt;<span class="kw-2">&amp;</span><span class="lifetime">'a </span>String&gt;,
 }
-<span class="kw">impl</span>&lt;<span class="lifetime">&#39;a</span>&gt; BrewAction&lt;<span class="lifetime">&#39;a</span>&gt; {
+<span class="kw">impl</span>&lt;<span class="lifetime">'a</span>&gt; BrewAction&lt;<span class="lifetime">'a</span>&gt; {
   <span class="doccomment">/// Constructs a new [BrewAction]
   </span><span class="kw">pub fn </span>new(
     skip_in_ci: bool,
@@ -497,7 +497,7 @@
     taps: Vec&lt;String&gt;,
     formulae: Vec&lt;String&gt;,
     casks: Vec&lt;String&gt;,
-    <span class="attr">#[cfg(target_os = <span class="string">&quot;macos&quot;</span>)] </span>mas_apps: Vec&lt;MacAppStoreItem&gt;,
+    <span class="attr">#[cfg(target_os = <span class="string">"macos"</span>)] </span>mas_apps: Vec&lt;MacAppStoreItem&gt;,
   ) -&gt; <span class="self">Self </span>{
     <span class="kw">let </span>action = BrewAction {
       skip_in_ci,
@@ -505,16 +505,16 @@
       taps,
       formulae,
       casks,
-      <span class="attr">#[cfg(target_os = <span class="string">&quot;macos&quot;</span>)]
+      <span class="attr">#[cfg(target_os = <span class="string">"macos"</span>)]
       </span>mas_apps,
       phantom_data: PhantomData,
     };
-    <span class="macro">log::trace!</span>(<span class="string">&quot;Creating new {:?}&quot;</span>, action);
+    <span class="macro">log::trace!</span>(<span class="string">"Creating new {:?}"</span>, action);
     action
   }
 }
 
-<span class="kw">impl </span>Action&lt;<span class="lifetime">&#39;_</span>&gt; <span class="kw">for </span>BrewAction&lt;<span class="lifetime">&#39;_</span>&gt; {
+<span class="kw">impl </span>Action&lt;<span class="lifetime">'_</span>&gt; <span class="kw">for </span>BrewAction&lt;<span class="lifetime">'_</span>&gt; {
   <span class="kw">fn </span>execute(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="prelude-ty">Result</span>&lt;(), DotfilesError&gt; {
     <span class="kw">for </span>tap <span class="kw">in </span><span class="kw-2">&amp;</span><span class="self">self</span>.taps {
       BrewCommand::tap(tap).execute()<span class="question-mark">?</span>;

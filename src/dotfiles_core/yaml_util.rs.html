@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `dotfiles_core/src/yaml_util.rs`."><title>yaml_util.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../static.files/rustdoc-9ee3a5e31a2afa3e.css"><meta name="rustdoc-vars" data-root-path="../../" data-static-root-path="../../static.files/" data-current-crate="dotfiles_core" data-themes="" data-resource-suffix="" data-rustdoc-version="1.76.0-nightly (9a66e4471 2023-11-19)" data-channel="nightly" data-search-js="search-d23a059ec093b287.js" data-settings-js="settings-74424d7eec62a23e.js" ><script src="../../static.files/storage-fec3eaa3851e447d.js"></script><script defer src="../../static.files/src-script-3280b574d94e47b4.js"></script><script defer src="../../src-files.js"></script><script defer src="../../static.files/main-f06f02fd918e3bb3.js"></script><noscript><link rel="stylesheet" href="../../static.files/noscript-5d8b3c7633ad77ba.css"></noscript><link rel="alternate icon" type="image/png" href="../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `dotfiles_core/src/yaml_util.rs`."><title>yaml_util.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../static.files/rustdoc-c67e44d78ab2db17.css"><meta name="rustdoc-vars" data-root-path="../../" data-static-root-path="../../static.files/" data-current-crate="dotfiles_core" data-themes="" data-resource-suffix="" data-rustdoc-version="1.76.0-nightly (e9013ac0e 2023-12-05)" data-channel="nightly" data-search-js="search-5a66c239c06b3a66.js" data-settings-js="settings-fe03fdc259827cd2.js" ><script src="../../static.files/storage-fec3eaa3851e447d.js"></script><script defer src="../../static.files/src-script-3280b574d94e47b4.js"></script><script defer src="../../src-files.js"></script><script defer src="../../static.files/main-77dede896d6ac08e.js"></script><noscript><link rel="stylesheet" href="../../static.files/noscript-5d8b3c7633ad77ba.css"></noscript><link rel="alternate icon" type="image/png" href="../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
 <a href="#2" id="2">2</a>
 <a href="#3" id="3">3</a>
 <a href="#4" id="4">4</a>
@@ -502,7 +502,7 @@
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
-// &quot;Software&quot;), to deal in the Software without restriction, including
+// "Software"), to deal in the Software without restriction, including
 // without limitation the rights to use, copy, modify, merge, publish,
 // distribute, sublicense, and/or sell copies of the Software, and to
 // permit persons to whom the Software is furnished to do so, subject to
@@ -511,7 +511,7 @@
 // The above copyright notice and this permission notice shall be
 // included in all copies or substantial portions of the Software.
 //
-// THE SOFTWARE IS PROVIDED &quot;AS IS&quot;, WITHOUT WARRANTY OF ANY KIND,
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
 // EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
 // MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
 // NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
@@ -548,7 +548,7 @@
     })
   } <span class="kw">else </span>{
     <span class="prelude-val">Err</span>(DotfilesError::from_wrong_yaml(
-      <span class="string">&quot;Expected a yaml hash, got something else&quot;</span>.to_owned(),
+      <span class="string">"Expected a yaml hash, got something else"</span>.to_owned(),
       yaml_hash.to_owned(),
       StrictYaml::Hash(Default::default()),
     ))
@@ -563,7 +563,7 @@
 ///
 /// * Will return an error that happens during the process_function application.
 /// * Will return a [ErrorType::UnexpectedYamlTypeError] if the value is not a hash or if the hash
-///   doesn&#39;t have string-based keys.
+///   doesn't have string-based keys.
 /// * Will return a [ErrorType::IncompleteConfigurationError] if the key is not found in the hash.
 </span><span class="kw">pub fn </span>process_value_from_yaml_hash&lt;T, F&gt;(
   key: <span class="kw-2">&amp;</span>str,
@@ -577,7 +577,7 @@
     <span class="kw">match </span>inner_hash.get(<span class="kw-2">&amp;</span>StrictYaml::String(key.into())) {
       <span class="prelude-val">Some</span>(yaml) =&gt; process(yaml),
       <span class="prelude-val">None </span>=&gt; <span class="prelude-val">Err</span>(DotfilesError::from(
-        <span class="macro">format!</span>(<span class="string">&quot;Hash does not contain key {}&quot;</span>, key.to_owned()),
+        <span class="macro">format!</span>(<span class="string">"Hash does not contain key {}"</span>, key.to_owned()),
         ErrorType::IncompleteConfigurationError {
           missing_field: key.into(),
         },
@@ -585,7 +585,7 @@
     }
   } <span class="kw">else </span>{
     <span class="prelude-val">Err</span>(DotfilesError::from_wrong_yaml(
-      <span class="string">&quot;process_value_from_yaml_hash expects a hash, but got something else&quot;</span>.into(),
+      <span class="string">"process_value_from_yaml_hash expects a hash, but got something else"</span>.into(),
       yaml_hash.to_owned(),
       StrictYaml::Hash(Default::default()),
     ))
@@ -607,7 +607,7 @@
     inner_vec.iter().map(process).collect()
   } <span class="kw">else </span>{
     <span class="prelude-val">Err</span>(DotfilesError::from_wrong_yaml(
-      <span class="string">&quot;map_yaml_array expects a yaml array, but got something else&quot;</span>.into(),
+      <span class="string">"map_yaml_array expects a yaml array, but got something else"</span>.into(),
       yaml_array.to_owned(),
       StrictYaml::Array(<span class="macro">vec!</span>[]),
     ))
@@ -619,7 +619,7 @@
 /// # Errors
 /// * [ErrorType::UnexpectedYamlTypeError] if the yaml is not a hash.
 /// * [ErrorType::UnexpectedYamlTypeError] if the yaml does not have string keys.
-/// * [ErrorType::UnexpectedYamlTypeError] if the value&#39;s type does not match the `setting_type`.
+/// * [ErrorType::UnexpectedYamlTypeError] if the value's type does not match the `setting_type`.
 /// * [ErrorType::IncompleteConfigurationError] if the hash does not contain the requested key
 </span><span class="kw">pub fn </span>get_setting_from_yaml_hash(
   name: <span class="kw-2">&amp;</span>str,
@@ -635,7 +635,7 @@
 /// # Errors
 /// * [ErrorType::UnexpectedYamlTypeError] if the yaml is not a hash.
 /// * [ErrorType::UnexpectedYamlTypeError] if the yaml does not have string keys.
-/// * [ErrorType::UnexpectedYamlTypeError] if the value&#39;s type  is not boolean.
+/// * [ErrorType::UnexpectedYamlTypeError] if the value's type  is not boolean.
 /// * [ErrorType::IncompleteConfigurationError] if the hash does not contain the requested key
 </span><span class="kw">pub fn </span>get_boolean_from_yaml_hash(name: <span class="kw-2">&amp;</span>str, yaml: <span class="kw-2">&amp;</span>StrictYaml) -&gt; <span class="prelude-ty">Result</span>&lt;bool, DotfilesError&gt; {
   process_value_from_yaml_hash(name, yaml, |value_for_name| {
@@ -648,7 +648,7 @@
 /// # Errors
 /// * [ErrorType::UnexpectedYamlTypeError] if the yaml is not a hash.
 /// * [ErrorType::UnexpectedYamlTypeError] if the yaml does not have string keys.
-/// * [ErrorType::UnexpectedYamlTypeError] if the value&#39;s type  is not integer.
+/// * [ErrorType::UnexpectedYamlTypeError] if the value's type  is not integer.
 /// * [ErrorType::IncompleteConfigurationError] if the hash does not contain the requested key
 </span><span class="kw">pub fn </span>get_integer_from_yaml_hash(name: <span class="kw-2">&amp;</span>str, yaml: <span class="kw-2">&amp;</span>StrictYaml) -&gt; <span class="prelude-ty">Result</span>&lt;i64, DotfilesError&gt; {
   process_value_from_yaml_hash(name, yaml, |value_for_name| {
@@ -661,7 +661,7 @@
 /// # Errors
 /// * [ErrorType::UnexpectedYamlTypeError] if the yaml is not a hash.
 /// * [ErrorType::UnexpectedYamlTypeError] if the yaml does not have string keys.
-/// * [ErrorType::UnexpectedYamlTypeError] if the value&#39;s type  is not string.
+/// * [ErrorType::UnexpectedYamlTypeError] if the value's type  is not string.
 /// * [ErrorType::IncompleteConfigurationError] if the hash does not contain the requested key
 </span><span class="kw">pub fn </span>get_string_from_yaml_hash(name: <span class="kw-2">&amp;</span>str, yaml: <span class="kw-2">&amp;</span>StrictYaml) -&gt; <span class="prelude-ty">Result</span>&lt;String, DotfilesError&gt; {
   process_value_from_yaml_hash(name, yaml, parse_as_string)
@@ -672,7 +672,7 @@
 /// # Errors
 /// * [ErrorType::UnexpectedYamlTypeError] if the yaml is not a hash.
 /// * [ErrorType::UnexpectedYamlTypeError] if the yaml does not have string keys.
-/// * [ErrorType::UnexpectedYamlTypeError] if the value&#39;s type  is not array, or some of its values
+/// * [ErrorType::UnexpectedYamlTypeError] if the value's type  is not array, or some of its values
 ///   are not string.
 /// * [ErrorType::IncompleteConfigurationError] if the hash does not contain the requested key
 </span><span class="kw">pub fn </span>get_string_array_from_yaml_hash(
@@ -690,7 +690,7 @@
 /// # Errors
 /// * [ErrorType::UnexpectedYamlTypeError] if the yaml is not a hash.
 /// * [ErrorType::UnexpectedYamlTypeError] if the yaml does not have string keys.
-/// * [ErrorType::UnexpectedYamlTypeError] if the value&#39;s type  is not array, or some of its values
+/// * [ErrorType::UnexpectedYamlTypeError] if the value's type  is not array, or some of its values
 ///   are not string.
 </span><span class="kw">pub fn </span>get_optional_string_array_from_yaml_hash(
   name: <span class="kw-2">&amp;</span>str,
@@ -708,7 +708,7 @@
 <span class="doccomment">/// Gets a boolean value for the setting named `name`.
 ///
 /// First it tries to find a value for the setting in the `context_settings`
-/// argument, if it doesn&#39;t contain any it falls back to `directive-defaults`.
+/// argument, if it doesn't contain any it falls back to `directive-defaults`.
 ///
 /// Returns an error if no such setting was found in either setting collection.
 </span><span class="kw">pub fn </span>get_boolean_setting_from_context(
@@ -721,7 +721,7 @@
     <span class="prelude-val">Ok</span>(b)
   } <span class="kw">else </span>{
     <span class="prelude-val">Err</span>(DotfilesError::from(
-      <span class="macro">format!</span>(<span class="string">&quot;Setting {name} was found in directive defaults but is not boolean&quot;</span>,),
+      <span class="macro">format!</span>(<span class="string">"Setting {name} was found in directive defaults but is not boolean"</span>,),
       ErrorType::CoreError,
     ))
   }
@@ -730,7 +730,7 @@
 <span class="doccomment">/// Gets a String value for the setting named `name`.
 ///
 /// First it tries to find a value for the setting in the `context_settings`
-/// argument, if it doesn&#39;t contain any it falls back to `directive-defaults`.
+/// argument, if it doesn't contain any it falls back to `directive-defaults`.
 ///
 /// Returns an error if no such setting was found in either setting collection.
 </span><span class="kw">pub fn </span>get_string_setting(
@@ -743,7 +743,7 @@
     <span class="prelude-val">Ok</span>(s)
   } <span class="kw">else </span>{
     <span class="prelude-val">Err</span>(DotfilesError::from(
-      <span class="macro">format!</span>(<span class="string">&quot;Setting {name} was found in directive defaults but is not a string&quot;</span>,),
+      <span class="macro">format!</span>(<span class="string">"Setting {name} was found in directive defaults but is not a string"</span>,),
       ErrorType::CoreError,
     ))
   }
@@ -752,7 +752,7 @@
 <span class="doccomment">/// Gets a Int value for the setting named `name`.
 ///
 /// First it tries to find a value for the setting in the `context_settings`
-/// argument, if it doesn&#39;t contain any it falls back to `directive-defaults`.
+/// argument, if it doesn't contain any it falls back to `directive-defaults`.
 ///
 /// Returns an error if no such setting was found in either setting collection.
 </span><span class="kw">pub fn </span>get_integer_setting(
@@ -765,7 +765,7 @@
     <span class="prelude-val">Ok</span>(x)
   } <span class="kw">else </span>{
     <span class="prelude-val">Err</span>(DotfilesError::from(
-      <span class="macro">format!</span>(<span class="string">&quot;Setting {name} was found in directive defaults but is not an integer&quot;</span>,),
+      <span class="macro">format!</span>(<span class="string">"Setting {name} was found in directive defaults but is not an integer"</span>,),
       ErrorType::CoreError,
     ))
   }
@@ -774,7 +774,7 @@
 <span class="doccomment">/// Gets a String value for the setting named `name`.
 ///
 /// First it tries to find a value for the setting in the `context_settings`
-/// argument, if it doesn&#39;t contain any it falls back to `directive-defaults`
+/// argument, if it doesn't contain any it falls back to `directive-defaults`
 ///
 /// Returns an error if no such setting was found in either setting collection.
 </span><span class="kw">pub fn </span>get_setting_from_context(
@@ -788,7 +788,7 @@
     <span class="prelude-val">Ok</span>(setting.clone())
   } <span class="kw">else </span>{
     <span class="prelude-val">Err</span>(DotfilesError::from(
-      <span class="macro">format!</span>(<span class="string">&quot;Setting {name} couldn&#39;t be found in context or defaults&quot;</span>),
+      <span class="macro">format!</span>(<span class="string">"Setting {name} couldn't be found in context or defaults"</span>),
       ErrorType::CoreError,
     ))
   }
@@ -796,12 +796,12 @@
 
 <span class="doccomment">/// Gets a Boolean value from YAML or context.
 ///
-/// First it tries to find a value in `yaml`, if it can&#39;t find one then it
+/// First it tries to find a value in `yaml`, if it can't find one then it
 /// falls back to `context_settings` or finally `default_settings`.
 ///
 /// # Errors
-/// - Found a setting in YAML but that couldn&#39;t be parsed as a boolean.
-/// - Didn&#39;t find a setting matching this name anywhere
+/// - Found a setting in YAML but that couldn't be parsed as a boolean.
+/// - Didn't find a setting matching this name anywhere
 </span><span class="kw">pub fn </span>get_boolean_setting_from_yaml_or_context(
   name: <span class="kw-2">&amp;</span>str,
   yaml: <span class="kw-2">&amp;</span>StrictYaml,
@@ -814,12 +814,12 @@
 
 <span class="doccomment">/// Gets a Integer value from YAML or context.
 ///
-/// First it tries to find a value in `yaml`, if it can&#39;t find one then it
+/// First it tries to find a value in `yaml`, if it can't find one then it
 /// falls back to `context_settings` or finally `default_settings`.
 ///
 /// # Errors
-/// - Found a setting in YAML but that couldn&#39;t be parsed.
-/// - Didn&#39;t find a setting matching this name anywhere
+/// - Found a setting in YAML but that couldn't be parsed.
+/// - Didn't find a setting matching this name anywhere
 </span><span class="kw">pub fn </span>get_integer_setting_from_yaml_or_context(
   name: <span class="kw-2">&amp;</span>str,
   yaml: <span class="kw-2">&amp;</span>StrictYaml,
@@ -832,12 +832,12 @@
 
 <span class="doccomment">/// Gets a String value from YAML or context.
 ///
-/// First itb tries to find a value in `yaml`, if it can&#39;t find one then it
+/// First itb tries to find a value in `yaml`, if it can't find one then it
 /// falls back to `context_settings` or finally `default_settings`.
 ///
 /// # Errors
-/// - Found a setting in YAML but that couldn&#39;t be parsed.
-/// - Didn&#39;t find a setting matching this name anywhere
+/// - Found a setting in YAML but that couldn't be parsed.
+/// - Didn't find a setting matching this name anywhere
 </span><span class="kw">pub fn </span>get_string_setting_from_yaml_or_context(
   name: <span class="kw-2">&amp;</span>str,
   yaml: <span class="kw-2">&amp;</span>StrictYaml,
@@ -886,9 +886,9 @@
   <span class="kw">match </span>yaml_to_parse {
     StrictYaml::String(s) =&gt; <span class="prelude-val">Ok</span>(s.to_owned()),
     <span class="kw">_ </span>=&gt; <span class="prelude-val">Err</span>(DotfilesError::from_wrong_yaml(
-      <span class="string">&quot;Expected StrictYaml String and got something else&quot;</span>.into(),
+      <span class="string">"Expected StrictYaml String and got something else"</span>.into(),
       yaml_to_parse.clone(),
-      StrictYaml::String(<span class="string">&quot;&quot;</span>.into()),
+      StrictYaml::String(<span class="string">""</span>.into()),
     )),
   }
 }
@@ -901,16 +901,16 @@
   <span class="kw">if let </span>StrictYaml::String(b) = yaml {
     FromStr::from_str(b).map_err(|<span class="kw">_</span>| {
       DotfilesError::from_wrong_yaml(
-        <span class="macro">format!</span>(<span class="string">&quot;Got a Yaml String that can&#39;t be parsed as boolean: `{b}`&quot;</span>),
+        <span class="macro">format!</span>(<span class="string">"Got a Yaml String that can't be parsed as boolean: `{b}`"</span>),
         yaml.to_owned(),
-        StrictYaml::String(<span class="string">&quot;true&quot;</span>.into()),
+        StrictYaml::String(<span class="string">"true"</span>.into()),
       )
     })
   } <span class="kw">else </span>{
     <span class="prelude-val">Err</span>(DotfilesError::from_wrong_yaml(
-      <span class="string">&quot;Expected StrictYaml string containing a boolean and got something else&quot;</span>.into(),
+      <span class="string">"Expected StrictYaml string containing a boolean and got something else"</span>.into(),
       yaml.clone(),
-      StrictYaml::String(<span class="string">&quot;false&quot;</span>.into()),
+      StrictYaml::String(<span class="string">"false"</span>.into()),
     ))
   }
 }
@@ -922,16 +922,16 @@
   <span class="kw">if let </span>StrictYaml::String(i) = yaml {
     FromStr::from_str(i).map_err(|<span class="kw">_</span>| {
       DotfilesError::from_wrong_yaml(
-        <span class="macro">format!</span>(<span class="string">&quot;Got a Yaml String that can&#39;t be parsed as integer: `{i}`&quot;</span>),
+        <span class="macro">format!</span>(<span class="string">"Got a Yaml String that can't be parsed as integer: `{i}`"</span>),
         yaml.to_owned(),
-        StrictYaml::String(<span class="string">&quot;11111&quot;</span>.into()),
+        StrictYaml::String(<span class="string">"11111"</span>.into()),
       )
     })
   } <span class="kw">else </span>{
     <span class="prelude-val">Err</span>(DotfilesError::from_wrong_yaml(
-      <span class="string">&quot;Expected StrictYaml String and got something else&quot;</span>.into(),
+      <span class="string">"Expected StrictYaml String and got something else"</span>.into(),
       yaml.clone(),
-      StrictYaml::String(<span class="string">&quot;0&quot;</span>.into()),
+      StrictYaml::String(<span class="string">"0"</span>.into()),
     ))
   }
 }
@@ -945,7 +945,7 @@
     <span class="prelude-val">Ok</span>(v.to_owned())
   } <span class="kw">else </span>{
     <span class="prelude-val">Err</span>(DotfilesError::from_wrong_yaml(
-      <span class="string">&quot;Expected StrictYaml Array and got something else&quot;</span>.into(),
+      <span class="string">"Expected StrictYaml Array and got something else"</span>.into(),
       yaml.clone(),
       StrictYaml::Array(<span class="macro">vec!</span>[]),
     ))
@@ -957,7 +957,7 @@
   <span class="kw">let </span>contents = std::fs::read_to_string(file).map_err(DotfilesError::from_io_error)<span class="question-mark">?</span>;
   StrictYamlLoader::load_from_str(<span class="kw-2">&amp;</span>contents).map_err(|err| {
     DotfilesError::from(
-      <span class="macro">format!</span>(<span class="string">&quot;yaml syntax error in file `{:?}`&quot;</span>, file.as_os_str()),
+      <span class="macro">format!</span>(<span class="string">"yaml syntax error in file `{:?}`"</span>, file.as_os_str()),
       ErrorType::YamlParseError { scan_error: err },
     )
   })
@@ -992,7 +992,7 @@
     )
   } <span class="kw">else </span>{
     <span class="prelude-val">Err</span>(DotfilesError::from_wrong_yaml(
-      <span class="string">&quot;Expected StrictYaml Hash, got wrong type&quot;</span>.to_owned(),
+      <span class="string">"Expected StrictYaml Hash, got wrong type"</span>.to_owned(),
       yaml.to_owned(),
       StrictYaml::Hash(Default::default()),
     ))
