@@ -66,8 +66,7 @@ jobs:
         with:
           toolchain: ${{ matrix.rust}}
           target: ${{ matrix.target.name }}
-          override: true
-          profile: minimal
+          components: rustc, rust-std, cargo
       - name: Install Linker
         if: matrix.cross
         run: |

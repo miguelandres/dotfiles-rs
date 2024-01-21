@@ -14,13 +14,12 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Install Rust toolchain
+      - name: Setup rust
         uses: dtolnay/rust-toolchain@master
         with:
-          toolchain: nightly
-          profile: minimal
-          override: true
-          components: rustfmt, rust-src
+          toolchain: ${{ matrix.rust}}
+          target: ${{ matrix.target.name }}
+          components: rustc, rust-std, cargo
 
       - name: Build
         uses: actions-rs/cargo@v1.0.6
