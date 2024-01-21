@@ -24,9 +24,8 @@ jobs:
       - name: Setup rust
         uses: dtolnay/rust-toolchain@master
         with:
-          toolchain: ${{ matrix.rust}}
-          target: ${{ matrix.target.name }}
-          components: rustc, rust-std, cargo
+          toolchain: nightly
+          components: clippy
       - uses: Swatinem/rust-cache@v2
         with:
           shared-key: security-analyses--branch--${{ github.ref }}
