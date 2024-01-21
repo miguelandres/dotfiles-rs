@@ -130,7 +130,7 @@ jobs:
       # When rustup is updated, it tries to replace its binary, which on Windows is somehow locked.
       # This can result in the CI failure, see: https://github.com/rust-lang/rustup/issues/3029
       - name: Setup rust
-        uses: actions-rs/toolchain@v1
+        uses: actions-rs/toolchain@v1.0.6
         with:
           toolchain: ${{ matrix.rust}}
           target: ${{ matrix.target.name }}
@@ -145,7 +145,7 @@ jobs:
         with:
           shared-key: ${{ matrix.target.name }}--nightly-release--branch--${{ github.ref }}
       - name: Cargo build
-        uses: actions-rs/cargo@v1
+        uses: actions-rs/cargo@v1.0.6
         with:
           command: build
           args: --package dotfiles --release --target ${{ matrix.target.name }}
