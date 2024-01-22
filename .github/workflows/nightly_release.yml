@@ -60,14 +60,13 @@ jobs:
       - name: Create release
         if: env.GHA_REPO_ALIVE == 'true'
         id: create_release
-        uses: actions/create-release@v1.1.4
+      - uses: ncipollo/release-action@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          tag_name: nightly-${{ steps.current_time_dashes.outputs.formattedTime }}
-          release_name: Nightly ${{ steps.current_time_dashes.outputs.formattedTime }}
+          tag: nightly-${{ steps.current_time_dashes.outputs.formattedTime }}
+          name: Nightly ${{ steps.current_time_dashes.outputs.formattedTime }}
           prerelease: true
-
       - name: Commit CHANGELOG.md
         uses: stefanzweifel/git-auto-commit-action@v4
         with:
