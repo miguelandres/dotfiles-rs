@@ -15,6 +15,8 @@ jobs:
     outputs:
       activity_check: ${{ env.GHA_REPO_ALIVE }}
       date: ${{ steps.current_time_underscores.outputs.formattedTime }}
+      tag: nightly-${{ steps.current_time_dashes.outputs.formattedTime }}
+      name: Nightly ${{ steps.current_time_dashes.outputs.formattedTime }}
       upload_url: ${{ steps.create_release.outputs.upload_url }}
       package_prefix: dotfiles-nightly-${{ steps.current_time_underscores.outputs.formattedTime }}
     steps:
@@ -158,6 +160,8 @@ jobs:
       - name: Upload package
         uses: softprops/action-gh-release@v1
         with:
+          tag_name: ${{ needs.create-nightly-release.outputs.tag }}
+          name: ${{ needs.create-nightly-release.outputs.name }}
           files: |
             ${{ env.PACKAGE_FILE }}
 
@@ -194,6 +198,8 @@ jobs:
       - name: Upload package
         uses: softprops/action-gh-release@v1
         with:
+          tag_name: ${{ needs.create-nightly-release.outputs.tag }}
+          name: ${{ needs.create-nightly-release.outputs.name }}
           files: |
             ${{ env.MACOS_PACKAGE_FILE }}
 
@@ -227,5 +233,7 @@ jobs:
       - name: Upload package
         uses: softprops/action-gh-release@v1
         with:
+          tag_name: ${{ needs.create-nightly-release.outputs.tag }}
+          name: ${{ needs.create-nightly-release.outputs.name }}
           files: |
             ${{ env.ALL_BINARIES_PACKAGE_FILE }}
