@@ -56,13 +56,10 @@ jobs:
         id: current_time_underscores
         with:
           format: YYYY_MM_DD
-
       - name: Create release
         if: env.GHA_REPO_ALIVE == 'true'
         id: create_release
-      - uses: ncipollo/release-action@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        uses: ncipollo/release-action@v1.1.13
         with:
           tag: nightly-${{ steps.current_time_dashes.outputs.formattedTime }}
           name: Nightly ${{ steps.current_time_dashes.outputs.formattedTime }}
