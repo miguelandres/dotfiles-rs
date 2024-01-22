@@ -156,17 +156,13 @@ jobs:
           tar -czvf ../${{ env.PACKAGE_FILE }} *
 
       - name: Upload package
-        uses: actions/upload-release-asset@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        uses: softprops/action-gh-release@v1
         with:
-          upload_url: ${{ needs.create-nightly-release.outputs.upload_url }}
-          asset_path: ./${{ env.PACKAGE_FILE }}
-          asset_name: ${{ env.PACKAGE_FILE }}
-          asset_content_type: ${{ endsWith(env.PACKAGE_FILE, 'tar.gz') && 'application/gzip' || 'application/zip' }}
+          files: |
+            ${{ env.PACKAGE_FILE }}
 
       - name: Upload build artifact
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: ${{ matrix.target.name }}
           path: |
@@ -196,17 +192,13 @@ jobs:
           tar -czvf ../${{ env.MACOS_PACKAGE_FILE }} *
 
       - name: Upload package
-        uses: actions/upload-release-asset@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        uses: softprops/action-gh-release@v1
         with:
-          upload_url: ${{ needs.create-nightly-release.outputs.upload_url }}
-          asset_path: ./${{ env.MACOS_PACKAGE_FILE }}
-          asset_name: ${{ env.MACOS_PACKAGE_FILE }}
-          asset_content_type: application/gzip
+          files: |
+            ${{ env.MACOS_PACKAGE_FILE }}
 
       - name: Upload build artifact
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: macos-universal
           path: |
@@ -233,11 +225,7 @@ jobs:
           tar -czvf ../${{ env.ALL_BINARIES_PACKAGE_FILE }} *
 
       - name: Upload package
-        uses: actions/upload-release-asset@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        uses: softprops/action-gh-release@v1
         with:
-          upload_url: ${{ needs.create-nightly-release.outputs.upload_url }}
-          asset_path: ./${{ env.ALL_BINARIES_PACKAGE_FILE }}
-          asset_name: ${{ env.ALL_BINARIES_PACKAGE_FILE }}
-          asset_content_type: application/gzip
+          files: |
+            ${{ env.ALL_BINARIES_PACKAGE_FILE }}
