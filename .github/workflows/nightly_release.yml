@@ -59,7 +59,7 @@ jobs:
       - name: Create release
         if: env.GHA_REPO_ALIVE == 'true'
         id: create_release
-        uses: ncipollo/release-action@v1.1.13
+        uses: ncipollo/release-action@v1.13.0
         with:
           tag: nightly-${{ steps.current_time_dashes.outputs.formattedTime }}
           name: Nightly ${{ steps.current_time_dashes.outputs.formattedTime }}
