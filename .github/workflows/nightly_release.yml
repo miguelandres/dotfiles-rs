@@ -144,13 +144,8 @@ jobs:
         with:
           shared-key: ${{ matrix.target.name }}--nightly-release--branch--${{ github.ref }}
       - name: Cargo build
-        uses: actions-rs/cargo@v1.0.6
-        with:
-          command: build
-          args: --package dotfiles --release --target ${{ matrix.target.name }}
-        env:
-          RUSTFLAGS: ${{ matrix.RUSTFLAGS }}
-
+        run: |
+          cargo build --package dotfiles --release --target ${{ matrix.target.name }}
       - name: Package common
         run: |
           mkdir package
