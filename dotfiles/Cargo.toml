@@ -1,11 +1,11 @@
 [package]
 name = "dotfiles"
-version = "0.10.2"
+version = "1.0.0"
 authors = ["Miguel Barreto <miguelandres@users.noreply.github.com>"]
 edition = "2018"
 
 [dependencies]
-clap = {version ="4.0.13", features = ["derive"]}
-dotfiles_processor = {path = "../dotfiles_processor"}
+clap = { version = "4.0.13", features = ["derive"] }
+dotfiles_processor = { path = "../dotfiles_processor" }
 log = "0.4.14"
 simplelog = "^0.12.0"
