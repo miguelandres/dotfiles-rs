@@ -9,8 +9,20 @@ You can use this brew directive itself to install `mas`
 
 * `force_casks` (default: false): if true it passes `--force` to all invocations
   `brew install --cask ...`. This is useful when you may have a previous version
-  of the same application already installed. This is not the default behavior
-  for `brew` so that is why it's not enabled by default in `dotfiles-rs`
+  of the same application already installed, as it overwrites whatever binaries
+  already exist in your system. This is not the default behavior for `brew` so
+  that is why it's not enabled by default in `dotfiles-rs`
+* `adopt_casks` (default: false): if true it passes `--adopt` to all invocations
+  `brew install --cask ...`. This is useful when you may have a previous version
+  of the same application already installed, as it allows homebrew to adopt
+  already existing binaries so long as they match the one that was going to be
+  installed. This is not the default behavior for `brew` so that is why it's not
+  enabled by default in `dotfiles-rs`
+
+> [!CAUTION]
+> `force_casks` and `adopt_casks` are mutually exclusive and brew will fail to
+> run if you enable both. See the [homebrew documentation](https://docs.brew.sh/Manpage#install-options-formulacask-)
+
 * `tap` (optional): a list of homebrew taps to use
 * `formula` (optional): a list of formulae to install
 * `cask` (optional): a list of casks to install

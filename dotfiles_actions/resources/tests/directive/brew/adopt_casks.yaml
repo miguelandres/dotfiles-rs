@@ -1,0 +1,11 @@
+adopt_casks: true
+tap:
+  - homebrew/cask
+  - homebrew/cask-fonts
+  - miguelandres/homebrew-tap
+  - spotify/public
+formula:
+  - fzf
+  - zsh
+cask:
+  - firefox
