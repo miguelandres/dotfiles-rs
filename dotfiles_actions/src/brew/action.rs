@@ -176,10 +176,13 @@ impl BrewCommand {
     }
   }
 
-  fn install_casks(items: &Vec<String>, force: &bool) -> BrewCommand {
+  fn install_casks(items: &Vec<String>, force: &bool, adopt: &bool) -> BrewCommand {
     let mut args = vec!["install".into(), "--cask".into()];
     if *force {
       args.push("--force".into())
+    }
+    if *adopt {
+      args.push("--adopt".into())
     }
     {
       let mut items = items.clone();
@@ -202,10 +205,13 @@ pub struct BrewAction<'a> {
   /// Skips this action if it is running in a CI environment.
   #[get = "pub"]
   skip_in_ci: bool,
-  /// Passes `--force` to `brew install --cask` to prevent the install failure
-  /// when the app is already installed before the cask install.
+  /// Passes `--force` to `brew install --cask`.
   #[get = "pub"]
   force_casks: bool,
+  // Passes `--adopt` to `brew install --cask` to prevent the install failure
+  /// when the app is already installed before the cask install.
+  #[get = "pub"]
+  adopt_casks: bool,
   /// List of repositories to tap into using `brew tap`.
   #[get = "pub"]
   taps: Vec<String>,
@@ -229,6 +235,7 @@ impl<'a> BrewAction<'a> {
   pub fn new(
     skip_in_ci: bool,
     force_casks: bool,
+    adopt_casks: bool,
     taps: Vec<String>,
     formulae: Vec<String>,
     casks: Vec<String>,
@@ -237,6 +244,7 @@ impl<'a> BrewAction<'a> {
     let action = BrewAction {
       skip_in_ci,
       force_casks,
+      adopt_casks,
       taps,
       formulae,
       casks,
@@ -258,7 +266,7 @@ impl Action<'_> for BrewAction<'_> {
       BrewCommand::install_formulae(&self.formulae).execute()?;
     }
     if !self.casks.is_empty() {
-      BrewCommand::install_casks(&self.casks, self.force_casks()).execute()?;
+      BrewCommand::install_casks(&self.casks, self.force_casks(), self.adopt_casks()).execute()?;
     }
     Ok(())
   }

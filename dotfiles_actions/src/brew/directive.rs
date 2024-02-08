@@ -44,8 +44,10 @@ use strict_yaml_rust::StrictYaml;
 
 /// Name of the Brew directive
 pub const DIRECTIVE_NAME: &str = "brew";
-/// force casks to deal with previously installed apps
+/// force casks
 pub const FORCE_CASKS_SETTING: &str = "force_casks";
+/// adopt casks to deal with previously installed apps
+pub const ADOPT_CASKS_SETTING: &str = "adopt_casks";
 
 /// The string that identifies the list of taps to install
 pub const TAP_SETTING: &str = "tap";
@@ -60,6 +62,7 @@ pub fn init_directive_data() -> DirectiveData {
     DIRECTIVE_NAME.into(),
     initialize_settings_object(&[
       (FORCE_CASKS_SETTING.to_owned(), Setting::Boolean(false)),
+      (ADOPT_CASKS_SETTING.to_owned(), Setting::Boolean(false)),
       (SKIP_IN_CI_SETTING.to_owned(), Setting::Boolean(false)),
     ]),
   )
@@ -92,6 +95,12 @@ impl<'a> ActionParser<'a> for BrewDirective<'a> {
   ) -> Result<BrewAction<'a>, DotfilesError> {
     let force_casks = get_boolean_setting_from_yaml_or_context(
       FORCE_CASKS_SETTING,
+      yaml,
+      context_settings,
+      self.data.defaults(),
+    )?;
+    let adopt_casks = get_boolean_setting_from_yaml_or_context(
+      ADOPT_CASKS_SETTING,
       yaml,
       context_settings,
       self.data.defaults(),
@@ -151,6 +160,7 @@ impl<'a> ActionParser<'a> for BrewDirective<'a> {
     Ok(BrewAction::new(
       skip_in_ci,
       force_casks,
+      adopt_casks,
       taps,
       formulae,
       casks,

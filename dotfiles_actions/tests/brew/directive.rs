@@ -28,15 +28,41 @@ use dotfiles_actions::brew::directive::BrewDirective;
 use dotfiles_core::{action::ActionParser, error::DotfilesError, settings::Settings};
 
 #[test]
-fn brew_directive_parsed() -> Result<(), DotfilesError> {
+fn brew_directive_force_casks_parsed() -> Result<(), DotfilesError> {
   let default_settings = Settings::new();
-  let yaml = read_test_yaml("directive/brew/plain_functional.yaml")
+  let yaml = read_test_yaml("directive/brew/force_casks.yaml")
     .unwrap()
     .pop()
     .unwrap();
   let directive = BrewDirective::default();
   let action = directive.parse_action(&default_settings, &yaml, &PathBuf::from("/home/user"))?;
+  assert!(!action.adopt_casks());
   assert!(action.force_casks());
+  assert_eq!(
+    action.taps().to_owned(),
+    Vec::from([
+      "homebrew/cask",
+      "homebrew/cask-fonts",
+      "miguelandres/homebrew-tap",
+      "spotify/public"
+    ])
+  );
+  assert_eq!(action.casks().to_owned(), Vec::from(["firefox"]));
+  assert_eq!(action.formulae().to_owned(), Vec::from(["fzf", "zsh"]));
+  Ok(())
+}
+
+#[test]
+fn brew_directive_adopt_casks_parsed() -> Result<(), DotfilesError> {
+  let default_settings = Settings::new();
+  let yaml = read_test_yaml("directive/brew/adopt_casks.yaml")
+    .unwrap()
+    .pop()
+    .unwrap();
+  let directive = BrewDirective::default();
+  let action = directive.parse_action(&default_settings, &yaml, &PathBuf::from("/home/user"))?;
+  assert!(action.adopt_casks());
+  assert!(!action.force_casks());
   assert_eq!(
     action.taps().to_owned(),
     Vec::from([
