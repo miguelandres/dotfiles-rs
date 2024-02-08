@@ -48,13 +48,13 @@ jobs:
         shell: bash
 
       - name: Get current time with dashes
-        uses: josStorer/get-current-time@v2.0.2
+        uses: josStorer/get-current-time@v2.1.1
         id: current_time_dashes
         with:
           format: YYYY-MM-DD
 
       - name: Get current time with underscores
-        uses: josStorer/get-current-time@v2.0.2
+        uses: josStorer/get-current-time@v2.1.1
         id: current_time_underscores
         with:
           format: YYYY_MM_DD
