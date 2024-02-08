@@ -1,13 +1,13 @@
 [package]
 name = "dotfiles_processor"
-version = "0.10.2"
+version = "1.0.0"
 authors = ["Miguel Barreto <miguelandres@users.noreply.github.com>"]
 edition = "2018"
 
 [dependencies]
-clap = {version ="4.0.13", features = ["derive"]}
-dotfiles_core = {path = "../dotfiles_core"}
-dotfiles_actions = {path = "../dotfiles_actions"}
+clap = { version = "4.0.13", features = ["derive"] }
+dotfiles_core = { path = "../dotfiles_core" }
+dotfiles_actions = { path = "../dotfiles_actions" }
 getset = "0.1.2"
 itertools = "0.12.0"
 log = "0.4.14"
