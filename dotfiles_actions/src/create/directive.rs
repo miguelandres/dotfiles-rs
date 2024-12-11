@@ -104,7 +104,7 @@ impl<'a, F: FileSystem + Default> ActionParser<'a> for CreateDirective<'a, F> {
     settings: &std::collections::HashMap<String, Setting>,
     yaml: &StrictYaml,
     current_dir: &Path,
-  ) -> Result<CreateAction<F>, DotfilesError> {
+  ) -> Result<CreateAction<'a, F>, DotfilesError> {
     CreateAction::<'a, F>::new(
       self.fs(),
       yaml_util::get_boolean_setting_from_yaml_or_context(

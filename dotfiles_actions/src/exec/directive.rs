@@ -76,7 +76,7 @@ impl<'a> ActionParser<'a> for ExecDirective<'a> {
     settings: &HashMap<String, Setting>,
     yaml: &StrictYaml,
     current_dir: &Path,
-  ) -> Result<ExecAction, DotfilesError> {
+  ) -> Result<ExecAction<'a>, DotfilesError> {
     ExecAction::new(
       yaml_util::get_boolean_setting_from_yaml_or_context(
         SKIP_IN_CI_SETTING,
