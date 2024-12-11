@@ -84,6 +84,8 @@ jobs:
         target:
           - name: x86_64-unknown-linux-gnu
             gh_env: ubuntu-latest
+          - name: x86_64-unknown-linux-musl
+            gh_env: ubuntu-latest
           - name: aarch64-unknown-linux-gnu
             gh_env: ubuntu-latest
           - name: armv7-unknown-linux-gnueabihf
@@ -95,6 +97,10 @@ jobs:
         include:
           - target:
               name: x86_64-unknown-linux-gnu
+            cross: false
+            run_tests: true
+          - target:
+              name: x86_64-unknown-linux-musl
             cross: false
             run_tests: true
           - target:
@@ -216,7 +222,7 @@ jobs:
           mv macos-universal/dotfiles package/dotfiles-macos
           chmod +x package/dotfiles-macos
 
-          mv x86_64-unknown-linux-gnu/dotfiles package/dotfiles-x86_64
+          mv x86_64-unknown-linux-musl/dotfiles package/dotfiles-x86_64
           chmod +x package/dotfiles-x86_64
 
           mv armv7-unknown-linux-gnueabihf/dotfiles package/dotfiles-armv7
