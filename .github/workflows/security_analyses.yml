@@ -42,7 +42,7 @@ jobs:
           sarif_file: rust-clippy-results.sarif
           wait-for-processing: true
       - name: Run DevSkim scanner
-        uses: microsoft/DevSkim-Action@v1.0.11
+        uses: microsoft/DevSkim-Action@v1.0.15
 
       - name: Upload DevSkim scan results to GitHub Security tab
         uses: github/codeql-action/upload-sarif@v3
