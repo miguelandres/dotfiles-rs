@@ -7,3 +7,5 @@ members = [
   "dotfiles_core_macros",
   "dotfiles_processor",
 ]
+
+resolver = "2"
