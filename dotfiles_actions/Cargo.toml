@@ -13,4 +13,4 @@ filesystem = { git = "https://github.com/miguelandres/filesystem-rs" }
 getset = "0.1.2"
 log = "0.4.14"
 strict-yaml-rust = "0.2.0"
-subprocess = "0.2.8"
+subprocess = "1.0.0"
