@@ -28,7 +28,6 @@ use dotfiles_core::error::execution_error;
 use dotfiles_core::error::DotfilesError;
 use dotfiles_core_macros::ConditionalAction;
 use subprocess::Exec;
-use subprocess::ExitStatus;
 
 use dotfiles_core::Action;
 
@@ -104,23 +103,16 @@ impl<'a> Action<'a> for ExecAction<'a> {
           execution_error(Some(err), None),
         ))
       },
-      |status| match status {
-        ExitStatus::Exited(0) => Ok(()),
-        ExitStatus::Exited(code) => Err(DotfilesError::from(
+      |status| match status.success() {
+        true => Ok(()),
+        false => Err(DotfilesError::from(
           format!(
             "Command `{0}` failed with error code {1}",
             self.command(),
-            code
+            status.code().unwrap()
           ),
           execution_error(None, Some(status)),
-        )),
-        _ => Err(DotfilesError::from(
-          format!(
-            "Unexpected error while running command `{0}`",
-            self.command()
-          ),
-          execution_error(None, Some(status)),
-        )),
+        ))
       },
     )
   }

@@ -21,42 +21,44 @@
 
 //! Wraps some logic to run external commands and handle errors
 
-use subprocess::{Exec, ExitStatus, PopenError};
+use std::io::Result as IoResult;
+use subprocess::{Exec, ExitStatus};
+
 
 use crate::error::{execution_error, process_until_first_err, DotfilesError};
 
 /// Executes the `cmd` and waits for it to finish.
 ///
-/// If the execution returns a [subprocess::PopenError] then it uses the `popen_error_message`
+/// If the execution returns a [std::io::Error] then it uses the `io_error_message` 
 /// for the message in a DotfilesError.
 ///
 /// If the execution finishes but in an error state, then it uses the
 /// `error_while_running_message` instead.
 pub fn execute_commands(
   cmds: Vec<Exec>,
-  popen_error_message: &str,
+  io_error_message: &str,
   error_while_running_message: &str,
 ) -> Result<(), DotfilesError> {
   process_until_first_err(cmds.into_iter(), |cmd| {
-    handle_exec_error(cmd.join(), popen_error_message, error_while_running_message)
+    handle_exec_error(cmd.join(),io_error_message, error_while_running_message)
   })
 }
 
 fn handle_exec_error(
-  popen: Result<ExitStatus, PopenError>,
-  popen_error_message: &str,
+  result: IoResult<ExitStatus>,
+  io_error_message: &str,
   error_while_running_message: &str,
 ) -> Result<(), DotfilesError> {
-  popen.map_or_else(
+  result.map_or_else(
     |err| {
       Err(DotfilesError::from(
-        popen_error_message.into(),
+        io_error_message.into(),
         execution_error(Some(err), None),
       ))
     },
-    |status| match status {
-      ExitStatus::Exited(0) => Ok(()),
-      _ => Err(DotfilesError::from(
+    |status| match status.success() {
+      true => Ok(()),
+      false => Err(DotfilesError::from(
         format!("{error_while_running_message}, {status:?}"),
         execution_error(None, Some(status)),
       )),

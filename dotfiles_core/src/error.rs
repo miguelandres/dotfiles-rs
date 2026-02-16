@@ -29,7 +29,7 @@ use std::fmt::Display;
 use strict_yaml_rust::ScanError;
 use strict_yaml_rust::StrictYaml;
 use subprocess::ExitStatus;
-use subprocess::PopenError;
+use std::io::Error as IoError;
 
 use crate::Directive;
 
@@ -81,9 +81,9 @@ where
 pub enum ErrorType {
   /// An error occurred while running a command necessary for executing an action
   ExecutionError {
-    /// If the command could not execute for some reason the underlying Popen Error will be saved
+    /// If the command could not execute for some reason the underlying io Error will be saved
     /// here
-    popen_error: Option<PopenError>,
+    io_error: Option<IoError>,
     /// If the command attempted to execute but failed for some reason, the underlying ExitStatus
     /// will be saved here.
     exit_status: Option<ExitStatus>,
@@ -126,7 +126,7 @@ impl Display for ErrorType {
       "{}",
       match self {
         ErrorType::ExecutionError {
-          popen_error: _,
+          io_error: _,
           exit_status: _,
         } => "ExecutionError",
         ErrorType::FileSystemError { fs_error: _ } => "FileSystemError",
@@ -148,11 +148,11 @@ impl Display for ErrorType {
 
 /// Creates an [ErrorType::ExecutionError]
 pub fn execution_error(
-  popen_error: Option<PopenError>,
+  io_error: Option<IoError>,
   exit_status: Option<ExitStatus>,
 ) -> ErrorType {
   ErrorType::ExecutionError {
-    popen_error,
+    io_error,
     exit_status,
   }
 }
