@@ -268,6 +268,10 @@ impl Action<'_> for BrewAction<'_> {
     if !self.casks.is_empty() {
       BrewCommand::install_casks(&self.casks, self.force_casks(), self.adopt_casks()).execute()?;
     }
+    #[cfg(target_os = "macos")]
+    if !self.mas_apps.is_empty() {
+      MacAppStoreCommand::from(self.mas_apps.clone()).execute()?;
+    }
     Ok(())
   }
 }
