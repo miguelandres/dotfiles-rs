@@ -139,3 +139,23 @@ fn brew_directive_auto_trust_taps_parsed() -> Result<(), DotfilesError> {
   assert_eq!(action.formulae().to_owned(), Vec::from(["fzf", "zsh"]));
   Ok(())
 }
+
+#[cfg(target_os = "macos")]
+#[test]
+fn mac_app_store_command_construction() {
+  use dotfiles_actions::brew::action::{MacAppStoreCommand, MacAppStoreItem};
+  use dotfiles_actions::install_command::InstallCommand;
+
+  let apps = vec![
+    MacAppStoreItem::from((123, "Excel".to_owned())),
+    MacAppStoreItem::from((155, "Microsoft Word".to_owned())),
+  ];
+
+  let command = MacAppStoreCommand::from(apps);
+
+  assert_eq!(
+    command.args(),
+    &vec!["install".to_string(), "123".to_string(), "155".to_string()]
+  );
+  assert_eq!(command.action_name(), "mas");
+}
