@@ -48,26 +48,26 @@ jobs:
         shell: bash
 
       - name: Get current time with dashes
-        uses: josStorer/get-current-time@v2.1.1
+        uses: josStorer/get-current-time@v2.1.3
         id: current_time_dashes
         with:
           format: YYYY-MM-DD
 
       - name: Get current time with underscores
-        uses: josStorer/get-current-time@v2.1.1
+        uses: josStorer/get-current-time@v2.1.3
         id: current_time_underscores
         with:
           format: YYYY_MM_DD
       - name: Create release
         if: env.GHA_REPO_ALIVE == 'true'
         id: create_release
-        uses: ncipollo/release-action@v1.13.0
+        uses: ncipollo/release-action@v1
         with:
           tag: nightly-${{ steps.current_time_dashes.outputs.formattedTime }}
           name: Nightly ${{ steps.current_time_dashes.outputs.formattedTime }}
           prerelease: true
       - name: Commit CHANGELOG.md
-        uses: stefanzweifel/git-auto-commit-action@v4
+        uses: stefanzweifel/git-auto-commit-action@v7
         with:
           branch: main
           commit_message: "docs: update CHANGELOG.md for ${{ github.ref_name }} [skip ci]"
@@ -164,7 +164,7 @@ jobs:
           tar -czvf ../${{ env.PACKAGE_FILE }} *
 
       - name: Upload package
-        uses: softprops/action-gh-release@v1
+        uses: softprops/action-gh-release@v3
         with:
           tag_name: ${{ needs.create-nightly-release.outputs.tag }}
           name: ${{ needs.create-nightly-release.outputs.name }}
@@ -202,7 +202,7 @@ jobs:
           tar -czvf ../${{ env.MACOS_PACKAGE_FILE }} *
 
       - name: Upload package
-        uses: softprops/action-gh-release@v1
+        uses: softprops/action-gh-release@v3
         with:
           tag_name: ${{ needs.create-nightly-release.outputs.tag }}
           name: ${{ needs.create-nightly-release.outputs.name }}
@@ -237,7 +237,7 @@ jobs:
           tar -czvf ../${{ env.ALL_BINARIES_PACKAGE_FILE }} *
 
       - name: Upload package
-        uses: softprops/action-gh-release@v1
+        uses: softprops/action-gh-release@v3
         with:
           tag_name: ${{ needs.create-nightly-release.outputs.tag }}
           name: ${{ needs.create-nightly-release.outputs.name }}
