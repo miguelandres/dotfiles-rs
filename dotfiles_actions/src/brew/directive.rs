@@ -48,6 +48,8 @@ pub const DIRECTIVE_NAME: &str = "brew";
 pub const FORCE_CASKS_SETTING: &str = "force_casks";
 /// adopt casks to deal with previously installed apps
 pub const ADOPT_CASKS_SETTING: &str = "adopt_casks";
+/// Automatically trust taps
+pub const AUTO_TRUST_TAPS_SETTING: &str = "auto_trust_taps";
 
 /// The string that identifies the list of taps to install
 pub const TAP_SETTING: &str = "tap";
@@ -63,6 +65,7 @@ pub fn init_directive_data() -> DirectiveData {
     initialize_settings_object(&[
       (FORCE_CASKS_SETTING.to_owned(), Setting::Boolean(false)),
       (ADOPT_CASKS_SETTING.to_owned(), Setting::Boolean(false)),
+      (AUTO_TRUST_TAPS_SETTING.to_owned(), Setting::Boolean(false)),
       (SKIP_IN_CI_SETTING.to_owned(), Setting::Boolean(false)),
     ]),
   )
@@ -101,6 +104,12 @@ impl<'a> ActionParser<'a> for BrewDirective<'a> {
     )?;
     let adopt_casks = get_boolean_setting_from_yaml_or_context(
       ADOPT_CASKS_SETTING,
+      yaml,
+      context_settings,
+      self.data.defaults(),
+    )?;
+    let auto_trust_taps = get_boolean_setting_from_yaml_or_context(
+      AUTO_TRUST_TAPS_SETTING,
       yaml,
       context_settings,
       self.data.defaults(),
@@ -161,6 +170,7 @@ impl<'a> ActionParser<'a> for BrewDirective<'a> {
       skip_in_ci,
       force_casks,
       adopt_casks,
+      auto_trust_taps,
       taps,
       formulae,
       casks,

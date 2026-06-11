@@ -165,6 +165,15 @@ impl BrewCommand {
     }
   }
 
+  fn trust(tap: &str) -> BrewCommand {
+    BrewCommand {
+      items: vec![tap.into()],
+      args: vec!["trust".into(), tap.into()],
+      action_name: "trust".into(),
+      action_description: "trusting".into(),
+    }
+  }
+
   fn install_formulae(items: &Vec<String>) -> BrewCommand {
     let mut args: Vec<String> = items.clone();
     args.insert(0, "install".into());
@@ -212,6 +221,9 @@ pub struct BrewAction<'a> {
   /// when the app is already installed before the cask install.
   #[get = "pub"]
   adopt_casks: bool,
+  /// Automatically run `brew trust` on any custom taps.
+  #[get = "pub"]
+  auto_trust_taps: bool,
   /// List of repositories to tap into using `brew tap`.
   #[get = "pub"]
   taps: Vec<String>,
@@ -236,6 +248,7 @@ impl<'a> BrewAction<'a> {
     skip_in_ci: bool,
     force_casks: bool,
     adopt_casks: bool,
+    auto_trust_taps: bool,
     taps: Vec<String>,
     formulae: Vec<String>,
     casks: Vec<String>,
@@ -245,6 +258,7 @@ impl<'a> BrewAction<'a> {
       skip_in_ci,
       force_casks,
       adopt_casks,
+      auto_trust_taps,
       taps,
       formulae,
       casks,
@@ -260,6 +274,9 @@ impl<'a> BrewAction<'a> {
 impl Action<'_> for BrewAction<'_> {
   fn execute(&self) -> Result<(), DotfilesError> {
     for tap in &self.taps {
+      if self.auto_trust_taps {
+        BrewCommand::trust(tap).execute()?;
+      }
       BrewCommand::tap(tap).execute()?;
     }
     if !self.formulae.is_empty() {
