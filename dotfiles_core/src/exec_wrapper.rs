@@ -24,12 +24,11 @@
 use std::io::Result as IoResult;
 use subprocess::{Exec, ExitStatus};
 
-
 use crate::error::{execution_error, process_until_first_err, DotfilesError};
 
 /// Executes the `cmd` and waits for it to finish.
 ///
-/// If the execution returns a [std::io::Error] then it uses the `io_error_message` 
+/// If the execution returns a [std::io::Error] then it uses the `io_error_message`
 /// for the message in a DotfilesError.
 ///
 /// If the execution finishes but in an error state, then it uses the
@@ -40,7 +39,7 @@ pub fn execute_commands(
   error_while_running_message: &str,
 ) -> Result<(), DotfilesError> {
   process_until_first_err(cmds.into_iter(), |cmd| {
-    handle_exec_error(cmd.join(),io_error_message, error_while_running_message)
+    handle_exec_error(cmd.join(), io_error_message, error_while_running_message)
   })
 }
 

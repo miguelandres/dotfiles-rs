@@ -26,10 +26,10 @@ use std::fmt::Formatter;
 use getset::Getters;
 use itertools::fold;
 use std::fmt::Display;
+use std::io::Error as IoError;
 use strict_yaml_rust::ScanError;
 use strict_yaml_rust::StrictYaml;
 use subprocess::ExitStatus;
-use std::io::Error as IoError;
 
 use crate::Directive;
 
@@ -147,10 +147,7 @@ impl Display for ErrorType {
 }
 
 /// Creates an [ErrorType::ExecutionError]
-pub fn execution_error(
-  io_error: Option<IoError>,
-  exit_status: Option<ExitStatus>,
-) -> ErrorType {
+pub fn execution_error(io_error: Option<IoError>, exit_status: Option<ExitStatus>) -> ErrorType {
   ErrorType::ExecutionError {
     io_error,
     exit_status,

@@ -112,7 +112,7 @@ impl<'a> Action<'a> for ExecAction<'a> {
             status.code().unwrap()
           ),
           execution_error(None, Some(status)),
-        ))
+        )),
       },
     )
   }
