@@ -13,14 +13,18 @@ jobs:
     name: Create Nightly Release
     runs-on: ubuntu-latest
     outputs:
-      activity_check: ${{ env.GHA_REPO_ALIVE }}
+      activity_check: ${{ steps.activity_check.outputs.alive }}
       date: ${{ steps.current_time_underscores.outputs.formattedTime }}
       tag: nightly-${{ steps.current_time_dashes.outputs.formattedTime }}
       name: Nightly ${{ steps.current_time_dashes.outputs.formattedTime }}
       upload_url: ${{ steps.create_release.outputs.upload_url }}
       package_prefix: dotfiles-nightly-${{ steps.current_time_underscores.outputs.formattedTime }}
     steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
       - name: Activity check
+        id: activity_check
         run: |
           :
           # Based off https://github.community/t/trigger-workflow-if-there-is-commit-in-last-24-hours/17074/3
@@ -43,7 +47,9 @@ jobs:
             echo "[WARNING] Repository not updated: event ${{ github.event_name }} not allowed to modify stale repository."
           fi
           if [[ $alive == 1 ]]; then
-            echo "GHA_REPO_ALIVE=true" >> $GITHUB_ENV
+            echo "alive=true" >> $GITHUB_OUTPUT
+          else
+            echo "alive=false" >> $GITHUB_OUTPUT
           fi
         shell: bash
 
@@ -59,7 +65,7 @@ jobs:
         with:
           format: YYYY_MM_DD
       - name: Create release
-        if: env.GHA_REPO_ALIVE == 'true'
+        if: steps.activity_check.outputs.alive == 'true'
         id: create_release
         uses: ncipollo/release-action@v1
         with:
@@ -67,6 +73,7 @@ jobs:
           name: Nightly ${{ steps.current_time_dashes.outputs.formattedTime }}
           prerelease: true
       - name: Commit CHANGELOG.md
+        if: steps.activity_check.outputs.alive == 'true'
         uses: stefanzweifel/git-auto-commit-action@v7
         with:
           branch: main
