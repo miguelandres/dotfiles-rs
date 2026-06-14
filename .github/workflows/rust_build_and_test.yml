@@ -11,7 +11,7 @@ env:
 
 jobs:
   build-and-test:
-    name: ${{ matrix.make.name }} (${{ matrix.target.name }})
+    name: Build ${{ matrix.target.name }}
     runs-on: ${{ matrix.target.gh_env }}
     strategy:
       fail-fast: false
@@ -64,7 +64,7 @@ jobs:
       RUSTV: ${{ matrix.rust }}
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
       # When rustup is updated, it tries to replace its binary, which on Windows is somehow locked.
       # This can result in the CI failure, see: https://github.com/rust-lang/rustup/issues/3029
       - name: Setup rust

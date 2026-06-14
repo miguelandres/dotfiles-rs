@@ -21,7 +21,7 @@ jobs:
       package_prefix: dotfiles-nightly-${{ steps.current_time_underscores.outputs.formattedTime }}
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
       - name: Activity check
         id: activity_check
@@ -146,7 +146,7 @@ jobs:
     runs-on: ${{ matrix.target.gh_env }}
     steps:
       - name: Clone repo
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
       # When rustup is updated, it tries to replace its binary, which on Windows is somehow locked.
       # This can result in the CI failure, see: https://github.com/rust-lang/rustup/issues/3029
       - name: Setup rust
@@ -188,7 +188,7 @@ jobs:
             ${{ env.PACKAGE_FILE }}
 
       - name: Upload build artifact
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: ${{ matrix.target.name }}
           path: |
@@ -203,7 +203,7 @@ jobs:
       ALL_BINARIES_PACKAGE_FILE: ${{ needs.create-nightly-release.outputs.package_prefix }}-all_binaries.tar.gz
     steps:
       - name: Download all binaries
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v8
       - name: Display structure of downloaded files
         run: ls -R
       - name: Make universal binary
@@ -226,7 +226,7 @@ jobs:
             ${{ env.MACOS_PACKAGE_FILE }}
 
       - name: Upload build artifact
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: macos-universal
           path: |
