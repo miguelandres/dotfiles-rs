@@ -64,6 +64,14 @@ jobs:
         id: current_time_underscores
         with:
           format: YYYY_MM_DD
+
+      - name: Update CHANGELOG
+        id: changelog
+        uses: requarks/changelog-action@v1
+        with:
+          token: ${{ github.token }}
+          tag: nightly-${{ steps.current_time_dashes.outputs.formattedTime }}
+
       - name: Create release
         if: steps.activity_check.outputs.alive == 'true'
         id: create_release
@@ -72,6 +80,7 @@ jobs:
           tag: nightly-${{ steps.current_time_dashes.outputs.formattedTime }}
           name: Nightly ${{ steps.current_time_dashes.outputs.formattedTime }}
           prerelease: true
+
       - name: Commit CHANGELOG.md
         if: steps.activity_check.outputs.alive == 'true'
         uses: stefanzweifel/git-auto-commit-action@v7
