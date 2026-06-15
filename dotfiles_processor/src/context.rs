@@ -1,4 +1,4 @@
-// Copyright (c) 2021-2022 Miguel Barreto and others
+// Copyright (c) 2021-2026 Miguel Barreto and others
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -48,7 +48,7 @@ pub struct Context {
   defaults: HashMap<String, Settings>,
   /// The list of actions parsed from this file.
   #[getset(get = "pub")]
-  actions: Vec<KnownAction<'static>>,
+  actions: Vec<KnownAction>,
   /// The absolute path to the file to which this context corresponds.
   #[getset(get = "pub")]
   file: PathBuf,
@@ -149,9 +149,9 @@ impl Context {
   /// It may fail for several reasons:
   ///
   /// * [ErrorType::InconsistentConfigurationError]
-  ///   - In case the configuration mentions a directive that doesn't exist
+  ///   - In case the configuration mentions settings for an action type that doesn't exist
   /// * [ErrorType::YamlParseError]
-  ///   - A directive is mentioned more than once.
+  ///   - An action type is configured more than once.
   ///   - Some other Yaml syntax error.
   /// * [ErrorType::UnexpectedYamlTypeError]:
   ///   - The StrictYaml passed to this function is not a Hash.
@@ -162,7 +162,7 @@ impl Context {
     fold_hash_until_first_err(
       yaml,
       Ok(HashMap::default()),
-      |key, yaml_val| Self::parse_directive_defaults_for_yaml(&key, yaml_val),
+      |key, yaml_val| Self::parse_action_defaults_for_yaml(&key, yaml_val),
       |mut defaults, (dir_name, settings)| {
         defaults.insert(dir_name, settings);
         Ok(defaults)
@@ -170,7 +170,7 @@ impl Context {
     )
   }
 
-  fn parse_directive_defaults_for_yaml(
+  fn parse_action_defaults_for_yaml(
     directive_name: &str,
     defaults: &StrictYaml,
   ) -> Result<(String, Settings), DotfilesError> {
@@ -183,9 +183,9 @@ impl Context {
   /// It may fail for several reasons:
   ///
   /// * [ErrorType::InconsistentConfigurationError]
-  ///   - In case the configuration mentions a directive that doesn't exist
+  ///   - In case the configuration mentions an action type that doesn't exist
   /// * [ErrorType::YamlParseError]
-  ///   - A directive is mentioned more than once.
+  ///   - An action type is configured more than once.
   ///   - Some other Yaml syntax error.
   /// * [ErrorType::UnexpectedYamlTypeError]:
   ///   - The StrictYaml passed to this function is not a Hash.
@@ -196,7 +196,7 @@ impl Context {
     defaults: &mut HashMap<String, Settings>,
     steps_yaml: &StrictYaml,
     context: &Context,
-  ) -> Result<Vec<KnownAction<'static>>, DotfilesError> {
+  ) -> Result<Vec<KnownAction>, DotfilesError> {
     let all_actions: Vec<KnownAction> = map_yaml_array(steps_yaml, |step| {
       fold_hash_until_first_err(
         step,

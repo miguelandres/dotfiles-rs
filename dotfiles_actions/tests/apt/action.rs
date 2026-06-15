@@ -1,4 +1,4 @@
-// Copyright (c) 2021-2022 Miguel Barreto and others
+// Copyright (c) 2021-2026 Miguel Barreto and others
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -24,53 +24,21 @@ use std::path::PathBuf;
 
 use crate::utils::read_test_yaml;
 
-use dotfiles_actions::exec::action::ExecAction;
-use dotfiles_actions::exec::directive::ExecDirective;
-use dotfiles_core::action::ActionParser;
-use dotfiles_core::error::DotfilesError;
-use dotfiles_core::settings::Settings;
+use dotfiles_core::{error::DotfilesError, settings::Settings};
 
 #[test]
-fn parse_list_of_execs() -> Result<(), DotfilesError> {
-  let directive = ExecDirective::default();
+fn apt_action_parsed() -> Result<(), DotfilesError> {
   let default_settings = Settings::new();
-  let yaml = read_test_yaml("directive/exec/exec_list.yaml")
+  let yaml = read_test_yaml("directive/apt/plain_functional.yaml")
     .unwrap()
     .pop()
     .unwrap();
-
-  let actions =
-    directive.parse_action_list(&default_settings, &yaml, &PathBuf::from("/home/user"))?;
-  assert_eq!(actions.len(), 3);
-  assert_eq!(
-    actions[0],
-    ExecAction::new(
-      false,
-      r#"echo "hello world""#.into(),
-      None,
-      false,
-      &PathBuf::from("/home/user"),
-    )?
-  );
-  assert_eq!(
-    actions[1],
-    ExecAction::new(
-      false,
-      r#"sleep 5"#.into(),
-      Some(String::from("waste some time")),
-      true,
-      &PathBuf::from("/home/user"),
-    )?
-  );
-  assert_eq!(
-    actions[2],
-    ExecAction::new(
-      false,
-      r#"ls"#.into(),
-      None,
-      false,
-      &PathBuf::from("/home/user"),
-    )?
-  );
+  let mut actions = dotfiles_actions::apt::action::parse_action_list(
+    &default_settings,
+    &yaml,
+    &PathBuf::from("/home/user"),
+  )?;
+  let action = actions.pop().unwrap();
+  assert_eq!(action.packages().to_owned(), Vec::from(["fzf", "zsh",]));
   Ok(())
 }

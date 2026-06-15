@@ -1,8 +1,8 @@
-# `exec` directive
+# `exec` action
 
-The `exec` executes a command in the `zsh` shell. Each command will run in its
-own isolated nested zsh process from the directory where the configuration file
-is.
+The `exec` action executes a command in the `zsh` shell. Each command will
+run in its own isolated nested zsh process from the directory where the
+configuration file is.
 
 ## Shortened version
 

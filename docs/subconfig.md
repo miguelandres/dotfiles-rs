@@ -1,6 +1,6 @@
-# `subconfig` directive
+# `subconfig` action
 
-The `subconfig` directive instantiates the listed configuration files in new
+The `subconfig` action instantiates the listed configuration files in new
 contexts for each one.
 
 The new contexts inherit all of the defaults for the current configuration and
@@ -11,7 +11,7 @@ created subcontext.
 
 ```yaml
 # All of these defaults will be inherited in each of the files below, when
-# inboked from this file.
+# invoked from this file.
 defaults:
   create:
     force: true

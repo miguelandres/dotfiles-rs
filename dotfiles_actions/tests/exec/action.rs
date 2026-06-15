@@ -1,6 +1,6 @@
 #![cfg(test)]
 
-// Copyright (c) 2021-2022 Miguel Barreto and others
+// Copyright (c) 2021-2026 Miguel Barreto and others
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -24,12 +24,9 @@
 use std::{env, path::PathBuf};
 
 use dotfiles_actions::exec::action::ExecAction;
-use dotfiles_core::{
-  action::{Action, ConditionalAction},
-  error::DotfilesError,
-};
+use dotfiles_core::{action::Action, error::DotfilesError, settings::Settings};
 
-use crate::utils::check_action_fail;
+use crate::utils::{check_action_fail, read_test_yaml};
 
 #[test]
 fn skip_in_ci_is_respected() -> Result<(), DotfilesError> {
@@ -85,4 +82,53 @@ fn exec_succeeds() -> Result<(), DotfilesError> {
     PathBuf::from("/").as_path(),
   )?;
   action.execute()
+}
+
+#[test]
+fn parse_list_of_execs() -> Result<(), DotfilesError> {
+  let default_settings = Settings::new();
+  let yaml = read_test_yaml("directive/exec/exec_list.yaml")
+    .unwrap()
+    .pop()
+    .unwrap();
+
+  let actions = dotfiles_core::yaml_util::map_yaml_array(&yaml, |yaml_item| {
+    dotfiles_actions::exec::action::parse_action(
+      &default_settings,
+      yaml_item,
+      &PathBuf::from("/home/user"),
+    )
+  })?;
+  assert_eq!(actions.len(), 3);
+  assert_eq!(
+    actions[0],
+    ExecAction::new(
+      false,
+      r#"echo "hello world""#.into(),
+      None,
+      false,
+      &PathBuf::from("/home/user"),
+    )?
+  );
+  assert_eq!(
+    actions[1],
+    ExecAction::new(
+      false,
+      r#"sleep 5"#.into(),
+      Some(String::from("waste some time")),
+      true,
+      &PathBuf::from("/home/user"),
+    )?
+  );
+  assert_eq!(
+    actions[2],
+    ExecAction::new(
+      false,
+      r#"ls"#.into(),
+      None,
+      false,
+      &PathBuf::from("/home/user"),
+    )?
+  );
+  Ok(())
 }

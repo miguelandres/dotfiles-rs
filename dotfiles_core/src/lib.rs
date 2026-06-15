@@ -1,4 +1,4 @@
-// Copyright (c) 2021-2022 Miguel Barreto and others
+// Copyright (c) 2021-2026 Miguel Barreto and others
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -23,20 +23,16 @@
 #![deny(rustdoc::broken_intra_doc_links)]
 #![feature(map_try_insert)]
 
-//! The core of Dotfiles-rs is basically a set of [directives](
-//! directive::Directive) that can build executable [actions](action::Action)
-//! from configuration sources (StrictYaml is the only supported configuration source
+//! The core of Dotfiles-rs is basically a set of [actions](action::Action)
+//! built from configuration sources (StrictYaml is the only supported configuration source
 //! so far).
 //!
-//! Directives are responsible for parsing configuration from the configuration
-//! source, applying default [settings] if necessary, and
-//! using these to build actions that can be executed.
+//! The framework parses configuration from the configuration source,
+//! applies default [settings] if necessary, and builds actions that can be executed.
 //!
-//! The base traits and classes for these building blocks can be found in the
-//! [action] and [directive] modules. The [yaml_util] module is a set of helper
-//! functions for Directives to parse configuration.
+//! The base traits and helper functions for these building blocks can be found in the
+//! [action] and [yaml_util] modules.
 pub mod action;
-pub mod directive;
 pub mod error;
 pub mod exec_wrapper;
 pub mod path;
@@ -44,6 +40,5 @@ pub mod settings;
 pub mod yaml_util;
 
 pub use action::Action;
-pub use directive::Directive;
 pub use settings::Setting;
 pub use settings::Settings;

@@ -1,4 +1,4 @@
-// Copyright (c) 2021-2022 Miguel Barreto and others
+// Copyright (c) 2021-2026 Miguel Barreto and others
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -24,18 +24,21 @@ use std::path::PathBuf;
 
 use crate::utils::read_test_yaml;
 
-use dotfiles_actions::brew::directive::BrewDirective;
-use dotfiles_core::{action::ActionParser, error::DotfilesError, settings::Settings};
+use dotfiles_core::{error::DotfilesError, settings::Settings};
 
 #[test]
-fn brew_directive_force_casks_parsed() -> Result<(), DotfilesError> {
+fn brew_action_force_casks_parsed() -> Result<(), DotfilesError> {
   let default_settings = Settings::new();
   let yaml = read_test_yaml("directive/brew/force_casks.yaml")
     .unwrap()
     .pop()
     .unwrap();
-  let directive = BrewDirective::default();
-  let action = directive.parse_action(&default_settings, &yaml, &PathBuf::from("/home/user"))?;
+  let mut actions = dotfiles_actions::brew::action::parse_action_list(
+    &default_settings,
+    &yaml,
+    &PathBuf::from("/home/user"),
+  )?;
+  let action = actions.pop().unwrap();
   assert!(!action.adopt_casks());
   assert!(action.force_casks());
   assert!(!action.auto_trust_taps());
@@ -54,14 +57,18 @@ fn brew_directive_force_casks_parsed() -> Result<(), DotfilesError> {
 }
 
 #[test]
-fn brew_directive_adopt_casks_parsed() -> Result<(), DotfilesError> {
+fn brew_action_adopt_casks_parsed() -> Result<(), DotfilesError> {
   let default_settings = Settings::new();
   let yaml = read_test_yaml("directive/brew/adopt_casks.yaml")
     .unwrap()
     .pop()
     .unwrap();
-  let directive = BrewDirective::default();
-  let action = directive.parse_action(&default_settings, &yaml, &PathBuf::from("/home/user"))?;
+  let mut actions = dotfiles_actions::brew::action::parse_action_list(
+    &default_settings,
+    &yaml,
+    &PathBuf::from("/home/user"),
+  )?;
+  let action = actions.pop().unwrap();
   assert!(action.adopt_casks());
   assert!(!action.force_casks());
   assert!(!action.auto_trust_taps());
@@ -81,7 +88,7 @@ fn brew_directive_adopt_casks_parsed() -> Result<(), DotfilesError> {
 
 #[cfg(target_os = "macos")]
 #[test]
-fn brew_directive_with_mas_parsed() -> Result<(), DotfilesError> {
+fn brew_action_with_mas_parsed() -> Result<(), DotfilesError> {
   use dotfiles_actions::brew::action::MacAppStoreItem;
 
   let default_settings = Settings::new();
@@ -89,8 +96,12 @@ fn brew_directive_with_mas_parsed() -> Result<(), DotfilesError> {
     .unwrap()
     .pop()
     .unwrap();
-  let directive = BrewDirective::default();
-  let action = directive.parse_action(&default_settings, &yaml, &PathBuf::from("/home/user"))?;
+  let mut actions = dotfiles_actions::brew::action::parse_action_list(
+    &default_settings,
+    &yaml,
+    &PathBuf::from("/home/user"),
+  )?;
+  let action = actions.pop().unwrap();
   assert!(action.force_casks());
   assert!(!action.auto_trust_taps());
   assert_eq!(
@@ -115,14 +126,18 @@ fn brew_directive_with_mas_parsed() -> Result<(), DotfilesError> {
 }
 
 #[test]
-fn brew_directive_auto_trust_taps_parsed() -> Result<(), DotfilesError> {
+fn brew_action_auto_trust_taps_parsed() -> Result<(), DotfilesError> {
   let default_settings = Settings::new();
   let yaml = read_test_yaml("directive/brew/auto_trust_taps.yaml")
     .unwrap()
     .pop()
     .unwrap();
-  let directive = BrewDirective::default();
-  let action = directive.parse_action(&default_settings, &yaml, &PathBuf::from("/home/user"))?;
+  let mut actions = dotfiles_actions::brew::action::parse_action_list(
+    &default_settings,
+    &yaml,
+    &PathBuf::from("/home/user"),
+  )?;
+  let action = actions.pop().unwrap();
   assert!(!action.adopt_casks());
   assert!(!action.force_casks());
   assert!(action.auto_trust_taps());

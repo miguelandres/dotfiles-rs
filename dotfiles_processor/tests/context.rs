@@ -1,6 +1,4 @@
-use std::{convert::TryFrom, path::PathBuf, str::FromStr};
-
-// Copyright (c) 2021-2022 Miguel Barreto and others
+// Copyright (c) 2021-2026 Miguel Barreto and others
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -20,8 +18,10 @@ use std::{convert::TryFrom, path::PathBuf, str::FromStr};
 // LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+
 use dotfiles_core::{error::DotfilesError, Setting};
 use dotfiles_processor::context::Context;
+use std::{convert::TryFrom, path::PathBuf, str::FromStr};
 
 #[test]
 fn context_fails_to_parse_nonexistent_file() -> Result<(), DotfilesError> {
@@ -38,9 +38,9 @@ fn context_fails_to_parse_file_with_no_root_hash() -> Result<(), DotfilesError> 
 }
 
 #[test]
-fn context_fails_multiple_defaults_same_directive() -> Result<(), DotfilesError> {
+fn context_fails_multiple_defaults_same_action() -> Result<(), DotfilesError> {
   let mut ctx = Context::try_from(
-    get_test_file("context/errors/multiple_defaults_same_directive.yaml").as_path(),
+    get_test_file("context/errors/multiple_defaults_same_action.yaml").as_path(),
   )?;
   assert!(ctx.parse_file().unwrap_err().is_yaml_parse_error());
   Ok(())

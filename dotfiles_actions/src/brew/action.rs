@@ -1,4 +1,4 @@
-// Copyright (c) 2021-2022 Miguel Barreto and others
+// Copyright (c) 2021-2026 Miguel Barreto and others
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -24,15 +24,20 @@
 
 #![cfg(unix)]
 use crate::install_command::InstallCommand;
-use dotfiles_core::action::Action;
-use dotfiles_core::error::DotfilesError;
-use dotfiles_core_macros::ConditionalAction;
+use dotfiles_core::error::{DotfilesError, ErrorType};
+use dotfiles_core::settings::{initialize_settings_object, Setting, Settings};
+use dotfiles_core::yaml_util::{
+  fold_hash_until_first_err, get_boolean_setting_from_yaml_or_context,
+  get_optional_string_array_from_yaml_hash, process_value_from_yaml_hash,
+};
+use dotfiles_core::{action::SKIP_IN_CI_SETTING, Action};
 use getset::Getters;
 #[cfg(target_os = "macos")]
 use log::info;
 #[cfg(target_os = "macos")]
 use std::fmt::Display;
-use std::marker::PhantomData;
+use std::path::Path;
+use strict_yaml_rust::StrictYaml;
 use subprocess::Exec;
 #[cfg(target_os = "macos")]
 #[derive(Getters, Eq, PartialEq, Debug, Clone)]
@@ -208,9 +213,33 @@ impl BrewCommand {
   }
 }
 
+/// force casks
+pub const FORCE_CASKS_SETTING: &str = "force_casks";
+/// adopt casks to deal with previously installed apps
+pub const ADOPT_CASKS_SETTING: &str = "adopt_casks";
+/// Automatically trust taps
+pub const AUTO_TRUST_TAPS_SETTING: &str = "auto_trust_taps";
+
+/// The string that identifies the list of taps to install
+pub const TAP_SETTING: &str = "tap";
+/// The string that identifies the list of formulae to install
+pub const FORMULA_SETTING: &str = "formula";
+/// The string that identifies the list of casks to install
+pub const CASK_SETTING: &str = "cask";
+
+/// Default settings for the Brew action.
+pub fn default_settings() -> Settings {
+  initialize_settings_object(&[
+    (FORCE_CASKS_SETTING.to_owned(), Setting::Boolean(false)),
+    (ADOPT_CASKS_SETTING.to_owned(), Setting::Boolean(false)),
+    (AUTO_TRUST_TAPS_SETTING.to_owned(), Setting::Boolean(false)),
+    (SKIP_IN_CI_SETTING.to_owned(), Setting::Boolean(false)),
+  ])
+}
+
 /// [BrewAction] Installs software using homebrew.
-#[derive(Eq, PartialEq, Debug, ConditionalAction, Getters)]
-pub struct BrewAction<'a> {
+#[derive(Eq, PartialEq, Debug, Getters)]
+pub struct BrewAction {
   /// Skips this action if it is running in a CI environment.
   #[get = "pub"]
   skip_in_ci: bool,
@@ -240,9 +269,8 @@ pub struct BrewAction<'a> {
   /// List of Mac OS apps to install from the App Store
   #[get = "pub"]
   mas_apps: Vec<MacAppStoreItem>,
-  phantom_data: PhantomData<&'a String>,
 }
-impl<'a> BrewAction<'a> {
+impl BrewAction {
   /// Constructs a new [BrewAction]
   pub fn new(
     skip_in_ci: bool,
@@ -264,14 +292,13 @@ impl<'a> BrewAction<'a> {
       casks,
       #[cfg(target_os = "macos")]
       mas_apps,
-      phantom_data: PhantomData,
     };
     log::trace!("Creating new {:?}", action);
     action
   }
 }
 
-impl Action<'_> for BrewAction<'_> {
+impl Action for BrewAction {
   fn execute(&self) -> Result<(), DotfilesError> {
     for tap in &self.taps {
       if self.auto_trust_taps {
@@ -291,4 +318,98 @@ impl Action<'_> for BrewAction<'_> {
     }
     Ok(())
   }
+
+  fn skip_in_ci(&self) -> bool {
+    self.skip_in_ci
+  }
+}
+
+/// Static parsing function to build a list of BrewActions from YAML and settings context
+pub fn parse_action_list(
+  context_settings: &Settings,
+  yaml: &StrictYaml,
+  _current_dir: &Path,
+) -> Result<Vec<BrewAction>, DotfilesError> {
+  let defaults = default_settings();
+  let force_casks = get_boolean_setting_from_yaml_or_context(
+    FORCE_CASKS_SETTING,
+    yaml,
+    context_settings,
+    &defaults,
+  )?;
+  let adopt_casks = get_boolean_setting_from_yaml_or_context(
+    ADOPT_CASKS_SETTING,
+    yaml,
+    context_settings,
+    &defaults,
+  )?;
+  let auto_trust_taps = get_boolean_setting_from_yaml_or_context(
+    AUTO_TRUST_TAPS_SETTING,
+    yaml,
+    context_settings,
+    &defaults,
+  )?;
+  let skip_in_ci = get_boolean_setting_from_yaml_or_context(
+    SKIP_IN_CI_SETTING,
+    yaml,
+    context_settings,
+    &defaults,
+  )?;
+  let taps = get_optional_string_array_from_yaml_hash(TAP_SETTING, yaml)?;
+  let formulae = get_optional_string_array_from_yaml_hash(FORMULA_SETTING, yaml)?;
+  let casks = get_optional_string_array_from_yaml_hash(CASK_SETTING, yaml)?;
+  #[cfg(target_os = "macos")]
+  let mas_apps = process_value_from_yaml_hash("mas", yaml, |mas_yaml| {
+    fold_hash_until_first_err(
+      mas_yaml,
+      Ok(Vec::<MacAppStoreItem>::new()),
+      |key, val| {
+        Ok((
+          val
+            .to_owned()
+            .into_string()
+            .ok_or(DotfilesError::from_wrong_yaml(
+              "Mac App Store app ID is not a string as expected".into(),
+              val.to_owned(),
+              StrictYaml::String("".into()),
+            ))
+            .and_then(|id| {
+              id.parse::<i64>().map_err(|_| {
+                DotfilesError::from(
+                  format!("{id} is not a valid Mac App Store app id"),
+                  ErrorType::InconsistentConfigurationError,
+                )
+              })
+            })?,
+          key,
+        ))
+      },
+      |mut list, item| {
+        list.push(MacAppStoreItem::from(item));
+        Ok(list)
+      },
+    )
+  })
+  .map_or_else(
+    |err| {
+      if err.is_missing_config("mas") {
+        Ok(Vec::new())
+      } else {
+        Err(err)
+      }
+    },
+    Ok,
+  )?;
+
+  Ok(vec![BrewAction::new(
+    skip_in_ci,
+    force_casks,
+    adopt_casks,
+    auto_trust_taps,
+    taps,
+    formulae,
+    casks,
+    #[cfg(target_os = "macos")]
+    mas_apps,
+  )])
 }

@@ -1,5 +1,5 @@
 #![cfg(test)]
-// Copyright (c) 2021-2022 Miguel Barreto and others
+// Copyright (c) 2021-2026 Miguel Barreto and others
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -31,7 +31,7 @@ use std::path::PathBuf;
 use std::str::FromStr;
 use strict_yaml_rust::StrictYaml;
 
-pub fn check_action_fail<'a, A: Action<'a>>(
+pub fn check_action_fail<A: Action>(
   action: &A,
   error_message: String,
 ) -> Result<(), DotfilesError> {
