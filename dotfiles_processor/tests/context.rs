@@ -1,5 +1,3 @@
-use std::{convert::TryFrom, path::PathBuf, str::FromStr};
-
 // Copyright (c) 2021-2026 Miguel Barreto and others
 //
 // Permission is hereby granted, free of charge, to any person obtaining
@@ -20,8 +18,10 @@ use std::{convert::TryFrom, path::PathBuf, str::FromStr};
 // LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+
 use dotfiles_core::{error::DotfilesError, Setting};
 use dotfiles_processor::context::Context;
+use std::{convert::TryFrom, path::PathBuf, str::FromStr};
 
 #[test]
 fn context_fails_to_parse_nonexistent_file() -> Result<(), DotfilesError> {
