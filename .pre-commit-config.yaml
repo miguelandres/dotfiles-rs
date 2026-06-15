@@ -33,7 +33,7 @@ repos:
       #   pass_filenames: false
 
   - repo: https://github.com/pre-commit/pre-commit-hooks
-    rev: v4.0.1
+    rev: v6.0.0
     hooks:
       - id: check-added-large-files
       - id: check-case-conflict
@@ -56,12 +56,12 @@ repos:
       - id: forbid-binary
       - id: git-dirty
   - repo: https://github.com/igorshubovych/markdownlint-cli
-    rev: v0.39.0
+    rev: v0.48.0
     hooks:
       - id: markdownlint
         exclude: ^CHANGELOG\.md$
   - repo: https://github.com/Lucas-C/pre-commit-hooks
-    rev: v1.5.4
+    rev: v1.5.6
     hooks:
       - id: forbid-tabs
       - id: remove-tabs
