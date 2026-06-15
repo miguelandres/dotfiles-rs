@@ -1,1 +1,0 @@
-window.SIDEBAR_ITEMS = {"constant":["DIRECTIVE_NAME","PACKAGE_SETTING"],"fn":["init_directive_data"],"struct":["AptDirective"]};

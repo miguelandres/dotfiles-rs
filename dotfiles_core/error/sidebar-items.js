@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"enum":["ErrorType"],"fn":["add_directive_error_prefix","execution_error","fold_until_first_err","process_until_first_err"],"struct":["DotfilesError"]};
+window.SIDEBAR_ITEMS = {"enum":["ErrorType"],"fn":["execution_error","fold_until_first_err","process_until_first_err"],"struct":["DotfilesError"]};

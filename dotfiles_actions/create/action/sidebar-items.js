@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"struct":["CreateAction"],"type":["FakeCreateAction","NativeCreateAction"]};
+window.SIDEBAR_ITEMS = {"constant":["CREATE_PARENT_DIRS_SETTING","DIR_SETTING"],"fn":["default_settings","parse_action"],"struct":["CreateAction"],"type":["FakeCreateAction","NativeCreateAction"]};

@@ -1,1 +1,0 @@
-window.SIDEBAR_ITEMS = {"struct":["DirectiveData"],"trait":["Directive","HasDirectiveData"]};

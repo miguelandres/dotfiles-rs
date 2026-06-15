@@ -1,1 +1,0 @@
-window.SIDEBAR_ITEMS = {"constant":["CREATE_PARENT_DIRS_SETTING","DIRECTIVE_NAME","DIR_SETTING"],"fn":["init_directive_data"],"struct":["CreateDirective"],"type":["FakeCreateDirective","NativeCreateDirective"]};

@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"mod":["action","directive"]};
+window.SIDEBAR_ITEMS = {"mod":["action"]};

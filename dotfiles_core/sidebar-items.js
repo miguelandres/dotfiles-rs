@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"mod":["action","directive","error","exec_wrapper","path","settings","yaml_util"]};
+window.SIDEBAR_ITEMS = {"mod":["action","error","exec_wrapper","path","settings","yaml_util"]};

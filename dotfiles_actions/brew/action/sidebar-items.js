@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"struct":["BrewAction"]};
+window.SIDEBAR_ITEMS = {"constant":["ADOPT_CASKS_SETTING","AUTO_TRUST_TAPS_SETTING","CASK_SETTING","FORCE_CASKS_SETTING","FORMULA_SETTING","TAP_SETTING"],"fn":["default_settings","parse_action_list"],"struct":["BrewAction"]};

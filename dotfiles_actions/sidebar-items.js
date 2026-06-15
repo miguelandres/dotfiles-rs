@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"mod":["apt","brew","create","exec","filesystem","homebrew_install","install_command","link","ohmyzsh_install"]};
+window.SIDEBAR_ITEMS = {"mod":["apt","brew","create","exec","homebrew_install","install_command","link","ohmyzsh_install"]};

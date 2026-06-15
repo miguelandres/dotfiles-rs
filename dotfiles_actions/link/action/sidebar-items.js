@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"struct":["LinkAction"],"type":["FakeLinkAction","NativeLinkAction"]};
+window.SIDEBAR_ITEMS = {"constant":["CREATE_PARENT_DIRS_SETTING","FORCE_SETTING","IGNORE_MISSING_TARGET_SETTING","PATH_SETTING","RELINK_SETTING","RESOLVE_SYMLINK_TARGET_SETTING","TARGET_SETTING"],"fn":["default_settings","parse_action"],"struct":["LinkAction"],"type":["FakeLinkAction","NativeLinkAction"]};

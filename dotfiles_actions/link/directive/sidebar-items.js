@@ -1,1 +1,0 @@
-window.SIDEBAR_ITEMS = {"constant":["CREATE_PARENT_DIRS_SETTING","DIRECTIVE_NAME","FORCE_SETTING","IGNORE_MISSING_TARGET_SETTING","PATH_SETTING","RELINK_SETTING","RESOLVE_SYMLINK_TARGET_SETTING","TARGET_SETTING"],"fn":["init_directive_data"],"struct":["LinkDirective"],"type":["FakeLinkDirective","NativeLinkDirective"]};

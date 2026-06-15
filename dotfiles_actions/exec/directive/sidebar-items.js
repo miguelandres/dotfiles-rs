@@ -1,1 +1,0 @@
-window.SIDEBAR_ITEMS = {"constant":["COMMAND_SETTING","DESCRIPTION_SETTING","DIRECTIVE_NAME","ECHO_SETTING"],"fn":["init_directive_data"],"struct":["ExecDirective"]};

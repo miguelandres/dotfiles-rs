@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"struct":["AptAction"]};
+window.SIDEBAR_ITEMS = {"constant":["PACKAGE_SETTING"],"fn":["default_settings","parse_action_list"],"struct":["AptAction"]};

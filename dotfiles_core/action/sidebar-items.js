@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"constant":["SKIP_IN_CI_SETTING"],"fn":["is_running_in_ci"],"trait":["Action","ActionParser","ConditionalAction"]};
+window.SIDEBAR_ITEMS = {"constant":["SKIP_IN_CI_SETTING"],"fn":["is_running_in_ci"],"trait":["Action"]};
