@@ -44,7 +44,7 @@ impl OhMyZshInstallAction {
   }
   /// Returns true if the $ZSH environment var is set
   pub fn check_oh_my_zsh_is_installed(&self) -> bool {
-    matches!(std::env::var("ZSH"), Ok(_))
+    std::env::var("ZSH").is_ok()
   }
 }
 

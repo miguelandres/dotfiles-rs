@@ -102,7 +102,7 @@ fn convert_to_absolute() -> Result<(), DotfilesError> {
 fn handles_tildes() -> Result<(), DotfilesError> {
   let fs = FakeFileSystem::new();
   setup_fs(&fs)?;
-  env::set_var("HOME".to_owned(), "/home/user".to_owned());
+  env::set_var("HOME", "/home/user");
   fs.create_dir("/home/user/target").unwrap();
   let settings = Settings::new();
 
@@ -418,7 +418,7 @@ fn link_resolves_symlink_target() -> Result<(), DotfilesError> {
   )?;
   action.execute().unwrap();
   let source = fs.get_symlink_src("/home/user/path").unwrap();
-  assert!(source == PathBuf::from("/home/user/target"));
+  assert!(source == *"/home/user/target");
   Ok(())
 }
 

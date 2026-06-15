@@ -78,7 +78,7 @@ impl Action for HomebrewInstallAction {
           "couldn't set .zprofile and .bash_profile to use homebrew",
         )
       }
-      #[cfg(all(target_os = "linux"))]
+      #[cfg(target_os = "linux")]
       {
         result?;
         execute_commands(

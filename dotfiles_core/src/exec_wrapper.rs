@@ -38,7 +38,7 @@ pub fn execute_commands(
   io_error_message: &str,
   error_while_running_message: &str,
 ) -> Result<(), DotfilesError> {
-  process_until_first_err(cmds.into_iter(), |cmd| {
+  process_until_first_err(cmds, |cmd| {
     handle_exec_error(cmd.join(), io_error_message, error_while_running_message)
   })
 }

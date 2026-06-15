@@ -48,7 +48,7 @@ pub trait InstallCommand<F: Display> {
 
   /// Runs the command to execut
   fn execute(&self) -> Result<(), DotfilesError> {
-    let item_list: String = self.formatted_item_list().join(", ").into();
+    let item_list: String = self.formatted_item_list().join(", ");
     info!("{} {}", self.action_description(), item_list);
     let mut cmd = self.base_command();
     for arg in self.args().iter() {
@@ -60,7 +60,7 @@ pub trait InstallCommand<F: Display> {
       format!(
         "Unexpected error while {} {}",
         self.action_description(),
-        &item_list
+        item_list
       )
       .as_str(),
     )

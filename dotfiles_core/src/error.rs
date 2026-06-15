@@ -63,14 +63,10 @@ where
     iterable.into_iter().map(process_function).collect();
 
   processed_vec_res.and_then(|processed_vec| {
-    fold(
-      processed_vec.into_iter(),
-      init,
-      |prev_res, item| match prev_res {
-        Ok(prev_folded) => fold_function(prev_folded, item),
-        Err(err) => Err(err),
-      },
-    )
+    fold(processed_vec, init, |prev_res, item| match prev_res {
+      Ok(prev_folded) => fold_function(prev_folded, item),
+      Err(err) => Err(err),
+    })
   })
 }
 
@@ -107,9 +103,9 @@ pub enum ErrorType {
   /// Received an StrictYaml object of an unexpected type
   UnexpectedYamlTypeError {
     /// What we got instead of the expected type.
-    encountered: StrictYaml,
+    encountered: Box<StrictYaml>,
     /// An example of what we expected.
-    expected: StrictYaml,
+    expected: Box<StrictYaml>,
   },
   /// A core logic error for Dotfiles-rs
   CoreError,
@@ -227,8 +223,8 @@ impl DotfilesError {
     DotfilesError {
       message,
       error_type: ErrorType::UnexpectedYamlTypeError {
-        encountered: wrong_yaml,
-        expected: expected_type,
+        encountered: Box::new(wrong_yaml),
+        expected: Box::new(expected_type),
       },
     }
   }

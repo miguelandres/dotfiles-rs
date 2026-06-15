@@ -221,6 +221,6 @@ impl Context {
 
   /// Runs the actions in this context and consumes the context.
   pub fn run_actions(context: Context) -> Result<(), DotfilesError> {
-    process_until_first_err(context.actions.into_iter(), |action| action.execute())
+    process_until_first_err(context.actions, |action| action.execute())
   }
 }

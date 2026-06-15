@@ -210,7 +210,7 @@ impl<F: FileSystem + UnixFileSystem> Action for LinkAction<F> {
                             // path exists, no force, is symlink, no relink
                             return Err(io::Error::new(
                                 ErrorKind::AlreadyExists,
-                                format!("{:?} already exists. Use `force` to delete a file/directory or `relink` to recreate a symlink", &path))),
+                                format!("{:?} already exists. Use `force` to delete a file/directory or `relink` to recreate a symlink", path))),
                         _ => ()
                     }
         fs.symlink(&target, &path)
@@ -231,13 +231,13 @@ impl<F: FileSystem + UnixFileSystem> Action for LinkAction<F> {
     target = convert_path_to_absolute(&target, Some(&self.current_dir))?;
     match create_symlink(&self.fs, self, path, target) {
       Ok(()) => {
-        info!("Created symlink {} -> {}", &self.path, &self.target);
+        info!("Created symlink {} -> {}", self.path, self.target);
         Ok(())
       }
       Err(err) => {
         error!(
           "Couldn't create symlink {} -> {}: {}",
-          &self.path, &self.target, err
+          self.path, self.target, err
         );
         Err(DotfilesError::from(
           err.to_string(),
@@ -283,8 +283,8 @@ fn parse_full_action<F: FileSystem + UnixFileSystem>(
     &defaults,
   )?;
   let action_settings: Result<Settings, DotfilesError> = defaults
-    .iter()
-    .map(|(name, _)| {
+    .keys()
+    .map(|name| {
       yaml_util::get_setting_from_yaml_hash_or_from_context(name, yaml, context_settings, &defaults)
         .map(|setting| (name.to_owned(), setting))
     })

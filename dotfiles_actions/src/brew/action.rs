@@ -125,7 +125,7 @@ impl InstallCommand<MacAppStoreItem> for MacAppStoreCommand {
       format!(
         "Unexpected error while {} {}",
         self.action_description(),
-        &item_list
+        item_list
       )
       .as_str(),
     )
@@ -179,18 +179,18 @@ impl BrewCommand {
     }
   }
 
-  fn install_formulae(items: &Vec<String>) -> BrewCommand {
-    let mut args: Vec<String> = items.clone();
+  fn install_formulae(items: &[String]) -> BrewCommand {
+    let mut args: Vec<String> = items.to_vec();
     args.insert(0, "install".into());
     BrewCommand {
-      items: items.clone(),
-      args: args,
+      items: items.to_vec(),
+      args,
       action_name: "install formula".into(),
       action_description: "installing formula".into(),
     }
   }
 
-  fn install_casks(items: &Vec<String>, force: &bool, adopt: &bool) -> BrewCommand {
+  fn install_casks(items: &[String], force: &bool, adopt: &bool) -> BrewCommand {
     let mut args = vec!["install".into(), "--cask".into()];
     if *force {
       args.push("--force".into())
@@ -199,11 +199,11 @@ impl BrewCommand {
       args.push("--adopt".into())
     }
     {
-      let mut items = items.clone();
+      let mut items = items.to_vec();
       args.append(&mut items)
     }
     let args = args;
-    let items = items.clone();
+    let items = items.to_vec();
     BrewCommand {
       items,
       args,
@@ -272,6 +272,7 @@ pub struct BrewAction {
 }
 impl BrewAction {
   /// Constructs a new [BrewAction]
+  #[allow(clippy::too_many_arguments)]
   pub fn new(
     skip_in_ci: bool,
     force_casks: bool,

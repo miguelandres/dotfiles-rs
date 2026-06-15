@@ -74,8 +74,8 @@ pub dotfiles_core::error::ErrorType::IncompleteConfigurationError::missing_field
 pub dotfiles_core::error::ErrorType::InconsistentConfigurationError
 pub dotfiles_core::error::ErrorType::TestingErrorActionSucceedsWhenItShouldFail
 pub dotfiles_core::error::ErrorType::UnexpectedYamlTypeError
-pub dotfiles_core::error::ErrorType::UnexpectedYamlTypeError::encountered: strict_yaml_rust::strict_yaml::StrictYaml
-pub dotfiles_core::error::ErrorType::UnexpectedYamlTypeError::expected: strict_yaml_rust::strict_yaml::StrictYaml
+pub dotfiles_core::error::ErrorType::UnexpectedYamlTypeError::encountered: alloc::boxed::Box<strict_yaml_rust::strict_yaml::StrictYaml>
+pub dotfiles_core::error::ErrorType::UnexpectedYamlTypeError::expected: alloc::boxed::Box<strict_yaml_rust::strict_yaml::StrictYaml>
 pub dotfiles_core::error::ErrorType::YamlParseError
 pub dotfiles_core::error::ErrorType::YamlParseError::scan_error: strict_yaml_rust::scanner::ScanError
 impl core::fmt::Debug for dotfiles_core::error::ErrorType

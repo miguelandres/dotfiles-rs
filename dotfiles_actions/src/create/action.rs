@@ -153,7 +153,7 @@ impl<F: FileSystem> Action for CreateAction<F> {
       &self.current_dir,
     )
     .map(|_| {
-      info!("Created directory {}", &self.directory);
+      info!("Created directory {}", self.directory);
     })
   }
 

@@ -503,7 +503,7 @@ where
 {
   if let StrictYaml::Hash(hash) = yaml {
     fold_until_first_err(
-      hash.into_iter(),
+      hash,
       init,
       |(yaml_key, yaml_value)| process_function(parse_as_string(yaml_key)?, yaml_value),
       fold_function,
