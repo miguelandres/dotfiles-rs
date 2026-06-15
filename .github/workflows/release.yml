@@ -1,99 +1,48 @@
-name: Release Nightly
+name: Release
 
 on:
-  # Run nightly
-  schedule:
-    - cron: "0 0 * * *"
-
-  # Allow for manual dispatch on GitHub
-  workflow_dispatch:
+  push:
+    tags:
+      - 'v[0-9]+.[0-9]+.[0-9]+'
 
 jobs:
-  create-nightly-release:
-    name: Create Nightly Release
+  create-release:
+    name: Create Release
     runs-on: ubuntu-latest
     outputs:
-      activity_check: ${{ steps.activity_check.outputs.alive }}
-      date: ${{ steps.current_time_underscores.outputs.formattedTime }}
-      tag: nightly-${{ steps.current_time_dashes.outputs.formattedTime }}
-      name: Nightly ${{ steps.current_time_dashes.outputs.formattedTime }}
+      tag: ${{ github.ref_name }}
+      name: ${{ github.ref_name }}
       upload_url: ${{ steps.create_release.outputs.upload_url }}
-      package_prefix: dotfiles-nightly-${{ steps.current_time_underscores.outputs.formattedTime }}
+      package_prefix: dotfiles-${{ github.ref_name }}
     steps:
       - name: Checkout repository
         uses: actions/checkout@v6
 
-      - name: Activity check
-        id: activity_check
-        run: |
-          :
-          # Based off https://github.community/t/trigger-workflow-if-there-is-commit-in-last-24-hours/17074/3
-          curl -sL https://api.github.com/repos/$GITHUB_REPOSITORY/commits | jq -r '[.[]][0]' > $HOME/commit.json
-          date="$(jq -r '.commit.committer.date' $HOME/commit.json)"
-          timestamp=$(date --utc -d "$date" +%s)
-          days=$(( ( $(date --utc +%s) - $timestamp ) / 86400 ))
-          author="$(jq -r '.commit.committer.name' $HOME/commit.json)"
-          url="$(jq -r '.html_url' $HOME/commit.json)"
-          rm -f $HOME/commit.json
-          echo "Repository activity: $timestamp $author $url"
-          alive=0
-          if [ "${{ github.event_name }}" == "repository_dispatch" ] || [ "${{ github.event_name }}" == "workflow_dispatch" ]; then
-            echo "[WARNING] Ignoring activity check: workflow triggered manually."
-            alive=1
-          elif [[ $days < 1 ]]; then
-            echo Repository active
-            alive=1
-          else
-            echo "[WARNING] Repository not updated: event ${{ github.event_name }} not allowed to modify stale repository."
-          fi
-          if [[ $alive == 1 ]]; then
-            echo "alive=true" >> $GITHUB_OUTPUT
-          else
-            echo "alive=false" >> $GITHUB_OUTPUT
-          fi
-        shell: bash
-
-      - name: Get current time with dashes
-        uses: josStorer/get-current-time@v2.1.3
-        id: current_time_dashes
-        with:
-          format: YYYY-MM-DD
-
-      - name: Get current time with underscores
-        uses: josStorer/get-current-time@v2.1.3
-        id: current_time_underscores
-        with:
-          format: YYYY_MM_DD
-
       - name: Create release
-        if: steps.activity_check.outputs.alive == 'true'
         id: create_release
         uses: ncipollo/release-action@v1
         with:
-          tag: nightly-${{ steps.current_time_dashes.outputs.formattedTime }}
-          name: Nightly ${{ steps.current_time_dashes.outputs.formattedTime }}
-          prerelease: true
+          tag: ${{ github.ref_name }}
+          name: ${{ github.ref_name }}
+          prerelease: false
 
       - name: Update CHANGELOG
-        if: steps.activity_check.outputs.alive == 'true'
         id: changelog
         uses: requarks/changelog-action@v1
         with:
           token: ${{ github.token }}
-          tag: nightly-${{ steps.current_time_dashes.outputs.formattedTime }}
+          tag: ${{ github.ref_name }}
 
       - name: Commit CHANGELOG.md
-        if: steps.activity_check.outputs.alive == 'true'
         uses: stefanzweifel/git-auto-commit-action@v7
         with:
           branch: main
-          commit_message: "docs: update CHANGELOG.md for nightly-${{ steps.current_time_dashes.outputs.formattedTime }} [skip ci]"
+          commit_message: "docs: update CHANGELOG.md for ${{ github.ref_name }} [skip ci]"
           file_pattern: CHANGELOG.md
 
   build:
     name: Build ${{ matrix.target.name }}
-    needs: create-nightly-release
-    if: needs.create-nightly-release.outputs.activity_check == 'true'
+    needs: create-release
     strategy:
       fail-fast: false
       matrix:
@@ -140,7 +89,7 @@ jobs:
             run_tests: true
 
     env:
-      PACKAGE_FILE: ${{ needs.create-nightly-release.outputs.package_prefix }}-${{ matrix.target.name }}.${{ 'tar.gz' }}
+      PACKAGE_FILE: ${{ needs.create-release.outputs.package_prefix }}-${{ matrix.target.name }}.${{ 'tar.gz' }}
       CARGO_BUILD_DIR: target/${{ matrix.target.name }}/release
       RUST_BACKTRACE: full
       RUSTV: ${{ matrix.rust }}
@@ -148,8 +97,6 @@ jobs:
     steps:
       - name: Clone repo
         uses: actions/checkout@v6
-      # When rustup is updated, it tries to replace its binary, which on Windows is somehow locked.
-      # This can result in the CI failure, see: https://github.com/rust-lang/rustup/issues/3029
       - name: Setup rust
         uses: dtolnay/rust-toolchain@master
         with:
@@ -163,7 +110,7 @@ jobs:
           sudo apt install ${{ matrix.linker }}
       - uses: Swatinem/rust-cache@v2
         with:
-          shared-key: ${{ matrix.target.name }}--nightly-release--branch--${{ github.ref }}
+          shared-key: ${{ matrix.target.name }}--release--branch--${{ github.ref }}
       - name: Cargo build
         run: |
           cargo build --package dotfiles --release --target ${{ matrix.target.name }}
@@ -183,8 +130,8 @@ jobs:
       - name: Upload package
         uses: softprops/action-gh-release@v3
         with:
-          tag_name: ${{ needs.create-nightly-release.outputs.tag }}
-          name: ${{ needs.create-nightly-release.outputs.name }}
+          tag_name: ${{ needs.create-release.outputs.tag }}
+          name: ${{ needs.create-release.outputs.name }}
           files: |
             ${{ env.PACKAGE_FILE }}
 
@@ -197,11 +144,11 @@ jobs:
 
   build-mac-universal-binary-and-all-binaries-package:
     name: Build macOS universal binary
-    needs: [create-nightly-release, build]
+    needs: [create-release, build]
     runs-on: macos-latest
     env:
-      MACOS_PACKAGE_FILE: ${{ needs.create-nightly-release.outputs.package_prefix }}-macos-universal.tar.gz
-      ALL_BINARIES_PACKAGE_FILE: ${{ needs.create-nightly-release.outputs.package_prefix }}-all_binaries.tar.gz
+      MACOS_PACKAGE_FILE: ${{ needs.create-release.outputs.package_prefix }}-macos-universal.tar.gz
+      ALL_BINARIES_PACKAGE_FILE: ${{ needs.create-release.outputs.package_prefix }}-all_binaries.tar.gz
     steps:
       - name: Download all binaries
         uses: actions/download-artifact@v8
@@ -221,8 +168,8 @@ jobs:
       - name: Upload package
         uses: softprops/action-gh-release@v3
         with:
-          tag_name: ${{ needs.create-nightly-release.outputs.tag }}
-          name: ${{ needs.create-nightly-release.outputs.name }}
+          tag_name: ${{ needs.create-release.outputs.tag }}
+          name: ${{ needs.create-release.outputs.name }}
           files: |
             ${{ env.MACOS_PACKAGE_FILE }}
 
@@ -256,7 +203,7 @@ jobs:
       - name: Upload package
         uses: softprops/action-gh-release@v3
         with:
-          tag_name: ${{ needs.create-nightly-release.outputs.tag }}
-          name: ${{ needs.create-nightly-release.outputs.name }}
+          tag_name: ${{ needs.create-release.outputs.tag }}
+          name: ${{ needs.create-release.outputs.name }}
           files: |
             ${{ env.ALL_BINARIES_PACKAGE_FILE }}
