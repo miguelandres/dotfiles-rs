@@ -77,9 +77,13 @@ repos:
       - id: fmt
       - id: cargo-check
         args: ["--target=x86_64-apple-darwin", "--all-targets"]
+        files: \.(rs|toml)$
       - id: cargo-check
         args: ["--all-targets"]
+        files: \.(rs|toml)$
       - id: clippy
         args: ["--target=x86_64-apple-darwin", "--all-targets"]
+        files: \.(rs|toml)$
       - id: clippy
         args: ["--all-targets"]
+        files: \.(rs|toml)$
