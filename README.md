@@ -66,9 +66,9 @@ if `dotfiles-rs` determines that it's being run in a known CI environment.
 Defaults are settings for each action type that can be shared across multiple
 actions of the same type in the same file or context.
 
-For example, if you always (or almost always) use the same setting for a specific
-action type, you can set it up in a `defaults` section and then only specify it in
-cases where you need to override that default.
+For example, if you always (or almost always) use the same setting for a
+specific action type, you can set it up in a `defaults` section and then only
+specify it in cases where you need to override that default.
 
 That means that the following file ...
 
