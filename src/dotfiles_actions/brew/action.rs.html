@@ -125,7 +125,7 @@
 <a href=#125 id=125 data-nosnippet>125</a>      <span class="macro">format!</span>(
 <a href=#126 id=126 data-nosnippet>126</a>        <span class="string">"Unexpected error while {} {}"</span>,
 <a href=#127 id=127 data-nosnippet>127</a>        <span class="self">self</span>.action_description(),
-<a href=#128 id=128 data-nosnippet>128</a>        <span class="kw-2">&amp;</span>item_list
+<a href=#128 id=128 data-nosnippet>128</a>        item_list
 <a href=#129 id=129 data-nosnippet>129</a>      )
 <a href=#130 id=130 data-nosnippet>130</a>      .as_str(),
 <a href=#131 id=131 data-nosnippet>131</a>    )
@@ -179,18 +179,18 @@
 <a href=#179 id=179 data-nosnippet>179</a>    }
 <a href=#180 id=180 data-nosnippet>180</a>  }
 <a href=#181 id=181 data-nosnippet>181</a>
-<a href=#182 id=182 data-nosnippet>182</a>  <span class="kw">fn </span>install_formulae(items: <span class="kw-2">&amp;</span>Vec&lt;String&gt;) -&gt; BrewCommand {
-<a href=#183 id=183 data-nosnippet>183</a>    <span class="kw">let </span><span class="kw-2">mut </span>args: Vec&lt;String&gt; = items.clone();
+<a href=#182 id=182 data-nosnippet>182</a>  <span class="kw">fn </span>install_formulae(items: <span class="kw-2">&amp;</span>[String]) -&gt; BrewCommand {
+<a href=#183 id=183 data-nosnippet>183</a>    <span class="kw">let </span><span class="kw-2">mut </span>args: Vec&lt;String&gt; = items.to_vec();
 <a href=#184 id=184 data-nosnippet>184</a>    args.insert(<span class="number">0</span>, <span class="string">"install"</span>.into());
 <a href=#185 id=185 data-nosnippet>185</a>    BrewCommand {
-<a href=#186 id=186 data-nosnippet>186</a>      items: items.clone(),
-<a href=#187 id=187 data-nosnippet>187</a>      args: args,
+<a href=#186 id=186 data-nosnippet>186</a>      items: items.to_vec(),
+<a href=#187 id=187 data-nosnippet>187</a>      args,
 <a href=#188 id=188 data-nosnippet>188</a>      action_name: <span class="string">"install formula"</span>.into(),
 <a href=#189 id=189 data-nosnippet>189</a>      action_description: <span class="string">"installing formula"</span>.into(),
 <a href=#190 id=190 data-nosnippet>190</a>    }
 <a href=#191 id=191 data-nosnippet>191</a>  }
 <a href=#192 id=192 data-nosnippet>192</a>
-<a href=#193 id=193 data-nosnippet>193</a>  <span class="kw">fn </span>install_casks(items: <span class="kw-2">&amp;</span>Vec&lt;String&gt;, force: <span class="kw-2">&amp;</span>bool, adopt: <span class="kw-2">&amp;</span>bool) -&gt; BrewCommand {
+<a href=#193 id=193 data-nosnippet>193</a>  <span class="kw">fn </span>install_casks(items: <span class="kw-2">&amp;</span>[String], force: <span class="kw-2">&amp;</span>bool, adopt: <span class="kw-2">&amp;</span>bool) -&gt; BrewCommand {
 <a href=#194 id=194 data-nosnippet>194</a>    <span class="kw">let </span><span class="kw-2">mut </span>args = <span class="macro">vec!</span>[<span class="string">"install"</span>.into(), <span class="string">"--cask"</span>.into()];
 <a href=#195 id=195 data-nosnippet>195</a>    <span class="kw">if </span><span class="kw-2">*</span>force {
 <a href=#196 id=196 data-nosnippet>196</a>      args.push(<span class="string">"--force"</span>.into())
@@ -199,11 +199,11 @@
 <a href=#199 id=199 data-nosnippet>199</a>      args.push(<span class="string">"--adopt"</span>.into())
 <a href=#200 id=200 data-nosnippet>200</a>    }
 <a href=#201 id=201 data-nosnippet>201</a>    {
-<a href=#202 id=202 data-nosnippet>202</a>      <span class="kw">let </span><span class="kw-2">mut </span>items = items.clone();
+<a href=#202 id=202 data-nosnippet>202</a>      <span class="kw">let </span><span class="kw-2">mut </span>items = items.to_vec();
 <a href=#203 id=203 data-nosnippet>203</a>      args.append(<span class="kw-2">&amp;mut </span>items)
 <a href=#204 id=204 data-nosnippet>204</a>    }
 <a href=#205 id=205 data-nosnippet>205</a>    <span class="kw">let </span>args = args;
-<a href=#206 id=206 data-nosnippet>206</a>    <span class="kw">let </span>items = items.clone();
+<a href=#206 id=206 data-nosnippet>206</a>    <span class="kw">let </span>items = items.to_vec();
 <a href=#207 id=207 data-nosnippet>207</a>    BrewCommand {
 <a href=#208 id=208 data-nosnippet>208</a>      items,
 <a href=#209 id=209 data-nosnippet>209</a>      args,
@@ -272,145 +272,146 @@
 <a href=#272 id=272 data-nosnippet>272</a>}
 <a href=#273 id=273 data-nosnippet>273</a><span class="kw">impl </span>BrewAction {
 <a href=#274 id=274 data-nosnippet>274</a>  <span class="doccomment">/// Constructs a new [BrewAction]
-<a href=#275 id=275 data-nosnippet>275</a>  </span><span class="kw">pub fn </span>new(
-<a href=#276 id=276 data-nosnippet>276</a>    skip_in_ci: bool,
-<a href=#277 id=277 data-nosnippet>277</a>    force_casks: bool,
-<a href=#278 id=278 data-nosnippet>278</a>    adopt_casks: bool,
-<a href=#279 id=279 data-nosnippet>279</a>    auto_trust_taps: bool,
-<a href=#280 id=280 data-nosnippet>280</a>    taps: Vec&lt;String&gt;,
-<a href=#281 id=281 data-nosnippet>281</a>    formulae: Vec&lt;String&gt;,
-<a href=#282 id=282 data-nosnippet>282</a>    casks: Vec&lt;String&gt;,
-<a href=#283 id=283 data-nosnippet>283</a>    <span class="attr">#[cfg(target_os = <span class="string">"macos"</span>)] </span>mas_apps: Vec&lt;MacAppStoreItem&gt;,
-<a href=#284 id=284 data-nosnippet>284</a>  ) -&gt; <span class="self">Self </span>{
-<a href=#285 id=285 data-nosnippet>285</a>    <span class="kw">let </span>action = BrewAction {
-<a href=#286 id=286 data-nosnippet>286</a>      skip_in_ci,
-<a href=#287 id=287 data-nosnippet>287</a>      force_casks,
-<a href=#288 id=288 data-nosnippet>288</a>      adopt_casks,
-<a href=#289 id=289 data-nosnippet>289</a>      auto_trust_taps,
-<a href=#290 id=290 data-nosnippet>290</a>      taps,
-<a href=#291 id=291 data-nosnippet>291</a>      formulae,
-<a href=#292 id=292 data-nosnippet>292</a>      casks,
-<a href=#293 id=293 data-nosnippet>293</a>      <span class="attr">#[cfg(target_os = <span class="string">"macos"</span>)]
-<a href=#294 id=294 data-nosnippet>294</a>      </span>mas_apps,
-<a href=#295 id=295 data-nosnippet>295</a>    };
-<a href=#296 id=296 data-nosnippet>296</a>    <span class="macro">log::trace!</span>(<span class="string">"Creating new {:?}"</span>, action);
-<a href=#297 id=297 data-nosnippet>297</a>    action
-<a href=#298 id=298 data-nosnippet>298</a>  }
-<a href=#299 id=299 data-nosnippet>299</a>}
-<a href=#300 id=300 data-nosnippet>300</a>
-<a href=#301 id=301 data-nosnippet>301</a><span class="kw">impl </span>Action <span class="kw">for </span>BrewAction {
-<a href=#302 id=302 data-nosnippet>302</a>  <span class="kw">fn </span>execute(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="prelude-ty">Result</span>&lt;(), DotfilesError&gt; {
-<a href=#303 id=303 data-nosnippet>303</a>    <span class="kw">for </span>tap <span class="kw">in </span><span class="kw-2">&amp;</span><span class="self">self</span>.taps {
-<a href=#304 id=304 data-nosnippet>304</a>      <span class="kw">if </span><span class="self">self</span>.auto_trust_taps {
-<a href=#305 id=305 data-nosnippet>305</a>        BrewCommand::trust(tap).execute()<span class="question-mark">?</span>;
-<a href=#306 id=306 data-nosnippet>306</a>      }
-<a href=#307 id=307 data-nosnippet>307</a>      BrewCommand::tap(tap).execute()<span class="question-mark">?</span>;
-<a href=#308 id=308 data-nosnippet>308</a>    }
-<a href=#309 id=309 data-nosnippet>309</a>    <span class="kw">if </span>!<span class="self">self</span>.formulae.is_empty() {
-<a href=#310 id=310 data-nosnippet>310</a>      BrewCommand::install_formulae(<span class="kw-2">&amp;</span><span class="self">self</span>.formulae).execute()<span class="question-mark">?</span>;
-<a href=#311 id=311 data-nosnippet>311</a>    }
-<a href=#312 id=312 data-nosnippet>312</a>    <span class="kw">if </span>!<span class="self">self</span>.casks.is_empty() {
-<a href=#313 id=313 data-nosnippet>313</a>      BrewCommand::install_casks(<span class="kw-2">&amp;</span><span class="self">self</span>.casks, <span class="self">self</span>.force_casks(), <span class="self">self</span>.adopt_casks()).execute()<span class="question-mark">?</span>;
-<a href=#314 id=314 data-nosnippet>314</a>    }
-<a href=#315 id=315 data-nosnippet>315</a>    <span class="attr">#[cfg(target_os = <span class="string">"macos"</span>)]
-<a href=#316 id=316 data-nosnippet>316</a>    </span><span class="kw">if </span>!<span class="self">self</span>.mas_apps.is_empty() {
-<a href=#317 id=317 data-nosnippet>317</a>      MacAppStoreCommand::from(<span class="self">self</span>.mas_apps.clone()).execute()<span class="question-mark">?</span>;
-<a href=#318 id=318 data-nosnippet>318</a>    }
-<a href=#319 id=319 data-nosnippet>319</a>    <span class="prelude-val">Ok</span>(())
-<a href=#320 id=320 data-nosnippet>320</a>  }
-<a href=#321 id=321 data-nosnippet>321</a>
-<a href=#322 id=322 data-nosnippet>322</a>  <span class="kw">fn </span>skip_in_ci(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; bool {
-<a href=#323 id=323 data-nosnippet>323</a>    <span class="self">self</span>.skip_in_ci
-<a href=#324 id=324 data-nosnippet>324</a>  }
-<a href=#325 id=325 data-nosnippet>325</a>}
-<a href=#326 id=326 data-nosnippet>326</a>
-<a href=#327 id=327 data-nosnippet>327</a><span class="doccomment">/// Static parsing function to build a list of BrewActions from YAML and settings context
-<a href=#328 id=328 data-nosnippet>328</a></span><span class="kw">pub fn </span>parse_action_list(
-<a href=#329 id=329 data-nosnippet>329</a>  context_settings: <span class="kw-2">&amp;</span>Settings,
-<a href=#330 id=330 data-nosnippet>330</a>  yaml: <span class="kw-2">&amp;</span>StrictYaml,
-<a href=#331 id=331 data-nosnippet>331</a>  _current_dir: <span class="kw-2">&amp;</span>Path,
-<a href=#332 id=332 data-nosnippet>332</a>) -&gt; <span class="prelude-ty">Result</span>&lt;Vec&lt;BrewAction&gt;, DotfilesError&gt; {
-<a href=#333 id=333 data-nosnippet>333</a>  <span class="kw">let </span>defaults = default_settings();
-<a href=#334 id=334 data-nosnippet>334</a>  <span class="kw">let </span>force_casks = get_boolean_setting_from_yaml_or_context(
-<a href=#335 id=335 data-nosnippet>335</a>    FORCE_CASKS_SETTING,
-<a href=#336 id=336 data-nosnippet>336</a>    yaml,
-<a href=#337 id=337 data-nosnippet>337</a>    context_settings,
-<a href=#338 id=338 data-nosnippet>338</a>    <span class="kw-2">&amp;</span>defaults,
-<a href=#339 id=339 data-nosnippet>339</a>  )<span class="question-mark">?</span>;
-<a href=#340 id=340 data-nosnippet>340</a>  <span class="kw">let </span>adopt_casks = get_boolean_setting_from_yaml_or_context(
-<a href=#341 id=341 data-nosnippet>341</a>    ADOPT_CASKS_SETTING,
-<a href=#342 id=342 data-nosnippet>342</a>    yaml,
-<a href=#343 id=343 data-nosnippet>343</a>    context_settings,
-<a href=#344 id=344 data-nosnippet>344</a>    <span class="kw-2">&amp;</span>defaults,
-<a href=#345 id=345 data-nosnippet>345</a>  )<span class="question-mark">?</span>;
-<a href=#346 id=346 data-nosnippet>346</a>  <span class="kw">let </span>auto_trust_taps = get_boolean_setting_from_yaml_or_context(
-<a href=#347 id=347 data-nosnippet>347</a>    AUTO_TRUST_TAPS_SETTING,
-<a href=#348 id=348 data-nosnippet>348</a>    yaml,
-<a href=#349 id=349 data-nosnippet>349</a>    context_settings,
-<a href=#350 id=350 data-nosnippet>350</a>    <span class="kw-2">&amp;</span>defaults,
-<a href=#351 id=351 data-nosnippet>351</a>  )<span class="question-mark">?</span>;
-<a href=#352 id=352 data-nosnippet>352</a>  <span class="kw">let </span>skip_in_ci = get_boolean_setting_from_yaml_or_context(
-<a href=#353 id=353 data-nosnippet>353</a>    SKIP_IN_CI_SETTING,
-<a href=#354 id=354 data-nosnippet>354</a>    yaml,
-<a href=#355 id=355 data-nosnippet>355</a>    context_settings,
-<a href=#356 id=356 data-nosnippet>356</a>    <span class="kw-2">&amp;</span>defaults,
-<a href=#357 id=357 data-nosnippet>357</a>  )<span class="question-mark">?</span>;
-<a href=#358 id=358 data-nosnippet>358</a>  <span class="kw">let </span>taps = get_optional_string_array_from_yaml_hash(TAP_SETTING, yaml)<span class="question-mark">?</span>;
-<a href=#359 id=359 data-nosnippet>359</a>  <span class="kw">let </span>formulae = get_optional_string_array_from_yaml_hash(FORMULA_SETTING, yaml)<span class="question-mark">?</span>;
-<a href=#360 id=360 data-nosnippet>360</a>  <span class="kw">let </span>casks = get_optional_string_array_from_yaml_hash(CASK_SETTING, yaml)<span class="question-mark">?</span>;
-<a href=#361 id=361 data-nosnippet>361</a>  <span class="attr">#[cfg(target_os = <span class="string">"macos"</span>)]
-<a href=#362 id=362 data-nosnippet>362</a>  </span><span class="kw">let </span>mas_apps = process_value_from_yaml_hash(<span class="string">"mas"</span>, yaml, |mas_yaml| {
-<a href=#363 id=363 data-nosnippet>363</a>    fold_hash_until_first_err(
-<a href=#364 id=364 data-nosnippet>364</a>      mas_yaml,
-<a href=#365 id=365 data-nosnippet>365</a>      <span class="prelude-val">Ok</span>(Vec::&lt;MacAppStoreItem&gt;::new()),
-<a href=#366 id=366 data-nosnippet>366</a>      |key, val| {
-<a href=#367 id=367 data-nosnippet>367</a>        <span class="prelude-val">Ok</span>((
-<a href=#368 id=368 data-nosnippet>368</a>          val
-<a href=#369 id=369 data-nosnippet>369</a>            .to_owned()
-<a href=#370 id=370 data-nosnippet>370</a>            .into_string()
-<a href=#371 id=371 data-nosnippet>371</a>            .ok_or(DotfilesError::from_wrong_yaml(
-<a href=#372 id=372 data-nosnippet>372</a>              <span class="string">"Mac App Store app ID is not a string as expected"</span>.into(),
-<a href=#373 id=373 data-nosnippet>373</a>              val.to_owned(),
-<a href=#374 id=374 data-nosnippet>374</a>              StrictYaml::String(<span class="string">""</span>.into()),
-<a href=#375 id=375 data-nosnippet>375</a>            ))
-<a href=#376 id=376 data-nosnippet>376</a>            .and_then(|id| {
-<a href=#377 id=377 data-nosnippet>377</a>              id.parse::&lt;i64&gt;().map_err(|<span class="kw">_</span>| {
-<a href=#378 id=378 data-nosnippet>378</a>                DotfilesError::from(
-<a href=#379 id=379 data-nosnippet>379</a>                  <span class="macro">format!</span>(<span class="string">"{id} is not a valid Mac App Store app id"</span>),
-<a href=#380 id=380 data-nosnippet>380</a>                  ErrorType::InconsistentConfigurationError,
-<a href=#381 id=381 data-nosnippet>381</a>                )
-<a href=#382 id=382 data-nosnippet>382</a>              })
-<a href=#383 id=383 data-nosnippet>383</a>            })<span class="question-mark">?</span>,
-<a href=#384 id=384 data-nosnippet>384</a>          key,
-<a href=#385 id=385 data-nosnippet>385</a>        ))
-<a href=#386 id=386 data-nosnippet>386</a>      },
-<a href=#387 id=387 data-nosnippet>387</a>      |<span class="kw-2">mut </span>list, item| {
-<a href=#388 id=388 data-nosnippet>388</a>        list.push(MacAppStoreItem::from(item));
-<a href=#389 id=389 data-nosnippet>389</a>        <span class="prelude-val">Ok</span>(list)
-<a href=#390 id=390 data-nosnippet>390</a>      },
-<a href=#391 id=391 data-nosnippet>391</a>    )
-<a href=#392 id=392 data-nosnippet>392</a>  })
-<a href=#393 id=393 data-nosnippet>393</a>  .map_or_else(
-<a href=#394 id=394 data-nosnippet>394</a>    |err| {
-<a href=#395 id=395 data-nosnippet>395</a>      <span class="kw">if </span>err.is_missing_config(<span class="string">"mas"</span>) {
-<a href=#396 id=396 data-nosnippet>396</a>        <span class="prelude-val">Ok</span>(Vec::new())
-<a href=#397 id=397 data-nosnippet>397</a>      } <span class="kw">else </span>{
-<a href=#398 id=398 data-nosnippet>398</a>        <span class="prelude-val">Err</span>(err)
-<a href=#399 id=399 data-nosnippet>399</a>      }
-<a href=#400 id=400 data-nosnippet>400</a>    },
-<a href=#401 id=401 data-nosnippet>401</a>    <span class="prelude-val">Ok</span>,
-<a href=#402 id=402 data-nosnippet>402</a>  )<span class="question-mark">?</span>;
-<a href=#403 id=403 data-nosnippet>403</a>
-<a href=#404 id=404 data-nosnippet>404</a>  <span class="prelude-val">Ok</span>(<span class="macro">vec!</span>[BrewAction::new(
-<a href=#405 id=405 data-nosnippet>405</a>    skip_in_ci,
-<a href=#406 id=406 data-nosnippet>406</a>    force_casks,
-<a href=#407 id=407 data-nosnippet>407</a>    adopt_casks,
-<a href=#408 id=408 data-nosnippet>408</a>    auto_trust_taps,
-<a href=#409 id=409 data-nosnippet>409</a>    taps,
-<a href=#410 id=410 data-nosnippet>410</a>    formulae,
-<a href=#411 id=411 data-nosnippet>411</a>    casks,
-<a href=#412 id=412 data-nosnippet>412</a>    <span class="attr">#[cfg(target_os = <span class="string">"macos"</span>)]
-<a href=#413 id=413 data-nosnippet>413</a>    </span>mas_apps,
-<a href=#414 id=414 data-nosnippet>414</a>  )])
-<a href=#415 id=415 data-nosnippet>415</a>}
+<a href=#275 id=275 data-nosnippet>275</a>  </span><span class="attr">#[allow(clippy::too_many_arguments)]
+<a href=#276 id=276 data-nosnippet>276</a>  </span><span class="kw">pub fn </span>new(
+<a href=#277 id=277 data-nosnippet>277</a>    skip_in_ci: bool,
+<a href=#278 id=278 data-nosnippet>278</a>    force_casks: bool,
+<a href=#279 id=279 data-nosnippet>279</a>    adopt_casks: bool,
+<a href=#280 id=280 data-nosnippet>280</a>    auto_trust_taps: bool,
+<a href=#281 id=281 data-nosnippet>281</a>    taps: Vec&lt;String&gt;,
+<a href=#282 id=282 data-nosnippet>282</a>    formulae: Vec&lt;String&gt;,
+<a href=#283 id=283 data-nosnippet>283</a>    casks: Vec&lt;String&gt;,
+<a href=#284 id=284 data-nosnippet>284</a>    <span class="attr">#[cfg(target_os = <span class="string">"macos"</span>)] </span>mas_apps: Vec&lt;MacAppStoreItem&gt;,
+<a href=#285 id=285 data-nosnippet>285</a>  ) -&gt; <span class="self">Self </span>{
+<a href=#286 id=286 data-nosnippet>286</a>    <span class="kw">let </span>action = BrewAction {
+<a href=#287 id=287 data-nosnippet>287</a>      skip_in_ci,
+<a href=#288 id=288 data-nosnippet>288</a>      force_casks,
+<a href=#289 id=289 data-nosnippet>289</a>      adopt_casks,
+<a href=#290 id=290 data-nosnippet>290</a>      auto_trust_taps,
+<a href=#291 id=291 data-nosnippet>291</a>      taps,
+<a href=#292 id=292 data-nosnippet>292</a>      formulae,
+<a href=#293 id=293 data-nosnippet>293</a>      casks,
+<a href=#294 id=294 data-nosnippet>294</a>      <span class="attr">#[cfg(target_os = <span class="string">"macos"</span>)]
+<a href=#295 id=295 data-nosnippet>295</a>      </span>mas_apps,
+<a href=#296 id=296 data-nosnippet>296</a>    };
+<a href=#297 id=297 data-nosnippet>297</a>    <span class="macro">log::trace!</span>(<span class="string">"Creating new {:?}"</span>, action);
+<a href=#298 id=298 data-nosnippet>298</a>    action
+<a href=#299 id=299 data-nosnippet>299</a>  }
+<a href=#300 id=300 data-nosnippet>300</a>}
+<a href=#301 id=301 data-nosnippet>301</a>
+<a href=#302 id=302 data-nosnippet>302</a><span class="kw">impl </span>Action <span class="kw">for </span>BrewAction {
+<a href=#303 id=303 data-nosnippet>303</a>  <span class="kw">fn </span>execute(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="prelude-ty">Result</span>&lt;(), DotfilesError&gt; {
+<a href=#304 id=304 data-nosnippet>304</a>    <span class="kw">for </span>tap <span class="kw">in </span><span class="kw-2">&amp;</span><span class="self">self</span>.taps {
+<a href=#305 id=305 data-nosnippet>305</a>      <span class="kw">if </span><span class="self">self</span>.auto_trust_taps {
+<a href=#306 id=306 data-nosnippet>306</a>        BrewCommand::trust(tap).execute()<span class="question-mark">?</span>;
+<a href=#307 id=307 data-nosnippet>307</a>      }
+<a href=#308 id=308 data-nosnippet>308</a>      BrewCommand::tap(tap).execute()<span class="question-mark">?</span>;
+<a href=#309 id=309 data-nosnippet>309</a>    }
+<a href=#310 id=310 data-nosnippet>310</a>    <span class="kw">if </span>!<span class="self">self</span>.formulae.is_empty() {
+<a href=#311 id=311 data-nosnippet>311</a>      BrewCommand::install_formulae(<span class="kw-2">&amp;</span><span class="self">self</span>.formulae).execute()<span class="question-mark">?</span>;
+<a href=#312 id=312 data-nosnippet>312</a>    }
+<a href=#313 id=313 data-nosnippet>313</a>    <span class="kw">if </span>!<span class="self">self</span>.casks.is_empty() {
+<a href=#314 id=314 data-nosnippet>314</a>      BrewCommand::install_casks(<span class="kw-2">&amp;</span><span class="self">self</span>.casks, <span class="self">self</span>.force_casks(), <span class="self">self</span>.adopt_casks()).execute()<span class="question-mark">?</span>;
+<a href=#315 id=315 data-nosnippet>315</a>    }
+<a href=#316 id=316 data-nosnippet>316</a>    <span class="attr">#[cfg(target_os = <span class="string">"macos"</span>)]
+<a href=#317 id=317 data-nosnippet>317</a>    </span><span class="kw">if </span>!<span class="self">self</span>.mas_apps.is_empty() {
+<a href=#318 id=318 data-nosnippet>318</a>      MacAppStoreCommand::from(<span class="self">self</span>.mas_apps.clone()).execute()<span class="question-mark">?</span>;
+<a href=#319 id=319 data-nosnippet>319</a>    }
+<a href=#320 id=320 data-nosnippet>320</a>    <span class="prelude-val">Ok</span>(())
+<a href=#321 id=321 data-nosnippet>321</a>  }
+<a href=#322 id=322 data-nosnippet>322</a>
+<a href=#323 id=323 data-nosnippet>323</a>  <span class="kw">fn </span>skip_in_ci(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; bool {
+<a href=#324 id=324 data-nosnippet>324</a>    <span class="self">self</span>.skip_in_ci
+<a href=#325 id=325 data-nosnippet>325</a>  }
+<a href=#326 id=326 data-nosnippet>326</a>}
+<a href=#327 id=327 data-nosnippet>327</a>
+<a href=#328 id=328 data-nosnippet>328</a><span class="doccomment">/// Static parsing function to build a list of BrewActions from YAML and settings context
+<a href=#329 id=329 data-nosnippet>329</a></span><span class="kw">pub fn </span>parse_action_list(
+<a href=#330 id=330 data-nosnippet>330</a>  context_settings: <span class="kw-2">&amp;</span>Settings,
+<a href=#331 id=331 data-nosnippet>331</a>  yaml: <span class="kw-2">&amp;</span>StrictYaml,
+<a href=#332 id=332 data-nosnippet>332</a>  _current_dir: <span class="kw-2">&amp;</span>Path,
+<a href=#333 id=333 data-nosnippet>333</a>) -&gt; <span class="prelude-ty">Result</span>&lt;Vec&lt;BrewAction&gt;, DotfilesError&gt; {
+<a href=#334 id=334 data-nosnippet>334</a>  <span class="kw">let </span>defaults = default_settings();
+<a href=#335 id=335 data-nosnippet>335</a>  <span class="kw">let </span>force_casks = get_boolean_setting_from_yaml_or_context(
+<a href=#336 id=336 data-nosnippet>336</a>    FORCE_CASKS_SETTING,
+<a href=#337 id=337 data-nosnippet>337</a>    yaml,
+<a href=#338 id=338 data-nosnippet>338</a>    context_settings,
+<a href=#339 id=339 data-nosnippet>339</a>    <span class="kw-2">&amp;</span>defaults,
+<a href=#340 id=340 data-nosnippet>340</a>  )<span class="question-mark">?</span>;
+<a href=#341 id=341 data-nosnippet>341</a>  <span class="kw">let </span>adopt_casks = get_boolean_setting_from_yaml_or_context(
+<a href=#342 id=342 data-nosnippet>342</a>    ADOPT_CASKS_SETTING,
+<a href=#343 id=343 data-nosnippet>343</a>    yaml,
+<a href=#344 id=344 data-nosnippet>344</a>    context_settings,
+<a href=#345 id=345 data-nosnippet>345</a>    <span class="kw-2">&amp;</span>defaults,
+<a href=#346 id=346 data-nosnippet>346</a>  )<span class="question-mark">?</span>;
+<a href=#347 id=347 data-nosnippet>347</a>  <span class="kw">let </span>auto_trust_taps = get_boolean_setting_from_yaml_or_context(
+<a href=#348 id=348 data-nosnippet>348</a>    AUTO_TRUST_TAPS_SETTING,
+<a href=#349 id=349 data-nosnippet>349</a>    yaml,
+<a href=#350 id=350 data-nosnippet>350</a>    context_settings,
+<a href=#351 id=351 data-nosnippet>351</a>    <span class="kw-2">&amp;</span>defaults,
+<a href=#352 id=352 data-nosnippet>352</a>  )<span class="question-mark">?</span>;
+<a href=#353 id=353 data-nosnippet>353</a>  <span class="kw">let </span>skip_in_ci = get_boolean_setting_from_yaml_or_context(
+<a href=#354 id=354 data-nosnippet>354</a>    SKIP_IN_CI_SETTING,
+<a href=#355 id=355 data-nosnippet>355</a>    yaml,
+<a href=#356 id=356 data-nosnippet>356</a>    context_settings,
+<a href=#357 id=357 data-nosnippet>357</a>    <span class="kw-2">&amp;</span>defaults,
+<a href=#358 id=358 data-nosnippet>358</a>  )<span class="question-mark">?</span>;
+<a href=#359 id=359 data-nosnippet>359</a>  <span class="kw">let </span>taps = get_optional_string_array_from_yaml_hash(TAP_SETTING, yaml)<span class="question-mark">?</span>;
+<a href=#360 id=360 data-nosnippet>360</a>  <span class="kw">let </span>formulae = get_optional_string_array_from_yaml_hash(FORMULA_SETTING, yaml)<span class="question-mark">?</span>;
+<a href=#361 id=361 data-nosnippet>361</a>  <span class="kw">let </span>casks = get_optional_string_array_from_yaml_hash(CASK_SETTING, yaml)<span class="question-mark">?</span>;
+<a href=#362 id=362 data-nosnippet>362</a>  <span class="attr">#[cfg(target_os = <span class="string">"macos"</span>)]
+<a href=#363 id=363 data-nosnippet>363</a>  </span><span class="kw">let </span>mas_apps = process_value_from_yaml_hash(<span class="string">"mas"</span>, yaml, |mas_yaml| {
+<a href=#364 id=364 data-nosnippet>364</a>    fold_hash_until_first_err(
+<a href=#365 id=365 data-nosnippet>365</a>      mas_yaml,
+<a href=#366 id=366 data-nosnippet>366</a>      <span class="prelude-val">Ok</span>(Vec::&lt;MacAppStoreItem&gt;::new()),
+<a href=#367 id=367 data-nosnippet>367</a>      |key, val| {
+<a href=#368 id=368 data-nosnippet>368</a>        <span class="prelude-val">Ok</span>((
+<a href=#369 id=369 data-nosnippet>369</a>          val
+<a href=#370 id=370 data-nosnippet>370</a>            .to_owned()
+<a href=#371 id=371 data-nosnippet>371</a>            .into_string()
+<a href=#372 id=372 data-nosnippet>372</a>            .ok_or(DotfilesError::from_wrong_yaml(
+<a href=#373 id=373 data-nosnippet>373</a>              <span class="string">"Mac App Store app ID is not a string as expected"</span>.into(),
+<a href=#374 id=374 data-nosnippet>374</a>              val.to_owned(),
+<a href=#375 id=375 data-nosnippet>375</a>              StrictYaml::String(<span class="string">""</span>.into()),
+<a href=#376 id=376 data-nosnippet>376</a>            ))
+<a href=#377 id=377 data-nosnippet>377</a>            .and_then(|id| {
+<a href=#378 id=378 data-nosnippet>378</a>              id.parse::&lt;i64&gt;().map_err(|<span class="kw">_</span>| {
+<a href=#379 id=379 data-nosnippet>379</a>                DotfilesError::from(
+<a href=#380 id=380 data-nosnippet>380</a>                  <span class="macro">format!</span>(<span class="string">"{id} is not a valid Mac App Store app id"</span>),
+<a href=#381 id=381 data-nosnippet>381</a>                  ErrorType::InconsistentConfigurationError,
+<a href=#382 id=382 data-nosnippet>382</a>                )
+<a href=#383 id=383 data-nosnippet>383</a>              })
+<a href=#384 id=384 data-nosnippet>384</a>            })<span class="question-mark">?</span>,
+<a href=#385 id=385 data-nosnippet>385</a>          key,
+<a href=#386 id=386 data-nosnippet>386</a>        ))
+<a href=#387 id=387 data-nosnippet>387</a>      },
+<a href=#388 id=388 data-nosnippet>388</a>      |<span class="kw-2">mut </span>list, item| {
+<a href=#389 id=389 data-nosnippet>389</a>        list.push(MacAppStoreItem::from(item));
+<a href=#390 id=390 data-nosnippet>390</a>        <span class="prelude-val">Ok</span>(list)
+<a href=#391 id=391 data-nosnippet>391</a>      },
+<a href=#392 id=392 data-nosnippet>392</a>    )
+<a href=#393 id=393 data-nosnippet>393</a>  })
+<a href=#394 id=394 data-nosnippet>394</a>  .map_or_else(
+<a href=#395 id=395 data-nosnippet>395</a>    |err| {
+<a href=#396 id=396 data-nosnippet>396</a>      <span class="kw">if </span>err.is_missing_config(<span class="string">"mas"</span>) {
+<a href=#397 id=397 data-nosnippet>397</a>        <span class="prelude-val">Ok</span>(Vec::new())
+<a href=#398 id=398 data-nosnippet>398</a>      } <span class="kw">else </span>{
+<a href=#399 id=399 data-nosnippet>399</a>        <span class="prelude-val">Err</span>(err)
+<a href=#400 id=400 data-nosnippet>400</a>      }
+<a href=#401 id=401 data-nosnippet>401</a>    },
+<a href=#402 id=402 data-nosnippet>402</a>    <span class="prelude-val">Ok</span>,
+<a href=#403 id=403 data-nosnippet>403</a>  )<span class="question-mark">?</span>;
+<a href=#404 id=404 data-nosnippet>404</a>
+<a href=#405 id=405 data-nosnippet>405</a>  <span class="prelude-val">Ok</span>(<span class="macro">vec!</span>[BrewAction::new(
+<a href=#406 id=406 data-nosnippet>406</a>    skip_in_ci,
+<a href=#407 id=407 data-nosnippet>407</a>    force_casks,
+<a href=#408 id=408 data-nosnippet>408</a>    adopt_casks,
+<a href=#409 id=409 data-nosnippet>409</a>    auto_trust_taps,
+<a href=#410 id=410 data-nosnippet>410</a>    taps,
+<a href=#411 id=411 data-nosnippet>411</a>    formulae,
+<a href=#412 id=412 data-nosnippet>412</a>    casks,
+<a href=#413 id=413 data-nosnippet>413</a>    <span class="attr">#[cfg(target_os = <span class="string">"macos"</span>)]
+<a href=#414 id=414 data-nosnippet>414</a>    </span>mas_apps,
+<a href=#415 id=415 data-nosnippet>415</a>  )])
+<a href=#416 id=416 data-nosnippet>416</a>}
 </code></pre></div></section></main></body></html>

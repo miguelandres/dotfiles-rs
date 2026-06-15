@@ -221,7 +221,7 @@
 <a href=#221 id=221 data-nosnippet>221</a>
 <a href=#222 id=222 data-nosnippet>222</a>  <span class="doccomment">/// Runs the actions in this context and consumes the context.
 <a href=#223 id=223 data-nosnippet>223</a>  </span><span class="kw">pub fn </span>run_actions(context: Context) -&gt; <span class="prelude-ty">Result</span>&lt;(), DotfilesError&gt; {
-<a href=#224 id=224 data-nosnippet>224</a>    process_until_first_err(context.actions.into_iter(), |action| action.execute())
+<a href=#224 id=224 data-nosnippet>224</a>    process_until_first_err(context.actions, |action| action.execute())
 <a href=#225 id=225 data-nosnippet>225</a>  }
 <a href=#226 id=226 data-nosnippet>226</a>}
 </code></pre></div></section></main></body></html>

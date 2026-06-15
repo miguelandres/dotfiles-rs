@@ -38,7 +38,7 @@
 <a href=#38 id=38 data-nosnippet>38</a>  io_error_message: <span class="kw-2">&amp;</span>str,
 <a href=#39 id=39 data-nosnippet>39</a>  error_while_running_message: <span class="kw-2">&amp;</span>str,
 <a href=#40 id=40 data-nosnippet>40</a>) -&gt; <span class="prelude-ty">Result</span>&lt;(), DotfilesError&gt; {
-<a href=#41 id=41 data-nosnippet>41</a>  process_until_first_err(cmds.into_iter(), |cmd| {
+<a href=#41 id=41 data-nosnippet>41</a>  process_until_first_err(cmds, |cmd| {
 <a href=#42 id=42 data-nosnippet>42</a>    handle_exec_error(cmd.join(), io_error_message, error_while_running_message)
 <a href=#43 id=43 data-nosnippet>43</a>  })
 <a href=#44 id=44 data-nosnippet>44</a>}

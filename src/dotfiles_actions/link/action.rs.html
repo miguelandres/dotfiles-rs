@@ -210,7 +210,7 @@
 <a href=#210 id=210 data-nosnippet>210</a>                            <span class="comment">// path exists, no force, is symlink, no relink
 <a href=#211 id=211 data-nosnippet>211</a>                            </span><span class="kw">return </span><span class="prelude-val">Err</span>(io::Error::new(
 <a href=#212 id=212 data-nosnippet>212</a>                                ErrorKind::AlreadyExists,
-<a href=#213 id=213 data-nosnippet>213</a>                                <span class="macro">format!</span>(<span class="string">"{:?} already exists. Use `force` to delete a file/directory or `relink` to recreate a symlink"</span>, <span class="kw-2">&amp;</span>path))),
+<a href=#213 id=213 data-nosnippet>213</a>                                <span class="macro">format!</span>(<span class="string">"{:?} already exists. Use `force` to delete a file/directory or `relink` to recreate a symlink"</span>, path))),
 <a href=#214 id=214 data-nosnippet>214</a>                        <span class="kw">_ </span>=&gt; ()
 <a href=#215 id=215 data-nosnippet>215</a>                    }
 <a href=#216 id=216 data-nosnippet>216</a>        fs.symlink(<span class="kw-2">&amp;</span>target, <span class="kw-2">&amp;</span>path)
@@ -231,13 +231,13 @@
 <a href=#231 id=231 data-nosnippet>231</a>    target = convert_path_to_absolute(<span class="kw-2">&amp;</span>target, <span class="prelude-val">Some</span>(<span class="kw-2">&amp;</span><span class="self">self</span>.current_dir))<span class="question-mark">?</span>;
 <a href=#232 id=232 data-nosnippet>232</a>    <span class="kw">match </span>create_symlink(<span class="kw-2">&amp;</span><span class="self">self</span>.fs, <span class="self">self</span>, path, target) {
 <a href=#233 id=233 data-nosnippet>233</a>      <span class="prelude-val">Ok</span>(()) =&gt; {
-<a href=#234 id=234 data-nosnippet>234</a>        <span class="macro">info!</span>(<span class="string">"Created symlink {} -&gt; {}"</span>, <span class="kw-2">&amp;</span><span class="self">self</span>.path, <span class="kw-2">&amp;</span><span class="self">self</span>.target);
+<a href=#234 id=234 data-nosnippet>234</a>        <span class="macro">info!</span>(<span class="string">"Created symlink {} -&gt; {}"</span>, <span class="self">self</span>.path, <span class="self">self</span>.target);
 <a href=#235 id=235 data-nosnippet>235</a>        <span class="prelude-val">Ok</span>(())
 <a href=#236 id=236 data-nosnippet>236</a>      }
 <a href=#237 id=237 data-nosnippet>237</a>      <span class="prelude-val">Err</span>(err) =&gt; {
 <a href=#238 id=238 data-nosnippet>238</a>        <span class="macro">error!</span>(
 <a href=#239 id=239 data-nosnippet>239</a>          <span class="string">"Couldn't create symlink {} -&gt; {}: {}"</span>,
-<a href=#240 id=240 data-nosnippet>240</a>          <span class="kw-2">&amp;</span><span class="self">self</span>.path, <span class="kw-2">&amp;</span><span class="self">self</span>.target, err
+<a href=#240 id=240 data-nosnippet>240</a>          <span class="self">self</span>.path, <span class="self">self</span>.target, err
 <a href=#241 id=241 data-nosnippet>241</a>        );
 <a href=#242 id=242 data-nosnippet>242</a>        <span class="prelude-val">Err</span>(DotfilesError::from(
 <a href=#243 id=243 data-nosnippet>243</a>          err.to_string(),
@@ -283,8 +283,8 @@
 <a href=#283 id=283 data-nosnippet>283</a>    <span class="kw-2">&amp;</span>defaults,
 <a href=#284 id=284 data-nosnippet>284</a>  )<span class="question-mark">?</span>;
 <a href=#285 id=285 data-nosnippet>285</a>  <span class="kw">let </span>action_settings: <span class="prelude-ty">Result</span>&lt;Settings, DotfilesError&gt; = defaults
-<a href=#286 id=286 data-nosnippet>286</a>    .iter()
-<a href=#287 id=287 data-nosnippet>287</a>    .map(|(name, <span class="kw">_</span>)| {
+<a href=#286 id=286 data-nosnippet>286</a>    .keys()
+<a href=#287 id=287 data-nosnippet>287</a>    .map(|name| {
 <a href=#288 id=288 data-nosnippet>288</a>      yaml_util::get_setting_from_yaml_hash_or_from_context(name, yaml, context_settings, <span class="kw-2">&amp;</span>defaults)
 <a href=#289 id=289 data-nosnippet>289</a>        .map(|setting| (name.to_owned(), setting))
 <a href=#290 id=290 data-nosnippet>290</a>    })
