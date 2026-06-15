@@ -1,0 +1,182 @@
+name: Shared Build and Publish
+
+on:
+  workflow_call:
+    inputs:
+      tag:
+        required: true
+        type: string
+      name:
+        required: true
+        type: string
+      package_prefix:
+        required: true
+        type: string
+
+jobs:
+  build:
+    name: Build ${{ matrix.target.name }}
+    strategy:
+      fail-fast: false
+      matrix:
+        rust: [nightly]
+        target:
+          - name: x86_64-unknown-linux-gnu
+            gh_env: ubuntu-latest
+          - name: x86_64-unknown-linux-musl
+            gh_env: ubuntu-latest
+          - name: aarch64-unknown-linux-gnu
+            gh_env: ubuntu-latest
+          - name: armv7-unknown-linux-gnueabihf
+            gh_env: ubuntu-latest
+          - name: aarch64-apple-darwin
+            gh_env: macos-latest
+          - name: x86_64-apple-darwin
+            gh_env: macos-latest
+        include:
+          - target:
+              name: x86_64-unknown-linux-gnu
+            cross: false
+            run_tests: true
+          - target:
+              name: x86_64-unknown-linux-musl
+            cross: false
+            run_tests: true
+          - target:
+              name: aarch64-unknown-linux-gnu
+            linker: gcc-aarch64-linux-gnu
+            cross: true
+            run_tests: false
+          - target:
+              name: armv7-unknown-linux-gnueabihf
+            linker: gcc-arm-linux-gnueabihf
+            cross: true
+            run_tests: false
+          - target:
+              name: aarch64-apple-darwin
+            cross: false
+            run_tests: false
+          - target:
+              name: x86_64-apple-darwin
+            cross: false
+            run_tests: true
+
+    env:
+      PACKAGE_FILE: ${{ inputs.package_prefix }}-${{ matrix.target.name }}.${{ 'tar.gz' }}
+      CARGO_BUILD_DIR: target/${{ matrix.target.name }}/release
+      RUST_BACKTRACE: full
+      RUSTV: ${{ matrix.rust }}
+    runs-on: ${{ matrix.target.gh_env }}
+    steps:
+      - name: Clone repo
+        uses: actions/checkout@v6
+      - name: Setup rust
+        uses: dtolnay/rust-toolchain@master
+        with:
+          toolchain: ${{ matrix.rust}}
+          target: ${{ matrix.target.name }}
+          components: rustc, rust-std, cargo
+      - name: Install Linker
+        if: matrix.cross
+        run: |
+          sudo apt update
+          sudo apt install ${{ matrix.linker }}
+      - uses: Swatinem/rust-cache@v2
+        with:
+          shared-key: ${{ matrix.target.name }}--release--branch--${{ github.ref }}
+      - name: Cargo build
+        run: |
+          cargo build --package dotfiles --release --target ${{ matrix.target.name }}
+      - name: Package common
+        run: |
+          mkdir package
+          cp README.md package/README.md
+          cp LICENSE.txt package/LICENSE.txt
+
+      - name: Package
+        run: |
+          mv package ${{ matrix.target.name }}
+          cp ${{ env.CARGO_BUILD_DIR }}/dotfiles ${{ matrix.target.name }}/dotfiles
+          cd ${{ matrix.target.name }}/
+          tar -czvf ../${{ env.PACKAGE_FILE }} *
+
+      - name: Upload package
+        uses: softprops/action-gh-release@v3
+        with:
+          tag_name: ${{ inputs.tag }}
+          name: ${{ inputs.name }}
+          files: |
+            ${{ env.PACKAGE_FILE }}
+
+      - name: Upload build artifact
+        uses: actions/upload-artifact@v7
+        with:
+          name: ${{ matrix.target.name }}
+          path: |
+            ${{ matrix.target.name }}
+
+  build-mac-universal-binary-and-all-binaries-package:
+    name: Build macOS universal binary
+    needs: build
+    runs-on: macos-latest
+    env:
+      MACOS_PACKAGE_FILE: ${{ inputs.package_prefix }}-macos-universal.tar.gz
+      ALL_BINARIES_PACKAGE_FILE: ${{ inputs.package_prefix }}-all_binaries.tar.gz
+    steps:
+      - name: Download all binaries
+        uses: actions/download-artifact@v8
+      - name: Display structure of downloaded files
+        run: ls -R
+      - name: Make universal binary
+        run: |
+          mkdir macos-universal
+          lipo -create -output macos-universal/dotfiles x86_64-apple-darwin/dotfiles aarch64-apple-darwin/dotfiles
+          chmod +x macos-universal/dotfiles
+
+      - name: Package macOS
+        run: |
+          cd macos-universal
+          tar -czvf ../${{ env.MACOS_PACKAGE_FILE }} *
+
+      - name: Upload package
+        uses: softprops/action-gh-release@v3
+        with:
+          tag_name: ${{ inputs.tag }}
+          name: ${{ inputs.name }}
+          files: |
+            ${{ env.MACOS_PACKAGE_FILE }}
+
+      - name: Upload build artifact
+        uses: actions/upload-artifact@v7
+        with:
+          name: macos-universal
+          path: |
+            macos-universal
+
+      - name: Organize package
+        run: |
+          mkdir package
+          mv macos-universal/dotfiles package/dotfiles-macos
+          chmod +x package/dotfiles-macos
+
+          mv x86_64-unknown-linux-musl/dotfiles package/dotfiles-x86_64
+          chmod +x package/dotfiles-x86_64
+
+          mv armv7-unknown-linux-gnueabihf/dotfiles package/dotfiles-armv7
+          chmod +x package/dotfiles-armv7
+
+          mv aarch64-unknown-linux-gnu/dotfiles package/dotfiles-aarch64
+          chmod +x package/dotfiles-aarch64
+
+      - name: Package all binaries
+        run: |
+          cd package
+          tar -czvf ../${{ env.ALL_BINARIES_PACKAGE_FILE }} *
+
+      - name: Upload package
+        uses: softprops/action-gh-release@v3
+        with:
+          tag_name: ${{ inputs.tag }}
+          name: ${{ inputs.name }}
+          files: |
+            ${{ env.ALL_BINARIES_PACKAGE_FILE }}
