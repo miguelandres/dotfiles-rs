@@ -82,8 +82,8 @@ repos:
         args: ["--all-targets"]
         files: \.(rs|toml)$
       - id: clippy
-        args: ["--target=x86_64-apple-darwin", "--all-targets"]
+        args: ["--target=x86_64-apple-darwin", "--all-targets", "--", "-D", "warnings"]
         files: \.(rs|toml)$
       - id: clippy
-        args: ["--all-targets"]
+        args: ["--all-targets", "--", "-D", "warnings"]
         files: \.(rs|toml)$
