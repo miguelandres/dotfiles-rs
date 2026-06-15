@@ -24,11 +24,13 @@
 
 #![cfg(unix)]
 use crate::install_command::InstallCommand;
-use dotfiles_core::action::Action;
 use dotfiles_core::error::DotfilesError;
-use dotfiles_core_macros::ConditionalAction;
+use dotfiles_core::settings::{initialize_settings_object, Setting, Settings};
+use dotfiles_core::yaml_util;
+use dotfiles_core::{action::SKIP_IN_CI_SETTING, Action};
 use getset::Getters;
-use std::marker::PhantomData;
+use std::path::Path;
+use strict_yaml_rust::StrictYaml;
 use subprocess::Exec;
 
 struct AptCommand {
@@ -71,36 +73,63 @@ impl AptCommand {
   }
 }
 
+/// The string that identifies the list of packages to install
+pub const PACKAGE_SETTING: &str = "package";
+
+/// Default settings for AptAction.
+pub fn default_settings() -> Settings {
+  initialize_settings_object(&[(SKIP_IN_CI_SETTING.to_owned(), Setting::Boolean(false))])
+}
+
 /// [AptAction] Installs software using apt.
-#[derive(Eq, PartialEq, Debug, ConditionalAction, Getters)]
-pub struct AptAction<'a> {
+#[derive(Eq, PartialEq, Debug, Getters)]
+pub struct AptAction {
   /// Skips this action if it is running in a CI environment.
   #[get = "pub"]
   skip_in_ci: bool,
   /// List of packages to install.
   #[get = "pub"]
   packages: Vec<String>,
-
-  phantom_data: PhantomData<&'a String>,
 }
-impl<'a> AptAction<'a> {
+
+impl AptAction {
   /// Constructs a new [AptAction]
   pub fn new(skip_in_ci: bool, packages: Vec<String>) -> Self {
     let action = AptAction {
       skip_in_ci,
       packages,
-      phantom_data: PhantomData,
     };
     log::trace!("Creating new {:?}", action);
     action
   }
 }
 
-impl Action<'_> for AptAction<'_> {
+impl Action for AptAction {
   fn execute(&self) -> Result<(), DotfilesError> {
     if !self.packages.is_empty() {
       AptCommand::install(&self.packages).execute()?;
     }
     Ok(())
   }
+
+  fn skip_in_ci(&self) -> bool {
+    self.skip_in_ci
+  }
+}
+
+/// Static parsing function to build a list of AptActions from YAML and settings context
+pub fn parse_action_list(
+  settings: &Settings,
+  yaml: &StrictYaml,
+  _current_dir: &Path,
+) -> Result<Vec<AptAction>, DotfilesError> {
+  let defaults = default_settings();
+  let skip_in_ci = yaml_util::get_boolean_setting_from_yaml_or_context(
+    SKIP_IN_CI_SETTING,
+    yaml,
+    settings,
+    &defaults,
+  )?;
+  let packages = yaml_util::get_optional_string_array_from_yaml_hash(PACKAGE_SETTING, yaml)?;
+  Ok(vec![AptAction::new(skip_in_ci, packages)])
 }

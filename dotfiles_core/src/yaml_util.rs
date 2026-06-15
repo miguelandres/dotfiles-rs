@@ -294,6 +294,24 @@ pub fn get_setting_from_context(
   }
 }
 
+/// Gets a setting from yaml hash, falling back to context settings and directive defaults.
+pub fn get_setting_from_yaml_hash_or_from_context(
+  name: &str,
+  yaml: &StrictYaml,
+  context_settings: &Settings,
+  directive_defaults: &Settings,
+) -> Result<Setting, DotfilesError> {
+  if let Some(setting_type) = directive_defaults.get(name) {
+    get_setting_from_yaml_hash(name, setting_type, yaml)
+      .or_else(|_| get_setting_from_context(name, context_settings, directive_defaults))
+  } else {
+    Err(DotfilesError::from(
+      format!("Unknown setting: {}", name),
+      ErrorType::InconsistentConfigurationError,
+    ))
+  }
+}
+
 /// Gets a Boolean value from YAML or context.
 ///
 /// First it tries to find a value in `yaml`, if it can't find one then it
@@ -497,4 +515,43 @@ where
       StrictYaml::Hash(Default::default()),
     ))
   }
+}
+
+/// parses a list of defaults from the passed StrictYaml configuration.
+pub fn parse_context_defaults(
+  name: &str,
+  default_settings: &Settings,
+  yaml_settings: &StrictYaml,
+) -> Result<Settings, DotfilesError> {
+  fold_hash_until_first_err(
+    yaml_settings,
+    Ok(Settings::new()),
+    |setting_name, value_yaml| {
+      if let Some(setting_type) = default_settings.get(&setting_name) {
+        parse_setting(setting_type, value_yaml).map(|value| (setting_name, value))
+      } else {
+        Err(DotfilesError::from(
+          format!(
+            "Action type `{}` could not parse settings, unknown setting: {}",
+            name, setting_name,
+          ),
+          ErrorType::InconsistentConfigurationError,
+        ))
+      }
+    },
+    |mut settings, (setting_name, val)| {
+      settings
+        .try_insert(setting_name.clone(), val)
+        .map_err(|_| {
+          DotfilesError::from(
+            format!(
+              "Action type {} configuration contains duplicated setting {}",
+              name, setting_name
+            ),
+            ErrorType::InconsistentConfigurationError,
+          )
+        })?;
+      Ok(settings)
+    },
+  )
 }

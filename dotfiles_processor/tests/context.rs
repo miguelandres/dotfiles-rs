@@ -38,9 +38,9 @@ fn context_fails_to_parse_file_with_no_root_hash() -> Result<(), DotfilesError> 
 }
 
 #[test]
-fn context_fails_multiple_defaults_same_directive() -> Result<(), DotfilesError> {
+fn context_fails_multiple_defaults_same_action() -> Result<(), DotfilesError> {
   let mut ctx = Context::try_from(
-    get_test_file("context/errors/multiple_defaults_same_directive.yaml").as_path(),
+    get_test_file("context/errors/multiple_defaults_same_action.yaml").as_path(),
   )?;
   assert!(ctx.parse_file().unwrap_err().is_yaml_parse_error());
   Ok(())

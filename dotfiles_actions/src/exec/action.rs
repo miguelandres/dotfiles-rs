@@ -21,19 +21,34 @@
 
 //! This module contains the [ExecAction] that executes a command in the shell
 
-use std::marker::PhantomData;
 use std::path::Path;
 
+use dotfiles_core::action::SKIP_IN_CI_SETTING;
 use dotfiles_core::error::execution_error;
 use dotfiles_core::error::DotfilesError;
-use dotfiles_core_macros::ConditionalAction;
+use dotfiles_core::settings::{initialize_settings_object, Setting, Settings};
+use dotfiles_core::{yaml_util, Action};
+use strict_yaml_rust::StrictYaml;
 use subprocess::Exec;
 
-use dotfiles_core::Action;
+/// Echo the command to run before running it.
+pub const ECHO_SETTING: &str = "echo";
+/// Command to run
+pub const COMMAND_SETTING: &str = "cmd";
+/// Optional description for the command to run
+pub const DESCRIPTION_SETTING: &str = "description";
+
+/// Default settings for the Exec action.
+pub fn default_settings() -> Settings {
+  initialize_settings_object(&[
+    (ECHO_SETTING.to_owned(), Setting::Boolean(false)),
+    (SKIP_IN_CI_SETTING.to_owned(), Setting::Boolean(false)),
+  ])
+}
 
 /// [ExecAction] Installs software using homebrew.
-#[derive(Eq, PartialEq, Debug, ConditionalAction)]
-pub struct ExecAction<'a> {
+#[derive(Eq, PartialEq, Debug)]
+pub struct ExecAction {
   /// Skips this action if it is running in a CI environment.
   skip_in_ci: bool,
   /// Command to run
@@ -42,10 +57,9 @@ pub struct ExecAction<'a> {
   description: Option<String>,
   /// Whether to print out the command for clarity.
   echo: bool,
-  phantom_data: PhantomData<&'a String>,
 }
 
-impl<'a> ExecAction<'a> {
+impl ExecAction {
   /// Create a new Exec Action that will run from the parent directory of the config file
   pub fn new(
     skip_in_ci: bool,
@@ -63,7 +77,6 @@ impl<'a> ExecAction<'a> {
       ),
       description,
       echo,
-      phantom_data: PhantomData,
     };
     log::trace!("Creating new {:?}", action);
     Ok(action)
@@ -84,7 +97,7 @@ impl<'a> ExecAction<'a> {
   }
 }
 
-impl<'a> Action<'a> for ExecAction<'a> {
+impl Action for ExecAction {
   fn execute(&self) -> Result<(), DotfilesError> {
     if let Some(description) = self.description.as_ref() {
       log::info!("{}", description);
@@ -116,4 +129,35 @@ impl<'a> Action<'a> for ExecAction<'a> {
       },
     )
   }
+
+  fn skip_in_ci(&self) -> bool {
+    self.skip_in_ci
+  }
+}
+
+/// Static parsing function to build an ExecAction from YAML and settings context
+pub fn parse_action(
+  settings: &Settings,
+  yaml: &StrictYaml,
+  current_dir: &Path,
+) -> Result<ExecAction, DotfilesError> {
+  let defaults = default_settings();
+  ExecAction::new(
+    yaml_util::get_boolean_setting_from_yaml_or_context(
+      SKIP_IN_CI_SETTING,
+      yaml,
+      settings,
+      &defaults,
+    )?,
+    yaml_util::get_string_content_or_keyed_value(yaml, Some(COMMAND_SETTING))?,
+    yaml_util::get_string_setting_from_yaml_or_context(
+      DESCRIPTION_SETTING,
+      yaml,
+      settings,
+      &defaults,
+    )
+    .ok(),
+    yaml_util::get_boolean_setting_from_yaml_or_context(ECHO_SETTING, yaml, settings, &defaults)?,
+    current_dir,
+  )
 }

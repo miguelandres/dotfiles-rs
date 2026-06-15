@@ -23,8 +23,10 @@
 
 extern crate strict_yaml_rust;
 
-use dotfiles_core::{error::DotfilesError, yaml_util::*};
-use strict_yaml_rust::StrictYamlLoader;
+use dotfiles_core::{
+  error::DotfilesError, settings::initialize_settings_object, yaml_util::*, Setting, Settings,
+};
+use strict_yaml_rust::{StrictYaml, StrictYamlLoader};
 
 const YAML_STRING: &str = "
 - create:
@@ -79,4 +81,95 @@ fn fails_to_get_string_in_hash_when_without_correct_key() {
   let doc = &docs[0];
   let list = &doc[0]["create"][0];
   get_string_content_or_keyed_value(list, None).unwrap();
+}
+
+const BOOLEAN_SETTING: &str = "boolean";
+const STRING_SETTING: &str = "string";
+const INT_SETTING: &str = "int";
+
+fn default_settings() -> Settings {
+  initialize_settings_object(&[
+    (BOOLEAN_SETTING.to_owned(), Setting::Boolean(false)),
+    (STRING_SETTING.to_owned(), Setting::String(String::new())),
+    (INT_SETTING.to_owned(), Setting::Integer(0)),
+  ])
+}
+
+#[test]
+fn directive_fails_unknown_setting() {
+  let mut map: strict_yaml_rust::strict_yaml::Hash = Default::default();
+  map.insert(
+    StrictYaml::from_str("unknown"),
+    StrictYaml::from_str("value"),
+  );
+  let yaml = StrictYaml::Hash(map);
+  assert!(
+    parse_context_defaults("parse_test", &default_settings(), &yaml)
+      .unwrap_err()
+      .is_inconsistent_config()
+  );
+}
+
+#[test]
+fn directive_fails_parsing_setting_with_wrong_type() {
+  let mut map: strict_yaml_rust::strict_yaml::Hash = Default::default();
+  map.insert(
+    StrictYaml::from_str(BOOLEAN_SETTING),
+    StrictYaml::from_str("some"),
+  );
+  let yaml = StrictYaml::Hash(map);
+  assert!(
+    parse_context_defaults("parse_test", &default_settings(), &yaml)
+      .unwrap_err()
+      .is_wrong_yaml()
+  );
+}
+
+#[test]
+fn directive_fails_parsing_context_defaults_when_not_hash() {
+  let yaml = StrictYaml::String("some".into());
+  assert!(
+    parse_context_defaults("parse_test", &default_settings(), &yaml)
+      .unwrap_err()
+      .is_wrong_yaml()
+  );
+}
+
+#[test]
+fn directive_fails_parsing_context_defaults_hash_not_string_keyed() {
+  let mut map: strict_yaml_rust::strict_yaml::Hash = Default::default();
+  map.insert(StrictYaml::BadValue, StrictYaml::from_str("1"));
+  let yaml = StrictYaml::Hash(map);
+  assert!(
+    parse_context_defaults("parse_test", &default_settings(), &yaml)
+      .unwrap_err()
+      .is_wrong_yaml()
+  );
+}
+
+#[test]
+fn directive_succeeds_parsing_context_defaults() {
+  let mut map: strict_yaml_rust::strict_yaml::Hash = Default::default();
+  map.insert(
+    StrictYaml::from_str(STRING_SETTING),
+    StrictYaml::from_str(STRING_SETTING),
+  );
+  map.insert(
+    StrictYaml::from_str(BOOLEAN_SETTING),
+    StrictYaml::from_str("true"),
+  );
+  map.insert(StrictYaml::from_str(INT_SETTING), StrictYaml::from_str("1"));
+  let yaml = StrictYaml::Hash(map);
+  let settings = parse_context_defaults("parse_test", &default_settings(), &yaml).unwrap();
+
+  assert_eq!(
+    &Setting::String(STRING_SETTING.into()),
+    settings.get(STRING_SETTING).unwrap()
+  );
+  assert_eq!(
+    &Setting::Boolean(true),
+    settings.get(BOOLEAN_SETTING).unwrap()
+  );
+
+  assert_eq!(&Setting::Integer(1), settings.get(INT_SETTING).unwrap());
 }

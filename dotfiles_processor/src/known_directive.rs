@@ -23,37 +23,20 @@ use std::convert::TryFrom;
 use std::path::PathBuf;
 
 #[cfg(target_os = "linux")]
-use dotfiles_actions::apt::{action::AptAction, directive::AptDirective};
+use dotfiles_actions::apt::action::AptAction;
 #[cfg(any(target_os = "linux", target_os = "macos"))]
-use dotfiles_actions::brew::{action::BrewAction, directive::BrewDirective};
-use dotfiles_actions::create::{action::NativeCreateAction, directive::NativeCreateDirective};
-use dotfiles_actions::exec::{action::ExecAction, directive::ExecDirective};
+use dotfiles_actions::brew::action::BrewAction;
+use dotfiles_actions::create::action::NativeCreateAction;
+use dotfiles_actions::exec::action::ExecAction;
 #[cfg(unix)]
-use dotfiles_actions::link::{action::NativeLinkAction, directive::NativeLinkDirective};
-use dotfiles_core::action::ActionParser;
-use dotfiles_core::action::ConditionalAction;
-use dotfiles_core::directive::{DirectiveData, HasDirectiveData};
+use dotfiles_actions::link::action::NativeLinkAction;
+
 use dotfiles_core::error::{DotfilesError, ErrorType};
 use dotfiles_core::yaml_util::map_yaml_array;
-use dotfiles_core::Settings;
-use once_cell::sync::Lazy;
+use dotfiles_core::{Action, Settings};
 use strict_yaml_rust::StrictYaml;
 
 use crate::context::Context;
-
-#[cfg(target_os = "linux")]
-static APT: Lazy<AptDirective<'static>> = Lazy::new(Default::default);
-#[cfg(any(target_os = "linux", target_os = "macos"))]
-static BREW: Lazy<BrewDirective<'static>> = Lazy::new(Default::default);
-static CREATE: Lazy<NativeCreateDirective<'static>> = Lazy::new(Default::default);
-static EXEC: Lazy<ExecDirective<'static>> = Lazy::new(Default::default);
-#[cfg(unix)]
-static LINK: Lazy<NativeLinkDirective<'static>> = Lazy::new(Default::default);
-static SUBCONFIG_DIRECTIVE_DATA: Lazy<DirectiveData> = Lazy::new(subconfig_directive_data);
-
-fn subconfig_directive_data() -> DirectiveData {
-  DirectiveData::from("subconfig".into(), Default::default())
-}
 
 #[derive(Clone)]
 pub enum KnownDirective {
@@ -68,58 +51,58 @@ pub enum KnownDirective {
   Subconfig,
 }
 
-pub enum KnownAction<'a> {
+pub enum KnownAction {
   #[cfg(target_os = "linux")]
-  Apt(AptAction<'a>),
+  Apt(AptAction),
   #[cfg(any(target_os = "linux", target_os = "macos"))]
-  Brew(BrewAction<'a>),
-  Create(NativeCreateAction<'a>),
-  Exec(ExecAction<'a>),
+  Brew(BrewAction),
+  Create(NativeCreateAction),
+  Exec(ExecAction),
   #[cfg(unix)]
-  Link(NativeLinkAction<'a>),
+  Link(NativeLinkAction),
   Subconfig(Context),
 }
 
 #[cfg(target_os = "linux")]
-impl<'a> From<AptAction<'a>> for KnownAction<'a> {
-  fn from(value: AptAction<'a>) -> Self {
+impl From<AptAction> for KnownAction {
+  fn from(value: AptAction) -> Self {
     KnownAction::Apt(value)
   }
 }
 
 #[cfg(any(target_os = "linux", target_os = "macos"))]
-impl<'a> From<BrewAction<'a>> for KnownAction<'a> {
-  fn from(value: BrewAction<'a>) -> Self {
+impl From<BrewAction> for KnownAction {
+  fn from(value: BrewAction) -> Self {
     KnownAction::Brew(value)
   }
 }
 
-impl<'a> From<NativeCreateAction<'a>> for KnownAction<'a> {
-  fn from(value: NativeCreateAction<'a>) -> Self {
+impl From<NativeCreateAction> for KnownAction {
+  fn from(value: NativeCreateAction) -> Self {
     KnownAction::Create(value)
   }
 }
 
-impl<'a> From<ExecAction<'a>> for KnownAction<'a> {
-  fn from(value: ExecAction<'a>) -> Self {
+impl From<ExecAction> for KnownAction {
+  fn from(value: ExecAction) -> Self {
     KnownAction::Exec(value)
   }
 }
 
 #[cfg(unix)]
-impl<'a> From<NativeLinkAction<'a>> for KnownAction<'a> {
-  fn from(value: NativeLinkAction<'a>) -> Self {
+impl From<NativeLinkAction> for KnownAction {
+  fn from(value: NativeLinkAction) -> Self {
     KnownAction::Link(value)
   }
 }
 
-impl<'a> From<Context> for KnownAction<'a> {
+impl From<Context> for KnownAction {
   fn from(value: Context) -> Self {
     KnownAction::Subconfig(value)
   }
 }
 
-impl<'a> KnownAction<'a> {
+impl KnownAction {
   pub fn execute(self) -> Result<(), DotfilesError> {
     match self {
       #[cfg(target_os = "linux")]
@@ -151,35 +134,54 @@ impl<'a> KnownAction<'a> {
 }
 
 impl KnownDirective {
-  pub fn data(&self) -> &DirectiveData {
+  pub fn name(&self) -> &'static str {
     match self {
       #[cfg(target_os = "linux")]
-      KnownDirective::Apt => APT.directive_data(),
+      KnownDirective::Apt => "apt",
       #[cfg(any(target_os = "linux", target_os = "macos"))]
-      KnownDirective::Brew => BREW.directive_data(),
-      KnownDirective::Create => CREATE.directive_data(),
-      KnownDirective::Exec => EXEC.directive_data(),
+      KnownDirective::Brew => "brew",
+      KnownDirective::Create => "create",
+      KnownDirective::Exec => "exec",
       #[cfg(unix)]
-      KnownDirective::Link => LINK.directive_data(),
-      KnownDirective::Subconfig => &SUBCONFIG_DIRECTIVE_DATA,
+      KnownDirective::Link => "link",
+      KnownDirective::Subconfig => "subconfig",
     }
   }
+
+  pub fn default_settings(&self) -> Settings {
+    match self {
+      #[cfg(target_os = "linux")]
+      KnownDirective::Apt => dotfiles_actions::apt::action::default_settings(),
+      #[cfg(any(target_os = "linux", target_os = "macos"))]
+      KnownDirective::Brew => dotfiles_actions::brew::action::default_settings(),
+      KnownDirective::Create => dotfiles_actions::create::action::default_settings(),
+      KnownDirective::Exec => dotfiles_actions::exec::action::default_settings(),
+      #[cfg(unix)]
+      KnownDirective::Link => dotfiles_actions::link::action::default_settings(),
+      KnownDirective::Subconfig => Settings::new(),
+    }
+  }
+
   pub fn parse_context_defaults(
     &self,
     defaults: &strict_yaml_rust::StrictYaml,
   ) -> Result<(String, Settings), DotfilesError> {
     Ok((
-      self.data().name().clone(),
-      self.data().parse_context_defaults(defaults)?,
+      self.name().to_owned(),
+      dotfiles_core::yaml_util::parse_context_defaults(
+        self.name(),
+        &self.default_settings(),
+        defaults,
+      )?,
     ))
   }
 
-  pub fn parse_action_list<'a>(
+  pub fn parse_action_list(
     directive: KnownDirective,
     context_settings: &Settings,
     actions: &strict_yaml_rust::StrictYaml,
     context: &Context,
-  ) -> Result<Vec<KnownAction<'a>>, DotfilesError> {
+  ) -> Result<Vec<KnownAction>, DotfilesError> {
     let file = context.file();
     let current_dir = file.parent().ok_or_else(||
       DotfilesError::from(
@@ -189,23 +191,40 @@ impl KnownDirective {
       ErrorType::CoreError))?;
     match directive {
       #[cfg(target_os = "linux")]
-      KnownDirective::Apt => APT
-        .parse_action_list(context_settings, actions, current_dir)
+      KnownDirective::Apt => dotfiles_actions::apt::action::parse_action_list(context_settings, actions, current_dir)
         .map(|list| list.into_iter().map(KnownAction::from).collect()),
       #[cfg(any(target_os = "linux", target_os = "macos"))]
-      KnownDirective::Brew => BREW
-        .parse_action_list(context_settings, actions, current_dir)
+      KnownDirective::Brew => dotfiles_actions::brew::action::parse_action_list(context_settings, actions, current_dir)
         .map(|list| list.into_iter().map(KnownAction::from).collect()),
-      KnownDirective::Create => CREATE
-        .parse_action_list(context_settings, actions, current_dir)
-        .map(|list| list.into_iter().map(KnownAction::from).collect()),
-      KnownDirective::Exec => EXEC
-        .parse_action_list(context_settings, actions, current_dir)
-        .map(|list| list.into_iter().map(KnownAction::from).collect()),
+      KnownDirective::Create => {
+        dotfiles_core::yaml_util::map_yaml_array(actions, |yaml_item| {
+          dotfiles_actions::create::action::parse_action::<dotfiles_actions::filesystem::OsFileSystem>(
+            dotfiles_actions::filesystem::OsFileSystem::default(),
+            context_settings,
+            yaml_item,
+            current_dir,
+          )
+        })
+        .map(|list| list.into_iter().map(KnownAction::from).collect())
+      }
+      KnownDirective::Exec => {
+        dotfiles_core::yaml_util::map_yaml_array(actions, |yaml_item| {
+          dotfiles_actions::exec::action::parse_action(context_settings, yaml_item, current_dir)
+        })
+        .map(|list| list.into_iter().map(KnownAction::from).collect())
+      }
       #[cfg(unix)]
-      KnownDirective::Link => LINK
-        .parse_action_list(context_settings, actions, current_dir)
-        .map(|list| list.into_iter().map(KnownAction::from).collect()),
+      KnownDirective::Link => {
+        dotfiles_core::yaml_util::map_yaml_array(actions, |yaml_item| {
+          dotfiles_actions::link::action::parse_action::<dotfiles_actions::filesystem::OsFileSystem>(
+            dotfiles_actions::filesystem::OsFileSystem::default(),
+            context_settings,
+            yaml_item,
+            current_dir,
+          )
+        })
+        .map(|list| list.into_iter().map(KnownAction::from).collect())
+      }
       KnownDirective::Subconfig => map_yaml_array(actions, |file_yaml| {
         file_yaml
           .clone()
@@ -240,7 +259,7 @@ impl TryFrom<&str> for KnownDirective {
       "link" => Ok(KnownDirective::Link),
       "subconfig" => Ok(KnownDirective::Subconfig),
       _ => Err(DotfilesError::from(
-        format!("Configuration refers to unknown directive `{value}`"),
+        format!("Configuration refers to unknown action type `{value}`"),
         ErrorType::InconsistentConfigurationError,
       )),
     }

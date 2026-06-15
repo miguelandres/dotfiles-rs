@@ -31,8 +31,6 @@ use strict_yaml_rust::ScanError;
 use strict_yaml_rust::StrictYaml;
 use subprocess::ExitStatus;
 
-use crate::Directive;
-
 /// Executes the `process_function` on each of the items in the `iterable`, and then returns
 /// `Ok(())`. It stops execution if any of the process functions returns an Error, and returns said
 /// error.
@@ -241,18 +239,4 @@ impl DotfilesError {
       error_type: ErrorType::FileSystemError { fs_error: io_error },
     }
   }
-}
-
-/// Adds a prefix to an error with the name of the directive where it happened
-pub fn add_directive_error_prefix<'a, D, T>(
-  dir: &'a D,
-  res: Result<T, DotfilesError>,
-) -> Result<T, DotfilesError>
-where
-  D: Directive<'a>,
-{
-  res.map_err(|mut error| {
-    error.add_message_prefix(format!("Directive {}", dir.name()));
-    error
-  })
 }

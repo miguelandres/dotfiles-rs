@@ -1,9 +1,9 @@
-# `brew` directive
+# `brew` action
 
-The `brew` directive allows you to install packages using homebrew and `mas`.
+The `brew` action allows you to install packages using homebrew and `mas`.
 
 **Note:** in order to use `mas` you need to install it as a formula using `brew`.
-You can use this brew directive itself to install `mas`
+You can use this brew action itself to install `mas`
 
 ## Options
 
@@ -42,7 +42,7 @@ You can use this brew directive itself to install `mas`
       cask:
         - visual-studio-code
   - brew:
-      # This is a separate brew directive so it can be skipped in CI.
+      # This is a separate brew action so it can be skipped in CI.
       # Some of these formulae and casks either take too long to install or just
       # don't install in CI.
       # `mas` actions should never be run in CI since they depend on a

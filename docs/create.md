@@ -1,10 +1,10 @@
-# `create` directive
+# `create` action
 
-The `create` directive creates a new directory specified by the `dir` setting.
+The `create` action creates a new directory specified by the `dir` setting.
 
 ## Shortened version
 
-You can just list directories to create and the directive will use the defaults
+You can just list directories to create and the action will use the defaults
 for the current context.
 
 ```yaml

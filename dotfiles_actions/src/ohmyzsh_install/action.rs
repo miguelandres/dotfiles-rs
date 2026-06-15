@@ -48,7 +48,7 @@ impl OhMyZshInstallAction {
   }
 }
 
-impl Action<'_> for OhMyZshInstallAction {
+impl Action for OhMyZshInstallAction {
   fn execute(&self) -> Result<(), DotfilesError> {
     if self.check_oh_my_zsh_is_installed() {
       log::info!("oh-my-zsh is already installed, no need to reinstall");
@@ -80,5 +80,9 @@ impl Action<'_> for OhMyZshInstallAction {
       "Couldn't install ohmyzsh",
       "Unexpected error while installing ohmyzsh",
     )
+  }
+
+  fn skip_in_ci(&self) -> bool {
+    false
   }
 }

@@ -21,23 +21,37 @@
 
 //! This module contains the base trait for all [Action]s.
 
-use std::path::Path;
-
-use strict_yaml_rust::StrictYaml;
-
-use crate::{
-  directive::HasDirectiveData, error::DotfilesError, yaml_util::map_yaml_array, Settings,
-};
+use crate::error::DotfilesError;
 
 /// Skip this whole action in CI environments.
 pub const SKIP_IN_CI_SETTING: &str = "skip_in_ci";
-/// An action to be run by a the dotfiles runtime.
-pub trait Action<'a> {
+/// An action to be run by the dotfiles runtime.
+pub trait Action {
   /// Executes the action.
   ///
   /// Returns an error String describing the issue, this string can be used
   /// to log or display to the user.
   fn execute(&self) -> Result<(), DotfilesError>;
+
+  /// Whether to skip this action in Continuous Integration environments.
+  ///
+  /// See [is_running_in_ci()]
+  fn skip_in_ci(&self) -> bool;
+
+  /// Checks that the conditions allow for executing this action, and if so executes it according to
+  /// [execute(&self)].
+  ///
+  /// If conditions don't pass it simply skips and returns `Ok(())`
+  ///
+  /// At this moment the only condition that is supported is whether the action should be skipped in
+  /// CI, see [skip_in_ci(&self)].
+  fn check_conditions_and_execute(&self) -> Result<(), DotfilesError> {
+    if self.skip_in_ci() && is_running_in_ci() {
+      Ok(())
+    } else {
+      self.execute()
+    }
+  }
 }
 
 /// Whether the execution environment is presumed to be CI
@@ -81,65 +95,4 @@ pub fn is_running_in_ci() -> bool {
     }
   }
   false
-}
-/// Trait for actions to be skippable under certain conditions.
-///
-/// For now the only supported condition is whether to skip on CI environments.
-pub trait ConditionalAction<'a>: Action<'a> {
-  /// Whether to skip this action in Continuous Integration environments.
-  ///
-  /// See [is_running_in_ci()]
-  fn skip_in_ci(&self) -> bool;
-
-  /// Checks that the conditions allow for executing this action, and if so executes it according to
-  /// [execute(&self)].
-  ///
-  /// If conditions don't pass it simply skips and returns `Ok(())`
-  ///
-  /// At this moment the only condition that is supported is whether the action should be skipped in
-  /// CI, see [skip_in_ci(&self)].
-  fn check_conditions_and_execute(&self) -> Result<(), DotfilesError> {
-    if ConditionalAction::skip_in_ci(self) && is_running_in_ci() {
-      Ok(())
-    } else {
-      self.execute()
-    }
-  }
-}
-
-/// Trait to parse a specific action type from StrictYaml.
-pub trait ActionParser<'a>: HasDirectiveData<'a> {
-  /// The action type this object parses
-  type ActionType: Action<'a>;
-
-  /// Builds a single action of type [ActionParser::ActionType] from StrictYaml tree object
-  /// that represents the action's configuration and a default settings object.
-  ///
-  /// Returns an Error containing a human readable string in case there
-  /// was an issue building the action.
-  fn parse_action(
-    &'a self,
-    settings: &Settings,
-    yaml: &StrictYaml,
-    current_dir: &Path,
-  ) -> Result<Self::ActionType, DotfilesError>;
-
-  /// Builds a list of actions of type [ActionParser::ActionType] from StrictYaml tree object
-  /// that represents the actions' configurations and a default settings object.
-  ///
-  /// Returns an Error containing a human readable string in case there
-  /// was an issue building the action.
-  ///
-  /// The default implementation assumes there must be StrictYaml array whose items each
-  /// represent an individual action
-  fn parse_action_list(
-    &'a self,
-    settings: &Settings,
-    yaml: &StrictYaml,
-    current_dir: &Path,
-  ) -> Result<Vec<Self::ActionType>, DotfilesError> {
-    map_yaml_array(yaml, |yaml_item| {
-      self.parse_action(settings, yaml_item, current_dir)
-    })
-  }
 }

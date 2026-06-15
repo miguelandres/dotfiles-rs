@@ -1,6 +1,6 @@
-# `link` directive
+# `link` action
 
-The `link` creates a symlink at the `path` pointing to the `target` file or dir.
+The `link` action creates a new symlink at `path` pointing to `target`.
 
 Notice that even though the `target` file can be relative to the current
 configuration file, the symlink will be created pointing to the absolute path to
@@ -8,8 +8,8 @@ the file.
 
 ## Shortened version
 
-You can just list directories mappings of symlink paths to destinations and the
-directive  will use the defaults for the current context.
+You can just list mappings of symlink paths to destinations and the
+action will use the defaults for the current context.
 
 ```yaml
   - link:
@@ -31,7 +31,7 @@ directive  will use the defaults for the current context.
   replace it with the new symlink
 * `relink` (default: false): if a symlink already exists at `path`, recreate it
   pointing to the new `target`.
-* `resolve_simlink_target` (default: false): if the `target` is also a simlink,
+* `resolve_symlink_target` (default: false): if the `target` is also a symlink,
   recursively find the concrete target it points to and use that instead.
 
 ## Example

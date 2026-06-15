@@ -21,16 +21,15 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-use crate::utils::check_action_fail;
-use crate::utils::setup_fs;
+use crate::utils::{check_action_fail, read_test_yaml, setup_fs};
+use dotfiles_actions::link::action::default_settings;
 use dotfiles_actions::link::action::FakeLinkAction;
-use dotfiles_actions::link::directive::init_directive_data;
-use dotfiles_actions::link::directive::CREATE_PARENT_DIRS_SETTING;
-use dotfiles_actions::link::directive::FORCE_SETTING;
-use dotfiles_actions::link::directive::IGNORE_MISSING_TARGET_SETTING;
-use dotfiles_actions::link::directive::RELINK_SETTING;
-use dotfiles_actions::link::directive::RESOLVE_SYMLINK_TARGET_SETTING;
-use dotfiles_core::action::ConditionalAction;
+use dotfiles_actions::link::action::CREATE_PARENT_DIRS_SETTING;
+use dotfiles_actions::link::action::FORCE_SETTING;
+use dotfiles_actions::link::action::IGNORE_MISSING_TARGET_SETTING;
+use dotfiles_actions::link::action::RELINK_SETTING;
+use dotfiles_actions::link::action::RESOLVE_SYMLINK_TARGET_SETTING;
+
 use dotfiles_core::action::SKIP_IN_CI_SETTING;
 use dotfiles_core::error::DotfilesError;
 use dotfiles_core::settings::initialize_settings_object;
@@ -55,11 +54,11 @@ fn skip_in_ci_is_respected() -> Result<(), DotfilesError> {
   env::set_var("DOTFILES_TESTING_ENV_VAR", "true");
   env::set_var("TESTING_ONLY_FAKE_CI", "true");
   let action = FakeLinkAction::new(
-    &fs,
+    fs.clone(),
     String::from("/home/user/path"),
     String::from("/home/user/target"),
     &settings,
-    init_directive_data().defaults(),
+    &default_settings(),
     PathBuf::from("/home/user"),
   )?;
   action.check_conditions_and_execute()?;
@@ -83,11 +82,11 @@ fn convert_to_absolute() -> Result<(), DotfilesError> {
   let settings = Settings::new();
 
   let action = FakeLinkAction::new(
-    &fs,
+    fs.clone(),
     String::from("/home/user/path"),
     String::from("target"),
     &settings,
-    init_directive_data().defaults(),
+    &default_settings(),
     PathBuf::from("/home/user"),
   )?;
   action.check_conditions_and_execute()?;
@@ -108,11 +107,11 @@ fn handles_tildes() -> Result<(), DotfilesError> {
   let settings = Settings::new();
 
   let action = FakeLinkAction::new(
-    &fs,
+    fs.clone(),
     String::from("~/path"),
     String::from("/home/user/target"),
     &settings,
-    init_directive_data().defaults(),
+    &default_settings(),
     PathBuf::from("/home/user"),
   )?;
   action.check_conditions_and_execute()?;
@@ -130,11 +129,11 @@ fn link_fails_on_nonexistent_path() -> Result<(), DotfilesError> {
   fs.create_dir("/home/user/target").unwrap();
   let settings = Settings::new();
   let action = FakeLinkAction::new(
-    &fs,
+    fs.clone(),
     String::from("/home/user/nonexistent_path/path"),
     String::from("/home/user/target"),
     &settings,
-    init_directive_data().defaults(),
+    &default_settings(),
     PathBuf::from("/home/user"),
   )?;
   check_action_fail(
@@ -157,11 +156,11 @@ fn link_succeeds_on_nonexistent_path_with_create_parent_dirs() -> Result<(), Dot
     Setting::Boolean(true),
   )]);
   let action = FakeLinkAction::new(
-    &fs,
+    fs.clone(),
     String::from("/home/user/nonexistent_path/path"),
     String::from("/home/user/target"),
     &settings,
-    init_directive_data().defaults(),
+    &default_settings(),
     PathBuf::from("/home/user"),
   )?;
   action.execute()
@@ -175,11 +174,11 @@ fn link_fails_on_readonly_dir() -> Result<(), DotfilesError> {
   fs.set_readonly("/home/user/readonly", true).unwrap();
   let settings = Settings::new();
   let action = FakeLinkAction::new(
-    &fs,
+    fs.clone(),
     String::from("/home/user/readonly/some"),
     String::from("/home/user"),
     &settings,
-    init_directive_data().defaults(),
+    &default_settings(),
     PathBuf::from("/home/user"),
   )?;
   check_action_fail(
@@ -197,11 +196,11 @@ fn link_fails_on_nonexistent_target() -> Result<(), DotfilesError> {
   setup_fs(&fs).expect("Failure setting up FakeFileSystem");
   let settings = Settings::new();
   let action = FakeLinkAction::new(
-    &fs,
+    fs.clone(),
     String::from("/home/user/path"),
     String::from("/home/user/target"),
     &settings,
-    init_directive_data().defaults(),
+    &default_settings(),
     PathBuf::from("/home/user"),
   )?;
   check_action_fail(
@@ -224,11 +223,11 @@ fn link_succeeds_on_nonexistent_target_if_ignoring_missing_target() -> Result<()
     Setting::Boolean(true),
   )]);
   let action = FakeLinkAction::new(
-    &fs,
+    fs.clone(),
     String::from("/home/user/path"),
     String::from("/home/user/target"),
     &settings,
-    init_directive_data().defaults(),
+    &default_settings(),
     PathBuf::from("/home/user"),
   )?;
   action.execute()
@@ -243,11 +242,11 @@ fn link_fails_on_existing_link() -> Result<(), DotfilesError> {
   fs.symlink("/home/user/target", "/home/user/path").unwrap();
   let settings = Settings::new();
   let action = FakeLinkAction::new(
-    &fs,
+    fs.clone(),
     String::from("/home/user/path"),
     String::from("/home/user/target2"),
     &settings,
-    init_directive_data().defaults(),
+    &default_settings(),
     PathBuf::from("/home/user"),
   )?;
   check_action_fail(
@@ -272,11 +271,11 @@ fn link_succeeds_on_existing_link_with_relink() -> Result<(), DotfilesError> {
   let settings =
     initialize_settings_object(&[(String::from(RELINK_SETTING), Setting::Boolean(true))]);
   let action = FakeLinkAction::new(
-    &fs,
+    fs.clone(),
     String::from("/home/user/path"),
     String::from("/home/user/target2"),
     &settings,
-    init_directive_data().defaults(),
+    &default_settings(),
     PathBuf::from("/home/user"),
   )?;
   action.execute()
@@ -292,11 +291,11 @@ fn link_fails_on_existing_file_with_relink() -> Result<(), DotfilesError> {
   let settings =
     initialize_settings_object(&[(String::from(RELINK_SETTING), Setting::Boolean(true))]);
   let action = FakeLinkAction::new(
-    &fs,
+    fs.clone(),
     String::from("/home/user/path"),
     String::from("/home/user/target2"),
     &settings,
-    init_directive_data().defaults(),
+    &default_settings(),
     PathBuf::from("/home/user"),
   )?;
   check_action_fail(
@@ -320,11 +319,11 @@ fn link_fails_on_existing_dir_with_relink() -> Result<(), DotfilesError> {
   let settings =
     initialize_settings_object(&[(String::from(RELINK_SETTING), Setting::Boolean(true))]);
   let action = FakeLinkAction::new(
-    &fs,
+    fs.clone(),
     String::from("/home/user/path"),
     String::from("/home/user/target2"),
     &settings,
-    init_directive_data().defaults(),
+    &default_settings(),
     PathBuf::from("/home/user"),
   )?;
   check_action_fail(
@@ -348,11 +347,11 @@ fn link_succeeds_on_existing_link_with_force() -> Result<(), DotfilesError> {
   let settings =
     initialize_settings_object(&[(String::from(FORCE_SETTING), Setting::Boolean(true))]);
   let action = FakeLinkAction::new(
-    &fs,
+    fs.clone(),
     String::from("/home/user/path"),
     String::from("/home/user/target2"),
     &settings,
-    init_directive_data().defaults(),
+    &default_settings(),
     PathBuf::from("/home/user"),
   )?;
   action.execute()
@@ -368,11 +367,11 @@ fn link_fails_on_existing_file_with_force() -> Result<(), DotfilesError> {
   let settings =
     initialize_settings_object(&[(String::from(FORCE_SETTING), Setting::Boolean(true))]);
   let action = FakeLinkAction::new(
-    &fs,
+    fs.clone(),
     String::from("/home/user/path"),
     String::from("/home/user/target2"),
     &settings,
-    init_directive_data().defaults(),
+    &default_settings(),
     PathBuf::from("/home/user"),
   )?;
   action.execute()
@@ -388,11 +387,11 @@ fn link_fails_on_existing_dir_with_force() -> Result<(), DotfilesError> {
   let settings =
     initialize_settings_object(&[(String::from(FORCE_SETTING), Setting::Boolean(true))]);
   let action = FakeLinkAction::new(
-    &fs,
+    fs.clone(),
     String::from("/home/user/path"),
     String::from("/home/user/target2"),
     &settings,
-    init_directive_data().defaults(),
+    &default_settings(),
     PathBuf::from("/home/user"),
   )?;
   action.execute()
@@ -410,15 +409,42 @@ fn link_resolves_symlink_target() -> Result<(), DotfilesError> {
     Setting::Boolean(true),
   )]);
   let action = FakeLinkAction::new(
-    &fs,
+    fs.clone(),
     String::from("/home/user/path"),
     String::from("/home/user/symlink"),
     &settings,
-    init_directive_data().defaults(),
+    &default_settings(),
     PathBuf::from("/home/user"),
   )?;
   action.execute().unwrap();
   let source = fs.get_symlink_src("/home/user/path").unwrap();
   assert!(source == PathBuf::from("/home/user/target"));
+  Ok(())
+}
+
+#[test]
+fn link_action_parsed_from_plain_link() -> Result<(), DotfilesError> {
+  let fs = filesystem::FakeFileSystem::new();
+  setup_fs(&fs)?;
+  fs.create_file("/home/user/the_file", String::from("aaa").as_bytes())
+    .unwrap();
+  let default_settings = Settings::new();
+  let yaml = read_test_yaml("directive/link/plain_link.yaml")
+    .unwrap()
+    .pop()
+    .unwrap();
+
+  let action = dotfiles_actions::link::action::parse_action::<filesystem::FakeFileSystem>(
+    fs.clone(),
+    &default_settings,
+    &yaml,
+    &PathBuf::from("/home/user"),
+  )?;
+  assert_eq!(action.path(), "a_link");
+  assert_eq!(action.target(), "/home/user/the_file");
+
+  action.execute()?;
+  assert!(fs.is_file("a_link"));
+  assert!(fs.is_file("/home/user/a_link"));
   Ok(())
 }

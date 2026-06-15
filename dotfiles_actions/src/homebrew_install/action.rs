@@ -54,7 +54,7 @@ impl HomebrewInstallAction {
   }
 }
 
-impl Action<'_> for HomebrewInstallAction {
+impl Action for HomebrewInstallAction {
   fn execute(&self) -> Result<(), DotfilesError> {
     if !self.check_brew_is_installed() {
       let result = execute_commands(
@@ -98,5 +98,9 @@ impl Action<'_> for HomebrewInstallAction {
       info!("Homebrew already installed, no need to re-install");
       Ok(())
     }
+  }
+
+  fn skip_in_ci(&self) -> bool {
+    false
   }
 }

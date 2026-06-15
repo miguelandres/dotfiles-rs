@@ -31,7 +31,7 @@ use std::path::PathBuf;
 use std::str::FromStr;
 use strict_yaml_rust::StrictYaml;
 
-pub fn check_action_fail<'a, A: Action<'a>>(
+pub fn check_action_fail<A: Action>(
   action: &A,
   error_message: String,
 ) -> Result<(), DotfilesError> {

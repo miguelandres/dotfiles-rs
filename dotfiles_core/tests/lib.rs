@@ -20,7 +20,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 #![cfg(test)]
-mod directive;
+
 #[cfg(unix)]
 mod path;
 mod settings;

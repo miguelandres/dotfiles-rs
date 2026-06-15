@@ -1,6 +1,6 @@
-# `apt` directive
+# `apt` action
 
-The `apt` directive allows you to install packages using `apt`.
+The `apt` action allows you to install packages using `apt`.
 
 ## Options
 
@@ -13,7 +13,7 @@ The `apt` directive allows you to install packages using `apt`.
       package:
         - fzf
   - apt:
-      # This is a separate apt directive so it can be skipped in CI.
+      # This is a separate apt action so it can be skipped in CI.
       package:
         - python3
 ```

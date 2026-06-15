@@ -24,13 +24,10 @@
 use std::{env, path::PathBuf};
 
 use dotfiles_actions::create::action::FakeCreateAction;
-use dotfiles_core::{
-  action::{Action, ConditionalAction},
-  error::DotfilesError,
-};
+use dotfiles_core::{action::Action, error::DotfilesError, settings::Settings};
 use filesystem::{FakeFileSystem, FileSystem};
 
-use crate::utils::{check_action_fail, setup_fs};
+use crate::utils::{check_action_fail, read_test_yaml, setup_fs};
 
 #[test]
 fn skip_in_ci_is_respected() -> Result<(), DotfilesError> {
@@ -39,7 +36,7 @@ fn skip_in_ci_is_respected() -> Result<(), DotfilesError> {
   env::set_var("DOTFILES_TESTING_ENV_VAR", "true");
   env::set_var("TESTING_ONLY_FAKE_CI", "true");
   let action = FakeCreateAction::new(
-    &fs,
+    fs.clone(),
     true,
     String::from("/home/user/target"),
     true,
@@ -60,7 +57,7 @@ fn create_dir_fails_on_nonexistent_path() -> Result<(), DotfilesError> {
   let fs = FakeFileSystem::new();
   setup_fs(&fs).expect("Failure setting up FakeFileSystem");
   let action = FakeCreateAction::new(
-    &fs,
+    fs.clone(),
     false,
     String::from("/home/user/nonexistent_path/target"),
     false,
@@ -80,7 +77,7 @@ fn create_dir_succeeds() -> Result<(), DotfilesError> {
   let fs = FakeFileSystem::new();
   setup_fs(&fs)?;
   let action = FakeCreateAction::new(
-    &fs,
+    fs.clone(),
     false,
     String::from("/home/user/target"),
     false,
@@ -94,7 +91,7 @@ fn create_relative_dir_succeeds() -> Result<(), DotfilesError> {
   let fs = FakeFileSystem::new();
   setup_fs(&fs)?;
   let action = FakeCreateAction::new(
-    &fs,
+    fs.clone(),
     false,
     String::from("target"),
     false,
@@ -108,7 +105,7 @@ fn create_dir_fails_on_readonly_dir() -> Result<(), DotfilesError> {
   let fs = FakeFileSystem::new();
   setup_fs(&fs)?;
   let action = FakeCreateAction::new(
-    &fs,
+    fs.clone(),
     false,
     String::from("/system/target"),
     false,
@@ -128,7 +125,7 @@ fn force_create_dir_succeeds_on_nonexistent_path() -> Result<(), DotfilesError> 
   let fs = FakeFileSystem::new();
   setup_fs(&fs)?;
   let action = FakeCreateAction::new(
-    &fs,
+    fs.clone(),
     false,
     String::from("/home/user/nonexistent_path/target"),
     true,
@@ -142,7 +139,7 @@ fn force_create_dir_succeeds() -> Result<(), DotfilesError> {
   let fs = FakeFileSystem::new();
   setup_fs(&fs)?;
   let action = FakeCreateAction::new(
-    &fs,
+    fs.clone(),
     false,
     String::from("/home/user/target"),
     true,
@@ -156,7 +153,7 @@ fn force_create_dir_fails_on_readonly_dir() -> Result<(), DotfilesError> {
   let fs = FakeFileSystem::new();
   setup_fs(&fs)?;
   let action = FakeCreateAction::new(
-    &fs,
+    fs.clone(),
     false,
     String::from("/system/target"),
     true,
@@ -169,4 +166,46 @@ fn force_create_dir_fails_on_readonly_dir() -> Result<(), DotfilesError> {
       action.directory()
     ),
   )
+}
+
+#[test]
+fn create_action_parsed_from_single_dir_name() -> Result<(), DotfilesError> {
+  let fs = FakeFileSystem::new();
+  setup_fs(&fs)?;
+  let default_settings = Settings::new();
+  let yaml = read_test_yaml("directive/create/plain_directory_name.yaml")
+    .unwrap()
+    .pop()
+    .unwrap();
+
+  let action = dotfiles_actions::create::action::parse_action::<FakeFileSystem>(
+    fs.clone(),
+    &default_settings,
+    &yaml,
+    &PathBuf::from("/home/user"),
+  )?;
+  assert_eq!(action.directory(), "directory");
+  assert!(!action.create_parent_dirs());
+
+  action.execute()
+}
+
+#[test]
+fn create_action_parsed_from_full_action() -> Result<(), DotfilesError> {
+  let fs = FakeFileSystem::new();
+  setup_fs(&fs)?;
+  let default_settings = Settings::new();
+  let yaml = read_test_yaml("directive/create/full_action.yaml")
+    .unwrap()
+    .pop()
+    .unwrap();
+  let action = dotfiles_actions::create::action::parse_action::<FakeFileSystem>(
+    fs.clone(),
+    &default_settings,
+    &yaml,
+    &PathBuf::from("/home/user"),
+  )?;
+  assert_eq!(action.directory(), "some/dir");
+  assert!(action.create_parent_dirs());
+  action.execute()
 }
